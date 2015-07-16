@@ -13,7 +13,7 @@ interface Point0{
     }
 }
 
-
+// expand to:
 //@Mixin
 interface Point {
     int x();
