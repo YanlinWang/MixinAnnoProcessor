@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javafx.util.Pair;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -46,7 +48,7 @@ public class MixinProcessor extends AbstractProcessor {
         String classContent = null;
         String algName;
         JavaFileObject jfo = null;
-        for (Element element: env.getElementsAnnotatedWith(Mixin.class)) {            
+        for (Element element: env.getElementsAnnotatedWith(Mixin.class)) {           
             // Initialization.
             TypeMirror tm = element.asType();
             String typeArgs = tm.accept(new DeclaredTypeVisitor(), element);
@@ -65,7 +67,7 @@ public class MixinProcessor extends AbstractProcessor {
                 ioe.printStackTrace();
             }
         }
-        return true;        
+        return true;       
     }
 
     private Map<String, TypeMirror> getFields(Element element) {
@@ -86,48 +88,53 @@ public class MixinProcessor extends AbstractProcessor {
         String algName = element.getSimpleName().toString();
         String baseName = getPackage(element) + "." + algName;
 
-        String classContent = "package " + folder + ";\n\n"
+        String res = "package " + folder + ";\n\n"
                 + "public interface " + algName + " extends " + baseName + " {\n\n";
 
 
-        Map<String, TypeMirror> fields = getFields(element); 
+        Map<String, TypeMirror> fields = getFields(element);
 
-
-
-
-        classContent += TAB + "static " + algName + " of(";
+        res += TAB + "static " + algName + " of(";
         boolean firstField = true;
         for (String field : fields.keySet()) {
-            if (!firstField) { classContent += ", "; }
-            classContent += fields.get(field) + " " + field;
+            if (!firstField) { res += ", "; }
+            res += fields.get(field) + " " + field;
             firstField = false;
         }
-        classContent += ") { return new " + algName + "() {\n";
-        for (String field : fields.keySet()) {
-            classContent += TAB2 + "public " + fields.get(field) + " " + field + "() { return " + field + "; }\n";
+        res += ") { return new " + algName + "() {\n";
+
+        res += genGetters(fields);
+       
+        List<? extends Element> le = element.getEnclosedElements();
+        for (Element e : le) {
+            String name = e.getSimpleName().toString();
+            if (isSetter(e, fields)) res += genSetter(name, fields.get(name));
+            else if (isWithMethod(e)) res += genWithMethod(element, (ExecutableElement) e, algName, fields);
         }
-
-        // begin: deal with `withX` methods
-        classContent += genWithMethod(element, algName, fields);
-        classContent += "};}\n";
-
-
-
-
-
-        //----------- debug code begin --------------
-        //            classContent += "e.getKind(): " + e.getKind() + "\n";
-        //            classContent += "e.getClass(): " + e.getClass() + "\n";
-        //            classContent += "e.getKind(): " + e.getKind() + "\n";
-        //            classContent += "e.getModifiers(): " + e.getModifiers() + "\n";
-        //            classContent += "Element e: " + e + "\n";
-        //            classContent += "e.asType(): " + e.asType().toString() + "\n";
-        //            classContent += "typeArgs: " + typeArgs + "\n";
-        //            classContent += "lTypeArgs: " + lTypeArgs.toString() + "\n\n\n"; 
-        //----------- debug code end -------------- 
-        classContent += "}";
-        return classContent;
+               
+        res += "};}\n";
+        res += "}";
+        return res;
     }
+
+   
+
+    private String genSetter(String name, TypeMirror tm) {
+        String res = "";
+        res += TAB2 + "public void " + name + "(" + tm.toString() + " " + name + ") { this." + name + " = " + name + "; }\n";
+        return res;
+    }
+
+    private String genGetters(Map<String, TypeMirror> fields) {
+        String res = "";
+        for (String field : fields.keySet()) {
+            res += TAB2 + fields.get(field) + " " + memberName(field) + " = " + field + ";\n";
+            res += TAB2 + "public " + fields.get(field) + " " + field + "() { return " + memberName(field) + "; }\n";
+        }
+        return res;
+    }
+    
+    private String memberName(String name) { return "_" + name; }
 
     private boolean noArgs(ExecutableElement e) { return e.getParameters().size() == 0; }
     private boolean isFieldMethod(Element e) { return isAbstractMethod(e) && noArgs((ExecutableElement)e); }
@@ -135,47 +142,57 @@ public class MixinProcessor extends AbstractProcessor {
     private boolean isAbstract(Element e) { return e.getModifiers().contains(Modifier.ABSTRACT); }
     private boolean isAbstractMethod(Element e) { return isMethod(e) && isAbstract(e); }
     private boolean isWithMethod(Element e) { return isMethod(e) && e.getSimpleName().toString().startsWith("with"); }
-
+    private boolean isSetter(Element e, Map<String, TypeMirror> fields) {
+        if (isAbstractMethod(e)) {
+            ExecutableElement ee = (ExecutableElement)e;
+            String methodName = ee.getSimpleName().toString();
+            List<? extends VariableElement> params = ee.getParameters();
+            if (ee.getReturnType().toString().equals("void")) { // return type is void
+                if (fields.containsKey(methodName)) {   // setter name ok
+                    if (params.size() == 1 && params.get(0).asType().equals(fields.get(methodName))) {
+                        return true;
+                    }
+                }
+            }
+      
+        }
+        return false;
+    }
     private String decapitalize(String string) {
         return Character.toLowerCase(string.charAt(0)) + (string.length() > 1 ? string.substring(1) : "");
     }
 
-    private String genWithMethod(Element element, String algName, Map<String, TypeMirror> fields) {
+    private String genWithMethod(Element element, ExecutableElement withMethod, String algName, Map<String, TypeMirror> fields) {
         String baseName = getPackage(element) + "." + algName;
 
         String res = "";
-        List<? extends Element> le = element.getEnclosedElements();
-        for (Element e : le) {
-            if (isWithMethod(e)) {
-                String methodName = e.getSimpleName().toString();
-                String name = methodName.substring(4, methodName.length());
-                name = decapitalize(name);
 
-                if (fields.containsKey(name)) {
-                    ExecutableElement ee = (ExecutableElement)e;
-                    List<? extends VariableElement> params = ee.getParameters();
-                    if (ee.getReturnType().toString().equals(baseName)) { 
-                        if (params.size() == 1 && params.get(0).asType().equals(fields.get(name))) {
-                            String pType = params.get(0).asType().toString();
-                            res += TAB2 + "public " + algName + " " + methodName + "(" + pType + " " + name + ") {\n" ;
-                            res += TAB3 + "return of(";
+        String methodName = withMethod.getSimpleName().toString();
+        String name = methodName.substring(4, methodName.length());
+        name = decapitalize(name);
 
-                            boolean firstField1 = true;
-                            for (String field : fields.keySet()) {
-                                if (!firstField1) { res += ", "; }
-                                if (field.equals(name)) {                   
-                                    res += field;
-                                } else {
-                                    res += field + "()";
-                                }
-                                firstField1 = false;
-                            }
+        if (fields.containsKey(name)) {
+            List<? extends VariableElement> params = withMethod.getParameters();
+            if (withMethod.getReturnType().toString().equals(baseName)) {
+                if (params.size() == 1 && params.get(0).asType().equals(fields.get(name))) {
+                    String pType = params.get(0).asType().toString();
+                    res += TAB2 + "public " + algName + " " + methodName + "(" + pType + " " + name + ") {\n" ;
+                    res += TAB3 + "return of(";
 
-                            res += ");\n" + TAB2 + "}\n";
-                        } else processingEnv.getMessager().printMessage(Kind.ERROR, "method parameter error!", e);
-                    } else processingEnv.getMessager().printMessage(Kind.ERROR, "method return type error!", e);
-                } else processingEnv.getMessager().printMessage(Kind.ERROR, "invalid with method error!", e);
-            }
+                    boolean firstField1 = true;
+                    for (String field : fields.keySet()) {
+                        if (!firstField1) { res += ", "; }
+                        if (field.equals(name)) {                  
+                            res += field;
+                        } else {
+                            res += field + "()";
+                        }
+                        firstField1 = false;
+                    }
+
+                    res += ");\n" + TAB2 + "}\n";
+                } else processingEnv.getMessager().printMessage(Kind.ERROR, "method parameter error!", withMethod);
+            } else processingEnv.getMessager().printMessage(Kind.ERROR, "method return type error!", withMethod);
         }
         return res;
     }

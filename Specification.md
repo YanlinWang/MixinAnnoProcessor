@@ -31,5 +31,16 @@ interfaces that are annotated with `@Mixin`.
 * if there's no `x` field, or `Tx` doesn't match, then generate error. else:  
 * implement `withX` using the `of` method.
 
+#### Generate get method: `Tx x()`:
 
+* generate member filed `_x`, initialized with `x`
+* generate method `public Tx x() { return _x; }`
+
+#### Generate set method: `void x(Tx x)`:
+
+* check if exist method `Tx x()`  
+* inside the inner class, generate
+  ```
+  pubic void x(Tx x) { this.x = x; }
+  ```
 
