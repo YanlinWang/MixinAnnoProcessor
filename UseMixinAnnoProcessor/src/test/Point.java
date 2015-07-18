@@ -9,7 +9,7 @@ public interface Point {
     
     int y();
     
-//    Point withX(int x);
+    Point withX(int x); 
     
     default int distance(){
         return (int) Math.sqrt(x()*x()+y()*y());
