@@ -10,14 +10,9 @@ public interface Point {
     
     Point withX(int x);
     
-//    void x(int x);
+    void x(int x);
     
-//    void x(int x); 
-    /*
-     * public void x(int x) {
-     *      this.x = x;
-     * }
-     */
+    void y(int x);
     
     default int distance(){
         return (int) Math.sqrt(x()*x()+y()*y());

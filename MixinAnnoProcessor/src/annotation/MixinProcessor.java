@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.util.Pair;
-
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -121,7 +119,7 @@ public class MixinProcessor extends AbstractProcessor {
 
     private String genSetter(String name, TypeMirror tm) {
         String res = "";
-        res += TAB2 + "public void " + name + "(" + tm.toString() + " " + name + ") { this." + name + " = " + name + "; }\n";
+        res += TAB2 + "public void " + name + "(" + tm.toString() + " " + name + ") {" + memberName(name) + " = " + name + "; }\n";
         return res;
     }
 
