@@ -92,14 +92,8 @@ public class MixinProcessor extends AbstractProcessor {
 
         Map<String, TypeMirror> fields = getFields(element);
 
-        res += TAB + "static " + algName + " of(";
-        boolean firstField = true;
-        for (String field : fields.keySet()) {
-            if (!firstField) { res += ", "; }
-            res += fields.get(field) + " " + field;
-            firstField = false;
-        }
-        res += ") { return new " + algName + "() {\n";
+        res += TAB + "static " + algName + " of(" + fieldsString(fields) + ") { "
+                + "return new " + algName + "() {\n";
 
         res += genGetters(fields);
        
@@ -108,6 +102,7 @@ public class MixinProcessor extends AbstractProcessor {
             String name = e.getSimpleName().toString();
             if (isSetter(e, fields)) res += genSetter(name, fields.get(name));
             else if (isWithMethod(e)) res += genWithMethod(element, (ExecutableElement) e, algName, fields);
+            else if (isCloneMethod(e)) res += genCloneMethod(algName, (ExecutableElement) e, fields);
         }
                
         res += "};}\n";
@@ -116,6 +111,30 @@ public class MixinProcessor extends AbstractProcessor {
     }
 
    
+    private String memberFieldNames(Map<String, TypeMirror> fields) {
+        String res = "";
+        boolean firstField = true;
+        for (String field : fields.keySet()) {
+            if (!firstField) { res += ", "; }
+            res += memberName(field);
+            firstField = false;
+        }
+        return res;
+    }
+    private String fieldsString(Map<String, TypeMirror> fields) {
+        String res = "";
+        boolean firstField = true;
+        for (String field : fields.keySet()) {
+            if (!firstField) { res += ", "; }
+            res += fields.get(field) + " " + field;
+            firstField = false;
+        }
+        return res;
+    }
+    
+    private String genCloneMethod(String intfName, ExecutableElement e, Map<String, TypeMirror> fields) {
+        return TAB2 + "public " + intfName + " clone() { return of(" + memberFieldNames(fields) + "); }\n";
+    }
 
     private String genSetter(String name, TypeMirror tm) {
         String res = "";
@@ -135,7 +154,8 @@ public class MixinProcessor extends AbstractProcessor {
     private String memberName(String name) { return "_" + name; }
 
     private boolean noArgs(ExecutableElement e) { return e.getParameters().size() == 0; }
-    private boolean isFieldMethod(Element e) { return isAbstractMethod(e) && noArgs((ExecutableElement)e); }
+    private boolean isFieldMethod(Element e) { return !isCloneMethod(e) 
+            && isAbstractMethod(e) && noArgs((ExecutableElement)e); }
     private boolean isMethod(Element e) { return e.getKind() == ElementKind.METHOD; }
     private boolean isAbstract(Element e) { return e.getModifiers().contains(Modifier.ABSTRACT); }
     private boolean isAbstractMethod(Element e) { return isMethod(e) && isAbstract(e); }
@@ -156,6 +176,8 @@ public class MixinProcessor extends AbstractProcessor {
         }
         return false;
     }
+    private boolean isCloneMethod(Element e) { return isAbstractMethod(e) && e.getSimpleName().toString().equals("clone"); }
+    
     private String decapitalize(String string) {
         return Character.toLowerCase(string.charAt(0)) + (string.length() > 1 ? string.substring(1) : "");
     }

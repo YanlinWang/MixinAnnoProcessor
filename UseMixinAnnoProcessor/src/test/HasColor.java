@@ -1,5 +1,8 @@
 package test;
 
+import annotation.Mixin;
+
+//@Mixin
 public interface HasColor{
     Color color();
     void color(Color val);
@@ -7,4 +10,8 @@ public interface HasColor{
     default void mergeColor(HasColor other){
         color(color().compose(other.color()));
     }
+    
+    /*
+     * public HasColor clone() { return of(_color); }
+     */
 }
