@@ -1,7 +1,5 @@
 package original;
 
-import annotation.Mixin;
-
 // BASIC EXAMPLE
 //@Mixin
 interface Point0{

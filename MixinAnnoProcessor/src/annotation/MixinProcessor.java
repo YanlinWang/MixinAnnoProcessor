@@ -1,8 +1,6 @@
 package annotation;
 
-import java.beans.Introspector;
 import java.io.IOException;
-import java.lang.reflect.Executable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +81,7 @@ public class MixinProcessor extends AbstractProcessor {
         }
         return fields;
     }
-    
+
     String createMixinClass(String folder, Element element, String[] lTypeArgs, String typeArgs) {
         String algName = element.getSimpleName().toString();
         String baseName = getPackage(element) + "." + algName;
@@ -95,7 +93,7 @@ public class MixinProcessor extends AbstractProcessor {
         Map<String, TypeMirror> fields = getFields(element); 
 
 
-        
+
 
         classContent += TAB + "static " + algName + " of(";
         boolean firstField = true;
@@ -108,7 +106,7 @@ public class MixinProcessor extends AbstractProcessor {
         for (String field : fields.keySet()) {
             classContent += TAB2 + "public " + fields.get(field) + " " + field + "() { return " + field + "; }\n";
         }
-        
+
         // begin: deal with `withX` methods
         classContent += genWithMethod(element, algName, fields);
         classContent += "};}\n";
@@ -117,16 +115,16 @@ public class MixinProcessor extends AbstractProcessor {
 
 
 
-            //----------- debug code begin --------------
-//            classContent += "e.getKind(): " + e.getKind() + "\n";
-//            classContent += "e.getClass(): " + e.getClass() + "\n";
-//            classContent += "e.getKind(): " + e.getKind() + "\n";
-//            classContent += "e.getModifiers(): " + e.getModifiers() + "\n";
-//            classContent += "Element e: " + e + "\n";
-//            classContent += "e.asType(): " + e.asType().toString() + "\n";
-//            classContent += "typeArgs: " + typeArgs + "\n";
-//            classContent += "lTypeArgs: " + lTypeArgs.toString() + "\n\n\n"; 
-          //----------- debug code end -------------- 
+        //----------- debug code begin --------------
+        //            classContent += "e.getKind(): " + e.getKind() + "\n";
+        //            classContent += "e.getClass(): " + e.getClass() + "\n";
+        //            classContent += "e.getKind(): " + e.getKind() + "\n";
+        //            classContent += "e.getModifiers(): " + e.getModifiers() + "\n";
+        //            classContent += "Element e: " + e + "\n";
+        //            classContent += "e.asType(): " + e.asType().toString() + "\n";
+        //            classContent += "typeArgs: " + typeArgs + "\n";
+        //            classContent += "lTypeArgs: " + lTypeArgs.toString() + "\n\n\n"; 
+        //----------- debug code end -------------- 
         classContent += "}";
         return classContent;
     }
@@ -137,48 +135,51 @@ public class MixinProcessor extends AbstractProcessor {
     private boolean isAbstract(Element e) { return e.getModifiers().contains(Modifier.ABSTRACT); }
     private boolean isAbstractMethod(Element e) { return isMethod(e) && isAbstract(e); }
     private boolean isWithMethod(Element e) { return isMethod(e) && e.getSimpleName().toString().startsWith("with"); }
-    
+
+    private String decapitalize(String string) {
+        return Character.toLowerCase(string.charAt(0)) + (string.length() > 1 ? string.substring(1) : "");
+    }
+
     private String genWithMethod(Element element, String algName, Map<String, TypeMirror> fields) {
+        String baseName = getPackage(element) + "." + algName;
+
         String res = "";
         List<? extends Element> le = element.getEnclosedElements();
         for (Element e : le) {
             if (isWithMethod(e)) {
                 String methodName = e.getSimpleName().toString();
                 String name = methodName.substring(4, methodName.length());
-                name = Introspector.decapitalize(name);
-               
+                name = decapitalize(name);
+
                 if (fields.containsKey(name)) {
                     ExecutableElement ee = (ExecutableElement)e;
                     List<? extends VariableElement> params = ee.getParameters();
-                    if (params.size() == 1 && params.get(0).asType().equals(fields.get(name))) {
-                        String pName = params.get(0).getSimpleName().toString();
-                        String pType = params.get(0).asType().toString();
-                        res += TAB2 + "public " + algName + " " + methodName + "(" + pType + " " + pName + ") {\n" ;
-                        res += TAB3 + "return of(";
-                        
-                        boolean firstField1 = true;
-                        for (String field : fields.keySet()) {
-                            if (!firstField1) { res += ", "; }
-                            if (field.equals(pName)) {                   
-                                res += field;
-                            } else {
-                                res += field + "()";
+                    if (ee.getReturnType().toString().equals(baseName)) { 
+                        if (params.size() == 1 && params.get(0).asType().equals(fields.get(name))) {
+                            String pType = params.get(0).asType().toString();
+                            res += TAB2 + "public " + algName + " " + methodName + "(" + pType + " " + name + ") {\n" ;
+                            res += TAB3 + "return of(";
+
+                            boolean firstField1 = true;
+                            for (String field : fields.keySet()) {
+                                if (!firstField1) { res += ", "; }
+                                if (field.equals(name)) {                   
+                                    res += field;
+                                } else {
+                                    res += field + "()";
+                                }
+                                firstField1 = false;
                             }
-                            firstField1 = false;
-                        }
-                        
-                        res += ");\n" + TAB2 + "}\n";
-                    } else {
-                        processingEnv.getMessager().printMessage(Kind.ERROR, "with method error!", e);
-                    }
-                } else {
-                    processingEnv.getMessager().printMessage(Kind.ERROR, "with method error!", e);
-                }
+
+                            res += ");\n" + TAB2 + "}\n";
+                        } else processingEnv.getMessager().printMessage(Kind.ERROR, "method parameter error!", e);
+                    } else processingEnv.getMessager().printMessage(Kind.ERROR, "method return type error!", e);
+                } else processingEnv.getMessager().printMessage(Kind.ERROR, "invalid with method error!", e);
             }
         }
         return res;
     }
-    
+
     private String[] toList(String message) {
         return message.split(",");
     }
