@@ -10,8 +10,4 @@ public interface HasColor{
     default void mergeColor(HasColor other){
         color(color().compose(other.color()));
     }
-    
-    /*
-     * public HasColor clone() { return of(_color); }
-     */
 }

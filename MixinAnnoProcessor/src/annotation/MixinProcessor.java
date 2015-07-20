@@ -1,6 +1,7 @@
 package annotation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.JavaFileObject;
@@ -68,9 +70,9 @@ public class MixinProcessor extends AbstractProcessor {
         return true;       
     }
 
-    private Map<String, TypeMirror> getFields(Element element) {
+    private Map<String, TypeMirror> getFields(List<Element> le) {
         Map<String, TypeMirror> fields = new HashMap<String, TypeMirror>();
-        List<? extends Element> le = element.getEnclosedElements();
+//        List<? extends Element> le = element.getEnclosedElements();
         for (Element e: le){
             if (isFieldMethod(e)) {
                 String methodName = e.getSimpleName().toString();
@@ -86,18 +88,31 @@ public class MixinProcessor extends AbstractProcessor {
         String algName = element.getSimpleName().toString();
         String baseName = getPackage(element) + "." + algName;
 
+        
         String res = "package " + folder + ";\n\n"
                 + "public interface " + algName + " extends " + baseName + " {\n\n";
 
+        
+        // start: inheritance test
+        List<Element> le = (List<Element>) element.getEnclosedElements();
+//        List<DeclaredType> exIntfs = (List<DeclaredType>) ((TypeElement)element).getInterfaces();
+//        List<TypeElement> exIntfElements = new ArrayList<TypeElement>();
+//        for (DeclaredType intf : exIntfs) {
+//            TypeElement ee = (TypeElement) intf.asElement();
+//            exIntfElements.add(ee);
+//            le.addAll(ee.getEnclosedElements());
+//            processingEnv.getMessager().printMessage(Kind.ERROR, "intf", element);
+//        }
+        // end: inheritance test 
 
-        Map<String, TypeMirror> fields = getFields(element);
+        Map<String, TypeMirror> fields = getFields(le);
 
         res += TAB + "static " + algName + " of(" + fieldsString(fields) + ") { "
                 + "return new " + algName + "() {\n";
 
         res += genGetters(fields);
        
-        List<? extends Element> le = element.getEnclosedElements();
+        
         for (Element e : le) {
             String name = e.getSimpleName().toString();
             if (isSetter(e, fields)) res += genSetter(name, fields.get(name));

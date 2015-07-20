@@ -7,6 +7,6 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/yanlinwang/Dropbox/PL_group/MixinAnnoProcessor/MixinAnnoProcessor/MixinProcessor.jar"/>
+	<classpathentry kind="lib" path="/MixinAnnoProcessor/MixinProcessor.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
