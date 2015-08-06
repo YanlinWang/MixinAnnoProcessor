@@ -1,6 +1,6 @@
 package test;
 
-import mixin.Point;
+import test.Point;
 
 public class Main {
     private static void print(Point p) { 
@@ -8,11 +8,11 @@ public class Main {
     }
     
     public static void main(String[] args) {
-        Point p = Point.of(3, 4);
+	Point p = mixin.Point.of(3, 4);
         print(p);
         p.x(9); 
         p.y(8);
         print(p);
-        print((Point) p.withX(6));   // TODO: this is not ideal.
+	print(p.withX(6));
     }
 }
