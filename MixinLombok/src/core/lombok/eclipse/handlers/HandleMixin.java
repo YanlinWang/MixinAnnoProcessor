@@ -25,11 +25,11 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 	long p;
 	EclipseNode me;
 	TypeDeclaration meDecl;
+	EclipseNode thisAnno;
 	ASTNode _ast;
 	Annotation _src;
 	Argument[] argFields;
 	ArrayList<MethodDeclaration> fields;
-	String info;
 	
 	@Override public void handle(AnnotationValues<Mixin> annotation, Annotation ast, EclipseNode annotationNode) {
 		pS = ast.sourceStart;
@@ -39,12 +39,14 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		meDecl = (TypeDeclaration) me.get();
 		_ast = annotationNode.get();
 		_src = ast;
+		thisAnno = annotationNode;
+		if ((meDecl.modifiers & ClassFileConstants.AccInterface) == 0) {
+			thisAnno.addError("@Mixin is only supported on an interface.");
+			return;
+		}
 		handleMixin();
-		createOfMethod();
 	}
 	private void handleMixin() {
-		info = "";
-		// Check: the annotated type is an interface.
 		// Check if a method is static. Has no type parameters.
 		fields = new ArrayList<MethodDeclaration>();
 		for (EclipseNode x : me.down()) {
@@ -63,9 +65,8 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			MethodDeclaration elem = fields.get(i);
 			argFields[i] = new Argument(elem.selector, p, copyType(elem.returnType), Modifier.NONE);
 		}
-		// TODO: two interfaces.
+		createOfMethod();
 	}
-	
 	@SuppressWarnings("unused") private void print(String s) {
 		MethodDeclaration print = new MethodDeclaration(meDecl.compilationResult);
 		print.annotations = null;
@@ -93,7 +94,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		of.typeParameters = null;
 		of.returnType = new SingleTypeReference(meDecl.name, p);
 		of.selector = "of".toCharArray();
-		of.arguments = argFields;
+		of.arguments = argFields.length == 0 ? null : argFields;
 		of.binding = null;
 		of.thrownExceptions = null;
 		of.bits |= ECLIPSE_DO_NOT_TOUCH_FLAG;
@@ -109,7 +110,6 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 	private TypeDeclaration genAnonymous() {
 		FieldDeclaration[] of_fields = new FieldDeclaration[fields.size()];
 		MethodDeclaration[] of_methods = new MethodDeclaration[2 * fields.size()];
-		int index1 = 0, index2 = 0;
 		for (int i = 0; i < fields.size(); i++) {
 			MethodDeclaration elem = fields.get(i);
 			Argument arg = new Argument(elem.selector, p, copyType(elem.returnType), Modifier.NONE);
@@ -118,7 +118,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			f.modifiers = ClassFileConstants.AccDefault;
 			f.type = copyType(arg.type);
 			f.initialization = new SingleNameReference(arg.name, p);
-			of_fields[index1++] = f;
+			of_fields[i] = f;
 			MethodDeclaration mSetter = new MethodDeclaration(meDecl.compilationResult);
 			mSetter.annotations = null;
 			mSetter.modifiers = ClassFileConstants.AccPublic;
@@ -134,7 +134,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			Assignment assignS = new Assignment(new SingleNameReference(("_" + String.valueOf(arg.name)).toCharArray(), p), new SingleNameReference(arg.name, p), (int)p);
 			assignS.sourceStart = pS; assignS.sourceEnd = assignS.statementEnd = pE;
 			mSetter.statements = new Statement[] { assignS };
-			of_methods[index2++] = mSetter;
+			of_methods[2 * i] = mSetter;
 			MethodDeclaration mGetter = new MethodDeclaration(meDecl.compilationResult);
 			mGetter.annotations = null;
 			mGetter.modifiers = ClassFileConstants.AccPublic;
@@ -149,14 +149,14 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			mGetter.bodyEnd = mGetter.declarationSourceEnd = mGetter.sourceEnd = _ast.sourceEnd;
 			ReturnStatement returnS = new ReturnStatement(new SingleNameReference(("_" + String.valueOf(arg.name)).toCharArray(), p), pS, pE);
 			mGetter.statements = new Statement[] { returnS };
-			of_methods[index2++] = mGetter;
+			of_methods[2 * i + 1] = mGetter;
 		}
 		TypeDeclaration anonymous = new TypeDeclaration(meDecl.compilationResult);
 		anonymous.bits |= (ASTNode.IsAnonymousType | ASTNode.IsLocalType);
 		anonymous.name = CharOperation.NO_CHAR;
 		anonymous.typeParameters = null;
-		anonymous.fields = of_fields;
-		anonymous.methods = of_methods;
+		anonymous.fields = of_fields.length == 0 ? null : of_fields;
+		anonymous.methods = of_methods.length == 0 ? null : of_methods;
 		return anonymous;
 	}
 }
