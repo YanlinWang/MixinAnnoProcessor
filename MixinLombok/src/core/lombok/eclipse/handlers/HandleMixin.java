@@ -1,7 +1,9 @@
 package lombok.eclipse.handlers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.Modifier;
@@ -29,7 +31,6 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 	ASTNode _ast;
 	Annotation _src;
 	Argument[] argFields;
-	ArrayList<MethodDeclaration> fields;
 	
 	@Override public void handle(AnnotationValues<Mixin> annotation, Annotation ast, EclipseNode annotationNode) {
 		pS = ast.sourceStart;
@@ -48,22 +49,40 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 	}
 	private void handleMixin() {
 		// Check if a method is static. Has no type parameters.
-		fields = new ArrayList<MethodDeclaration>();
+		HashMap<String, TypeReference> fieldType = new HashMap<String, TypeReference>();
+		HashMap<String, Boolean> hasSetter = new HashMap<String, Boolean>();
 		for (EclipseNode x : me.down()) {
 			if (!(x.get() instanceof MethodDeclaration)) continue;
 			MethodDeclaration y = (MethodDeclaration) x.get();
+			String methodName = String.valueOf(y.selector);
 			if (y.isDefaultMethod()) continue;
 			if (!(y.returnType instanceof SingleTypeReference)) continue;
-			if (!Arrays.equals(TypeConstants.VOID, ((SingleTypeReference) y.returnType).token)) {
+			if (!isVoidMethod(y)) {
 				if (y.arguments != null && y.arguments.length != 0) continue;
-				fields.add(y);
+				fieldType.put(methodName, copyType(y.returnType));
+				hasSetter.put(methodName, false);
 			}
 		}
-		// Check if a field has its setter correspondingly.
-		argFields = new Argument[fields.size()];		
-		for (int i = 0; i < fields.size(); i++) {
-			MethodDeclaration elem = fields.get(i);
-			argFields[i] = new Argument(elem.selector, p, copyType(elem.returnType), Modifier.NONE);
+		for (EclipseNode x : me.down()) {
+			if (!(x.get() instanceof MethodDeclaration)) continue;
+			MethodDeclaration y = (MethodDeclaration) x.get();
+			String methodName = String.valueOf(y.selector);
+			if (isVoidMethod(y) && y.arguments != null && y.arguments.length == 1)
+				if (sameType(fieldType.get(methodName), y.arguments[0].type))
+					hasSetter.put(methodName, true);
+		}
+		argFields = new Argument[fieldType.size()];
+		Iterator<Map.Entry<String, TypeReference>> it = fieldType.entrySet().iterator();
+		int index = 0;
+		while (it.hasNext()) {
+			Map.Entry<String, TypeReference> entry = it.next();
+			String name = entry.getKey();
+			TypeReference type = entry.getValue();
+			if (!hasSetter.get(name)) {
+				thisAnno.addError("Setter of field " + name + " undefined.");
+				return;
+			}
+			argFields[index++] = new Argument(name.toCharArray(), p, copyType(type), Modifier.NONE);
 		}
 		createOfMethod();
 	}
@@ -108,11 +127,10 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		injectMethod(me, of);
 	}
 	private TypeDeclaration genAnonymous() {
-		FieldDeclaration[] of_fields = new FieldDeclaration[fields.size()];
-		MethodDeclaration[] of_methods = new MethodDeclaration[2 * fields.size()];
-		for (int i = 0; i < fields.size(); i++) {
-			MethodDeclaration elem = fields.get(i);
-			Argument arg = new Argument(elem.selector, p, copyType(elem.returnType), Modifier.NONE);
+		FieldDeclaration[] of_fields = new FieldDeclaration[argFields.length];
+		MethodDeclaration[] of_methods = new MethodDeclaration[2 * argFields.length];
+		for (int i = 0; i < argFields.length; i++) {
+			Argument arg = new Argument(argFields[i].name, p, copyType(argFields[i].type), Modifier.NONE);
 			FieldDeclaration f = new FieldDeclaration(("_" + String.valueOf(arg.name)).toCharArray(), pS, pE);
 			f.bits |= Eclipse.ECLIPSE_DO_NOT_TOUCH_FLAG;
 			f.modifiers = ClassFileConstants.AccDefault;
@@ -158,5 +176,14 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		anonymous.fields = of_fields.length == 0 ? null : of_fields;
 		anonymous.methods = of_methods.length == 0 ? null : of_methods;
 		return anonymous;
+	}
+	private boolean sameType(TypeReference t1, TypeReference t2) {
+		if (!(t1 instanceof SingleTypeReference)) return false;
+		if (!(t2 instanceof SingleTypeReference)) return false;
+		return Arrays.equals(((SingleTypeReference) t1).token, ((SingleTypeReference) t2).token);
+	}
+	private boolean isVoidMethod(MethodDeclaration m) {
+		if (!(m.returnType instanceof SingleTypeReference)) return false;
+		return Arrays.equals(TypeConstants.VOID, ((SingleTypeReference) m.returnType).token);
 	}
 }
