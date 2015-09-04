@@ -106,9 +106,14 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 	}
 	private TypeDeclaration genAnonymous() {
 		FieldDeclaration[] of_fields = new FieldDeclaration[argFields.length];
-		MethodDeclaration[] of_methods = new MethodDeclaration[2 * argFields.length];
+		MethodDeclaration[] of_methods = new MethodDeclaration[3 * argFields.length + 1];
+		MessageSend invokeOfInClone = new MessageSend();
+		invokeOfInClone.receiver = new SingleNameReference(meDecl.name, p);
+		invokeOfInClone.selector = "of".toCharArray();
+		invokeOfInClone.arguments = new Expression[argFields.length];
 		for (int i = 0; i < argFields.length; i++) {
 			Argument arg = new Argument(argFields[i].name, p, copyType(argFields[i].type), Modifier.NONE);
+			Argument arg_copy = new Argument(argFields[i].name, p, copyType(argFields[i].type), Modifier.NONE);
 			FieldDeclaration f = new FieldDeclaration(("_" + String.valueOf(arg.name)).toCharArray(), pS, pE);
 			f.bits |= Eclipse.ECLIPSE_DO_NOT_TOUCH_FLAG;
 			f.modifiers = ClassFileConstants.AccDefault;
@@ -130,7 +135,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			Assignment assignS = new Assignment(new SingleNameReference(("_" + String.valueOf(arg.name)).toCharArray(), p), new SingleNameReference(arg.name, p), (int)p);
 			assignS.sourceStart = pS; assignS.sourceEnd = assignS.statementEnd = pE;
 			mSetter.statements = new Statement[] { assignS };
-			of_methods[2 * i] = mSetter;
+			of_methods[3 * i] = mSetter;
 			MethodDeclaration mGetter = new MethodDeclaration(meDecl.compilationResult);
 			mGetter.annotations = null;
 			mGetter.modifiers = ClassFileConstants.AccPublic;
@@ -145,8 +150,57 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			mGetter.bodyEnd = mGetter.declarationSourceEnd = mGetter.sourceEnd = _ast.sourceEnd;
 			ReturnStatement returnS = new ReturnStatement(new SingleNameReference(("_" + String.valueOf(arg.name)).toCharArray(), p), pS, pE);
 			mGetter.statements = new Statement[] { returnS };
-			of_methods[2 * i + 1] = mGetter;
+			of_methods[3 * i + 1] = mGetter;
+			MethodDeclaration mWith = new MethodDeclaration(meDecl.compilationResult);			
+			mWith.annotations = null;
+			mWith.modifiers = ClassFileConstants.AccPublic;
+			mWith.typeParameters = null;
+			mWith.returnType = new SingleTypeReference(meDecl.name, p);
+			mWith.selector = ("with" + String.valueOf(arg_copy.name)).toCharArray();
+			mWith.arguments = new Argument[]{ arg_copy };
+			mWith.binding = null;
+			mWith.thrownExceptions = null;
+			mWith.bits |= ECLIPSE_DO_NOT_TOUCH_FLAG;
+			mWith.bodyStart = mWith.declarationSourceStart = mWith.sourceStart = _ast.sourceStart;
+			mWith.bodyEnd = mWith.declarationSourceEnd = mWith.sourceEnd = _ast.sourceEnd;
+			MessageSend invokeOf = new MessageSend();
+			invokeOf.receiver = new SingleNameReference(meDecl.name, p);
+			invokeOf.selector = "of".toCharArray();
+			invokeOf.arguments = new Expression[argFields.length];
+			for (int j = 0; j < argFields.length; j++) {
+				if (j == i) invokeOf.arguments[j] = new SingleNameReference(argFields[j].name, p);
+				else {
+					MessageSend tempM = new MessageSend();
+					tempM.receiver = new ThisReference(pS, pE);
+					tempM.selector = argFields[j].name;
+					tempM.arguments = null;
+					invokeOf.arguments[j] = tempM;
+				}
+			}
+			ReturnStatement returnW = new ReturnStatement(invokeOf, pS, pE);
+			mWith.statements = new Statement[] { returnW };
+			of_methods[3 * i + 2] = mWith;
+			MessageSend tempC = new MessageSend();
+			tempC.receiver = new ThisReference(pS, pE);
+			tempC.selector = argFields[i].name;
+			tempC.arguments = null;
+			invokeOfInClone.arguments[i] = tempC;
 		}
+		MethodDeclaration mClone = new MethodDeclaration(meDecl.compilationResult);
+		mClone.annotations =  new Annotation[] { makeMarkerAnnotation(TypeConstants.JAVA_LANG_OVERRIDE, _ast) };
+		mClone.modifiers = ClassFileConstants.AccPublic;
+		mClone.typeParameters = null;
+		mClone.returnType = new SingleTypeReference(meDecl.name, p);
+		mClone.selector = "clone".toCharArray();
+		mClone.arguments = null;
+		mClone.binding = null;
+		mClone.thrownExceptions = null;
+		mClone.bits |= ECLIPSE_DO_NOT_TOUCH_FLAG;
+		mClone.bodyStart = mClone.declarationSourceStart = mClone.sourceStart = _ast.sourceStart;
+		mClone.bodyEnd = mClone.declarationSourceEnd = mClone.sourceEnd = _ast.sourceEnd;
+		ReturnStatement returnC = new ReturnStatement(invokeOfInClone, pS, pE);
+		mClone.statements = new Statement[] { returnC };
+		of_methods[of_methods.length - 1] = mClone;
 		TypeDeclaration anonymous = new TypeDeclaration(meDecl.compilationResult);
 		anonymous.bits |= (ASTNode.IsAnonymousType | ASTNode.IsLocalType);
 		anonymous.name = CharOperation.NO_CHAR;
@@ -226,6 +280,8 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			if (y.isDefaultMethod() || isVoidMethod(y)) continue;
 			if (y.arguments != null && y.arguments.length != 0) continue;
 			String name = String.valueOf(y.selector);
+			// Skip the clone method.
+			if (name.equals("clone")) continue;
 			TypeReference type = copyType(y.returnType);
 			ArrayList<TypeReference> l = new ArrayList<TypeReference>();
 			if (!fieldType.containsKey(name)) {
