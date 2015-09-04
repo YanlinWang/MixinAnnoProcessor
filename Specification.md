@@ -99,7 +99,14 @@ below:
 * implement `withX` using the `of` method.
 
 #### Generate `T clone()` method:
-TODO
+Use `of` method as the constructor, to create a new object with the same field
+values as the current one.
 
-#### Generate `T withX()` method:
-TODO
+#### Generate fluent set method `T x(Tx _)` :
+
+* check if exist method `T x(Tx _)`  
+* inside the inner class, generate
+
+```java
+  pubic T x(Tx x) { this.x = x; return this;}
+```
