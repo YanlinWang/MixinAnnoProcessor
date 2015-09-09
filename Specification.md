@@ -104,7 +104,7 @@ values as the current one.
 
 #### Generate fluent set method `T x(Tx _)` :
 
-* check if exist method `T x(Tx _)`  
+* check if exist method `T x()`, if not, generate error.
 * inside the inner class, generate
 
 ```java

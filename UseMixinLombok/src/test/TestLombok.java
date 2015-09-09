@@ -39,12 +39,15 @@ interface Point {
     Point withX(int x);
     Point withY(int y);
     Point clone();
+    default int distance() {
+        return (int) Math.sqrt(X() * X() + Y() * Y());
+    }
 }
 //END_POINT
 
-
 /****** generated
 //BEGIN_POINT_OF
+    // inside interface Point
     static Point of(int X, int Y) {
         return new Point() {
             int _X = X;
