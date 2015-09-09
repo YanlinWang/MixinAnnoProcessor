@@ -29,13 +29,48 @@ public class TestLombok {
 
 }
 
+//BEGIN_POINT
 @Mixin
 interface Point {
     int X();
-	int Y();
+    int Y();
     void X(int x);
     void Y(int y);
     Point withX(int x);
     Point withY(int y);
     Point clone();
 }
+//END_POINT
+
+
+/****** generated
+//BEGIN_POINT_OF
+    static Point of(int X, int Y) {
+        return new Point() {
+            int _X = X;
+            public int X() {
+                return _X;
+            }
+            int _Y = Y;
+            public int Y() {
+                return _Y;
+            }
+            public Point withX(int X) {
+                return of(X, Y());
+            }
+            public void X(int X) {
+                _X = X;
+            }
+            public void Y(int Y) {
+                _Y = Y;
+            }
+            public Point withY(int Y) {
+                return of(X(), Y);
+            }
+            public Point clone() {
+                return of(X(), Y());
+            }
+        }; 
+    }  
+//END_POINT_OF
+*/

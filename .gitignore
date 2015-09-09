@@ -20,3 +20,4 @@ hs_err_pid*
 *.fdb_latexmk
 *.log
 *.out
+footempfile.txt
