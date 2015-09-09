@@ -74,3 +74,37 @@ interface Point {
     }  
 //END_POINT_OF
 */
+
+//BEGIN_POINTIMPL
+class PointImpl implements Point {
+    private int _X;
+    private int _Y;
+    public PointImpl(int X, int Y) {
+        this._X = X;
+        this._Y = Y;
+    }
+    public int X() {
+        return _X;
+    }
+    public int Y() {
+        return _Y;
+    }
+    public Point withX(int X) {
+        X(X);
+        return this;
+    }
+    public void X(int X) {
+        _X = X;
+    }
+    public void Y(int Y) {
+        _Y = Y;
+    }
+    public Point withY(int Y) {
+        Y(Y);
+        return this;
+    }
+    public Point clone() {
+        return new PointImpl(_X, _Y);
+    }
+}
+//END_POINTIMPL

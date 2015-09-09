@@ -172,8 +172,23 @@ Yanlin
 
 * Maybe use Marco's example (Point example).
 
+We provide a Java annotation \mixin to provide default implementations for
+various methods and a mechanism to instantiate objects. \mixin annotation helps
+programmers to write less cumbersome code and instantiate interfaces in Java.
+
+For example, interface \texttt{Point} annotated with \mixin:
 
 \lstinputlisting[linerange=33-42]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT
+
+\texttt{Point} has two (conceptually) member fields \texttt{X} and
+\texttt{Y}. Methods \texttt{int X()} and \texttt{int Y()} serve as \emph{getter}
+methods. Methods \texttt{void X(int X)} and \texttt{void Y(int Y)} serve as
+\emph{setter} methods. Method \texttt{Point withX(int X)} updates field
+\texttt{X} and returns \textbf{this}.
+
+A typical and trivial implementation that programmers usually do is:
+
+\lstinputlisting[linerange=79-109]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINTIMPL
 
 \lstinputlisting[linerange=48-74]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT_OF
 
@@ -220,6 +235,7 @@ Haoyuan and Yanlin
 \bruno{The case studies still need to be implemented!}
 
 Collections example from traits paper? 
+(\yanlin{couldn't found source code})
 
 Other case studies using multiple inheritance?
 
