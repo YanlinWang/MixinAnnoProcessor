@@ -1,0 +1,317 @@
+%\documentclass[preprint]{sigplanconf}
+
+\documentclass[preprint]{llncs}
+
+
+\usepackage{color}
+
+\usepackage{amsmath}
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{fancyvrb}
+\usepackage{url}
+\usepackage{pstricks,pst-node,pst-tree}
+\usepackage{theorem}
+%% \usepackage{mathpartir}
+\usepackage{bbm}
+\usepackage{pgf}
+\usepackage{multirow}
+
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.85]{beramono}
+
+% "define" code highlights for Java and Scala
+\lstdefinelanguage{JavaScala}{
+  morekeywords={public,int,interface,implements,default,
+    abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+\lstset{ %
+language=JavaScala,                % choose the language of the code
+columns=flexible,
+lineskip=-1pt,
+basicstyle=\ttfamily\small,       % the size of the fonts that are used for the code
+numbers=none,                   % where to put the line-numbers
+numberstyle=\ttfamily\tiny,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it's 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+morekeywords={var},
+%  frame=single,                   % adds a frame around the code
+tabsize=2,                  % sets default tabsize to 2 spaces
+captionpos=none,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+title=\lstname,                 % show the filename of files included with \lstinputlisting; also try caption instead of title
+escapeinside={(*}{*)},          % if you want to add a comment within your code
+keywordstyle=\ttfamily\bfseries,
+% commentstyle=\color{Gray},
+% stringstyle=\color{Green}
+}
+
+
+%%\usepackage{natbib}
+%%\bibpunct();A{},
+%%\let\cite=\citep
+
+%include lhs2TeX.fmt
+%include lhs2TeX.sty
+%include forall.fmt
+
+\pagestyle{plain}
+
+%{\theorembodyfont{\sffamily} \newtheorem{theorem}{Theorem}}
+%{\theorembodyfont{\sffamily} \newtheorem{lemma}{Lemma}}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{lemma}{Lemma}
+%\newenvironment{proof}{\textbf{Proof:\hspace{4mm}}}{$\Box$}
+\newcommand{\authornote}[3]{{\color{#2} {\sc #1}: #3}}
+\newcommand\bruno[1]{\authornote{bruno}{red}{#1}}
+\newcommand\yanlin[1]{\authornote{yanlin}{green}{#1}}
+\newcommand{\hl}[1]{\textcolor{red}{#1}}
+
+\newcommand\sem[1]{\llbracket #1 \rrbracket_r}
+\newcommand\sems[1]{\llbracket #1 \rrbracket_s}
+\newcommand\tsem[1]{\llbracket #1 \rrbracket}
+\newcommand{\rbm}[1]{\raisebox{-2.0ex}[0.5ex]{#1}}
+\newcommand\nat[0]{\mathbb{N}}
+\newcommand\unit[0]{\mathbbm{1}}
+
+\newcommand\mixin{\textbf{@Mixin}}
+
+
+\begin{comment}
+\author{Bruno C. d. S. Oliveira and Yanlin Wang}
+\institute{The University of Hong Kong\\
+\email{\{bruno,ylwang\}@cs.hku.hk}\\
+\authorrunning{Bruno Oliveira and Yanlin Wang}} % abbreviated author list (for running head)
+\end{comment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\title{Classless Java}
+%%\subtitle{Solving The Expression Problem with Covariant Return Types}
+%% Poor Man's Family Polymorphism
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+%if False
+
+%\category{D.3.2}{Programming Languages}
+%                {Language Classifications}
+%                [Functional Languages]
+%\category{F.3.3}{Logics and Meanings of Programs}
+%                {Studies of Program Constructs}
+%                []
+
+%\terms
+%Languages
+%
+%\keywords
+%Mixins, explicit effects, monads, aspect-oriented programming, parametricity,
+%interference
+
+%endif
+
+%===============================================================================
+
+\section{Introduction}\label{sec:intro}
+
+\begin{itemize}
+
+\item Using annotattions to implement a rich notion of traits with a 
+mechanism to instantiate objects (the of method). Goal 1: is to reduce 
+the amount of code that is required to program with interfaces and default 
+methods. Goal 2: To provide a convenient means to do multiple inheritance 
+in Java.
+
+\item Specify the system more formally.
+
+\item Show that we can model all trait operations
+
+\item Implementation using Lombok
+
+\item Case studies: The expression problem, Trivially
+Case Studies from traits paper. 
+
+\end{itemize}
+
+\section{Overview}\label{sec:ep}
+Yanlin
+
+* Explain what the Mixin annotations do using examples. 
+
+* Motivate the use of multiple inheritance in Java.
+
+* Maybe use Marco's example (Point example).
+
+We provide a Java annotation \mixin to provide default implementations for
+various methods and a mechanism to instantiate objects. \mixin annotation helps
+programmers to write less cumbersome code and instantiate interfaces in Java.
+
+For example, interface \texttt{Point} annotated with \mixin:
+
+\lstinputlisting[linerange=33-45]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT
+
+\texttt{Point} has two (conceptually) member fields \texttt{X} and
+\texttt{Y}. Methods \texttt{int X()} and \texttt{int Y()} serve as \emph{getter}
+methods. Methods \texttt{void X(int X)} and \texttt{void Y(int Y)} serve as
+\emph{setter} methods. Method \texttt{Point withX(int X)} updates field
+\texttt{X} and returns \textbf{this}.
+
+A typical and trivial implementation that programmers usually do is:
+
+\lstinputlisting[linerange=82-112]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINTIMPL
+
+\texttt{PointImpl} implements \texttt{Point} and provides a constructor with
+quite mechanical code. What's worse, the implementation in \texttt{PointImpl}
+may not be reused in a single inheritance language. However, with our approach,
+the \mixin annotation will generate a static method \texttt{of} inside
+\texttt{Point}. \texttt{of} makes use of Java anonymous classes and achieves the
+same implementation as \texttt{PointImpl}.
+
+\lstinputlisting[linerange=50-77]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT_OF
+
+Inside the anonymous class in the annotated interface, the following code are
+generated:
+\begin{itemize}
+\item For methods inside the interface with the form \texttt{Tx x()}:
+  \begin{itemize}
+   \item \texttt{x} is the getter method, with return type
+     \texttt{Tx}. Conceptually, it is a member field with name \texttt{x} and
+     type \texttt{Tx}.
+   \item generate member field \texttt{\_x} of type \texttt{Tx}, initialized
+     with \texttt{x}.
+   \item generate implemented getter method:
+       \begin{lstlisting}
+           public Tx x() { return _x; }
+       \end{lstlisting}
+   \end{itemize}
+
+\item For methods inside the interface with the form \texttt{void x(Tx x)}:
+  \begin{itemize}
+    \item check if exist method \texttt{Tx x()}. If not, generate error.
+    \item generate implemented setter method:
+       \begin{lstlisting}
+           pubic void x(Tx x) { this.x = x; }
+       \end{lstlisting}
+    \end{itemize}
+
+\item For methods with the form \texttt{T withX(Tx \_)}:
+  \begin{itemize}
+  \item if there is no \texttt{x} field, or type \texttt{Tx} does not match,
+    then generate error.
+  \item implement `withX` using the `of` method.
+  \end{itemize}
+
+\item For methods with the form of \texttt{T clone()}: Use \texttt{of} method as
+  the constructor, to create a new object with the same field values as the
+  current one.
+
+\item For methods with the form of \texttt{T x(Tx \_)}:
+  \begin{itemize}
+    \item check if exist method \texttt{T x()}, if not, generate error.
+    \item inside the inner class, generate
+      \begin{lstlisting}
+          pubic T x(Tx x) { this.x = x; return this;}
+      \end{lstlisting}
+  \end{itemize}
+\end{itemize}
+
+
+\section{Comparing to traits and mixins}
+Haoyuan
+
+   - vs both: we do automatic return type refinement, which has useful applications 
+   (example: Expression Problem)
+
+   - vs traits: we support of methods to create new objects (a replacement to constructors);
+   Moreover we have the with and clone methods (we miss more applications for those). Show 
+   how to model the operations on traits; discuss operations that we cannot model 
+   (example: renaming).
+
+   - vs mixins: we use the trait model of explicitly resolving conflicts. This is arguably 
+   better for reasoning. 
+
+\section{Formal Semantics}\label{sec:typesafety}
+Yanlin and Haoyuan
+
+We need to show 2 things:
+
+1) The dynamic semantics: what's the code that gets generated by a mixin annotation;
+
+2) The type system: what programs to reject; properties: generation of type-safe/checkable code.
+
+\bruno{The implementation is still missing the type system (rejecting some programs)!}
+
+\section{Implementation}
+Haoyuan
+
+discuss implementation in lombok; and limitations.
+
+\bruno{The implementation does not support separate compilation yet. Can we fix this?}
+
+\section{Case studies}
+Haoyuan and Yanlin
+
+\subsection{A Trivial Solution to the Expression Problem}
+
+\subsection{Other case studies} 
+\bruno{The case studies still need to be implemented!}
+
+Collections example from traits paper? 
+(\yanlin{couldn't found source code})
+
+Other case studies using multiple inheritance?
+
+\section{Related Work}\label{sec:related}
+
+- traits (original, variations, scala)
+- mixins (original, scala)
+- multiple inheritance 
+- expression problem
+- ...
+
+%===============================================================================
+\section{Conclusion}\label{sec:conclusion}
+
+%===============================================================================
+
+\bibliographystyle{splncs}
+\bibliography{paper}
+
+\appendix
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "."
+%%% End:
