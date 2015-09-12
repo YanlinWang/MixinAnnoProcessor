@@ -209,7 +209,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		anonymous.methods = of_methods.length == 0 ? null : of_methods;
 		return anonymous;
 	}
-	@SuppressWarnings("unused") private boolean sameType(TypeReference t1, TypeReference t2) {
+	private boolean sameType(TypeReference t1, TypeReference t2) {
 		if (!(t1 instanceof SingleTypeReference)) return false;
 		if (!(t2 instanceof SingleTypeReference)) return false;
 		return Arrays.equals(((SingleTypeReference) t1).token, ((SingleTypeReference) t2).token);
@@ -230,6 +230,21 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			if (Arrays.equals(name, y.name)) return x;
 		}
 		return null;
+	}
+	private boolean subType(TypeReference t1, TypeReference t2) {
+		if (!(t1 instanceof SingleTypeReference)) return false;
+		if (!(t2 instanceof SingleTypeReference)) return false;
+		if (sameType(t1, t2)) return true;
+		EclipseNode d1 = findTypeDecl(((SingleTypeReference) t1).token);
+		if (d1 == null) return false;
+		if (!(d1.get() instanceof TypeDeclaration)) return false;
+		TypeDeclaration decl = (TypeDeclaration) d1.get();
+		if (decl.superclass != null & subType(decl.superclass, t2)) return true;
+		if (decl.superInterfaces != null) {
+			for (TypeReference x : ((TypeDeclaration) d1.get()).superInterfaces)
+				if (subType(x, t2)) return true;
+		}
+		return false;
 	}
 	// Example 1: (T1 <: T)
 	// interface A { T x(); }
@@ -288,9 +303,15 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 				l.add(type);
 			} else {
 				l = fieldType.get(name);
-				// Overridden with the new returnType <: old returnType.
-				// To be validated.
-				if (!l.contains(type)) l.add(type);
+				if (!l.contains(type)) {
+					int index = l.size() - 1;
+					while (index >= 0) {
+						if (!subType(l.get(index), type)) break;
+						else index--;
+					}
+					// List(T1, T2, T3, ...) satisfies: T1 >: T2 >: T3 >: ...
+					l.add(index + 1, type);
+				}
 			}
 			fieldType.put(name, l);
 		}
