@@ -12,3 +12,11 @@
 4. Build
 5. Run test.Main.java
 
+## How to run UseMixinLombok
+1. In terminal, browse to directory *MixinAnnoprocessor/MixinLombok*
+2. `$ant eclipse`
+3. `$ant`
+4. Quit eclipse
+5. Run (by double clicking) the generated jar
+   *MixinAnnoprocessor/MixinLombok/dist/lombok.jar* 
+4. Now start eclipse and import the jar file to project *UseMixinLombok*
