@@ -21,4 +21,3 @@ hs_err_pid*
 *.log
 *.out
 footempfile.txt
-.classpath
