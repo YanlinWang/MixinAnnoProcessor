@@ -11,6 +11,8 @@
 hs_err_pid*
 /bin/
 
+UseMixinLombok/.classpath
+
 ### LaTeX ###
 *.aux
 *.bbl
@@ -21,3 +23,6 @@ hs_err_pid*
 *.log
 *.out
 footempfile.txt
+
+## my ###
+Ignored/*
