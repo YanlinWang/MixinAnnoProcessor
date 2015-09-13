@@ -1,0 +1,13 @@
+\section{Comparing to traits and mixins}
+Haoyuan
+
+   - vs both: we do automatic return type refinement, which has useful applications
+   (example: Expression Problem)
+
+   - vs traits: we support of methods to create new objects (a replacement to constructors);
+   Moreover we have the with and clone methods (we miss more applications for those). Show
+   how to model the operations on traits; discuss operations that we cannot model
+   (example: renaming).
+
+   - vs mixins: we use the trait model of explicitly resolving conflicts. This is arguably
+   better for reasoning.

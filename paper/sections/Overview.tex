@@ -1,0 +1,81 @@
+\section{Overview}\label{sec:ep}
+Yanlin
+
+* Explain what the Mixin annotations do using examples.
+
+* Motivate the use of multiple inheritance in Java.
+
+* Maybe use Marco's example (Point example).
+
+We provide a Java annotation \mixin to provide default implementations for
+various methods and a mechanism to instantiate objects. \mixin annotation helps
+programmers to write less cumbersome code and instantiate interfaces in Java.
+
+For example, interface \texttt{Point} annotated with \mixin:
+
+\lstinputlisting[linerange=33-45]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT
+
+\texttt{Point} has two (conceptually) member fields \texttt{X} and
+\texttt{Y}. Methods \texttt{int X()} and \texttt{int Y()} serve as \emph{getter}
+methods. Methods \texttt{void X(int X)} and \texttt{void Y(int Y)} serve as
+\emph{setter} methods. Method \texttt{Point withX(int X)} updates field
+\texttt{X} and returns \textbf{this}.
+
+A typical and trivial implementation that programmers usually do is:
+
+\lstinputlisting[linerange=82-112]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINTIMPL
+
+\texttt{PointImpl} implements \texttt{Point} and provides a constructor with
+quite mechanical code. What's worse, the implementation in \texttt{PointImpl}
+may not be reused in a single inheritance language. However, with our approach,
+the \mixin annotation will generate a static method \texttt{of} inside
+\texttt{Point}. \texttt{of} makes use of Java anonymous classes and achieves the
+same implementation as \texttt{PointImpl}.
+
+\lstinputlisting[linerange=50-77]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT_OF
+
+Inside the anonymous class in the annotated interface, the following code are
+generated:
+\begin{itemize}
+\item For methods inside the interface with the form \texttt{Tx x()}:
+  \begin{itemize}
+   \item \texttt{x} is the getter method, with return type
+     \texttt{Tx}. Conceptually, it is a member field with name \texttt{x} and
+     type \texttt{Tx}.
+   \item generate member field \texttt{\_x} of type \texttt{Tx}, initialized
+     with \texttt{x}.
+   \item generate implemented getter method:
+       \begin{lstlisting}
+           public Tx x() { return _x; }
+       \end{lstlisting}
+   \end{itemize}
+
+\item For methods inside the interface with the form \texttt{void x(Tx x)}:
+  \begin{itemize}
+    \item check if exist method \texttt{Tx x()}. If not, generate error.
+    \item generate implemented setter method:
+       \begin{lstlisting}
+           pubic void x(Tx x) { this.x = x; }
+       \end{lstlisting}
+    \end{itemize}
+
+\item For methods with the form \texttt{T withX(Tx \_)}:
+  \begin{itemize}
+  \item if there is no \texttt{x} field, or type \texttt{Tx} does not match,
+    then generate error.
+  \item implement `withX` using the `of` method.
+  \end{itemize}
+
+\item For methods with the form of \texttt{T clone()}: Use \texttt{of} method as
+  the constructor, to create a new object with the same field values as the
+  current one.
+
+\item For methods with the form of \texttt{T x(Tx \_)}:
+  \begin{itemize}
+    \item check if exist method \texttt{T x()}, if not, generate error.
+    \item inside the inner class, generate
+      \begin{lstlisting}
+          pubic T x(Tx x) { this.x = x; return this;}
+      \end{lstlisting}
+  \end{itemize}
+\end{itemize}
