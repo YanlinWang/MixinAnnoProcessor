@@ -1,4 +1,51 @@
 \section{Formal Semantics}\label{sec:typesafety}
+\marco{Tentative Grammar ClassLessJava}
+
+\begin{figure}[h]
+\begin{grammar}
+\production{
+\e
+}{
+  \x\mid\MCall\e\m\es\mid\MCall{\C}\m\es\mid\MCall{\C\QM{.super}}\m\es\mid\obj
+  }{expressions}\\
+\production{
+\obj
+}{
+\QM{new}\C\oR\cR\oC\T_1\f_1\QM;\ldots\T_k\f_k\QM;\method_1\ldots\method_n\cC
+  }{object creation}\\
+\production{
+\metaVar{I}
+}{
+ \ann\ \QM{interface} \C_0\QM{extends}\C_1\ldots\C_k \oC\method_1\ldots\method_n\cC
+  }{interface declaration}\\
+\production{
+\method
+}{
+ \QM{static}\mh\oC\QM{return}\e\QM{;}\cC
+\mid 
+\QM{default}\mh\oC\QM{return}\e\QM{;}\cC
+\mid
+\mh\QM{;}
+  }{method declaration}\\
+\production{
+\mh
+}{
+ \T_0 \m  \oR\T_1\x_1\ldots\T_n\x_n\cR
+  }{method header}\\
+\production{
+\ann
+}{
+  \mixinAnn|\emptyset
+  }{annotations}\\
+\end{grammar}
+\caption{Grammar of ClassLess Java}
+\label{Grammar}
+\end{figure}
+
+In Figure~\ref{Grammar} we show the syntax of ClassLess Java.
+
+To be compatible with java, the concrete syntax for an interface declaration with empty supertype list $\C_1\ldots\C_k$ would also omit the \Q@extends@ keyword.
+
 Yanlin and Haoyuan
 
 We need to show 2 things:

@@ -1,0 +1,32 @@
+\newenvironment{grammar}{$\begin{array}[t]{lcll}}{\end{array}$}
+\newcommand{\production}[3]{#1&{:}{:}=&#2 & \mbox{{\small{#3}}}}
+\newcommand{\productionMore}[2]{&{}&#1 & \mbox{{\small{#2}}}}
+%\newcommand{\terminale}[1]{{\text{\tt #1}}}
+\newcommand{\nonTerminal}[1]{\mathit{#1}\xspace}
+\newcommand\Q\lstinline
+\newcommand{\metaVar}[1]{\textit{#1}\xspace}
+\newcommand{\ann}{\metaVar{ann}}
+\newcommand{\x}{\metaVar{x}}
+\newcommand{\e}{\metaVar{e}}
+\newcommand{\T}{\metaVar{T}}
+\newcommand{\xs}{\metaVar{xs}}
+\newcommand{\m}{\metaVar{m}}
+\newcommand{\es}{\metaVar{es}}
+\newcommand{\C}{\metaVar{C}}
+\newcommand{\f}{\metaVar{f}}
+\newcommand{\MCall}[3]{#1\mbox{\Q@.@}#2\oR#3\cR}
+\newcommand{\ctx}{{\cal{E}}}
+\newcommand{\emptyctx}{[\ ]}
+\newcommand{\val}{\metaVar{v}}
+\newcommand{\vals}{\metaVar{vs}}
+\newcommand{\Aux}[1]{\textsf{#1}}
+\newcommand\QM[1]{\mbox{\Q@#1@}}
+\newcommand\oC{\mbox{\Q@\{@}}
+\newcommand\cC{\mbox{\Q@\}@}}
+\newcommand\oR{\mbox{\Q@(@}}
+\newcommand\cR{\mbox{\Q@)@}}
+\newcommand{\this}{\mbox{\Q@this@\xspace}}
+\newcommand{\mixinAnn}{\mbox{\Q$@Mixin$\xspace}}
+\newcommand{\method}{\metaVar{meth}}
+\newcommand{\mh}{\metaVar{mh}}
+\newcommand{\obj}{\metaVar{obj}}
