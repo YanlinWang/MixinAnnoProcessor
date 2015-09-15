@@ -203,6 +203,24 @@ class DoorsRoom {
         return frontDoor;
     }
 }
+
+/* TODO: 
+ * option1: find a cool solution. maybe use flag.
+ * option2: limitation: mutable fields with initialization.. can still use classes
+ */
+interface TGame {
+    boolean Flag();
+    void Flag(boolean f);
+    default String Version() {
+        if (Flag())
+            return "0.0";
+        else
+            return null;
+    }
+    void Version(String v);
+
+}
+
 class Game {
     private Player player;
     private DoorsRoom doorsRoom;
