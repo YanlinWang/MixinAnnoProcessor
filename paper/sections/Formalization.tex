@@ -58,4 +58,43 @@ We need to show 2 things:
 
 2) The type system: what programs to reject; properties: generation of type-safe/checkable code.
 
-\bruno{The implementation is still missing the type system (rejecting some programs)!}
+\bruno{The implementation is still missing the type system (rejecting some
+  programs)!}
+
+Expression Typing:
+
+\[
+\inferrule{}{\Gamma \vdash x \in \Gamma(x)} \quad \textsc{(T-Var)}
+\]
+
+\[
+\inferrule{\Gamma \vdash e_0 \in C_0 \\ 
+  \textsf{mtype}(m,C_0) = \overline{D} \to E \\ 
+  \Gamma \vdash \overline{e} \in \overline{C} \\
+  \overline{C} <: \overline{D} }
+{ \Gamma \vdash e_0.m(\overline{e}) \in E }
+\quad \textsc{(T-Invk)}
+\]
+
+\[
+\inferrule{\textsf{mtype}(m,C) = \overline{D} \to E \\
+\Gamma \vdash \overline{e} \in \overline{C} \\
+\overline{C} <: \overline{D} \\
+\textsf{mmodifier}(m,C) = \textbf{static} }
+{\Gamma \vdash C.m(\overline{e}) \in E}
+\quad \textsc{(T-StaticInvk)}
+\]
+
+\[
+\inferrule{\textsf{mtype}(m,C) = \overline{D} \to E \\
+\Gamma \vdash \overline{e} \in \overline{C} \\
+\overline{C} <: \overline{D} \\
+\textsf{checkSuper}(C.super.m(\overline{e}), A, C) \\\\
+\text{\yanlin{check whether A <: C, where A is the enclosing interface of the
+    expression}} }
+{\Gamma \vdash C.\textbf{super}.m(\overline{e}) \in E}
+\quad \textsc{(T-SuperInvk)}
+\]
+
+
+
