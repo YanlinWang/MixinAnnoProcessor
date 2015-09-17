@@ -86,7 +86,7 @@ below:
 
 #### Generate set method: `void x(Tx x)`:
 
-* check if exist method `Tx x()`  
+* check if exist method `Tx x()`, if not, generate error.
 * inside the inner class, generate
 
 ```java
