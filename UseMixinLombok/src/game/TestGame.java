@@ -148,13 +148,15 @@ interface TKnockDoor extends TDoor, TCounter {
     }
 }
 
-class Player {
+class PlayerOri {
     private final String nickname;
-    private int bag = 150; //contains the coins /* Constructor */
-    public Player(String n) {
+    private int bag = 150; //contains the coins 
+    // Constructor
+    public PlayerOri(String n) {
         nickname = n;
     }
-    /* Setters and getters */public int getCoins()
+    // Setters and getters 
+    public int getCoins()
     {
         return bag;
     }
@@ -162,7 +164,7 @@ class Player {
     {
         return this.nickname;
     }
-    /* Helpful methods */
+    // Helpful methods
     public void addInBag(int amount)
     {
         this.bag += amount;
@@ -179,11 +181,34 @@ class Player {
     }
 }
 
-class DoorsRoom {
+@Mixin
+interface Player {
+    int Coins();
+    String Nickname();
+    void Coins(int Coins);
+    default void addInBad(int amount) {
+        Coins(Coins() + amount);
+    }
+    default void removeFromBag(int amount) {
+        Coins(Coins() - amount);
+    }
+    default String toS() {
+        String s = "I’m " + Nickname();
+        s += " and i’ve got " + Coins();
+        s += " coins in my bag.";
+        return s;
+    }
+    //model mutable field with initialization.
+    static Player of(String nickname) {
+        return of(150, nickname); //TODO: discuss fields' order
+    }
+}
+
+class DoorsRoomOri {
     private TDoor leftDoor;
     private TDoor rightDoor;
     private TDoor frontDoor; /* Constructor */
-    public DoorsRoom(TDoor l, TDoor r,
+    public DoorsRoomOri(TDoor l, TDoor r,
             TDoor f) {
         leftDoor = l;
         rightDoor = r;
@@ -204,32 +229,22 @@ class DoorsRoom {
     }
 }
 
-/* TODO: 
- * option1: find a cool solution. maybe use flag.
- * option2: limitation: mutable fields with initialization.. can still use classes
- */
-interface TGame {
-    boolean Flag();
-    void Flag(boolean f);
-    default String Version() {
-        if (Flag())
-            return "0.0";
-        else
-            return null;
-    }
-    void Version(String v);
-
+@Mixin interface DoorsRoom {
+    TDoor LeftDoor();
+    TDoor RightDoor();
+    TDoor FrontDoor();
 }
 
-class Game {
+class GameOri {
     private Player player;
     private DoorsRoom doorsRoom;
     private final String version = "0.0"; /* Constructor */
-    public Game(Player p, DoorsRoom dr) {
+    public GameOri(Player p, DoorsRoom dr) {
         player = p;
         doorsRoom = dr;
     }
-    /* Setters and getters */public Player getPlayer()
+    /* Setters and getters */
+    public Player getPlayer()
     {
         return player;
     }
@@ -239,8 +254,18 @@ class Game {
     }
 }
 
+@Mixin interface Game {
+    Player player();
+    DoorsRoom doorsRoom();
+    // model immutable field with default method
+    default String version() {
+        return "0.0";
+    }
+}
+
 public class TestGame {
     public static void main(String[] args) {
+        /*
         Player player = new Player("Grace");
         TDoor l = TDoor.of(false, 200);
         TDoor r = TEnchantedDoor.of(false, 10, 100);  //120 150
@@ -251,5 +276,17 @@ public class TestGame {
         game.getDoorsRoom().getLeftDoor().open();
         game.getDoorsRoom().getRightDoor().open();
         game.getDoorsRoom().getFrontDoor().open();
+        */
+
+        Player player = Player.of("Grace");
+        TDoor l = TDoor.of(false, 200);
+        TDoor r = TEnchantedDoor.of(false, 10, 100);  //120 150
+        TDoor f = TKnockDoor.of(true, 0, 100, 200, 200);
+        DoorsRoom doorsRoom = DoorsRoom.of(l, r, f);
+        Game game = Game.of(doorsRoom, player);
+        game.doorsRoom().LeftDoor().open();
+        game.doorsRoom().RightDoor().open();
+        game.doorsRoom().FrontDoor().open();
+
     }
 }
