@@ -46,18 +46,11 @@ public class TestAnimal {
 interface Point2D {
 	int X();
 	int Y();
-	Point2D withX(int val);
-	Point2D withY(int val);
 }
 
 @Mixin
 interface Point3D extends Point2D {
 	int Z();
-	Point3D withZ(int val);
-
-	/* not automatically generated for now */
-	Point3D withX(int val);
-	Point3D withY(int val);
 }
 
 interface Animal {

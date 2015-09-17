@@ -4,7 +4,6 @@ import lombok.Mixin;
 
 @Mixin
 interface Point{ int X(); int Y();//Is this a bug? should we require field lowercase, and with followed by upperCase
-  Point withX(int val); Point withY(int val);
   default String toS(){return "["+X()+","+Y()+"]";}
   }
 interface Colored{int Color(); Colored withColor(int val);}

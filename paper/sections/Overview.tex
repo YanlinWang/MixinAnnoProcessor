@@ -13,7 +13,7 @@ programmers to write less cumbersome code and instantiate interfaces in Java.
 
 For example, interface \texttt{Point} annotated with \mixin:
 
-\lstinputlisting[linerange=33-45]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT
+\lstinputlisting[linerange=33-42]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT
 
 \texttt{Point} has two (conceptually) member fields \texttt{X} and
 \texttt{Y}. Methods \texttt{int X()} and \texttt{int Y()} serve as \emph{getter}
@@ -23,7 +23,7 @@ methods. Methods \texttt{void X(int X)} and \texttt{void Y(int Y)} serve as
 
 A typical and trivial implementation that programmers usually do is:
 
-\lstinputlisting[linerange=82-112]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINTIMPL
+\lstinputlisting[linerange=81-111]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINTIMPL
 
 \texttt{PointImpl} implements \texttt{Point} and provides a constructor with
 quite mechanical code. What's worse, the implementation in \texttt{PointImpl}
@@ -32,7 +32,7 @@ the \mixin annotation will generate a static method \texttt{of} inside
 \texttt{Point}. \texttt{of} makes use of Java anonymous classes and achieves the
 same implementation as \texttt{PointImpl}.
 
-\lstinputlisting[linerange=50-77]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT_OF
+\lstinputlisting[linerange=47-76]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINT_OF
 
 Inside the anonymous class in the annotated interface, the following code are
 generated:
