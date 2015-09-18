@@ -45,6 +45,11 @@ interface Point {
 /****** generated
 //BEGIN_POINT_OF
     // inside interface Point
+    // Yanlin: it generated withX, withY and clone methods even if users are not 
+    // requiring them. I think this may not be a proper design decision, because 
+    // it enforces users to have this methods, which are breaking encapsulation.
+    // I think refined withX withY clone methods should be generated inside 
+    // Point3D only Point is declaring these methods. 
     default Point withX(int X) {
         return of(X, Y());
     }
