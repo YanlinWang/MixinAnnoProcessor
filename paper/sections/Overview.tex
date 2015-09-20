@@ -85,3 +85,31 @@ generated:
       \end{lstlisting}
   \end{itemize}
 \end{itemize}
+
+Another advantage: multiple inheritance.
+
+\lstinputlisting[linerange=46-50]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT2D
+
+\lstinputlisting[linerange=54-57]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
+
+\lstinputlisting[linerange=61-64]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=ANIMAL
+
+\lstinputlisting[linerange=68-73]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
+
+\lstinputlisting[linerange=77-89]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
+
+\lstinputlisting[linerange=93-94]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
+
+Interface \texttt{Point3D} extends \texttt{Point/Point2D} with a new abstract
+method \texttt{int z()} (treated as a member field). Interface \texttt{Horse}
+shows the usage and advantage of \emph{with} methods by method
+\texttt{run()}. Note that the return type of various methods get refined
+automatically by our annotation processor. Besides \emph{with}, other methods
+(including \emph{clone}, \emph{of}) also do type-refinements automatically.
+
+The \emph{``multiple inheritance''} case appears at interface
+\texttt{Pegasus}. Pegasuses can not only run but also fly! Interface
+\texttt{Pegasus} obtains \texttt{fly} and \texttt{run} functionality through
+interface \texttt{Horse} and \texttt{Bird}. Using \mixin annotation, actually
+these is no code at all programmars have to write, which otherwise is hard
+to do in Java-like languages that do not support multiple inheritance.
