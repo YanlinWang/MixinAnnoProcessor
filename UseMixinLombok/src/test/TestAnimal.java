@@ -33,11 +33,11 @@ public class TestAnimal {
 	}
 	
 	static void print(Point2D p) {
-		System.out.println(p.X() + ", " + p.Y());
+		System.out.println(p.x() + ", " + p.y());
 	}
 	
 	static void print(Point3D p) {
-		System.out.println(p.X() + ", " + p.Y() + ", " + p.Z());
+		System.out.println(p.x() + ", " + p.y() + ", " + p.z());
 	}
 	
 }
@@ -45,15 +45,15 @@ public class TestAnimal {
 //BEGIN_POINT2D
 @Mixin 
 interface Point2D {
-	int X();
-	int Y();
+	int x();
+	int y();
 }
 //END_POINT2D
 
 //BEGIN_POINT3D
 @Mixin
 interface Point3D extends Point2D {
-	int Z();
+	int z();
 }
 //END_POINT3D
 
@@ -68,7 +68,7 @@ interface Animal {
 @Mixin
 interface Horse extends Animal {
 	default void run() {
-		point(point().withX(point().X() + 20));
+		point(point().withX(point().x() + 20));
 	}
 }
 //END_HORSE
@@ -80,11 +80,11 @@ interface Bird extends Animal {
 	void point(Point3D val);
 	default void point(Point2D val) {
 		if(val instanceof Point3D) { point((Point3D) val); }
-		Point3D newPoint = point().withX(val.X()).withY(val.Y());
+		Point3D newPoint = point().withX(val.x()).withY(val.y());
 		point(newPoint);
 	}
 	default void fly() {
-		point(point().withX(point().X() + 40));
+		point(point().withX(point().x() + 40));
 	}
 }
 //END_BIRD

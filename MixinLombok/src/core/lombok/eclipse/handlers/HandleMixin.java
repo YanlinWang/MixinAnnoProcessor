@@ -28,8 +28,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 	ASTNode _ast;
 	Annotation _src;
 	Argument[] argFields;
-	HashMap<String, ArrayList<TypeReference>> fieldType; 
-	HashMap<String, TypeReference> hasDefault;
+	ResolvedType resolvedType;
 	
 	/* Auxiliary: create a method. */
 	private MethodDeclaration newMethod() {
@@ -77,7 +76,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		_ast = annotationNode.get();
 		_src = ast;
 		thisAnno = annotationNode;
-		if (!isInterface(meDecl)) {
+		if (!Util.isInterface(meDecl)) {
 			throwError("@Mixin is only supported on an interface.");
 			return;
 		}
@@ -85,19 +84,15 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 	}
 	
 	private void handleMixin() {
-		fieldType = new HashMap<String, ArrayList<TypeReference>>();
-		hasDefault = new HashMap<String, TypeReference>();
-		addFieldsToMap(me);
-		Iterator<Map.Entry<String, TypeReference>> it = hasDefault.entrySet().iterator();
-		while (it.hasNext()) { fieldType.remove(it.next().getKey()); }
-		argFields = new Argument[fieldType.size()];
-		Iterator<Map.Entry<String, ArrayList<TypeReference>>> it2 = fieldType.entrySet().iterator();
-		int index = 0;
-		while (it2.hasNext()) {
-			Map.Entry<String, ArrayList<TypeReference>> entry = it2.next();
-			String name = entry.getKey();
-			TypeReference type = entry.getValue().get(entry.getValue().size() - 1);
-			argFields[index++] = new Argument(name.toCharArray(), p, copyType(type), Modifier.NONE);
+		resolvedType = resolveType(me);
+		if (resolvedType.unresolved.length != 0) {
+			throwError("Unresolved methods inside.");
+			return;
+		}
+		argFields = new Argument[resolvedType.fields.length];
+		for (int i = 0; i < argFields.length; i++) {
+			Field f = resolvedType.fields[i];
+			argFields[i] = new Argument(f.name.toCharArray(), p, copyType(f.type), Modifier.NONE);
 		}
 		createOfMethod();
 		createWithMethod();
@@ -127,7 +122,6 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		invokeOfInClone.arguments = new Expression[argFields.length];
 		for (int i = 0; i < argFields.length; i++) {
 			Argument arg = new Argument(argFields[i].name, p, copyType(argFields[i].type), Modifier.NONE);
-			Argument arg_copy = new Argument(argFields[i].name, p, copyType(argFields[i].type), Modifier.NONE);
 			FieldDeclaration f = new FieldDeclaration(("_" + String.valueOf(arg.name)).toCharArray(), pS, pE);
 			f.bits |= Eclipse.ECLIPSE_DO_NOT_TOUCH_FLAG;
 			f.modifiers = ClassFileConstants.AccDefault;
@@ -136,42 +130,26 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			of_fields[i] = f;
 			MethodDeclaration mSetter = newMethod();
 			mSetter.modifiers = ClassFileConstants.AccPublic;
-			mSetter.returnType = new SingleTypeReference(TypeBinding.VOID.simpleName, p);
 			mSetter.selector = arg.name;
 			mSetter.arguments = new Argument[]{ arg };
 			Assignment assignS = new Assignment(new SingleNameReference(("_" + String.valueOf(arg.name)).toCharArray(), p), new SingleNameReference(arg.name, p), (int)p);
 			assignS.sourceStart = pS; assignS.sourceEnd = assignS.statementEnd = pE;
-			mSetter.statements = new Statement[] { assignS };
+			ReturnStatement returnS = new ReturnStatement(new ThisReference(pS, pE), pS, pE);
+			if (resolvedType.fields[i].setterType == Field.VOID_SETTER) {
+				mSetter.statements = new Statement[] { assignS };
+				mSetter.returnType = new SingleTypeReference(TypeBinding.VOID.simpleName, p);
+			} else {
+				mSetter.statements = new Statement[] { assignS, returnS };
+				mSetter.returnType = new SingleTypeReference(meDecl.name, p);
+			}
 			of_methods[2 * i] = mSetter;
 			MethodDeclaration mGetter = newMethod();
 			mGetter.modifiers = ClassFileConstants.AccPublic;
 			mGetter.returnType = copyType(arg.type);
 			mGetter.selector = arg.name;
-			ReturnStatement returnS = new ReturnStatement(new SingleNameReference(("_" + String.valueOf(arg.name)).toCharArray(), p), pS, pE);
-			mGetter.statements = new Statement[] { returnS };
+			ReturnStatement returnG = new ReturnStatement(new SingleNameReference(("_" + String.valueOf(arg.name)).toCharArray(), p), pS, pE);
+			mGetter.statements = new Statement[] { returnG };
 			of_methods[2 * i + 1] = mGetter;
-			MethodDeclaration mWith = newMethod();
-			mWith.modifiers = ClassFileConstants.AccPublic;
-			mWith.returnType = new SingleTypeReference(meDecl.name, p);
-			mWith.selector = ("with" + String.valueOf(arg_copy.name)).toCharArray();
-			mWith.arguments = new Argument[]{ arg_copy };
-			MessageSend invokeOf = new MessageSend();
-			invokeOf.receiver = new SingleNameReference(meDecl.name, p);
-			invokeOf.selector = "of".toCharArray();
-			invokeOf.arguments = new Expression[argFields.length];
-			for (int j = 0; j < argFields.length; j++) {
-				if (j == i) invokeOf.arguments[j] = new SingleNameReference(argFields[j].name, p);
-				else {
-					MessageSend tempM = new MessageSend();
-					tempM.receiver = new ThisReference(pS, pE);
-					tempM.selector = argFields[j].name;
-					tempM.arguments = null;
-					invokeOf.arguments[j] = tempM;
-				}
-			}
-			ReturnStatement returnW = new ReturnStatement(invokeOf, pS, pE);
-			mWith.statements = new Statement[] { returnW };
-			// of_methods[3 * i + 2] = mWith;
 			MessageSend tempC = new MessageSend();
 			tempC.receiver = new ThisReference(pS, pE);
 			tempC.selector = argFields[i].name;
@@ -206,6 +184,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			mWith.modifiers |= 0x10000;
 			mWith.returnType = new SingleTypeReference(meDecl.name, p);
 			mWith.selector = ("with" + String.valueOf(arg.name)).toCharArray();
+			mWith.selector[4] = Character.toUpperCase(mWith.selector[4]);
 			mWith.arguments = new Argument[]{ arg };
 			MessageSend invokeOf = new MessageSend();
 			invokeOf.receiver = new SingleNameReference(meDecl.name, p);
@@ -238,27 +217,12 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		injectMethod(me, mClone);
 	}
 	
-	private boolean sameType(TypeReference t1, TypeReference t2) {
-		if (!(t1 instanceof SingleTypeReference)) return false;
-		if (!(t2 instanceof SingleTypeReference)) return false;
-		return Arrays.equals(((SingleTypeReference) t1).token, ((SingleTypeReference) t2).token);
-	}
-	
-	private boolean isVoidMethod(MethodDeclaration m) {
-		if (!(m.returnType instanceof SingleTypeReference)) return false;
-		return Arrays.equals(TypeConstants.VOID, ((SingleTypeReference) m.returnType).token);
-	}
-	
-	private boolean isInterface(TypeDeclaration t) {
-		return (t.modifiers & ClassFileConstants.AccInterface) != 0;
-	}
-	
 	// Warning: workaround. Only check interfaces in the same file. Inner interfaces unsupported.
 	private EclipseNode findTypeDecl(char[] name) {
 		for (EclipseNode x : me.up().down()) {
 			if (!(x.get() instanceof TypeDeclaration)) continue;
 			TypeDeclaration y = (TypeDeclaration) x.get();
-			if (!isInterface(y)) continue;
+			if (!Util.isInterface(y)) continue;
 			if (Arrays.equals(name, y.name)) return x;
 		}
 		return null;
@@ -267,7 +231,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 	private boolean subType(TypeReference t1, TypeReference t2) {
 		if (!(t1 instanceof SingleTypeReference)) return false;
 		if (!(t2 instanceof SingleTypeReference)) return false;
-		if (sameType(t1, t2)) return true;
+		if (Util.sameType(t1, t2)) return true;
 		EclipseNode d1 = findTypeDecl(((SingleTypeReference) t1).token);
 		if (d1 == null) return false;
 		if (!(d1.get() instanceof TypeDeclaration)) return false;
@@ -280,61 +244,188 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		return false;
 	}
 	
-	private void addFieldsToMap(EclipseNode node) {
-		if (!(node.get() instanceof TypeDeclaration)) return;
+	private ResolvedType resolveType(EclipseNode node) {
+		Type type = analyseInterface(node);
+		if (type == null) { throwError("analyseInterface() failed."); return null; }
+		TypeReference thisType = new SingleTypeReference(((TypeDeclaration) node.get()).name, p);
+		ArrayList<Field> fields = new ArrayList<Field>();
+		HashSet<MethodDeclaration> unresolved = new HashSet<MethodDeclaration>();
+		for (int i = 0; i < type.methods.length; i++) {
+			MethodDeclaration m = type.methods[i].method;
+			if (Util.isField(m)) fields.add(new Field(String.valueOf(m.selector), copyType(m.returnType)));
+			else if (!Util.isCloneMethod(m) && Util.isAbstractMethod(m)) unresolved.add(m);
+		}
+		Field[] fields_array = fields.toArray(new Field[fields.size()]);		
+		for (int i = 0; i < fields_array.length; i++) {
+			for (MethodDeclaration m : unresolved) {
+				int isSetter = Util.isSetterFor(thisType, m, fields_array[i].name, fields_array[i].type);
+				if (isSetter != Field.NO_SETTER) {
+					fields_array[i].setterType = isSetter;
+					unresolved.remove(m);
+					break;
+				}
+			}
+		}
+		return new ResolvedType(fields_array, unresolved.toArray(new MethodDeclaration[unresolved.size()]));
+	}
+	
+	private Type analyseInterface(EclipseNode node) {
+		if (!(node.get() instanceof TypeDeclaration)) return null;
 		TypeDeclaration decl = (TypeDeclaration) node.get();
-		if (!isInterface(decl)) return;
+		if (!Util.isInterface(decl)) return null;
+		ArrayList<Method> thisMethods = new ArrayList<Method>();
+		for (EclipseNode x : node.down()) {
+			if (!(x.get() instanceof MethodDeclaration)) continue;
+			thisMethods.add(new Method((MethodDeclaration) x.get(), new SingleTypeReference(decl.name, p)));
+		}
+		Type thisType = new Type(thisMethods.toArray(new Method[thisMethods.size()]));
 		if (decl.superInterfaces != null) {
+			Type[] superTypes = new Type[decl.superInterfaces.length];
 			for (int i = 0; i < decl.superInterfaces.length; i++) {
 				if (!(decl.superInterfaces[i] instanceof SingleTypeReference)) {
-					throwError("SuperInterface unresolved.");
-					return;
+					throwError("SuperInterface has unexpected type.");
+					return null;
 				}
 				char[] tempSuper = ((SingleTypeReference) decl.superInterfaces[i]).token;
 				EclipseNode tempSuperDecl = findTypeDecl(tempSuper);
 				if (tempSuperDecl == null) {
 					throwError("SuperInterface not found.");
-					return;
+					return null;
 				}
-				addFieldsToMap(tempSuperDecl);
+				superTypes[i] = analyseInterface(tempSuperDecl);
 			}
+			thisType = mergeType(thisType, mergeType(superTypes));
 		}
-		for (EclipseNode x : node.down()) {
-			if (!(x.get() instanceof MethodDeclaration)) continue;
-			MethodDeclaration y = (MethodDeclaration) x.get();
-			if (y.isDefaultMethod() || isVoidMethod(y)) continue;
-			if (y.arguments != null && y.arguments.length != 0) continue;
-			String name = String.valueOf(y.selector);
-			// Skip the clone method.
-			if (name.equals("clone")) continue;
-			TypeReference type = copyType(y.returnType);
-			ArrayList<TypeReference> l = new ArrayList<TypeReference>();
-			if (!fieldType.containsKey(name)) {
-				l.add(type);
-			} else {
-				l = fieldType.get(name);
-				if (!l.contains(type)) {
-					int index = l.size() - 1;
-					while (index >= 0) {
-						if (!subType(l.get(index), type)) break;
-						else index--;
-					}
-					// List(T1, T2, T3, ...) satisfies: T1 >: T2 >: T3 >: ...
-					l.add(index + 1, type);
-				}
-			}
-			fieldType.put(name, l);
-		}
-		for (EclipseNode x : node.down()) {
-			if (!(x.get() instanceof MethodDeclaration)) continue;
-			MethodDeclaration y = (MethodDeclaration) x.get();
-			if (!y.isDefaultMethod() || isVoidMethod(y)) continue;
-			if (y.arguments != null && y.arguments.length != 0) continue;
-			String name = String.valueOf(y.selector);
-			if (fieldType.containsKey(name)) {
-				hasDefault.put(name, copyType(y.returnType));
-			}
-		}
+		return thisType;
 	}
 	
+	private Type mergeType(Type[] types) {
+		HashSet<Method> newMethods = new HashSet<Method>();
+		for (int i = 0; i < types.length; i++) {
+			for (int j = 0; j < types[i].methods.length; j++) {
+				Method thisMethod = types[i].methods[j];
+				boolean insert = true;
+				for (Method thatMethod : newMethods) {
+					if (!Util.sameMethod(thisMethod.method, thatMethod.method)) continue;					
+					if (Util.sameType(thisMethod.method.returnType, thatMethod.method.returnType)) {
+						if (subType(thisMethod.origin, thatMethod.origin)) insert = true;
+						else if (subType(thatMethod.origin, thisMethod.origin)) insert = false;
+						else insert = !thatMethod.method.isDefaultMethod();
+					} else insert = subType(thisMethod.method.returnType, thatMethod.method.returnType);
+					if (insert) newMethods.remove(thatMethod);					
+					break;
+				}
+				if (insert) newMethods.add(thisMethod);
+			}
+		}
+		Method[] ms = newMethods.toArray(new Method[newMethods.size()]);
+		return new Type(ms);
+	}
+	
+	private Type mergeType(Type thisType, Type superType) {
+		HashSet<Method> newMethods = new HashSet<Method>(Arrays.asList(superType.methods));
+		for (Method thisMethod : thisType.methods) {
+			for (Method thatMethod : newMethods) {
+				if (Util.sameMethod(thisMethod.method, thatMethod.method)) {
+					newMethods.remove(thatMethod); break;
+				}
+			}
+			newMethods.add(thisMethod);
+		}
+		Method[] ms = newMethods.toArray(new Method[newMethods.size()]);
+		return new Type(ms);
+	}
+	
+}
+
+class Field {
+	String name;
+	TypeReference type;
+	int setterType = NO_SETTER;
+	Field(String name, TypeReference type) {
+		this.name = name; this.type = type;
+	}
+	static int VOID_SETTER = 1;
+	static int FLUENT_SETTER = 2;
+	static int NO_SETTER = 3;
+}
+
+class Method {
+	MethodDeclaration method;
+	TypeReference origin;
+	Method(MethodDeclaration method, TypeReference origin) {
+		this.method = method; this.origin = origin;
+	}
+}
+
+class Type {
+	Method[] methods;
+	Type(Method[] ms) {
+		methods = new Method[ms.length];
+		for (int i = 0; i < ms.length; i++) methods[i] = ms[i]; 
+	}
+}
+
+class ResolvedType {
+	Field[] fields;
+	MethodDeclaration[] unresolved;
+	ResolvedType(Field[] _fields, MethodDeclaration[] _unresolved) {		
+		this.fields = new Field[_fields.length];
+		for (int i = 0; i < _fields.length; i++) this.fields[i] = _fields[i];
+		this.unresolved = new MethodDeclaration[_unresolved.length];
+		for (int i = 0; i < _unresolved.length; i++) this.unresolved[i] = _unresolved[i];
+	}
+}
+
+class Util {
+	static boolean sameType(TypeReference t1, TypeReference t2) {
+		if (!(t1 instanceof SingleTypeReference)) return false;
+		if (!(t2 instanceof SingleTypeReference)) return false;
+		return Arrays.equals(((SingleTypeReference) t1).token, ((SingleTypeReference) t2).token);
+	}
+	static boolean sameMethod(MethodDeclaration m1, MethodDeclaration m2) {
+		if (!Arrays.equals(m1.selector, m2.selector)) return false;
+		int length1 = 0, length2 = 0;
+		if (m1.arguments != null) length1 = m1.arguments.length;
+		if (m2.arguments != null) length2 = m2.arguments.length;
+		if (length1 != length2) return false;
+		for (int i = 0; i < length1; i++) {
+			TypeReference t1 = copyType(m1.arguments[i].type);
+			TypeReference t2 = copyType(m2.arguments[i].type);
+			if (!sameType(t1, t2)) return false;
+		}
+		return true;
+	}
+	static boolean isVoidMethod(MethodDeclaration m) {
+		if (!(m.returnType instanceof SingleTypeReference)) return false;
+		return Arrays.equals(TypeConstants.VOID, ((SingleTypeReference) m.returnType).token);
+	}
+	static boolean isInterface(TypeDeclaration t) {
+		return (t.modifiers & ClassFileConstants.AccInterface) != 0;
+	}
+	static String getName(MethodDeclaration m) {
+		return String.valueOf(m.selector);
+	}
+	static boolean isField(MethodDeclaration m) {
+		if (m.isDefaultMethod() || m.isStatic() || isVoidMethod(m)) return false;
+		if (m.arguments != null && m.arguments.length != 0) return false;
+		if (isCloneMethod(m)) return false;
+		if (!Character.isLowerCase(m.selector[0])) return false;
+		return true;
+	}
+	static boolean isAbstractMethod(MethodDeclaration m) {
+		return !m.isDefaultMethod() && !m.isStatic();	
+	}
+	static boolean isCloneMethod(MethodDeclaration m) {
+		if (m.arguments != null && m.arguments.length != 0) return false;
+		return getName(m).equals("clone");
+	}
+	static int isSetterFor(TypeReference thisType, MethodDeclaration m, String name, TypeReference type) {
+		if (!getName(m).equals(name)) return Field.NO_SETTER;
+		if (m.arguments == null || m.arguments.length != 1) return Field.NO_SETTER;
+		if (!sameType(m.arguments[0].type, type)) return Field.NO_SETTER;
+		if (isVoidMethod(m)) return Field.VOID_SETTER;
+		if (sameType(m.returnType, thisType)) return Field.FLUENT_SETTER;
+		return Field.NO_SETTER;
+	}
 }
