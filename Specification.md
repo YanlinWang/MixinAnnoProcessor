@@ -51,8 +51,15 @@ public interface Point {
         public Point withX(int x) {
             return of(x, y());
         }
+        public Point withY(int y) {
+            return of(x(), y);
+        }
         public void x(int x) {_x = x; }
         public void y(int y) {_y = y; }
+        @Override
+        public Point clone() {
+            return of(x(), y());
+        }
     };}
 }
 ```
@@ -86,7 +93,7 @@ below:
 
 #### Generate set method: `void x(Tx x)`:
 
-* check if exist method `Tx x()`, if not, generate error.
+* check if exist method `Tx x()`.
 * inside the inner class, generate
 
 ```java
@@ -95,8 +102,8 @@ below:
 
 #### Generate `T withX(Tx _)` method:
 
-* if there's no `x` field, or `Tx` doesn't match, then generate error. else:  
 * implement `withX` using the `of` method.
+* `withX` methods are automatically generated for users, whereas as default methods inside interfaces, to avoid the issue of inheritance.
 
 #### Generate `T clone()` method:
 Use `of` method as the constructor, to create a new object with the same field
@@ -104,7 +111,8 @@ values as the current one.
 
 #### Generate fluent set method `T x(Tx _)` :
 
-* check if exist method `T x()`, if not, generate error.
+* check if exist method `T x()`.
+* if neither a void setter nor a fluent setter is declared, the generation is for fluent setter by default.
 * inside the inner class, generate
 
 ```java
