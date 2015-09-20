@@ -39,13 +39,22 @@ fileloc = {}
 beginpos = {}
 endpos = {}
 
-Dir['../UseMixinLombok/src/test/*.java'].each do |file| 
+Dir['../UseMixinLombok/src/*/*.java'].each do |file| 
   scan(file, beginpos, endpos, fileloc)
 end
 
 
 
 Dir['*.tex'].each do |file| 
+  #temp = Tempfile.new('compute_positions')
+  tempname = "footempfile.txt"
+  temp = File.new(tempname, "w")
+  process(File.new(file, "r"), temp, beginpos, endpos, fileloc)
+  FileUtils.cp(file, "#{file}-old")
+  FileUtils.cp(tempname, file)
+end
+
+Dir['*/*.tex'].each do |file| 
   #temp = Tempfile.new('compute_positions')
   tempname = "footempfile.txt"
   temp = File.new(tempname, "w")

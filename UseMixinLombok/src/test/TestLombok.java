@@ -29,7 +29,6 @@ public class TestLombok {
 
 }
 
-//BEGIN_POINT
 @Mixin
 interface Point {
     int X();
@@ -40,10 +39,8 @@ interface Point {
         return (int) Math.sqrt(X() * X() + Y() * Y());
     }
 }
-//END_POINT
 
 /****** generated
-//BEGIN_POINT_OF
     // inside interface Point
     // Yanlin: it generated withX, withY and clone methods even if users are not 
     // requiring them. I think this may not be a proper design decision, because 
@@ -78,8 +75,7 @@ interface Point {
                 return of(X(), Y());
             }
         }; 
-    }  
-//END_POINT_OF
+    }
 */
 
 //BEGIN_POINTIMPL
