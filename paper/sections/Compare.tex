@@ -17,16 +17,21 @@ Haoyuan
 
 Our approach is based on code generation by Java annotations. The model we generate encourages composability and reusability in object-oriented programming, and is considered to be an alternative to traits or mixins,  meanwhile achieving better performance in some situations. Hence it is necessary for us to make a comparison between this approach and traits (or mixins) we commonly used before.
 
-Our approach is quite different from mixins, in the sense that we use the trait model of explicitly resolving conflicts. Just as [Scharli2003] demonstrated in the paper, mixin inheritance is a good approach of achieving code reuse, nevertheless, the mixin model is not so expressive to resolve conflicts from many mixins. In the trait model, aliases and exclusions are provided for explicit conflict resolution. Such operations can actually be modelled in the mechanism of our approach.
+Our approach is quite different from mixins, in the sense that we use the trait model of explicitly resolving conflicts. Just as [Scharli2003] demonstrated in the paper, mixin inheritance is a good approach of achieving code reuse, nevertheless, the mixin model is not so expressive to resolve conflicts from many mixins. In the trait model, aliases and exclusions are provided for explicit conflict resolution. Such operations can actually be modelled in the mechanism of our approach. On the other hand, the total ordering property [Scharli2003] restricts the composition of units of behavior. The linearization of mixin inheritance cannot provide a perfect total ordering for various requirements, however, in Java, we have multiple inheritance of interfaces, where methods are inherited at the same time from super interfaces.
 
 Here we present how the original operations on traits are supported by our model.
 \begin{itemize}
-\item \textbf{Symmetric sum}: the symmetric composition of two disjoint traits is achieved by simply implementing two interfaces in Java correspondingly, without overriding any method. The composition relies on multiple inheritance on interfaces, which is supported by Java.
+\item \textbf{Symmetric sum}: the symmetric composition of two disjoint traits is achieved by simply implementing two interfaces in Java correspondingly, without overriding any method. The composition relies on multiple inheritance on interfaces, which is supported by Java. Below is a simple example.
+    \begin{lstlisting}
+    interface A { int x(); }
+    interface B { int y(); }
+    interface C extends A, B {}
+    \end{lstlisting}
 \item \textbf{Override}: the overriding operation (also known as asymmetric sum) is modelled by implementing many interfaces, while overriding some methods inside. The code below gives an example of explicitly specifying which super interface to refer to, regarding two methods with the same name.
     \begin{lstlisting}
     interface A { default int m() {return 1;} }
     interface B { default int m() {return 2;} }
-    interface C extends A, B { default int m() {return B.super.m();} } 
+    interface C extends A, B { default int m() {return B.super.m();} }
     \end{lstlisting}
     Here the method \texttt{m()} in interface \texttt{C} simply inherits from \texttt{B.m()}.
 \item \textbf{Alias}: an alias operation adds a new name to an old method when creating the new trait. In Java, we just create a new method with reference to the existing method in its super interface. See the example below, where the new method \texttt{k()} is an alias of the existing method \texttt{m()}.
@@ -41,6 +46,11 @@ Here we present how the original operations on traits are supported by our model
     \end{lstlisting}
 \end{itemize}
 
-Besides, we support \texttt{of} methods in our model, as a replacement to the constructors in original traits. Furthermore, we also support \texttt{with} and \texttt{clone} methods as auxiliary constructors, making the creation of instances more flexible and convenient. Conversely, there are certain operations we cannot model, such as method renaming (as in [Reppy2006]), which breaks structural subtyping.
+Besides, we support more features than the original trait model:
+\begin{itemize}
+\item We provide \texttt{of} methods for the annotated interfaces. During annotation processing time, the ``fields'' inside an interface are observed and a static method \texttt{of} is automatically injected to the interface with its arguments correspondingly. Such a method is a replacement to the constructors in original traits, making instantiation more convenient to use.
+\item We provide \texttt{with-} and \texttt{clone} methods as auxiliary constructors. A \texttt{with-} method is generated for each field, just like record update, returning the new object with that field updated. A \texttt{clone} method is generated for the interface, returning a copy of the current object. Furthermore, we do automatic return type refinement for these two kind of methods. This feature is comparatively useful in big examples, making operations and behaviors more flexible, which we will demonstrate later.
+\item We provide two options for generating setters. There are two kind of setters which are commonly used, namely \textit{void setters} and \textit{fluent setters}. The only difference is that a fluent setter returns the object itself after setting, thus supporting a pipeline of such operations. The generation depends on which type of setter is declared in the interface by users.
+\end{itemize}
 
-A further feature leads to return type refinement in our model. Generally speaking, when we use inheritance to create a new trait, with the return type of an existing method being refined, the new \texttt{of} method keeps this consistency. This feature is very useful in many applications; we will see how it makes a difference in our Expression Problem example, in Section [Case Study]. 
+These are the additional features supported by our model, conversely, there are certain operations we cannot model, such as method renaming (as in [Reppy2006]), which breaks structural subtyping.

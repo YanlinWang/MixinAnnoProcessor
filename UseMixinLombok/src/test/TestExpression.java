@@ -19,6 +19,7 @@ public class TestExpression {
 	}
 }
 
+//BEGIN_EXPRESSION
 interface Exp {
     int eval();
 }
@@ -66,3 +67,4 @@ interface AddP extends Add, ExpP {
 	ExpP e1();
 	ExpP e2();
 }
+//END_EXPRESSION
