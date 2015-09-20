@@ -11,8 +11,8 @@ public class TestLombok {
 		System.out.println("p2 = p1.clone();");
 		System.out.print("print p1: ");
 		print(p1);
-		p1.X(4); p1.Y(5);
-		System.out.println("p1.X(4); p1.Y(5);");
+		p1.x(4); p1.y(5);
+		System.out.println("p1.x(4); p1.y(5);");
 		System.out.print("print p1: ");
 		print(p1);
 		p1 = p1.withX(6);
@@ -24,7 +24,7 @@ public class TestLombok {
 	}
 	
 	static void print(Point p) {
-		System.out.println(p.X() + " " + p.Y());
+		System.out.println(p.x() + " " + p.y());
 	}
 
 }
@@ -32,12 +32,12 @@ public class TestLombok {
 //BEGIN_POINT
 @Mixin
 interface Point {
-    int X();
-    int Y();
-    void X(int x);
-    void Y(int y);
+    int x();
+    int y();
+    void x(int x);
+    void y(int y);
     default int distance() {
-        return (int) Math.sqrt(X() * X() + Y() * Y());
+        return (int) Math.sqrt(x() * x() + y() * y());
     }
 }
 //END_POINT
@@ -50,32 +50,32 @@ interface Point {
     // it enforces users to have this methods, which are breaking encapsulation.
     // I think refined withX withY clone methods should be generated inside 
     // Point3D only Point is declaring these methods. 
-    default Point withX(int X) {
-        return of(X, Y());
+    default Point withX(int x) {
+        return of(x, y());
     }
-    default Point withY(int Y) {
-        return of(X(), Y);
+    default Point withY(int y) {
+        return of(x(), y);
     }
     Point clone();
-    static Point of(int X, int Y) {
+    static Point of(int x, int y) {
         return new Point() {
-            int _X = X;
-            public int X() {
-                return _X;
+            int _x = x;
+            public int x() {
+                return _x;
             }
-            int _Y = Y;
-            public int Y() {
-                return _Y;
+            int _y = y;
+            public int y() {
+                return _y;
             }
-            public void X(int X) {
-                _X = X;
+            public void X(int x) {
+                _x = x;
             }
-            public void Y(int Y) {
-                _Y = Y;
+            public void Y(int y) {
+                _y = y;
             }
             @Override
             public Point clone() {
-                return of(X(), Y());
+                return of(x(), y());
             }
         }; 
     }  
@@ -84,34 +84,34 @@ interface Point {
 
 //BEGIN_POINTIMPL
 class PointImpl implements Point {
-    private int _X;
-    private int _Y;
-    public PointImpl(int X, int Y) {
-        this._X = X;
-        this._Y = Y;
+    private int _x;
+    private int _y;
+    public PointImpl(int x, int y) {
+        this._x = x;
+        this._y = y;
     }
-    public int X() {
-        return _X;
+    public int x() {
+        return _x;
     }
-    public int Y() {
-        return _Y;
+    public int y() {
+        return _y;
     }
-    public Point withX(int X) {
-        X(X);
+    public Point withX(int x) {
+        x(x);
         return this;
     }
-    public void X(int X) {
-        _X = X;
+    public void x(int x) {
+        _x = x;
     }
-    public void Y(int Y) {
-        _Y = Y;
+    public void y(int y) {
+        _y = y;
     }
-    public Point withY(int Y) {
-        Y(Y);
+    public Point withY(int y) {
+        y(y);
         return this;
     }
     public Point clone() {
-        return new PointImpl(_X, _Y);
+        return new PointImpl(_x, _y);
     }
 }
 //END_POINTIMPL
