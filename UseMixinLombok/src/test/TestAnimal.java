@@ -42,29 +42,38 @@ public class TestAnimal {
 	
 }
 
+//BEGIN_POINT2D
 @Mixin 
 interface Point2D {
 	int X();
 	int Y();
 }
+//END_POINT2D
 
+//BEGIN_POINT3D
 @Mixin
 interface Point3D extends Point2D {
 	int Z();
 }
+//END_POINT3D
 
+//BEGIN_ANIMAL
 interface Animal {
 	Point2D point();
 	void point(Point2D val);
 }
+//END_ANIMAL
 
+//BEGIN_HORSE
 @Mixin
 interface Horse extends Animal {
 	default void run() {
 		point(point().withX(point().X() + 20));
 	}
 }
+//END_HORSE
 
+//BEGIN_BIRD
 @Mixin
 interface Bird extends Animal {
 	Point3D point();
@@ -78,6 +87,9 @@ interface Bird extends Animal {
 		point(point().withX(point().X() + 40));
 	}
 }
+//END_BIRD
 
+//BEGIN_PEGASUS
 @Mixin
 interface Pegasus extends Horse, Bird {}
+//END_PEGASUS

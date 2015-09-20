@@ -28,6 +28,25 @@ interface Point {
 //END_POINT_OF
 */
 
+/******* code without @Mixin
+//BEGIN_POINTIMPL
+class PointImpl implements Point {
+    private int _x;
+    private int _y;
+    public PointImpl(int x, int y) {
+        this._x = x;
+        this._y = y;
+    }
+    public int x() {
+        return _x;
+    }
+    public int y() {
+        return _y;
+    }
+}
+//END_POINTIMPL
+ * */
+
 public class TestPoint {
     public static void main(String[] args) {
         Point p1 = Point.of(2, 3);

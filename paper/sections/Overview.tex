@@ -9,7 +9,9 @@ Yanlin
 
 We provide a Java annotation \mixin to provide default implementations for
 various methods and a mechanism to instantiate objects. \mixin annotation helps
-programmers to write less cumbersome code and instantiate interfaces in Java.
+programmers to write less cumbersome code and instantiate interfaces in
+Java. More over, with \mixin annotation, programmers can mimic multiple
+inheritance in a restricted form easily.
 
 For example, interface \texttt{Point} annotated with \mixin:
 
@@ -17,13 +19,13 @@ For example, interface \texttt{Point} annotated with \mixin:
 
 \texttt{Point} has two (conceptually) member fields \texttt{X} and
 \texttt{Y}. Methods \texttt{int X()} and \texttt{int Y()} serve as \emph{getter}
-methods. Methods \texttt{void X(int X)} and \texttt{void Y(int Y)} serve as
-\emph{setter} methods. Method \texttt{Point withX(int X)} updates field
-\texttt{X} and returns \textbf{this}.
+methods. % Methods \texttt{void X(int X)} and \texttt{void Y(int Y)} serve as
+% \emph{setter} methods. Method \texttt{Point withX(int X)} updates field
+% \texttt{X} and returns \textbf{this}.
 
 A typical and trivial implementation that programmers usually do is:
 
-\lstinputlisting[linerange=82-112]{../UseMixinLombok/src/test/TestLombok.java} % APPLY:linerange=POINTIMPL
+\lstinputlisting[linerange=33-46]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINTIMPL
 
 \texttt{PointImpl} implements \texttt{Point} and provides a constructor with
 quite mechanical code. What's worse, the implementation in \texttt{PointImpl}
@@ -34,8 +36,12 @@ same implementation as \texttt{PointImpl}.
 
 \lstinputlisting[linerange=15-27]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT_OF
 
-Inside the anonymous class in the annotated interface, the following code are
+Apart from generating code for \emph{getter} methods, the annotation processor
+can also generate \emph{setter} methods, \emph{with} methods, \texttt{clone}
+methods, etc. We summarize all the forms of method \mixin  supports below. Inside
+the anonymous class in the annotated interface, the following code are
 generated:
+
 \begin{itemize}
 \item For methods inside the interface with the form \texttt{Tx x()}:
   \begin{itemize}

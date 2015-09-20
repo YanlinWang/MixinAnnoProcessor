@@ -78,7 +78,6 @@ interface Point {
     }
 */
 
-//BEGIN_POINTIMPL
 class PointImpl implements Point {
     private int _X;
     private int _Y;
@@ -110,4 +109,3 @@ class PointImpl implements Point {
         return new PointImpl(_X, _Y);
     }
 }
-//END_POINTIMPL
