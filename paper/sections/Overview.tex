@@ -101,15 +101,21 @@ Another advantage: multiple inheritance.
 \lstinputlisting[linerange=93-94]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
 
 Interface \texttt{Point3D} extends \texttt{Point/Point2D} with a new abstract
-method \texttt{int z()} (treated as a member field). Interface \texttt{Horse}
-shows the usage and advantage of \emph{with} methods by method
-\texttt{run()}. Note that the return type of various methods get refined
-automatically by our annotation processor. Besides \emph{with}, other methods
-(including \emph{clone}, \emph{of}) also do type-refinements automatically.
+method \texttt{int z()} (treated as a getter for member field
+\texttt{z}). Interface \texttt{Horse} shows the usage and advantage of
+\emph{with} methods by method \texttt{run()}: method \texttt{withX} returns a
+new point object with field \texttt{x} updated by the argument to
+\texttt{withX}. Without these \texttt{with} methods, operations like
+\texttt{run()} would be much harder to define. Note that the return type of
+various methods get refined automatically by our annotation processor. Besides
+\emph{with}, other methods (including \emph{clone}, \emph{of}) also do
+type-refinements automatically.
 
 The \emph{``multiple inheritance''} case appears at interface
-\texttt{Pegasus}. Pegasuses can not only run but also fly! Interface
-\texttt{Pegasus} obtains \texttt{fly} and \texttt{run} functionality through
-interface \texttt{Horse} and \texttt{Bird}. Using \mixin annotation, actually
-these is no code at all programmars have to write, which otherwise is hard
-to do in Java-like languages that do not support multiple inheritance.
+\texttt{Pegasus}. Pegasuses can not only \emph{run} but also \emph{fly}!
+Interface \texttt{Pegasus} obtains \texttt{fly} and \texttt{run} functionality
+through interface \texttt{Horse} and \texttt{Bird}. Using \mixin annotation,
+actually these is no code at all programmers have to write. The idea of using
+default methods inside interfaces was proposed in ~\cite{}. It enables us to do
+multiple inheritance, which otherwise is hard to do in Java-like languages that
+do not support multiple inheritance, easily.
