@@ -95,6 +95,7 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			argFields[i] = new Argument(f.name.toCharArray(), p, copyType(f.type), Modifier.NONE);
 		}
 		createOfMethod();
+		createSetterMethod();
 		createWithMethod();
 		createCloneMethod();
 	}
@@ -115,13 +116,14 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 	
 	private TypeDeclaration genAnonymous() {
 		FieldDeclaration[] of_fields = new FieldDeclaration[argFields.length];
-		MethodDeclaration[] of_methods = new MethodDeclaration[2 * argFields.length + 1];
+		MethodDeclaration[] of_methods = new MethodDeclaration[3 * argFields.length + 1];
 		MessageSend invokeOfInClone = new MessageSend();
 		invokeOfInClone.receiver = new SingleNameReference(meDecl.name, p);
 		invokeOfInClone.selector = "of".toCharArray();
 		invokeOfInClone.arguments = new Expression[argFields.length];
 		for (int i = 0; i < argFields.length; i++) {
 			Argument arg = new Argument(argFields[i].name, p, copyType(argFields[i].type), Modifier.NONE);
+			Argument arg_copy = new Argument(argFields[i].name, p, copyType(argFields[i].type), Modifier.NONE);
 			FieldDeclaration f = new FieldDeclaration(("_" + String.valueOf(arg.name)).toCharArray(), pS, pE);
 			f.bits |= Eclipse.ECLIPSE_DO_NOT_TOUCH_FLAG;
 			f.modifiers = ClassFileConstants.AccDefault;
@@ -142,14 +144,36 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 				mSetter.statements = new Statement[] { assignS, returnS };
 				mSetter.returnType = new SingleTypeReference(meDecl.name, p);
 			}
-			of_methods[2 * i] = mSetter;
+			of_methods[3 * i] = mSetter;
 			MethodDeclaration mGetter = newMethod();
 			mGetter.modifiers = ClassFileConstants.AccPublic;
 			mGetter.returnType = copyType(arg.type);
 			mGetter.selector = arg.name;
 			ReturnStatement returnG = new ReturnStatement(new SingleNameReference(("_" + String.valueOf(arg.name)).toCharArray(), p), pS, pE);
 			mGetter.statements = new Statement[] { returnG };
-			of_methods[2 * i + 1] = mGetter;
+			of_methods[3 * i + 1] = mGetter;
+			MethodDeclaration mWith = newMethod();
+			mWith.modifiers = ClassFileConstants.AccPublic;
+			mWith.returnType = new SingleTypeReference(meDecl.name, p);
+			mWith.selector = ("with" + Util.firstUpper(String.valueOf(arg_copy.name))).toCharArray();
+			mWith.arguments = new Argument[]{ arg_copy };
+			MessageSend invokeOf = new MessageSend();
+			invokeOf.receiver = new SingleNameReference(meDecl.name, p);
+			invokeOf.selector = "of".toCharArray();
+			invokeOf.arguments = new Expression[argFields.length];
+			for (int j = 0; j < argFields.length; j++) {
+				if (j == i) invokeOf.arguments[j] = new SingleNameReference(argFields[j].name, p);
+				else {
+					MessageSend tempM = new MessageSend();
+					tempM.receiver = new ThisReference(pS, pE);
+					tempM.selector = argFields[j].name;
+					tempM.arguments = null;
+					invokeOf.arguments[j] = tempM;
+				}
+			}
+			ReturnStatement returnW = new ReturnStatement(invokeOf, pS, pE);
+			mWith.statements = new Statement[] { returnW };
+			of_methods[3 * i + 2] = mWith;
 			MessageSend tempC = new MessageSend();
 			tempC.receiver = new ThisReference(pS, pE);
 			tempC.selector = argFields[i].name;
@@ -173,43 +197,30 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		return anonymous;
 	}
 	
-	/* 
-	 * With-methods are created as default interface methods.
-	 * Otherwise they will be inherited by sub-interfaces and cause trouble. 
-	 */
+	private void createSetterMethod() {
+		for (int i = 0; i < argFields.length; i++) {
+			if (resolvedType.fields[i].setterType != Field.REFINE_TYPE_FLUENT_SETTER) continue;
+			Argument arg = new Argument(argFields[i].name, p, copyType(argFields[i].type), Modifier.NONE);
+			MethodDeclaration mSetter = newMethod();
+			mSetter.returnType = new SingleTypeReference(meDecl.name, p);
+			mSetter.selector = arg.name;
+			mSetter.arguments = new Argument[]{ arg };
+			injectMethod(me, mSetter);
+		}
+	}
+	
 	private void createWithMethod() {
 		for (int i = 0; i < argFields.length; i++) {
+			if (resolvedType.fields[i].withType != Field.REFINE_TYPE_WITH) continue;
 			Argument arg = new Argument(argFields[i].name, p, copyType(argFields[i].type), Modifier.NONE);
-			MethodDeclaration mWith = new MethodDeclaration(meDecl.compilationResult);
-			mWith.modifiers |= 0x10000;
+			MethodDeclaration mWith = newMethod();
 			mWith.returnType = new SingleTypeReference(meDecl.name, p);
-			mWith.selector = ("with" + String.valueOf(arg.name)).toCharArray();
-			mWith.selector[4] = Character.toUpperCase(mWith.selector[4]);
+			mWith.selector = ("with" + Util.firstUpper(String.valueOf(arg.name))).toCharArray();
 			mWith.arguments = new Argument[]{ arg };
-			MessageSend invokeOf = new MessageSend();
-			invokeOf.receiver = new SingleNameReference(meDecl.name, p);
-			invokeOf.selector = "of".toCharArray();
-			invokeOf.arguments = new Expression[argFields.length];
-			for (int j = 0; j < argFields.length; j++) {
-				if (j == i) invokeOf.arguments[j] = new SingleNameReference(argFields[j].name, p);
-				else {
-					MessageSend tempM = new MessageSend();
-					tempM.receiver = new ThisReference(pS, pE);
-					tempM.selector = argFields[j].name;
-					tempM.arguments = null;
-					invokeOf.arguments[j] = tempM;
-				}
-			}
-			ReturnStatement returnW = new ReturnStatement(invokeOf, pS, pE);
-			mWith.statements = new Statement[] { returnW };
 			injectMethod(me, mWith);
 		}
 	}
 	
-	/*
-	 * Clone-methods are created as abstract methods, and overridden in the anonymous class.
-	 * Otherwise an exception will be thrown by java compiler.
-	 */
 	private void createCloneMethod() {
 		MethodDeclaration mClone = newMethod();
 		mClone.returnType = new SingleTypeReference(meDecl.name, p);
@@ -249,20 +260,26 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		if (type == null) { throwError("analyseInterface() failed."); return null; }
 		TypeReference thisType = new SingleTypeReference(((TypeDeclaration) node.get()).name, p);
 		ArrayList<Field> fields = new ArrayList<Field>();
+		HashSet<MethodDeclaration> pending = new HashSet<MethodDeclaration>();
 		HashSet<MethodDeclaration> unresolved = new HashSet<MethodDeclaration>();
 		for (int i = 0; i < type.methods.length; i++) {
 			MethodDeclaration m = type.methods[i].method;
 			if (Util.isField(m)) fields.add(new Field(String.valueOf(m.selector), copyType(m.returnType)));
-			else if (!Util.isCloneMethod(m) && Util.isAbstractMethod(m)) unresolved.add(m);
+			else if (!Util.isCloneMethod(m) && Util.isAbstractMethod(m)) {
+				pending.add(m); unresolved.add(m);
+			}
 		}
 		Field[] fields_array = fields.toArray(new Field[fields.size()]);		
 		for (int i = 0; i < fields_array.length; i++) {
-			for (MethodDeclaration m : unresolved) {
-				int isSetter = Util.isSetterFor(thisType, m, fields_array[i].name, fields_array[i].type);
+			for (MethodDeclaration m : pending) {
+				int isSetter = isSetterFor(thisType, m, fields_array[i].name, fields_array[i].type);
+				int isWith = isWithFor(thisType, m, fields_array[i].name, fields_array[i].type);
 				if (isSetter != Field.NO_SETTER) {
 					fields_array[i].setterType = isSetter;
 					unresolved.remove(m);
-					break;
+				} else if (isWith != Field.NO_WITH) {
+					fields_array[i].withType = isWith;
+					unresolved.remove(m);
 				}
 			}
 		}
@@ -336,18 +353,42 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 		return new Type(ms);
 	}
 	
+	private int isWithFor(TypeReference thisType, MethodDeclaration m, String name, TypeReference type) {
+		if (!Util.getName(m).equals("with" + Util.firstUpper(name))) return Field.NO_WITH;
+		if (m.arguments == null || m.arguments.length != 1) return Field.NO_WITH;
+		if (!Util.sameType(m.arguments[0].type, type)) return Field.NO_WITH;
+		if (Util.sameType(thisType, m.returnType)) return Field.THIS_TYPE_WITH;
+		if (subType(thisType, m.returnType)) return Field.REFINE_TYPE_WITH;
+		return Field.NO_WITH;
+	}
+	
+	private int isSetterFor(TypeReference thisType, MethodDeclaration m, String name, TypeReference type) {
+		if (!Util.getName(m).equals(name)) return Field.NO_SETTER;
+		if (m.arguments == null || m.arguments.length != 1) return Field.NO_SETTER;
+		if (!Util.sameType(m.arguments[0].type, type)) return Field.NO_SETTER;
+		if (Util.isVoidMethod(m)) return Field.VOID_SETTER;
+		if (Util.sameType(m.returnType, thisType)) return Field.THIS_TYPE_FLUENT_SETTER;
+		if (subType(thisType, m.returnType)) return Field.REFINE_TYPE_FLUENT_SETTER;
+		return Field.NO_SETTER;
+	}
+	
 }
 
 class Field {
 	String name;
 	TypeReference type;
 	int setterType = NO_SETTER;
+	int withType = NO_WITH;
 	Field(String name, TypeReference type) {
 		this.name = name; this.type = type;
 	}
 	static int VOID_SETTER = 1;
-	static int FLUENT_SETTER = 2;
-	static int NO_SETTER = 3;
+	static int THIS_TYPE_FLUENT_SETTER = 2;
+	static int REFINE_TYPE_FLUENT_SETTER = 3;
+	static int NO_SETTER = 4;
+	static int THIS_TYPE_WITH = 4;
+	static int REFINE_TYPE_WITH = 5;
+	static int NO_WITH = 6;
 }
 
 class Method {
@@ -420,12 +461,8 @@ class Util {
 		if (m.arguments != null && m.arguments.length != 0) return false;
 		return getName(m).equals("clone");
 	}
-	static int isSetterFor(TypeReference thisType, MethodDeclaration m, String name, TypeReference type) {
-		if (!getName(m).equals(name)) return Field.NO_SETTER;
-		if (m.arguments == null || m.arguments.length != 1) return Field.NO_SETTER;
-		if (!sameType(m.arguments[0].type, type)) return Field.NO_SETTER;
-		if (isVoidMethod(m)) return Field.VOID_SETTER;
-		if (sameType(m.returnType, thisType)) return Field.FLUENT_SETTER;
-		return Field.NO_SETTER;
+	static String firstUpper(String s) {
+		if (s.isEmpty()) return s;
+		return s.substring(0, 1).toUpperCase() + s.substring(1, s.length());
 	}
 }
