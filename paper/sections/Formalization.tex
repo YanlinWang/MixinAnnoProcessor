@@ -129,6 +129,18 @@ Auxiliary Definitions:
   m \notin M}
 { \textsf{mtype(m,T)} = \emptyset } \]
 
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C \text{ extends } C_1,...,C_k \{ \overline{M} \} \\ 
+  E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
+{ \textsf{mtype(m,T)} = \overline{D} \to E } \]
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
+  \overline{M} \} \\ 
+  m \notin M}
+{ \textsf{mtype(m,T)} = \bigcup \textsf{mtype}(m,\overline{D}) } \]
+
+
 
 
 
