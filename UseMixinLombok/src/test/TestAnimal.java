@@ -47,6 +47,8 @@ public class TestAnimal {
 interface Point2D {
 	int x();
 	int y();
+	Point2D withX(int x);
+	Point2D withY(int y);
 }
 //END_POINT2D
 
@@ -54,6 +56,7 @@ interface Point2D {
 @Mixin
 interface Point3D extends Point2D {
 	int z();
+	Point3D withZ(int z);
 }
 //END_POINT3D
 
