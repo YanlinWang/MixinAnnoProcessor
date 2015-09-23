@@ -96,5 +96,19 @@ Expression Typing:
 \quad \textsc{(T-SuperInvk)}
 \]
 
+Context:
+\[ \Gamma = \epsilon \mid (x, C) : \Gamma  \]
 
+Subtyping:
+
+\[ \inferrule{}{T <: T} \]
+
+\[ \inferrule{S <: T \\ T <: U}{S <: U}\]
+
+\[ \inferrule{\emph{ann} \spc \textbf{interface} \spc C_0 \spc \textbf{extends} \spc C_1,...,C_k \{...\}}
+{C_0 <: C_1 \\ ... \\ C_0 <: C_k} \]
+
+
+\yanlin{todo: add auxiliary functions}
+\yanlin{todo: add subtyping rules}
 

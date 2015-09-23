@@ -29,3 +29,5 @@ Ignored/*
 
 paper/paper.pdf
 *.tex-old
+
+*.el
