@@ -97,6 +97,7 @@ Expression Typing:
 \]
 
 Context:
+
 \[ \Gamma = \epsilon \mid (x, C) : \Gamma  \]
 
 Subtyping:
@@ -108,6 +109,34 @@ Subtyping:
 \[ \inferrule{\emph{ann} \spc \textbf{interface} \spc C_0 \spc \textbf{extends} \spc C_1,...,C_k \{...\}}
 {C_0 <: C_1 \\ ... \\ C_0 <: C_k} \]
 
+Interface Table (IT):
+
+A mapping from types \texttt{T} to interface declarations \texttt{L}. From the
+interface table, we can read off the subtype relation between interfaces. The
+subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
+
+Auxiliary Definitions:
+
+- \textsf{mtype(m, C)} : the signature of method m in C.
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\ 
+  E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
+{ \textsf{mtype(m,T)} = \overline{D} \to E } \]
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\ 
+  m \notin M}
+{ \textsf{mtype(m,T)} = \emptyset } \]
+
+
+
+
+\[ \textsf{mmodifier(m, C)} = ? \]
+
+\[ \textsf{mtype(m, C)} = ? \]
+
+\[ \textsf{checksuper(C.super.m(e), A, C)} = ? \]
 
 \yanlin{todo: add auxiliary functions}
 \yanlin{todo: add subtyping rules}
