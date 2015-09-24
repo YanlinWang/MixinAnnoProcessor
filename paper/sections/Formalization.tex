@@ -11,7 +11,7 @@
 \production{
 \obj
 }{
-\QM{new}\ \C\oR\cR\oC\T_1\ \f_1\QM;\ldots\T_k\ \f_k\QM;\ 
+\QM{new}\ \C\oR\cR\oC\T_1\ \f_1\QM;\ldots\T_k\ \f_k\QM;\
 \mh_1\oC\QM{return}\ \e_1\QM{;}\!\cC
 \ldots
 \mh_n\oC\QM{return}\ \e_n\QM{;}\!\cC
@@ -26,7 +26,7 @@
 \method
 }{
  \QM{static}\ \mh\ \oC\QM{return}\ \e\QM{;}\!\cC
-\mid 
+\mid
 \QM{default}\ \mh\oC\QM{return}\ \e\QM{;}\cC
 \mid
 \mh\QM{;}
@@ -68,8 +68,8 @@ Expression Typing:
 \]
 
 \[
-\inferrule{\Gamma \vdash e_0 \in C_0 \\ 
-  \textsf{mtype}(m,C_0) = \overline{D} \to E \\ 
+\inferrule{\Gamma \vdash e_0 \in C_0 \\
+  \textsf{mtype}(m,C_0) = \overline{D} \to E \\
   \Gamma \vdash \overline{e} \in \overline{C} \\
   \overline{C} <: \overline{D} }
 { \Gamma \vdash e_0.m(\overline{e}) \in E }
@@ -120,23 +120,23 @@ Auxiliary Definitions:
 - \textsf{mtype(m, C)} : the signature of method m in C.
 
 \[ \inferrule{
-  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\ 
+  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
   E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
 { \textsf{mtype(m,T)} = \overline{D} \to E } \]
 
 \[ \inferrule{
-  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\ 
+  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
   m \notin M}
 { \textsf{mtype(m,T)} = \emptyset } \]
 
 \[ \inferrule{
-  IT(T) = \text{\emph{ann} interface } C \text{ extends } C_1,...,C_k \{ \overline{M} \} \\ 
+  IT(T) = \text{\emph{ann} interface } C \text{ extends } C_1,...,C_k \{ \overline{M} \} \\
   E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
 { \textsf{mtype(m,T)} = \overline{D} \to E } \]
 
 \[ \inferrule{
   IT(T) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
-  \overline{M} \} \\ 
+  \overline{M} \} \\
   m \notin M}
 { \textsf{mtype(m,T)} = \bigcup \textsf{mtype}(m,\overline{D}) } \]
 
@@ -152,4 +152,60 @@ Auxiliary Definitions:
 
 \yanlin{todo: add auxiliary functions}
 \yanlin{todo: add subtyping rules}
+
+\subsection{Auxiliary function: \textsf{mbody}}
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
+  \overline{M} \} \\
+  m \notin M}
+{ \textsf{mbody(m,T)} } \]
+
+\subsection{Auxiliary function: \textsf{shadow}}
+
+The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
+
+(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence 
+\begin{equation*}
+\begin{array}{ll}
+\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
+\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
+\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
+\end{array}
+\end{equation*}
+
+(2) If $body_1.\textsf{returnType}=body_2.\textsf{returnType}$, \textsf{shadow} tends to return a default method. If both $body_1$ and $body_2$ are default methods, \textsf{shadow} throws an error.
+\begin{equation*}
+\begin{array}{ll}
+\textsf{shadow}(body_1, body_2)=\textsf{ERROR} & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{default}\\
+\textsf{shadow}(body_1, body_2)=body_1 \hspace{.1in} & \textsf{if }body_1.\textsf{modifier}=\textbf{default} \\
+\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in} & \textsf{if }body_2.\textsf{modifier}=\textbf{default} \\
+\textsf{shadow}(body_1, body_2)=body_1\textsf{ (or }body_2\textsf{)} \hspace{.1in} & \textsf{otherwise}
+\end{array}
+\end{equation*}
+
+(3) If $body_1.\textsf{returnType}<:body_2.\textsf{returnType}$, \textsf{shadow} tends to choose the one with the subtype (namely $body_1$), but only when both methods are abstract, otherwise it gives an error. The other direction $body_2.\textsf{returnType}<:body_1.\textsf{returnType}$ follows the same rule. It also gives an error if there is no subtyping relationship between two return types.
+\begin{equation*}
+\begin{array}{ll}
+\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\emptyset\\
+& \textsf{and }body_1.\textsf{returnType}<:body_2.\textsf{returnType}\\
+\textsf{shadow}(body_1, body_2)=body_2 & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\emptyset\\
+& \textsf{and }body_2.\textsf{returnType}<:body_1.\textsf{returnType}\\
+\textsf{shadow}(body_1, body_2)=\textsf{ERROR} \hspace{.1in} & \textsf{otherwise}
+\end{array}
+\end{equation*}
+
+\subsection{Auxiliary function: \textsf{replace}}
+
+The \textsf{replace} function takes two same methods (with the same name and types of arguments), and gives the result of the first method overriding the second one.
+
+\begin{equation*}
+\begin{array}{ll}
+\textsf{replace}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\\
+\textsf{replace}(body_1, body_2)=body_2 & \textsf{if }body_1=\emptyset\\
+\textsf{replace}(body_1, body_2)=body_1 & \textsf{if }body_1.\textsf{returnType}<:body_2.\textsf{returnType}\\
+\textsf{replace}(body_1, body_2)=\textsf{ERROR} \hspace{.1in} & \textsf{otherwise}
+\end{array}
+\end{equation*}
+
 
