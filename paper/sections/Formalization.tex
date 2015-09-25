@@ -123,6 +123,7 @@ subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
 
 \yanlin{todo: add interface context}
 
+\begin{comment}
 \subsubsection{Auxiliary function: \textsf{mtype}}
 - \textsf{mtype(m, C)} : the signature of method m in C.
 
@@ -146,20 +147,49 @@ subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
   \overline{M} \} \\
   m \notin M}
 { \textsf{mtype(m,T)} = \bigcup \textsf{mtype}(m,\overline{D}) } \]
+\end{comment}
 
 \subsubsection{Auxiliary function: \textsf{mbody}}
 
+$\textsf{mbody}(m,C)$ denotes the actual body of method $m$ that interface $C$ owns. It can either be defined originally in $C$ or in its supertypes, and then passed to $C$ via inheritance.
+
+The body of a method $m$ contains the relevant information with respect to that method, like the type of $m$ as well as the modifier. Below shows how the functions $mtype$ and $mmodifier$ are derived from $mbody$.
+
+\[ \textsf{mbody}(m,C) = \textit{modifier } E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \] \[ \Rightarrow \textsf{mtype}(m,C) = \overline{D} \to E,\ \textsf{mmodifier}(m,C) = \textit{modifier}\]
+
 \[ \inferrule{
-  IT(T) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
-  \overline{M} \} \\
+  IT(C) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
   m \notin M}
-{ \textsf{mbody(m,T)} } \]
+{ \textsf{mbody}(m,C) = \emptyset } \]
+
+\[ \inferrule{
+  IT(C) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
+  m \in M}
+{ \textsf{mbody}(m,C) = m } \]
+
+\[ \inferrule{
+  IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
+  \overline{M} \} \\
+  m \notin M
+  }
+{ \textsf{mbody}(m,C_0) = \textsf{fold}_\textsf{shadow}\cdot\textsf{map}_{\textsf{mbody,}m}\cdot\textsf{subset}(\overline{C}) } \]
+
+\[ \inferrule{
+  IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
+  \overline{M} \} \\
+  m \in M
+  }
+{ \textsf{mbody}(m,C_0) = \textsf{replace}(m, \textsf{fold}_\textsf{shadow}\cdot\textsf{map}_{\textsf{mbody,}m}\cdot\textsf{subset}(\overline{C})) } \]
+
+\subsubsection{Auxiliary function: \textsf{subset}}
+
+\[ \textsf{subset}(\overline{C})=\{\ x\in\overline{C}\ |\ \nexists y\in\overline{C},\ y <: x\ \} \]
 
 \subsubsection{Auxiliary function: \textsf{shadow}}
 
 The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
 
-(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence 
+(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
 \begin{equation*}
 \begin{array}{ll}
 \textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
