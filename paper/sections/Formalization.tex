@@ -174,50 +174,65 @@ The body of a method $m$ contains the relevant information with respect to that 
   }
 { \textsf{mbody}(m,C_0) = \textsf{fold}_\textsf{shadow}\cdot\textsf{map}_{\textsf{mbody,}m}\cdot\textsf{subset}(\overline{C}) } \]
 
-\[ \inferrule{
+\[ \inferrule[(ReviewedRule)]{
   IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
-  \overline{M} \} \\
-  m \in M
+  \methods \} \\
+  \methods(\m)=\method
+\\
+\Aux{tops}(\overline{C})=\C_1\ldots\C_n  
   }
-{ \textsf{mbody}(m,C_0) = \textsf{replace}(m, \textsf{fold}_\textsf{shadow}\cdot\textsf{map}_{\textsf{mbody,}m}\cdot\textsf{subset}(\overline{C})) } \]
+{ \mBody(\m,\C_0) = \textsf{replace}(\method, \shadow(\mBody(\m,C_1)\ldots\mBody(\m,C_n))
+ } \]
+\subsubsection{Auxiliary function: \Aux{tops}}
 
-\subsubsection{Auxiliary function: \textsf{subset}}
-
-\[ \textsf{subset}(\overline{C})=\{\ x\in\overline{C}\ |\ \nexists y\in\overline{C},\ y <: x\ \} \]
+\[ \textsf{tops}(\Cs)=\{\ \C\in\Cs\ |\ \nexists \C'\in\Cs\setminus\C,\ \C' \subtype \C\ \} \]
 
 \subsubsection{Auxiliary function: \textsf{shadow}}
 
+
+
 The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
 
-(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
+%(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
 \begin{equation*}
 \begin{array}{ll}
-\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
-\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
-\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
+\shadow()=\emptyset\\
+\shadow(\methods)=\method &\mif\ \method \in \methods, \forall \method' \in \methods\setminus\method :  \method' \subtype  \method,\\
+\mbox{ otherwise}\\
+\shadow(\methods)=\conflicted\mh&\mif\ \shadow(\Aux{removeBodies}(\methods))=\mh\\
+%\conflictError \shadow \_\\
+\_\subtype\emptyset\\
+%\mh\mbox{\Q@\{return \_;\}@}\shadow \mh & \mif\ \mh\shadow\mh'\\
+\_\ \mh\mbox{\Q@\{return \_;\}@}\subtype \mh & \mif\ \mh\subtype\mh'\\
+
+\T \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR & \mif\ \T\subtype \T'\\
+
+%\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
+%\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
+%\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
 \end{array}
 \end{equation*}
 
-(2) If $body_1.\textsf{returnType}=body_2.\textsf{returnType}$, \textsf{shadow} tends to return a default method. If both $body_1$ and $body_2$ are default methods, \textsf{shadow} throws an error.
-\begin{equation*}
-\begin{array}{ll}
-\textsf{shadow}(body_1, body_2)=\textsf{ERROR} & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{default}\\
-\textsf{shadow}(body_1, body_2)=body_1 \hspace{.1in} & \textsf{if }body_1.\textsf{modifier}=\textbf{default} \\
-\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in} & \textsf{if }body_2.\textsf{modifier}=\textbf{default} \\
-\textsf{shadow}(body_1, body_2)=body_1\textsf{ (or }body_2\textsf{)} \hspace{.1in} & \textsf{otherwise}
-\end{array}
-\end{equation*}
-
-(3) If $body_1.\textsf{returnType}<:body_2.\textsf{returnType}$, \textsf{shadow} tends to choose the one with the subtype (namely $body_1$), but only when both methods are abstract, otherwise it gives an error. The other direction $body_2.\textsf{returnType}<:body_1.\textsf{returnType}$ follows the same rule. It also gives an error if there is no subtyping relationship between two return types.
-\begin{equation*}
-\begin{array}{ll}
-\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\emptyset\\
-& \textsf{and }body_1.\textsf{returnType}<:body_2.\textsf{returnType}\\
-\textsf{shadow}(body_1, body_2)=body_2 & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\emptyset\\
-& \textsf{and }body_2.\textsf{returnType}<:body_1.\textsf{returnType}\\
-\textsf{shadow}(body_1, body_2)=\textsf{ERROR} \hspace{.1in} & \textsf{otherwise}
-\end{array}
-\end{equation*}
+%(2) If $body_1.\textsf{returnType}=body_2.\textsf{returnType}$, \textsf{shadow} tends to return a default method. If both $body_1$ and $body_2$ are default methods, \textsf{shadow} throws an error.
+%\begin{equation*}
+%\begin{array}{ll}
+%\textsf{shadow}(body_1, body_2)=\textsf{ERROR} & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{default}\\
+%\textsf{shadow}(body_1, body_2)=body_1 \hspace{.1in} & \textsf{if }body_1.\textsf{modifier}=\textbf{default} \\
+%\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in} & \textsf{if }body_2.\textsf{modifier}=\textbf{default} \\
+%\textsf{shadow}(body_1, body_2)=body_1\textsf{ (or }body_2\textsf{)} \hspace{.1in} & \textsf{otherwise}
+%\end{array}
+%\end{equation*}
+%
+%(3) If $body_1.\textsf{returnType}<:body_2.\textsf{returnType}$, \textsf{shadow} tends to choose the one with the subtype (namely $body_1$), but only when both methods are abstract, otherwise it gives an error. The other direction $body_2.\textsf{returnType}<:body_1.\textsf{returnType}$ follows the same rule. It also gives an error if there is no subtyping relationship between two return types.
+%\begin{equation*}
+%\begin{array}{ll}
+%\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\emptyset\\
+%& \textsf{and }body_1.\textsf{returnType}<:body_2.\textsf{returnType}\\
+%\textsf{shadow}(body_1, body_2)=body_2 & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\emptyset\\
+%& \textsf{and }body_2.\textsf{returnType}<:body_1.\textsf{returnType}\\
+%\textsf{shadow}(body_1, body_2)=\textsf{ERROR} \hspace{.1in} & \textsf{otherwise}
+%\end{array}
+%\end{equation*}
 
 \subsubsection{Auxiliary function: \textsf{replace}}
 
