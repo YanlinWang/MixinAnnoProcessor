@@ -1,4 +1,6 @@
-\section{Formal Semantics}\label{sec:typesafety}
+\section{Formal Semantics}\label{sec:formal}
+\subsection{Grammar}
+
 \marco{Tentative Grammar ClassLessJava}
 
 \begin{figure}[h]
@@ -61,7 +63,8 @@ We need to show 2 things:
 \bruno{The implementation is still missing the type system (rejecting some
   programs)!}
 
-Expression Typing:
+\subsection{Typing Rules}
+\subsubsection{Expression Typing}
 
 \[
 \inferrule{}{\Gamma \vdash x \in \Gamma(x)} \quad \textsc{(T-Var)}
@@ -96,11 +99,11 @@ Expression Typing:
 \quad \textsc{(T-SuperInvk)}
 \]
 
-Context:
+\subsubsection{Context}
 
 \[ \Gamma = \epsilon \mid (x, C) : \Gamma  \]
 
-Subtyping:
+\subsubsection{Subtyping}
 
 \[ \inferrule{}{T <: T} \]
 
@@ -109,14 +112,18 @@ Subtyping:
 \[ \inferrule{\emph{ann} \spc \textbf{interface} \spc C_0 \spc \textbf{extends} \spc C_1,...,C_k \{...\}}
 {C_0 <: C_1 \\ ... \\ C_0 <: C_k} \]
 
-Interface Table (IT):
-
-A mapping from types \texttt{T} to interface declarations \texttt{L}. From the
+\subsubsection{Interface Table}
+The Interface Table (IT) mapping from types \texttt{T} to interface declarations \texttt{L}. From the
 interface table, we can read off the subtype relation between interfaces. The
 subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
 
-Auxiliary Definitions:
 
+\subsection{Auxiliary Definitions}
+\yanlin{todo: add more auxiliary functions}
+
+\yanlin{todo: add interface context}
+
+\subsubsection{Auxiliary function: \textsf{mtype}}
 - \textsf{mtype(m, C)} : the signature of method m in C.
 
 \[ \inferrule{
@@ -140,20 +147,7 @@ Auxiliary Definitions:
   m \notin M}
 { \textsf{mtype(m,T)} = \bigcup \textsf{mtype}(m,\overline{D}) } \]
 
-
-
-
-
-\[ \textsf{mmodifier(m, C)} = ? \]
-
-\[ \textsf{mtype(m, C)} = ? \]
-
-\[ \textsf{checksuper(C.super.m(e), A, C)} = ? \]
-
-\yanlin{todo: add auxiliary functions}
-\yanlin{todo: add subtyping rules}
-
-\subsection{Auxiliary function: \textsf{mbody}}
+\subsubsection{Auxiliary function: \textsf{mbody}}
 
 \[ \inferrule{
   IT(T) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
@@ -161,7 +155,7 @@ Auxiliary Definitions:
   m \notin M}
 { \textsf{mbody(m,T)} } \]
 
-\subsection{Auxiliary function: \textsf{shadow}}
+\subsubsection{Auxiliary function: \textsf{shadow}}
 
 The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
 
@@ -195,7 +189,7 @@ The \textsf{shadow} function takes two same methods (with the same name and type
 \end{array}
 \end{equation*}
 
-\subsection{Auxiliary function: \textsf{replace}}
+\subsubsection{Auxiliary function: \textsf{replace}}
 
 The \textsf{replace} function takes two same methods (with the same name and types of arguments), and gives the result of the first method overriding the second one.
 
