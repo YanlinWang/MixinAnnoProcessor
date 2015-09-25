@@ -1,41 +1,56 @@
 \section{Overview}\label{sec:ep}
-Yanlin
 
-* Explain what the Mixin annotations do using examples.
+\subsection{A Running Example: \texttt{Point}}
+Suppose we want to create a point component that models the a point in space,
+that has x-coordinate and y-coordinate. For example, if we create the
+\texttt{Point} interface in Java, it would look like this:
 
-* Motivate the use of multiple inheritance in Java.
+\begin{lstlisting}
+interface Point {
+    int x();
+    int y(); 
+}
+\end{lstlisting}
 
-* Maybe use Marco's example (Point example).
-
-We provide a Java annotation \mixin to provide default implementations for
-various methods and a mechanism to instantiate objects. \mixin annotation helps
-programmers to write less cumbersome code and instantiate interfaces in
-Java. More over, with \mixin annotation, programmers can mimic multiple
-inheritance in a restricted form easily.
-
-For example, interface \texttt{Point} annotated with \mixin:
-
-\lstinputlisting[linerange=6-10]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT
-
-\texttt{Point} has two (conceptually) member fields \texttt{X} and
-\texttt{Y}. Methods \texttt{int X()} and \texttt{int Y()} serve as \emph{getter}
-methods. % Methods \texttt{void X(int X)} and \texttt{void Y(int Y)} serve as
+\texttt{Point} has two (conceptually) member fields \texttt{x} and \texttt{y},
+representing the two coordinates of a point. Methods \texttt{int x()} and
+\texttt{int y()} serve as \emph{getter} methods. 
+% Methods \texttt{void X(int X)} and \texttt{void Y(int Y)} serve as
 % \emph{setter} methods. Method \texttt{Point withX(int X)} updates field
 % \texttt{X} and returns \textbf{this}.
 
-A typical and trivial implementation that programmers usually do is:
+\subsection{Naive Implementation}
+In Java, to implement an interface like \texttt{Point}, a typical and trivial
+approach that programmers usually do is creating a class extending the interface
+and providing implementation for all methods inside. For example, this is the
+implementation for interface \texttt{Point}:
 
 \lstinputlisting[linerange=33-46]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINTIMPL
 
 \texttt{PointImpl} implements \texttt{Point} and provides a constructor with
 quite mechanical code. What's worse, the implementation in \texttt{PointImpl}
-may not be reused in a single inheritance language. However, with our approach,
-the \mixin annotation will generate a static method \texttt{of} inside
-\texttt{Point}. \texttt{of} makes use of Java anonymous classes and achieves the
-same implementation as \texttt{PointImpl}.
+may not be reused in a single inheritance language.
+
+\subsection{Our Approach}
+Instead of writing a whole another class to provide the implementation for
+\texttt{Point}, we annotate on interface \texttt{Point} directly with \mixin:
+
+\lstinputlisting[linerange=6-10]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT
+
+The \mixin annotation will generate a static method \texttt{of} inside
+\texttt{Point}. The method \texttt{of} mimic the functionality of constructors,
+it takes arguments same as constructors and return objects similar to
+constructors. It makes use of Java anonymous classes and achieves the same
+implementation as \texttt{PointImpl}. 
+
+With our approach, we provide a Java annotation \mixin to provide default
+implementations for various methods and a mechanism to instantiate
+objects. \mixin annotation helps programmers to write less cumbersome code and
+instantiate interfaces in Java. 
 
 \lstinputlisting[linerange=15-27]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT_OF
 
+\subsection{What  \mixin Generates}
 Apart from generating code for \emph{getter} methods, the annotation processor
 can also generate \emph{setter} methods, \emph{with} methods, \texttt{clone}
 methods, etc. We summarize all the forms of method \mixin  supports below. Inside
@@ -61,7 +76,7 @@ generated:
     \item check if exist method \texttt{Tx x()}. If not, generate error.
     \item generate implemented setter method:
        \begin{lstlisting}
-           pubic void x(Tx x) { this.x = x; }
+           public void x(Tx x) { this.x = x; }
        \end{lstlisting}
     \end{itemize}
 
@@ -81,12 +96,15 @@ generated:
     \item check if exist method \texttt{T x()}, if not, generate error.
     \item inside the inner class, generate
       \begin{lstlisting}
-          pubic T x(Tx x) { this.x = x; return this;}
+          public T x(Tx x) { this.x = x; return this;}
       \end{lstlisting}
   \end{itemize}
 \end{itemize}
 
-Another advantage: multiple inheritance.
+\subsection{More On \mixin}
+Besides the benefit of freeing programmers from writing boilerplate code, our
+\mixin annotation can also allow programs to mimic multiple inheritance in a
+restricted form easily.
 
 \lstinputlisting[linerange=46-52]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT2D
 
