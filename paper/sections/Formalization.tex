@@ -233,21 +233,41 @@ The body of a method $m$ contains the relevant information with respect to that 
 
 
 The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
-
+%exmples to motivate our design
+%interface A{static String m(){return "A";}}
+%interface C extends A{
+%	default String dm(){
+%		  this.m();//wrong in java
+%		  A.m();
+%		  C.m();//wrong in java
+%		}
+%}
+%
+%
 %(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
 \begin{equation*}
 \begin{array}{ll}
 \shadow()=\emptyset\\
 \shadow(\methods)=\method &\mif\ \method \in \methods, \forall \method' \in \methods\setminus\method :  \method' \subtype  \method,\\
 \mbox{ otherwise}\\
-\shadow(\methods)=\conflicted\mh&\mif\ \shadow(\Aux{removeBodies}(\methods))=\mh\\
+\shadow(\methods)=\conflicted\mh&\mif\ \shadow(\Aux{removeBody}(\methods))=\mh\\
+\Aux{removeBody}(\QM{default}\ \mh\mbox{\Q@\{return \_;\}@})
+=\mh\QM;\\
+\Aux{removeBody}(\mh\QM)
+=\mh\QM;
+\\
 %\conflictError \shadow \_\\
 \_\subtype\emptyset\\
 %\mh\mbox{\Q@\{return \_;\}@}\shadow \mh & \mif\ \mh\shadow\mh'\\
 \_\ \mh\mbox{\Q@\{return \_;\}@}\subtype \mh & \mif\ \mh\subtype\mh'\\
 
 \T \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR & \mif\ \T\subtype \T'\\
+\Aux{replace}(\method,\emptyset)=
+\Aux{replace}(\emptyset,\method)=\method\\
+\Aux{replace}(\method,\_\ \mh\mbox{\Q@\{return \_;\}@})
+=
 
+\\
 %\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
 %\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
 %\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
