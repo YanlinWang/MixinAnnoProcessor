@@ -103,6 +103,43 @@ We need to show 2 things:
 \quad \textsc{(T-SuperInvk)}
 \]
 
+
+\subsubsection{Method Typing} 
+\[ 
+\inferrule 
+{ }
+{T_0 \spc m(\overline{T} \spc \overline{x}); \text{ OK IN I} }
+\quad \textsc{(T-Meth)}
+\]
+
+\[ 
+\inferrule
+{\overline{x}:\overline{T} \vdash e:S \\ S <: T_0}
+{T_0 \spc m(\overline{T} \spc \overline{x}) \text{ \{ return } e;\} \text{ OK IN
+    I} }
+\quad \textsc{(T-MethBody)}
+\]
+
+\[ 
+\inferrule
+{IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\
+\forall i,\text{if \textsf{mtype}}(m,J_i) = \overline(T) \to U_0, \text{then }
+T_0 <: U_0 }
+{T_0 \spc m(\overline{T} \spc \overline{x}); \text{ OK IN I} }
+\quad \textsc{(T-MethExt)}
+\]
+
+\[ 
+\inferrule
+{\overline{x}:\overline{T} \vdash e:S \\ S <: T_0 \\ 
+IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\
+\forall i,\text{if \textsf{mtype}}(m,J_i) = \overline(T) \to U_0, \text{then }
+T_0 <: U_0 }
+{T_0 \spc m(\overline{T} \spc \overline{x}) \text{ \{ return } e;\} \text{ OK IN
+    I} }
+\quad \textsc{(T-MethBodyExt)}
+\]
+
 \subsubsection{Context}
 
 \[ \Gamma = \epsilon \mid (x, C) : \Gamma  \]
