@@ -221,21 +221,23 @@ We use internally a special modifier $\conflicted$ to denote the case of two met
 
 \[ \inferrule[(ReviewedRule)]{
   IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
-  \methods \} \\
-  \methods(\m)=\method
+  \methods \} 
+%\\
+ % \methods(\m)=\method
 %\\
 %\Aux{tops}(\overline{C})=\C_1\ldots\C_n  
   }
-{ \mBody(\m,\C_0) = \textsf{replace}(\method, %\shadow(\mBody(\m,C_1)\ldots\mBody(\m,C_n))
-\shadow(m,\Aux{tops}(\Cs)) 
+{ \mBody(\m,\C_0) = \override(\methods(\m), %\shadow(\mBody(\m,C_1)\ldots\mBody(\m,C_n))
+\shadow(\m,\Aux{tops}(\Cs)))
 } \]
 \subsubsection{Auxiliary function: $\tops(\Cs), \shadow(\m,\Cs),\override(\method,\method')$}
 
 \tops{} leave only the ``needed'' superinterfaces, that is, the ones that are not transitivelly reachable by following another superinterface chain. 
 
+\shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
+We do not model overloading, so it is an error if multiple versions are available with different parameter types.
 
-
-The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
+%The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
 %exmples to motivate our design
 %interface A{static String m(){return "A";}}
 %interface C extends A{
@@ -260,24 +262,26 @@ The \textsf{shadow} function takes two same methods (with the same name and type
 \\
 
 \shadow()=\none\\
-\shadow(\methods)=\method &\mif\ \method \in \methods, \forall \method' \in \methods\setminus\method :  \method' \subtype  \method,\\
-\mbox{ otherwise}\\
-\shadow(\methods)=\conflicted\mh&\mif\ \shadow(\Aux{removeBody}(\methods))=\mh\\
-\Aux{removeBody}(\QM{default}\ \mh\mbox{\Q@\{return \_;\}@})
-=\mh\QM;\\
-\Aux{removeBody}(\mh\QM)
-=\mh\QM;
-\\
-%\mh\mbox{\Q@\{return \_;\}@}\shadow \mh & \mif\ \mh\shadow\mh'\\
-\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\subtype \mh & \mif\ \mh\subtype\mh'\\
-
+\shadow(\method)=\method\\
+\shadow(\methods)=\conflicted\mh\QM;&\mif\ \Aux{mostSpecific}(\methods))\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
+\Aux{mostSpecific}(\methods)=\method &
+\mif\ \method \in \methods, \forall \method' \in \methods :  \method' \subtype  \method,\\
 \T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR & \mif\ \T\subtype \T'\\
-\override(\method,\none)=
-\override(\none,\method)=\method\\
+
+\method \subtype
+\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}=
+\method\subtype\mh\QM;
+\\
+\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\subtype\method=
+\mh\QM;\subtype\method
+\\
+\override(\none,\none)=\none\\
+\override(\method,\none)=\method\\
+
+\override(\none,\method)=\method &\mif\ \method\neq \conflicted\ \mh\QM;\\
 \override(\method,\method')
 =
-\override(\method,\mh\QM;) & \method'=\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\\
-\\
+\override(\method,\mh\QM;) & \method'\in\{\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \}\\
 \override(\method,\mh')
 =\method &\mif\ \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \}\\
 & \mh\subtype\mh'\\
@@ -308,18 +312,18 @@ The \textsf{shadow} function takes two same methods (with the same name and type
 %\end{array}
 %\end{equation*}
 
-\subsubsection{Auxiliary function: \textsf{replace}}
-
-The \textsf{replace} function takes two same methods (with the same name and types of arguments), and gives the result of the first method overriding the second one.
-
-\begin{equation*}
-\begin{array}{ll}
-\textsf{replace}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\\
-\textsf{replace}(body_1, body_2)=body_2 & \textsf{if }body_1=\emptyset\\
-\textsf{replace}(body_1, body_2)=body_1 & \textsf{if }body_1.\textsf{returnType}<:body_2.\textsf{returnType}\\
-\textsf{replace}(body_1, body_2)=\textsf{ERROR} \hspace{.1in} & \textsf{otherwise}
-\end{array}
-\end{equation*}
+%\subsubsection{Auxiliary function: \textsf{replace}}
+%
+%The \textsf{replace} function takes two same methods (with the same name and types of arguments), and gives the result of the first method overriding the second one.
+%
+%\begin{equation*}
+%\begin{array}{ll}
+%\textsf{replace}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\\
+%\textsf{replace}(body_1, body_2)=body_2 & \textsf{if }body_1=\emptyset\\
+%\textsf{replace}(body_1, body_2)=body_1 & \textsf{if }body_1.\textsf{returnType}<:body_2.\textsf{returnType}\\
+%\textsf{replace}(body_1, body_2)=\textsf{ERROR} \hspace{.1in} & \textsf{otherwise}
+%\end{array}
+%\end{equation*}
 
 
 
