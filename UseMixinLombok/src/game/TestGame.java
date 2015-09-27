@@ -4,17 +4,17 @@ import static java.lang.System.out;
 import lombok.Mixin;
 
 @Mixin interface TDoor {
-    public boolean Locked();
-    public int DoorMaxCoins();
+    public boolean locked();
+    public int doorMaxCoins();
 
     default boolean isLocked() {
-        return Locked();
+        return locked();
     }
     default int open() {
         if (!isLocked()) {
             out.println("The door has been opened!");
             double rnd = Math.random();
-            int cns = (int) (rnd * DoorMaxCoins()) + 1;
+            int cns = (int) (rnd * doorMaxCoins()) + 1;
             out.println("You got " + cns + " coins.");
             return cns;
         } else {
@@ -36,23 +36,23 @@ import lombok.Mixin;
 @Mixin
 interface TCounter {
     /* State references */
-    public int Counter();
-    public void Counter(int c);
-    public int Limit();
+    public int counter();
+    public void counter(int c);
+    public int limit();
     /* Coin management */
-    public int CounterMaxCoins();
+    public int counterMaxCoins();
     default void incrementCounter() {
-        Counter(Counter() + 1);
+        counter(counter() + 1);
     }
     default void decrementCounter() {
-        Counter(Counter() - 1);
+        counter(counter() - 1);
     }
     default boolean hasReachedLimit() {
-        return Counter() >= Limit();
+        return counter() >= limit();
     }
     default int releaseCoins() {
         double rnd = Math.random();
-        int cns = (int) (rnd * CounterMaxCoins()) + 1;
+        int cns = (int) (rnd * counterMaxCoins()) + 1;
         out.println("You got " + cns + " coins.");
         return cns;
     }
@@ -60,11 +60,11 @@ interface TCounter {
 
 interface TChest {
     /* Coin management */
-    public int ChestMaxCoins(); /* Opens the chest */
+    public int chestMaxCoins(); /* Opens the chest */
     default int open() {
         out.print("The chest is now opened!");
         double rnd = Math.random();
-        int c = (int) (rnd * ChestMaxCoins());
+        int c = (int) (rnd * chestMaxCoins());
         out.print("You got " + c);
         out.println(" coins from the chest.");
         return c;
@@ -72,7 +72,7 @@ interface TChest {
 }
 interface TEnchantment {
     /* Coin management */
-    public int EnchantMaxCoins();
+    public int enchantMaxCoins();
     /** An enchantment can give coins
     (max getEnchantMaxCoins()) or
     remove coins (max -getEnchantMaxCoins()) **/
@@ -82,7 +82,7 @@ interface TEnchantment {
         out.println("of coins you’ll have a cup,");
         out.print("but if no luck you got, ");
         out.println("you are gonna lose a lot.\"");
-        int max = EnchantMaxCoins();
+        int max = enchantMaxCoins();
         double rnd = Math.random();
         int cns = -max + (int) (rnd * ((max * 2) + 1));
         if (cns >= 0) {
@@ -139,7 +139,7 @@ interface TKnockDoor extends TDoor, TCounter {
         } else {
             //Let’s give a suggestion to the player 
             out.print("Don’t challenge me... ");
-            int c = Limit();
+            int c = limit();
             String sug = "never knock a door ";
             sug = sug + "more then " + c + " times.";
             out.println(sug);
@@ -183,18 +183,18 @@ class PlayerOri {
 
 @Mixin
 interface Player {
-    int Coins();
-    String Nickname();
-    void Coins(int Coins);
+    int coins();
+    String nickname();
+    void coins(int Coins);
     default void addInBad(int amount) {
-        Coins(Coins() + amount);
+        coins(coins() + amount);
     }
     default void removeFromBag(int amount) {
-        Coins(Coins() - amount);
+        coins(coins() - amount);
     }
     default String toS() {
-        String s = "I’m " + Nickname();
-        s += " and i’ve got " + Coins();
+        String s = "I’m " + nickname();
+        s += " and i’ve got " + coins();
         s += " coins in my bag.";
         return s;
     }
@@ -230,9 +230,9 @@ class DoorsRoomOri {
 }
 
 @Mixin interface DoorsRoom {
-    TDoor LeftDoor();
-    TDoor RightDoor();
-    TDoor FrontDoor();
+    TDoor leftDoor();
+    TDoor rightDoor();
+    TDoor frontDoor();
 }
 
 class GameOri {
@@ -284,9 +284,9 @@ public class TestGame {
         TDoor f = TKnockDoor.of(true, 0, 100, 200, 200);
         DoorsRoom doorsRoom = DoorsRoom.of(l, r, f);
         Game game = Game.of(doorsRoom, player);
-        game.doorsRoom().LeftDoor().open();
-        game.doorsRoom().RightDoor().open();
-        game.doorsRoom().FrontDoor().open();
+        game.doorsRoom().leftDoor().open();
+        game.doorsRoom().rightDoor().open();
+        game.doorsRoom().frontDoor().open();
 
     }
 }
