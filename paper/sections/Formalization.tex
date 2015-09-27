@@ -190,45 +190,48 @@ subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
 { \textsf{mtype(m,T)} = \bigcup \textsf{mtype}(m,\overline{D}) } \]
 \end{comment}
 
-\subsubsection{Auxiliary function: \textsf{mbody}}
+\subsubsection{Functional notation}
+We allows functional notation for set of methods $\methods$, using the method name $\m$ as a key.
+That is, we define $\methods(\m)=\method$ iff there is a unique $\method\in\methods$ whose name is $\m$.
+For convenience, we define $\methods(\m)=\none$ otherwise.
+  
+\subsubsection{Auxiliary function:\mBody}
 
-$\textsf{mbody}(m,C)$ denotes the actual body of method $m$ that interface $C$ owns. It can either be defined originally in $C$ or in its supertypes, and then passed to $C$ via inheritance.
+$\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns. It can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
 
-The body of a method $m$ contains the relevant information with respect to that method, like the type of $m$ as well as the modifier. Below shows how the functions $mtype$ and $mmodifier$ are derived from $mbody$.
-
-\[ \textsf{mbody}(m,C) = \textit{modifier } E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \] \[ \Rightarrow \textsf{mtype}(m,C) = \overline{D} \to E,\ \textsf{mmodifier}(m,C) = \textit{modifier}\]
-
-\[ \inferrule{
-  IT(C) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
-  m \notin M}
-{ \textsf{mbody}(m,C) = \emptyset } \]
-
-\[ \inferrule{
-  IT(C) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
-  m \in M}
-{ \textsf{mbody}(m,C) = m } \]
-
-\[ \inferrule{
-  IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
-  \overline{M} \} \\
-  m \notin M
-  }
-{ \textsf{mbody}(m,C_0) = \textsf{fold}_\textsf{shadow}\cdot\textsf{map}_{\textsf{mbody,}m}\cdot\textsf{subset}(\overline{C}) } \]
+The body of a method $\m$ contains all the relevant information with respect to that method, like the type of $\m$ as well as the modifier.
+We use internally a special modifier $\conflicted$ to denote the case of two methods with conflicting implementation.
+%
+%\[ \inferrule{
+%  IT(C) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
+%  m \notin M}
+%{ \textsf{mbody}(m,C) = \emptyset } \]
+%
+%\[ \inferrule{
+%  IT(C) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
+%  m \in M}
+%{ \textsf{mbody}(m,C) = m } \]
+%
+%\[ \inferrule{
+%  IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
+%  \overline{M} \} \\
+%  m \notin M
+%  }
+%{ \textsf{mbody}(m,C_0) = \textsf{fold}_\textsf{shadow}\cdot\textsf{map}_{\textsf{mbody,}m}\cdot\textsf{subset}(\overline{C}) } \]
 
 \[ \inferrule[(ReviewedRule)]{
   IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
   \methods \} \\
   \methods(\m)=\method
-\\
-\Aux{tops}(\overline{C})=\C_1\ldots\C_n  
+%\\
+%\Aux{tops}(\overline{C})=\C_1\ldots\C_n  
   }
-{ \mBody(\m,\C_0) = \textsf{replace}(\method, \shadow(\mBody(\m,C_1)\ldots\mBody(\m,C_n))
- } \]
-\subsubsection{Auxiliary function: \Aux{tops}}
+{ \mBody(\m,\C_0) = \textsf{replace}(\method, %\shadow(\mBody(\m,C_1)\ldots\mBody(\m,C_n))
+\shadow(m,\Aux{tops}(\Cs)) 
+} \]
+\subsubsection{Auxiliary function: $\tops(\Cs), \shadow(\m,\Cs),\override(\method,\method')$}
 
-\[ \textsf{tops}(\Cs)=\{\ \C\in\Cs\ |\ \nexists \C'\in\Cs\setminus\C,\ \C' \subtype \C\ \} \]
-
-\subsubsection{Auxiliary function: \textsf{shadow}}
+\tops{} leave only the ``needed'' superinterfaces, that is, the ones that are not transitivelly reachable by following another superinterface chain. 
 
 
 
@@ -245,9 +248,18 @@ The \textsf{shadow} function takes two same methods (with the same name and type
 %
 %
 %(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
+
 \begin{equation*}
 \begin{array}{ll}
-\shadow()=\emptyset\\
+\tops(\Cs)=\{\ \C\in\Cs\ |\ \nexists \C'\in\Cs\setminus\C,\ \C' \subtype \C\ \} 
+\\
+\shadow(\m,\C_1\ldots\C_n)=\shadow(\methods)
+& \mBody(\m,\C_i)\in\methods
+\\ & \mif\ \mBody(\m,\C)=\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}
+\\ &\mor\ \mBody(\m,\C)=\mh\QM;
+\\
+
+\shadow()=\none\\
 \shadow(\methods)=\method &\mif\ \method \in \methods, \forall \method' \in \methods\setminus\method :  \method' \subtype  \method,\\
 \mbox{ otherwise}\\
 \shadow(\methods)=\conflicted\mh&\mif\ \shadow(\Aux{removeBody}(\methods))=\mh\\
@@ -256,18 +268,19 @@ The \textsf{shadow} function takes two same methods (with the same name and type
 \Aux{removeBody}(\mh\QM)
 =\mh\QM;
 \\
-%\conflictError \shadow \_\\
-\_\subtype\emptyset\\
 %\mh\mbox{\Q@\{return \_;\}@}\shadow \mh & \mif\ \mh\shadow\mh'\\
-\_\ \mh\mbox{\Q@\{return \_;\}@}\subtype \mh & \mif\ \mh\subtype\mh'\\
+\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\subtype \mh & \mif\ \mh\subtype\mh'\\
 
-\T \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR & \mif\ \T\subtype \T'\\
-\Aux{replace}(\method,\emptyset)=
-\Aux{replace}(\emptyset,\method)=\method\\
-\Aux{replace}(\method,\_\ \mh\mbox{\Q@\{return \_;\}@})
+\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR & \mif\ \T\subtype \T'\\
+\override(\method,\none)=
+\override(\none,\method)=\method\\
+\override(\method,\method')
 =
-
+\override(\method,\mh\QM;) & \method'=\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\\
 \\
+\override(\method,\mh')
+=\method &\mif\ \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \}\\
+& \mh\subtype\mh'\\
 %\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
 %\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
 %\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
@@ -309,3 +322,9 @@ The \textsf{replace} function takes two same methods (with the same name and typ
 \end{equation*}
 
 
+
+\subsubsection{Derived notations}
+
+ Below shows how the functions $mtype$ and $mmodifier$ are derived from $mbody$.
+
+\[ \textsf{mbody}(m,C) = \textit{modifier } E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \] \[ \Rightarrow \textsf{mtype}(m,C) = \overline{D} \to E,\ \textsf{mmodifier}(m,C) = \textit{modifier}\]
