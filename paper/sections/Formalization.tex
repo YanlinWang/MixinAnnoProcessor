@@ -116,7 +116,7 @@ We need to show 2 things:
 \inferrule
 {\overline{x}:\overline{T} \vdash e:S \\ S <: T_0}
 {T_0 \spc m(\overline{T} \spc \overline{x}) \text{ \{ return } e;\} \text{ OK IN
-    I} }
+    I} \\\\ \Gamma \vdash \textbf{this}:I }
 \quad \textsc{(T-MethBody)}
 \]
 
@@ -136,7 +136,7 @@ IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\
 \forall i,\text{if \textsf{mtype}}(m,J_i) = \overline(T) \to U_0, \text{then }
 T_0 <: U_0 }
 {T_0 \spc m(\overline{T} \spc \overline{x}) \text{ \{ return } e;\} \text{ OK IN
-    I} }
+    I} \\\\ \Gamma \vdash \textbf{this}:I }
 \quad \textsc{(T-MethBodyExt)}
 \]
 
