@@ -265,7 +265,8 @@ We do not model overloading, so it is an error if multiple versions are availabl
 \shadow(\method)=\method\\
 \shadow(\methods)=\conflicted\mh\QM;&\mif\ \Aux{mostSpecific}(\methods))\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
 \Aux{mostSpecific}(\methods)=\method &
-\mif\ \method \in \methods, \forall \method' \in \methods :  \method' \subtype  \method,\\
+\mif\ \method \in \methods, \forall \method' \in \methods :  \method' \subtype
+                                       \method, \\
 \T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR & \mif\ \T\subtype \T'\\
 
 \method \subtype
@@ -290,6 +291,9 @@ We do not model overloading, so it is an error if multiple versions are availabl
 %\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
 \end{array}
 \end{equation*}
+
+\text{\yanlin{shouldn't mostSpecific be: $\forall \method' \in \methods : \method \subtype
+  \method'$ ?}}
 
 %(2) If $body_1.\textsf{returnType}=body_2.\textsf{returnType}$, \textsf{shadow} tends to return a default method. If both $body_1$ and $body_2$ are default methods, \textsf{shadow} throws an error.
 %\begin{equation*}
