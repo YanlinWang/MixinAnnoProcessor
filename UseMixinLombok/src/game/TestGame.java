@@ -280,7 +280,7 @@ public class TestGame {
 
         Player player = Player.of("Grace");
         TDoor l = TDoor.of(false, 200);
-        TDoor r = TEnchantedDoor.of(false, 10, 100);  //120 150
+        TDoor r = TEnchantedDoor.of(10, false, 100);
         TDoor f = TKnockDoor.of(true, 0, 100, 200, 200);
         DoorsRoom doorsRoom = DoorsRoom.of(l, r, f);
         Game game = Game.of(doorsRoom, player);
