@@ -284,12 +284,13 @@ We do not model overloading, so it is an error if multiple versions are availabl
 \\
 \shadow(\m,\C_1\ldots\C_n)=\shadow(\methods)
 & \mBody(\m,\C_i)\in\methods
-\\ & \mif\ \mBody(\m,\C)=\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}
-\\ &\mor\ \mBody(\m,\C)=\mh\QM;
+\\ & \mif\ \mBody(\m,\C)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}
+%\\ &\mor\ \mBody(\m,\C)=\mh\QM;
 \\
 
 \shadow()=\none\\
 \shadow(\method)=\method\\
+\shadow(\methods)=\Aux{mostSpecific}(\methods) &\mif\   \methods=\mh_1\QM;\ldots\mh_n\QM;\\
 \shadow(\methods)=\conflicted\mh\QM;&\mif\ \Aux{mostSpecific}(\methods))\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
 \Aux{mostSpecific}(\methods)=\method &
 \mif\ \method \in \methods, \forall \method' \in \methods :  \method \subtype
