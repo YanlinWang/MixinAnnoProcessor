@@ -162,13 +162,14 @@ T_0 <: U_0 }
 \]
 
 \subsubsection{Context}
-\[ \Gamma = \epsilon \mid (x, C) : \Gamma  \]
-\marco{what this want to model? do you want to write}
-\begin{grammar}
-\production{
-\Gamma
-}{\x_1{:}\C_1\ldots\x_n{:}\C_n}{}
-\end{grammar}
+\[ \Gamma :: = \overline{x}:\overline{C} \]
+
+The environment $\Gamma$ is a mapping from variables to types, written
+$\overline{x}:\overline{C}$. Typing statement $\Gamma \vdash t:C$ reads ``in the
+environment $\Gamma$, term $t$ has type $C$.'' We abbreviate typing statements on
+sequences in a simple way, writing $\Gamma \vdash \overline{t}:\overline{C}$ as
+shorthand for $\Gamma \vdash t_1:C_1,..., \Gamma \vdash t_n:C_n$.
+
 \subsubsection{Subtyping}
 
 \[ \inferrule{}{T <: T} \]
