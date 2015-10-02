@@ -123,9 +123,10 @@ We need to show 2 things:
 \]
 
 
-\subsubsection{Method Typing} 
+\subsubsection{Typechecking of Methods} 
 
 \marco{I can not understand those rules, when is t-meth and t-meth body called? when is that you state that all methods in all interfaces must be ok?}
+\begin{comment}
 \[ 
 \inferrule 
 { }
@@ -140,6 +141,7 @@ We need to show 2 things:
     I} \\\\ \Gamma \vdash \textbf{this}:I }
 \quad \textsc{(T-MethBody)}
 \]
+\end{comment}
 
 \[ 
 \inferrule
@@ -160,6 +162,10 @@ T_0 <: U_0 }
     I} \\\\ \Gamma \vdash \textbf{this}:I }
 \quad \textsc{(T-MethBodyExt)}
 \]
+
+\subssubsection{Typechecking of Interfaces}
+
+
 
 \subsubsection{Context}
 \[ \Gamma :: = \overline{x}:\overline{C} \]
