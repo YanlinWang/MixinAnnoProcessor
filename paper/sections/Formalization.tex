@@ -163,10 +163,6 @@ T_0 <: U_0 }
 \quad \textsc{(T-MethBodyExt)}
 \]
 
-\subssubsection{Typechecking of Interfaces}
-
-
-
 \subsubsection{Context}
 \[ \Gamma :: = \overline{x}:\overline{C} \]
 
@@ -192,9 +188,6 @@ subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
 
 
 \subsection{Auxiliary Definitions}
-\yanlin{todo: add more auxiliary functions}
-
-\yanlin{todo: add interface context}
 
 \begin{comment}
 \subsubsection{Auxiliary function: \textsf{mtype}}
@@ -284,6 +277,9 @@ We do not model overloading, so it is an error if multiple versions are availabl
 %
 %
 %(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
+
+\yanlin{for \textbf{shadow} conflicted mh;, one missing case is when there are
+  two conflicting default methods with same signature?? }
 
 \begin{equation*}
 \begin{array}{ll}
