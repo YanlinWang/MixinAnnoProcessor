@@ -163,6 +163,24 @@ T_0 <: U_0 }
 \quad \textsc{(T-MethBodyExt)}
 \]
 
+\subsubsection{Typechecking of Interfaces}
+\[ \inferrule
+{\textbf{interface } I \textbf{ extends } \overline{J} \{ \overline{M} \} \\\\
+ \forall J_i \in \overline{J}, J_i \text{ OK} \\\\
+ \forall m \in \overline{M}, \textsf{mbody}(m,I) \neq ERROR \\\\
+ \forall J_i \in \overline{J}, \forall m \text{ inside } J_i,
+ \textsf{mbody}(m,I) \neq ERROR }
+{I \text{ OK}}
+\quad \textsc{(T-Intf)}
+ \]
+
+Interface $I$ type checks well, if:
+\begin{itemize}
+\item All its super-interfaces $\overline{J}$ OK.
+\item All methods inside interface $I$ are OK.
+\item All methods that $I$ is inheriting from super-interfaces are OK.
+\end{itemize}
+
 \subsubsection{Context}
 \[ \Gamma :: = \overline{x}:\overline{C} \]
 
