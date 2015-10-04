@@ -123,18 +123,18 @@ We need to show 2 things:
 \]
 
 
-\subsubsection{Typechecking of Methods} 
+\subsubsection{Typechecking of Methods}
 
 \marco{I can not understand those rules, when is t-meth and t-meth body called? when is that you state that all methods in all interfaces must be ok?}
 \begin{comment}
-\[ 
-\inferrule 
+\[
+\inferrule
 { }
 {T_0 \spc m(\overline{T} \spc \overline{x}); \text{ OK IN I} }
 \quad \textsc{(T-Meth)}
 \]
 
-\[ 
+\[
 \inferrule
 {\overline{x}:\overline{T} \vdash e:S \\ S <: T_0}
 {T_0 \spc m(\overline{T} \spc \overline{x}) \text{ \{ return } e;\} \text{ OK IN
@@ -143,7 +143,7 @@ We need to show 2 things:
 \]
 \end{comment}
 
-\[ 
+\[
 \inferrule
 {IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\
 \forall i,\text{if \textsf{mtype}}(m,J_i) = \overline(T) \to U_0, \text{then }
@@ -152,9 +152,9 @@ T_0 <: U_0 }
 \quad \textsc{(T-MethExt)}
 \]
 
-\[ 
+\[
 \inferrule
-{\overline{x}:\overline{T} \vdash e:S \\ S <: T_0 \\ 
+{\overline{x}:\overline{T} \vdash e:S \\ S <: T_0 \\
 IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\
 \forall i,\text{if \textsf{mtype}}(m,J_i) = \overline(T) \to U_0, \text{then }
 T_0 <: U_0 }
@@ -237,7 +237,7 @@ subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
 We allows functional notation for set of methods $\methods$, using the method name $\m$ as a key.
 That is, we define $\methods(\m)=\method$ iff there is a unique $\method\in\methods$ whose name is $\m$.
 For convenience, we define $\methods(\m)=\none$ otherwise.
-  
+
 \subsubsection{Auxiliary function:\mBody}
 
 $\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns. It can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
@@ -264,11 +264,11 @@ We use internally a special modifier $\conflicted$ to denote the case of two met
 
 \[ \inferrule[(ReviewedRule)]{
   IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
-  \methods \} 
+  \methods \}
 %\\
  % \methods(\m)=\method
 %\\
-%\Aux{tops}(\overline{C})=\C_1\ldots\C_n  
+%\Aux{tops}(\overline{C})=\C_1\ldots\C_n
   }
 { \mBody(\m,\C_0) = \override(\methods(\m), %\shadow(\mBody(\m,C_1)\ldots\mBody(\m,C_n))
 \shadow(\m,\Aux{tops}(\Cs)))
@@ -277,7 +277,7 @@ We use internally a special modifier $\conflicted$ to denote the case of two met
 ${}_{}$\\*
 \marco{we need to discuss the names tops, shadow and override}
 
-\tops{} leave only the ``needed'' superinterfaces, that is, the ones that are not transitivelly reachable by following another superinterface chain. 
+\tops{} leave only the ``needed'' superinterfaces, that is, the ones that are not transitivelly reachable by following another superinterface chain.
 
 \shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
 We do not model overloading, so it is an error if multiple versions are available with different parameter types.
@@ -299,13 +299,48 @@ We do not model overloading, so it is an error if multiple versions are availabl
 \yanlin{for \textbf{shadow} conflicted mh;, one missing case is when there are
   two conflicting default methods with same signature?? }
 
-\yanlin{for \textbf{override}, what's the result if arguments for override
-  doesn't match any given rule. For example, override(a static method, mh'). It
-  would return UNDEFINED or generate ERROR??}
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=5in]{screenshot.png}
+\caption{Screenshot.}\label{screenshot_png}
+\end{figure}
+
+\haoyuan{I tried to understand the current algorithm, and did more experiments in eclipse.
+Now I borrow some ideas from the current version, and give a new version of the algorithm in text. See below.
+
+(1) I guess the function \textsf{tops} is not necessary. The first step is still
+\[\textsf{mbody}(m,C_i)\in\overline{meth}\textrm{ (excluding \textbf{static} methods)}\]
+
+(2) Assume the context is ``interface $C_0$ extends $\overline{C}$ \{$meth'$;...\}''. First handle
+\[\textsf{override}(meth',\overline{meth}) \eqno{(*)}\]
+
+(3) If $meth'\ne\none$, $(*)$ returns $meth'$ if
+\[\forall meth\in\overline{meth},meth'\subtype meth\]
+even if there are conflicts in $\overline{meth}$.
+
+(4) If $meth'=\none$, we need to figure out
+\[\textsf{mostSpecific}(\overline{meth})\]
+and it should be the one that ``overrides'' all the others in $\overline{meth}$. It means we should not only deal with the return types of methods, but also look into the subtyping relation of interfaces. But for abstract methods, only return types are taken into consideration.
+}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=5in]{table.png}
+\caption{Table.}\label{table_png}
+\end{figure}
+
+\haoyuan{
+I found this from the Internet. See Fig.~\ref{screenshot_png}.
+
+An experiment. See Fig.~\ref{table_png}.
+}
+
+
+
 
 \begin{equation*}
 \begin{array}{ll}
-\tops(\Cs)=\{\ \C\in\Cs\ |\ \nexists \C'\in\Cs\setminus\C,\ \C' \subtype \C\ \} 
+\tops(\Cs)=\{\ \C\in\Cs\ |\ \nexists \C'\in\Cs\setminus\C,\ \C' \subtype \C\ \}
 \\
 \shadow(\m,\C_1\ldots\C_n)=\shadow(\methods)
 & \mBody(\m,\C_i)\in\methods
