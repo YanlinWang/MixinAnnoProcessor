@@ -204,54 +204,10 @@ interface Player {
     }
 }
 
-class DoorsRoomOri {
-    private TDoor leftDoor;
-    private TDoor rightDoor;
-    private TDoor frontDoor; /* Constructor */
-    public DoorsRoomOri(TDoor l, TDoor r,
-            TDoor f) {
-        leftDoor = l;
-        rightDoor = r;
-        frontDoor = f;
-    }
-    /* Getters */
-    public TDoor getLeftDoor()
-    {
-        return leftDoor;
-    }
-    public TDoor getRightDoor()
-    {
-        return rightDoor;
-    }
-    public TDoor getFrontDoor()
-    {
-        return frontDoor;
-    }
-}
-
 @Mixin interface DoorsRoom {
     TDoor leftDoor();
     TDoor rightDoor();
     TDoor frontDoor();
-}
-
-class GameOri {
-    private Player player;
-    private DoorsRoom doorsRoom;
-    private final String version = "0.0"; /* Constructor */
-    public GameOri(Player p, DoorsRoom dr) {
-        player = p;
-        doorsRoom = dr;
-    }
-    /* Setters and getters */
-    public Player getPlayer()
-    {
-        return player;
-    }
-    public DoorsRoom getDoorsRoom()
-    {
-        return doorsRoom;
-    }
 }
 
 @Mixin interface Game {

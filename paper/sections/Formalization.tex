@@ -176,7 +176,7 @@ Interface $I$ type checks well, if:
 \begin{itemize}
 \item All its super-interfaces $\overline{J}$ OK.
 \item All methods inside interface $I$ are OK.
-\item All methods that $I$ is inheriting from super-interfaces are OK.      
+\item All methods that $I$ is inheriting from super-interfaces are OK.
 \end{itemize}
 
 \subsubsection{Context}
@@ -202,6 +202,16 @@ The Interface Table (IT) mapping from types \texttt{T} to interface declarations
 interface table, we can read off the subtype relation between interfaces. The
 subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
 
+\subsection{Translation Rules}
+
+\[ \inferrule{
+  \Gamma \vdash \mixinAnn \text{ interface } C_0 \text{ extends } \overline{C} \{
+  \methods \} \text{ OK }}
+{ \Gamma \vdash \mixinAnn \text{ interface } C_0 \text{ extends } \overline{C} \{ \methods \} \longmapsto \\
+  \mixinAnn \text{ interface } C_0 \text{ extends } \overline{C} \{ \methods; \textsf{ofMethod}(C_0); \textsf{otherMethod}(C_0) \}
+} \quad \textsc{(Translation)} \]
+
+\haoyuan{Not $\{ \methods; ... \}$, actually. Should avoid duplication.}
 
 \subsection{Auxiliary Definitions}
 
@@ -329,7 +339,6 @@ and it should be the one that ``overrides'' all the others in $\overline{meth}$.
 
 \haoyuan{
 I found this from the Internet. See Fig.~\ref{screenshot_png}.
-
 An experiment. See Fig.~\ref{table_png}.
 }
 
@@ -415,7 +424,30 @@ An experiment. See Fig.~\ref{table_png}.
 %\end{array}
 %\end{equation*}
 
+\subsubsection{Auxiliary function:???}
 
+\begin{equation*}
+\begin{array}{ll}
+\textsf{ofMethod}(C_0) = ... & ... \\
+\textsf{otherMethod}(C_0) = \methods_1; \methods_2; \methods_3 \hspace{0.1in} & \textsf{resolve}(C_0) = \overline{field} \\
+& \method_1 = \textsf{setter}(field) \\
+& \method_2 = \textsf{with}(field) \\
+& \method_3 = \textsf{clone}(field) \\
+\textsf{resolve}(C_0) = \overline{field} & \mif\ \textsf{methods}(C_0) = \mhs \\
+& \forall field^{\mh} \in \overline{field}, \mh \in \mhs, \textsf{isField}(\mBody(\mh, C_0)) = \QM{true} \\
+& \forall \mh \in \mhs, \mh \textsf{ isField or isSetter or isWith or isClone or isDefault} \\
+\textsf{methods}(C_0) = \mhs\ \bigcup\ \overline{\textsf{methods}(C)} & \mif\ \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{ \methods \} \\
+& \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \} \\
+\textsf{isField}(\method) = \QM{true} & \mif\ \method = T\ m();\ T \ne \QM{void} \\
+\textsf{setter}(field) = \none & \mif\ field^\mh = T\ m(),\ field^{setter} = \QM{void} \\
+\textsf{setter}(field) = T_0\ \QM{set}m(T\ x); & \mif\ field^\mh = T\ m(),\ field^{setter} = T_0 \\
+\textsf{with}(field) = \none & \mif\ field^\mh = T\ m(),\ field^{with} = \none \\
+\textsf{with}(field) = T_0\ \QM{with}m(T\ x); & \mif\ field^\mh = T\ m(),\ field^{with} = T_0 \\
+\textsf{clone}(field) = T_0\ \QM{clone}(); & \mif\ field^\mh = T\ m(),\ field^{clone} = T_0
+\end{array}
+\end{equation*}
+
+\haoyuan{Details? ThisReference? Assignment?}
 
 \subsubsection{Derived notations}
 

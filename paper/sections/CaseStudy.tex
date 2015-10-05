@@ -3,12 +3,53 @@ Haoyuan and Yanlin
 
 \subsection{A Trivial Solution to the Expression Problem}
 
-\lstinputlisting[linerange=23-69]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION
+The \emph{Expression Problem} (EP)~\cite{wadler98expression-problem} is coined
+by Wadler about modular extensibility issues in software evolution and has been
+a hot topic in programming languages since. Today we know of various solutions
+to the EP that either rely on \emph{new programming language
+  features}~\cite{chambers95multimethods,clifton00multiJava,madsen89virtual,nystrom06j,bruce98astatically,McDirmid01jiazzi,garrigue98polymorphic,zenger01extensible,loh06open,wehr11javaGI},
+or can be used as \emph{design patterns}~\cite{gof} in existing
+languages~\cite{torgersen04theexpression,oliveira06extensible,wouter08datatypes,oliveira09modular,oliveira12extensibility}. In
+this paper we show that the EP can be solved with our \mixin annotation in a
+trivial way. We will use a canonical example of implementing arithmetic
+expressions gradually to illustrate the usage. 
+
+\paragraph{\textbf{Initial System}}
+The initial system expresses arithmetic expressions with only literals and
+addition structure:
+
+\lstinputlisting[linerange=23-40]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
+
+\texttt{Exp} is the common super-interface with an evaluation operation
+\texttt{eval()} inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend
+interface \texttt{Exp} with default implementations for \texttt{eval}
+operation. The number field (\texttt{x}) of a literal is represented as a getter
+method \texttt{x()} and expression fields (\texttt{e1,e2}) of an addition as
+getter methods \texttt{e1()} and \texttt{e2()}.
+
+\paragraph{\textbf{Adding a New Variant}} 
+It is easy to add new data variants to the code in the initial system in a
+modular way. For example, the following code how to add the subtraction variant.
+
+\lstinputlisting[linerange=44-51]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
+
+
+\paragraph{\textbf{Adding a New Operation}}
+Adding new operations to the previous system is still straightforward (although
+requires longer code). The following code shows an example of adding a new
+operation \texttt{print}. 
+
+\lstinputlisting[linerange=55-73]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+
+The basic idea is to define interfaces for extending old interfaces.  The
+interface \texttt{ExpP} extending interface \texttt{Exp} is defined with the
+extra function \texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are
+defined with default implementations of operation \texttt{print()}, extending
+base interfaces \texttt{Lit} and \texttt{Add}, respectively. Importantly, note
+that in \texttt{AddP}, the types of ``\emph{fields}'' \texttt{e1,e2} are refined via
+the \emph{return types refinement} of getter methods \texttt{e1()} and
+\texttt{e2()}. 
 
 \subsection{Other case studies}
-\bruno{The case studies still need to be implemented!}
-
-Collections example from traits paper?
-(\yanlin{couldn't found source code})
 
 Other case studies using multiple inheritance?

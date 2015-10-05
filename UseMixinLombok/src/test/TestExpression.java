@@ -19,7 +19,7 @@ public class TestExpression {
 	}
 }
 
-//BEGIN_EXPRESSION
+//BEGIN_EXPRESSION_INIT
 interface Exp {
     int eval();
 }
@@ -38,7 +38,9 @@ interface Add extends Exp {
 		return e1().eval() + e2().eval();
 	}
 }
+//END_EXPRESSION_INIT
 
+//BEGIN_EXPRESSION_SUB
 @Mixin
 interface Sub extends Exp {
 	Exp e1();
@@ -47,7 +49,9 @@ interface Sub extends Exp {
 		return e1().eval() - e2().eval();
 	}
 }
+//END_EXPRESSION_SUB
 
+//BEGIN_EXPRESSION_PRINT
 interface ExpP extends Exp {
 	String print();
 }
@@ -67,4 +71,4 @@ interface AddP extends Add, ExpP {
 	ExpP e1();
 	ExpP e2();
 }
-//END_EXPRESSION
+//END_EXPRESSION_PRINT
