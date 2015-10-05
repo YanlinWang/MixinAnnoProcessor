@@ -95,10 +95,8 @@ We need to show 2 things:
 \[
 \inferrule{\textsf{mtype}(m,C) = \overline{D} \to E \\
 \Gamma \vdash \overline{e} \in \overline{C} \\
-\overline{C} <: \overline{D} \\
-\textsf{checkSuper}(C.super.m(\overline{e}), A, C) \\\\
-\text{\yanlin{check whether A <: C, where A is the enclosing interface of the
-    expression}} }
+\overline{C} <: \overline{D} \\\\
+\textbf{this}:I \\  I <: C }
 {\Gamma \vdash C.\textbf{super}.m(\overline{e}) \in E}
 \quad \textsc{(T-SuperInvk)}
 \]
@@ -154,12 +152,12 @@ T_0 <: U_0 }
 
 \[
 \inferrule
-{\overline{x}:\overline{T} \vdash e:S \\ S <: T_0 \\
+{\textbf{this}:I, \overline{x}:\overline{T} \vdash e:S \\ S <: T_0 \\
 IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\
 \forall i,\text{if \textsf{mtype}}(m,J_i) = \overline(T) \to U_0, \text{then }
 T_0 <: U_0 }
 {T_0 \spc m(\overline{T} \spc \overline{x}) \text{ \{ return } e;\} \text{ OK IN
-    I} \\\\ \Gamma \vdash \textbf{this}:I }
+    I} }
 \quad \textsc{(T-MethBodyExt)}
 \]
 
