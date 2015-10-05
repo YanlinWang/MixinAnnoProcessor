@@ -91,7 +91,7 @@ We need to show 2 things:
 {\Gamma \vdash C.m(\overline{e}) \in E}
 \quad \textsc{(T-StaticInvk)}
 \]
-\marco{rule tInvk must check is not static?}
+%\marco{rule tInvk must check is not static?}
 \[
 \inferrule{\textsf{mtype}(m,C) = \overline{D} \to E \\
 \Gamma \vdash \overline{e} \in \overline{C} \\
@@ -102,7 +102,7 @@ We need to show 2 things:
 \]
 
 \[
-\inferrule[(Obj)]{
+\inferrule{
 \forall i\in 1\ldots n\ \Gamma,\Gamma^{\mh_i}\vdash\e_i\in \_\subtype\C^{\mh_i}\\
 \forall\mh\in \mhs \mbox{ such that }
 \mBody(\m^\mh,\C)=\method;\mh\subtype\mh^\method\\
@@ -118,12 +118,12 @@ We need to show 2 things:
 \cC
 \in\C
 }
+\quad \textsc{(T-Obj)}
 \]
 
 
-\subsubsection{Typechecking of Methods}
+\subsubsection{Method Typing}
 
-\marco{I can not understand those rules, when is t-meth and t-meth body called? when is that you state that all methods in all interfaces must be ok?}
 \begin{comment}
 \[
 \inferrule
@@ -152,8 +152,8 @@ T_0 <: U_0 }
 
 \[
 \inferrule
-{\textbf{this}:I, \overline{x}:\overline{T} \vdash e:S \\ S <: T_0 \\
-IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\
+{\textbf{this}:I, \overline{x}:\overline{T} \vdash e:S \\ S <: T_0 \\\\
+IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\\\
 \forall i,\text{if \textsf{mtype}}(m,J_i) = \overline(T) \to U_0, \text{then }
 T_0 <: U_0 }
 {T_0 \spc m(\overline{T} \spc \overline{x}) \text{ \{ return } e;\} \text{ OK IN
@@ -161,13 +161,13 @@ T_0 <: U_0 }
 \quad \textsc{(T-MethBodyExt)}
 \]
 
-\subsubsection{Typechecking of Interfaces}
+\subsubsection{Interface Typing}
 \[ \inferrule
 {\textbf{interface } I \textbf{ extends } \overline{J} \{ \overline{M} \} \\\\
  \forall J_i \in \overline{J}, J_i \text{ OK} \\\\
- \forall m \in \overline{M}, \textsf{mbody}(m,I) \neq ERROR \\\\
+ \forall m \in \overline{M}, \textsf{mbody}(m,I) \neq \error \\\\
  \forall J_i \in \overline{J}, \forall m \text{ inside } J_i,
- \textsf{mbody}(m,I) \neq ERROR }
+ \textsf{mbody}(m,I) \neq \error }
 {I \text{ OK}}
 \quad \textsc{(T-Intf)}
  \]
@@ -381,6 +381,7 @@ An experiment. See Fig.~\ref{table_png}.
 \override(\method,\mh')
 =\method &\mif\ \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \}\\
 & \mh\subtype\mh'\\
+\override(\_,\_)=\error & Otherwise
 %\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
 %\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
 %\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
