@@ -89,6 +89,15 @@ public class HandleMixin extends EclipseAnnotationHandler<Mixin> {
 			throwError("Unresolved methods inside.");
 			return;
 		}
+		for (int i = 0; i < resolvedType.fields.length - 1; i++) {
+			for (int j = i + 1; j < resolvedType.fields.length; j++) {
+				if (resolvedType.fields[i].name.compareTo(resolvedType.fields[j].name) > 0) {
+					Field temp = resolvedType.fields[i];
+					resolvedType.fields[i] = resolvedType.fields[j];
+					resolvedType.fields[j] = temp;
+				}
+			}
+		}
 		argFields = new Argument[resolvedType.fields.length];
 		for (int i = 0; i < argFields.length; i++) {
 			Field f = resolvedType.fields[i];
