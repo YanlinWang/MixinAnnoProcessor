@@ -15,10 +15,10 @@ public class TestLombok {
 		System.out.println("p1.x(4); p1.y(5);");
 		System.out.print("print p1: ");
 		print(p1);
-		p1 = p1.withX(6);
-		System.out.println("p1 = p1.withX(6);");
-		System.out.print("print p1: ");
-		print(p1);
+//		p1 = p1.withX(6);
+//		System.out.println("p1 = p1.withX(6);");
+//		System.out.print("print p1: ");
+//		print(p1);
 		System.out.print("print p2: ");
 		print(p2);	
 	}

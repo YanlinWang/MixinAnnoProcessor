@@ -24,5 +24,4 @@ rm footempfile.txt
 rm *.bbl
 rm *.blg
 rm *.log
-rm *.aux
 rm *-old

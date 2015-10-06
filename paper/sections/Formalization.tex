@@ -430,25 +430,22 @@ An experiment. See Fig.~\ref{table_png}.
 \begin{equation*}
 \begin{array}{ll}
 \textsf{ofMethod}(C_0) = ... & ... \\
-\textsf{otherMethod}(C_0) = \methods_1; \methods_2; \methods_3 \hspace{0.1in} & \textsf{resolve}(C_0) = \overline{field} \\
-& \method_1 = \textsf{setter}(field) \\
-& \method_2 = \textsf{with}(field) \\
-& \method_3 = \textsf{clone}(field) \\
+\textsf{otherMethod}(C_0) = \methods_1; \methods_2 \hspace{0.1in} & \mif\ \textsf{resolve}(C_0) = \overline{field} \\
+& \method_1 = \textsf{with}(field, C_0) \\
+& \method_2 = \textsf{clone}(field, C_0) \\
 \textsf{resolve}(C_0) = \overline{field} & \mif\ \textsf{methods}(C_0) = \mhs \\
-& \forall field^{\mh} \in \overline{field}, \mh \in \mhs, \textsf{isField}(\mBody(\mh, C_0)) = \QM{true} \\
-& \forall \mh \in \mhs, \mh \textsf{ isField or isSetter or isWith or isClone or isDefault} \\
+& \forall \mh \in \mhs, \mh \textsf{ isField or isWith or isClone or isDefault} \\
+& \forall field \in \overline{field},\ \mh^{field} = T\ m\oR\cR,\ \mif\ \mBody(m, C_0) = T\ m\oR\cR\QM; \\
 \textsf{methods}(C_0) = \mhs\ \bigcup\ \overline{\textsf{methods}(C)} & \mif\ \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{ \methods \} \\
 & \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \} \\
-\textsf{isField}(\method) = \QM{true} & \mif\ \method = T\ m();\ T \ne \QM{void} \\
-\textsf{setter}(field) = \none & \mif\ field^\mh = T\ m(),\ field^{setter} = \QM{void} \\
-\textsf{setter}(field) = T_0\ \QM{set}m(T\ x); & \mif\ field^\mh = T\ m(),\ field^{setter} = T_0 \\
-\textsf{with}(field) = \none & \mif\ field^\mh = T\ m(),\ field^{with} = \none \\
-\textsf{with}(field) = T_0\ \QM{with}m(T\ x); & \mif\ field^\mh = T\ m(),\ field^{with} = T_0 \\
-\textsf{clone}(field) = T_0\ \QM{clone}(); & \mif\ field^\mh = T\ m(),\ field^{clone} = T_0
+\textsf{with}(field, C_0) = T_0\ \QM{with}m\oR T\ x\cR\QM; & \mif\ \mh^{field} = T\ m\oR\cR,\ \mh' = T'\ \QM{with}m\oR T\ x\cR \\
+& \mBody(\QM{with}m, C_0) \in \{ \mh'\QM;, \QM{default}\ \mh' \mbox{\Q@\{return \_;\}@}\} \\
+& IT(T_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{ \methods \},\ T_0 <: T' \\
+\textsf{clone}(field, C_0) = T_0\ \QM{clone}\oR\cR\QM; & \mif\ IT(T_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{ \methods \}
 \end{array}
 \end{equation*}
 
-\haoyuan{Details? ThisReference? Assignment?}
+\haoyuan{``\textsf{isField or isWith or isClone or isDefault}''?}
 
 \subsubsection{Derived notations}
 

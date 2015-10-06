@@ -221,23 +221,10 @@ interface Player {
 
 public class TestGame {
     public static void main(String[] args) {
-        /*
-        Player player = new Player("Grace");
-        TDoor l = TDoor.of(false, 200);
-        TDoor r = TEnchantedDoor.of(false, 10, 100);  //120 150
-        TDoor f = TKnockDoor.of(true, 0, 100, 200, 200);
-
-        DoorsRoom doorsRoom = new DoorsRoom(l, r, f);
-        Game game = new Game(player, doorsRoom);
-        game.getDoorsRoom().getLeftDoor().open();
-        game.getDoorsRoom().getRightDoor().open();
-        game.getDoorsRoom().getFrontDoor().open();
-        */
-
         Player player = Player.of("Grace");
-        TDoor l = TDoor.of(false, 200);
-        TDoor r = TEnchantedDoor.of(10, false, 100);
-        TDoor f = TKnockDoor.of(true, 0, 100, 200, 200);
+        TDoor l = TDoor.of(200, false);
+        TDoor r = TEnchantedDoor.of(10, 100, false);
+        TDoor f = TKnockDoor.of(200, 0, 100, 200, true);
         DoorsRoom doorsRoom = DoorsRoom.of(l, r, f);
         Game game = Game.of(doorsRoom, player);
         game.doorsRoom().leftDoor().open();
