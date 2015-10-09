@@ -102,7 +102,7 @@ We need to show 2 things:
 \]
 
 \[
-\inferrule{
+\inferrule[(T-Obj)]{
 \forall i\in 1\ldots n\ \Gamma,\Gamma^{\mh_i}\vdash\e_i\in \_\subtype\C^{\mh_i}\\
 \forall\mh\in \mhs \mbox{ such that }
 \mBody(\m^\mh,\C)=\method;\mh\subtype\mh^\method\\
@@ -118,13 +118,29 @@ We need to show 2 things:
 \cC
 \in\C
 }
-\quad \textsc{(T-Obj)}
 \]
 
 
-\subsubsection{Method Typing}
+\subsubsection{Interface and method Typing}
+
+\[ \inferrule[(T-Intf)]{
+IT(\C_0) = \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_n \oC\methods\cC\\\\
+ \forall \QM{default}\ \mh\oC\QM{return}\ \e\QM;\cC \in \methods,
+\ \Gamma^{\mh},\,\QM{this}{:}\C\vdash\e\in \_\subtype\C^{\mh} \\\\
+\dom(\C_0)=\dom(\C_1)\cup\ldots\cup\dom(C_n)\cup\dom(\methods)
+ }{
+I \text{ OK}
+}
+ \]
+
+We use $\dom(\C)$ to denote the set of methods that are defined for type $\C$, that is: $\m\in\dom(\C)\ \miff \ \mBody(\m,\C)=\method$.
+
+
 
 \begin{comment}
+\subsubsection{Method Typing}
+
+
 \[
 \inferrule
 { }
@@ -139,7 +155,6 @@ We need to show 2 things:
     I} \\\\ \Gamma \vdash \textbf{this}:I }
 \quad \textsc{(T-MethBody)}
 \]
-\end{comment}
 
 \[
 \inferrule
@@ -161,7 +176,6 @@ T_0 <: U_0 }
 \quad \textsc{(T-MethBodyExt)}
 \]
 
-\subsubsection{Interface Typing}
 \[ \inferrule
 {\textbf{interface } I \textbf{ extends } \overline{J} \{ \overline{M} \} \\\\
  \forall J_i \in \overline{J}, J_i \text{ OK} \\\\
@@ -178,7 +192,7 @@ Interface $I$ type checks well, if:
 \item All methods inside interface $I$ are OK.
 \item All methods that $I$ is inheriting from super-interfaces are OK.
 \end{itemize}
-
+\end{comment}
 \subsubsection{Context}
 \[ \Gamma :: = \overline{x}:\overline{C} \]
 
@@ -187,7 +201,7 @@ $\overline{x}:\overline{C}$. Typing statement $\Gamma \vdash t:C$ reads ``in the
 environment $\Gamma$, term $t$ has type $C$.'' We abbreviate typing statements on
 sequences in a simple way, writing $\Gamma \vdash \overline{t}:\overline{C}$ as
 shorthand for $\Gamma \vdash t_1:C_1,..., \Gamma \vdash t_n:C_n$.
-
+\marco{Something is wrong, do you really want to repeat $\Gamma$? do we ever really need the bars here?}
 \subsubsection{Subtyping}
 
 \[ \inferrule{}{T <: T} \]
@@ -244,8 +258,8 @@ subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
 \subsubsection{Functional notation}
 We allows functional notation for set of methods $\methods$, using the method name $\m$ as a key.
 That is, we define $\methods(\m)=\method$ iff there is a unique $\method\in\methods$ whose name is $\m$.
-For convenience, we define $\methods(\m)=\none$ otherwise.
-
+For convenience, we define $\methods(\m)=\none$ otherwise;
+moreover $\m\in\dom(\methods)\ \miff\ \methods(\m)=\method$.
 \subsubsection{Auxiliary function:\mBody}
 
 $\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns. It can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.

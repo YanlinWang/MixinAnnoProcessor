@@ -25,3 +25,7 @@ public class MarcoTest {
         System.out.println(p.toS());
     }
 }
+
+ interface A {void m();}
+interface B {void m();}
+interface C extends A, B {}
