@@ -13,10 +13,10 @@
 \production{
 \obj
 }{
-\QM{new}\ \C\oR\cR\oC\T_1\ \f_1\QM;\ldots\T_k\ \f_k\QM;\
-\mh_1\oC\QM{return}\ \e_1\QM{;}\!\cC
+\QM{new}\ \C\oR\cR\oC\T_1\ \f_1 = e_1\QM;\ldots\T_k\ \f_k = e_k\QM;\
+\mh_1\oC\QM{return}\ \e_{k+1}\QM{;}\!\cC
 \ldots
-\mh_n\oC\QM{return}\ \e_n\QM{;}\!\cC
+\mh_n\oC\QM{return}\ \e_{k+n}\QM{;}\!\cC
 \cC
   }{object creation}\\
 \production{
@@ -222,10 +222,12 @@ subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
   \Gamma \vdash \mixinAnn \text{ interface } C_0 \text{ extends } \overline{C} \{
   \methods \} \text{ OK }}
 { \Gamma \vdash \mixinAnn \text{ interface } C_0 \text{ extends } \overline{C} \{ \methods \} \longmapsto \\
-  \mixinAnn \text{ interface } C_0 \text{ extends } \overline{C} \{ \methods; \textsf{ofMethod}(C_0); \textsf{otherMethod}(C_0) \}
+  \emptyset \text{ interface } C_0 \text{ extends } \overline{C} \{ \methods; \textsf{ofMethod}(C_0); \textsf{otherMethod}(C_0) \}
 } \quad \textsc{(Translation)} \]
 
 \haoyuan{Not $\{ \methods; ... \}$, actually. Should avoid duplication.}
+
+\textbf{THEOREM. } If $I \longmapsto I'$ and $I$ OK, then $I'$ OK.
 
 \subsection{Auxiliary Definitions}
 
@@ -321,6 +323,8 @@ We do not model overloading, so it is an error if multiple versions are availabl
 \yanlin{for \textbf{shadow} conflicted mh;, one missing case is when there are
   two conflicting default methods with same signature?? }
 
+
+\begin{comment}
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=5in]{screenshot.png}
@@ -350,14 +354,7 @@ and it should be the one that ``overrides'' all the others in $\overline{meth}$.
 \includegraphics[width=5in]{table.png}
 \caption{Table.}\label{table_png}
 \end{figure}
-
-\haoyuan{
-I found this from the Internet. See Fig.~\ref{screenshot_png}.
-An experiment. See Fig.~\ref{table_png}.
-}
-
-
-
+\end{comment}
 
 \begin{equation*}
 \begin{array}{ll}
@@ -443,23 +440,37 @@ An experiment. See Fig.~\ref{table_png}.
 
 \begin{equation*}
 \begin{array}{ll}
-\textsf{ofMethod}(C_0) = ... & ... \\
+\textsf{ofMethod}(C_0) = \QM{static of} \oR T_1\ m_1\QM,\ldots T_k\ m_k\cR\ \QM{\{} &  \\
+\ \ \ \ \QM{return new}\ C_0 \oR\cR\ \QM{\{}  & \mif\ \textsf{resolve}(C_0) = \overline{field} \\
+\ \ \ \ \ \ \ \ T_1\ \_m_1 = m_1\QM;\ldots T_k\ \_m_k = m_k\QM; & \forall field_i \in \overline{field},\ \mh^{field_i} = T_i\ m_i\oR\cR \\
+\ \ \ \ \ \ \ \ T_i\ m_i\oR\cR\ \QM{\{return}\ \_m_i\QM{;\}}\ \ldots & T_i\ m_i\oR\cR \textsf{ included for all } i \\
+\ \ \ \ \ \ \ \ T_0\ \QM{with}m_i\oR T_i\ x_i\cR\ \QM{\{} & T_0\ \QM{with}m_i\oR T_i\ x_i\cR \textsf{ included if with}(field_i, C_0) \textsf{ defined} \\
+\ \ \ \ \ \ \ \ \ \ \ \ \QM{return this.of}\oR m_1\oR\cR\QM,\ldots x_i\QM,\ldots m_k\oR\cR\cR\QM{;} & \\
+\ \ \ \ \ \ \ \ \QM{\}}\ \ldots & \\
+\ \ \ \ \ \ \ \ T_0\ \QM{clone}\oR\cR\ \QM{\{} & \\
+\ \ \ \ \ \ \ \ \ \ \ \ \QM{return this.of}\oR m_1\oR\cR\QM,\ldots m_k\oR\cR \cR\QM; & \\
+\ \ \ \ \ \ \ \ \QM{\}} & \\
+\ \ \ \ \QM{\};} & \\
+\QM{\}} & \\
 \textsf{otherMethod}(C_0) = \methods_1; \methods_2 \hspace{0.1in} & \mif\ \textsf{resolve}(C_0) = \overline{field} \\
 & \method_1 = \textsf{with}(field, C_0) \\
 & \method_2 = \textsf{clone}(field, C_0) \\
-\textsf{resolve}(C_0) = \overline{field} & \mif\ \textsf{methods}(C_0) = \mhs \\
-& \forall \mh \in \mhs, \mh \textsf{ isField or isWith or isClone or isDefault} \\
-& \forall field \in \overline{field},\ \mh^{field} = T\ m\oR\cR,\ \mif\ \mBody(m, C_0) = T\ m\oR\cR\QM; \\
-\textsf{methods}(C_0) = \mhs\ \bigcup\ \overline{\textsf{methods}(C)} & \mif\ \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{ \methods \} \\
-& \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \} \\
+\textsf{resolve}(C_0) = \overline{field} & \mif\ \textsf{methods}(C_0) = \methods \\
+& \forall \method \in \methods, \method \textsf{ isField or isWith or isClone or isDefault} \\
+& \forall field \in \overline{field},\ \mh^{field} = T\ m\oR\cR \\
+& \ \ \ \ \mif\ \mBody(m, C_0) = T\ m\oR\cR\QM;\ m\ne\QM{clone} \\
+\textsf{methods}(C_0) = \overline{meth'}\ \bigcup\ \overline{\textsf{methods}(C)} & \mif\ \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{ \methods \} \\
+& \method'\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \} \\
 \textsf{with}(field, C_0) = T_0\ \QM{with}m\oR T\ x\cR\QM; & \mif\ \mh^{field} = T\ m\oR\cR,\ \mh' = T'\ \QM{with}m\oR T\ x\cR \\
 & \mBody(\QM{with}m, C_0) \in \{ \mh'\QM;, \QM{default}\ \mh' \mbox{\Q@\{return \_;\}@}\} \\
 & IT(T_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{ \methods \},\ T_0 <: T' \\
-\textsf{clone}(field, C_0) = T_0\ \QM{clone}\oR\cR\QM; & \mif\ IT(T_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{ \methods \}
+\textsf{clone}(field, C_0) = T_0\ \QM{clone}\oR\cR\QM; & \mif\ IT(T_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{ \methods \} \\
+\method \textsf{ isField} & \mif\ \method = T\ m\oR\cR\QM;\ m\ne\QM{clone} \\
+\method \textsf{ isWith} & \mif \\
+\method \textsf{ isClone} & \mif\ \method = T\ \QM{clone}\oR\cR\QM; \\
+\method \textsf{ isDefault} & \mif\ \method = \QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \\
 \end{array}
 \end{equation*}
-
-\haoyuan{``\textsf{isField or isWith or isClone or isDefault}''?}
 
 \subsubsection{Derived notations}
 
