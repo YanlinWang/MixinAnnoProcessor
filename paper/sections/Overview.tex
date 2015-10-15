@@ -1,4 +1,57 @@
 \section{Overview}\label{sec:ep}
+The single inheritance support for classes in Java prohibits doing multiple
+inheritance in Java. Instead, the support of multiple inheritance support for
+interfaces makes us to think the possibility of using interfaces only, throwing
+away classes. But immediately we will face the following three problems of using
+interfaces in Java.
+
+\subsection{Problems with Java Interfaces}\label{sec:intf_prob}
+\paragraph{Instantiation Code}. If we use interfaces, then we cannot
+avoid instantiation code. 
+\begin{lstlisting}
+interface P {
+    default m() { ... }
+}
+\end{lstlisting}
+For example, even if interface \texttt{P} is complete (does not contain any
+un-implemented method), to instantiate it programmers still need to create a
+class \texttt{PImpl} that has a constructor for instantiation:
+\begin{lstlisting}
+class PImpl extends P {}
+\end{lstlisting}
+
+\paragraph{Prohibition of Field Members Inside Interfaces}
+Only methods (abstract, static or default) are allowed to appear in the
+definition of interfaces. The use of interfaces prohibits defining field members
+inside. This limitation of interfaces hinders the adoption of using interfaces
+only. Because the need of using field members almost \emph{always} exists. Hence
+it forces programmers to use classes, but this gives up the ability of multiple
+inheritance in Java. So the trade-off is: if you use interfaces, then no field
+members; if you use classes, then no multiple inheritance.
+
+\paragraph{Manual Type Refinement}
+We will introduce operations \texttt{with} and \texttt{clone}, which requires
+return type refinement in extensions. A \texttt{clone} method
+returns a copy of the current object. For example, interfaces \texttt{I} and its
+extension \texttt{I2}:
+\begin{lstlisting}
+interface I { I clone(); }
+interface I2 extends I { 
+  // inherit I clone() from super-interface I
+  // which should be refined to I2 clone();
+  I2 clone();
+}
+\end{lstlisting}
+ 
+Interface \texttt{I} contains a \texttt{clone()} method which returns a copy of
+current object (of type \texttt{I}). Interface \texttt{I2} is an extension of
+interface \texttt{I}, so inheriting the \texttt{clone()} method from
+\texttt{I}. Since the current interface is \texttt{I2}, now the return type of
+\texttt{clone()} \texttt{should} be refined to \texttt{I2}. However, interfaces
+in Java does not provide this kind of automatic refinement. In order to achieve
+the same effect, programmers have to manually override it by a new
+\texttt{clone()} method with return type \texttt{I2}.
+
 
 \subsection{A Running Example: \texttt{Point}}
 Suppose we want to create a point component that models the a point in space,
@@ -137,3 +190,16 @@ actually these is no code at all programmers have to write. The idea of using
 default methods inside interfaces was proposed in ~\cite{}. It enables us to do
 multiple inheritance, which otherwise is hard to do in Java-like languages that
 do not support multiple inheritance, easily.
+
+In summary, our approach solves the three problems of interfaces
+(Section~\ref{sec:intf_prob}):
+\begin{itemize}
+\item Instantiation Code: Our approach solves the instantiation problem by
+  providing \texttt{of} methods, mimicking the behavior of constructors.
+\item No Fields Inside Interfaces: In our approach, abstract methods without
+  arguments stands for fields. The return type of the methods are the types of
+  member fields. Getters and setters are also generated automatically.
+\item Manual Type Refinement: The annotation processor is designed to do this
+  type refinement automatically, for \texttt{with-} methods, \texttt{clone}
+  methods, etc.
+\end{itemize}
