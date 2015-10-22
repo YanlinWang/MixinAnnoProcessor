@@ -1,57 +1,5 @@
 \section{Formal Semantics}\label{sec:formal}
-\subsection{Grammar}
-
-\marco{Tentative Grammar ClassLessJava}
-
-\begin{figure}[h]
-\begin{grammar}
-\production{
-\e
-}{
-  \x\mid\MCall\e\m\es\mid\MCall{\C}\m\es\mid\MCall{\C\QM{.super}}\m\es\mid\obj
-  }{expressions}\\
-\production{
-\obj
-}{
-\QM{new}\ \C\oR\cR\oC\T_1\ \f_1 = e_1\QM;\ldots\T_k\ \f_k = e_k\QM;\
-\mh_1\oC\QM{return}\ \e_{k+1}\QM{;}\!\cC
-\ldots
-\mh_n\oC\QM{return}\ \e_{k+n}\QM{;}\!\cC
-\cC
-  }{object creation}\\
-\production{
-\metaVar{I}
-}{
- \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_k \oC\method_1\ldots\method_n\cC
-  }{interface declaration}\\
-\production{
-\method
-}{
- \QM{static}\ \mh\ \oC\QM{return}\ \e\QM{;}\!\cC
-\mid
-\QM{default}\ \mh\oC\QM{return}\ \e\QM{;}\cC
-\mid
-\mh\QM{;}
-  }{method declaration}\\
-\production{
-\mh
-}{
- \T_0\ \m\ \oR\T_1\ \x_1\ldots\T_n\ \x_n\cR
-  }{method header}\\
-\production{
-\ann
-}{
-  \mixinAnn|\emptyset
-  }{annotations}\\
-\end{grammar}
-\caption{Grammar of ClassLess Java}
-\label{Grammar}
-\end{figure}
-
-In Figure~\ref{Grammar} we show the syntax of ClassLess Java.
-
-To be compatible with java, the concrete syntax for an interface declaration with empty supertype list $\C_1\ldots\C_k$ would also omit the \Q@extends@ keyword.
-
+\marco{Old notes: new text is later}
 Yanlin and Haoyuan
 
 We need to show 2 things:
@@ -67,63 +15,108 @@ We need to show 2 things:
   \texttt{with(T v)}}
 
 
-\subsection{Typing Rules}
-\subsubsection{Expression Typing}
 
-\[
-\inferrule{}{\Gamma \vdash x \in \Gamma(x)} \quad \textsc{(T-Var)}
-\]
-
-\[
-\inferrule{\Gamma \vdash e_0 \in C_0 \\
-  \textsf{mtype}(m,C_0) = \overline{D} \to E \\
-  \Gamma \vdash \overline{e} \in \overline{C} \\
-  \overline{C} <: \overline{D} }
-{ \Gamma \vdash e_0.m(\overline{e}) \in E }
-\quad \textsc{(T-Invk)}
-\]
-
-\[
-\inferrule{\textsf{mtype}(m,C) = \overline{D} \to E \\
-\Gamma \vdash \overline{e} \in \overline{C} \\
-\overline{C} <: \overline{D} \\
-\textsf{mmodifier}(m,C) = \textbf{static} }
-{\Gamma \vdash C.m(\overline{e}) \in E}
-\quad \textsc{(T-StaticInvk)}
-\]
-%\marco{rule tInvk must check is not static?}
-\[
-\inferrule{\textsf{mtype}(m,C) = \overline{D} \to E \\
-\Gamma \vdash \overline{e} \in \overline{C} \\
-\overline{C} <: \overline{D} \\\\
-\textbf{this}:I \\  I <: C }
-{\Gamma \vdash C.\textbf{super}.m(\overline{e}) \in E}
-\quad \textsc{(T-SuperInvk)}
-\]
-
-\[
-\inferrule[(T-Obj)]{
-\forall i\in 1\ldots n\ \Gamma,\Gamma^{\mh_i}\vdash\e_i\in \_\subtype\C^{\mh_i}\\
-\forall\mh\in \mhs \mbox{ such that }
-\mBody(\m^\mh,\C)=\method;\mh\subtype\mh^\method\\
-\forall\m \mbox{ such that }
-\mBody(\m,\C)\in\{\mh\QM;,\conflicted\mh\QM;\} \exists \mh_i \in\mhs\mbox{ such that }\mh_i\subtype\mh\\
-\Gamma=\Gamma',\f_1{:}\T_1,\ldots,\f_k{:}\T_k,\,\QM{this}{:}\C\\
-\mhs=\mh_1\ldots\mh_n
+\begin{figure}[h]
+\begin{grammar}
+\production{
+\e
 }{
-\Gamma' \vdash\QM{new}\ \C\oR\cR\oC\T_1\ \f_1\QM;\ldots\T_k\ \f_k\QM;\
+  \x\mid\MCall\e\m\es\mid\MCall{\C}\m\es\mid\MCall{\C\QM{.super}}\m\es\mid\obj
+  }{expressions}\\
+\production{
+\obj
+}{
+\QM{new}\ \C\oR\cR\oC\fields\ 
+\mh_1\oC\QM{return}\ \e_1\QM{;}\!\cC
+\ldots
+\mh_n\oC\QM{return}\ \e_n\QM{;}\!\cC
+\cC
+  }{object creation}\\
+\production{\field}{\T\ \f \QM= \x\QM;}{field declaration}\\
+\production{
+\metaVar{I}
+}{
+ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_k \oC\method_1\ldots\method_n\cC
+  }{interface declaration}\\
+\production{
+\method
+}{
+ \QM{static}\ \mh\ \oC\QM{return}\ \e\QM{;}\!\cC
+\mid
+\QM{default}\ \mh\oC\QM{return}\ \e\QM{;}\cC
+\mid
+\mh\QM{;}\quad
+  }{method declaration}\\
+\production{
+\mh
+}{
+ \T_0\ \m\ \oR\T_1\ \x_1\ldots\T_n\ \x_n\cR
+  }{method header}\\
+\production{
+\ann
+}{
+  \mixinAnn|\emptyset
+  }{annotations}\\
+\production{\Gamma}{
+\x_1{:}\C_1\ldots\x_n{:}\C_n
+}{environment}
+\end{grammar}
+\caption{Grammar of ClassLess Java}
+\label{Grammar}
+\end{figure}
+
+${}_{}$\\
+\begin{figure}[h]
+$
+\!\!\!\!\!\!\!\!\!\!
+\begin{array}{l}
+\inferrule[(T-Invk)]{
+\forall i\in 0..n  \Gamma \vdash \e_i \in \_<:\C_i \\\\
+  \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
+%\textsf{mmodifier}(\m,\C_0) \neq \textbf{static} 
+ }{
+ \Gamma \vdash e_0.m(\overline{e}) \in \C }
+\quad
+\inferrule[(T-StaticInvk)]{
+\forall i\in 1..n  \Gamma \vdash \e_i\in \_<:\C_i \\\\
+\textsf{mtypeS}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
+%\textsf{mmodifier}(\m,\C_0) = \textbf{static} 
+}{
+\Gamma \vdash \C_0\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
+\quad
+\inferrule[(T-SuperInvk)]{
+\Gamma(\this) <: \C \\\\
+\forall i\in 1..n  \Gamma \vdash \e_i\in \_<:\C_i \\\\
+  \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
+%\textsf{mmodifier}(\m,\C_0) \neq \textbf{static} \\\\
+}{\Gamma \vdash \C_0\QM.\QM{super}\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
+
+\\[5ex]
+\inferrule[(T-Obj)]{
+\forall i\in 1..n\ 
+%\Gamma_i
+\Gamma,\f_1{:}\T_1,\ldots,\f_k{:}\T_k,\,\QM{this}{:}\C,\Gamma^{\mh_i}
+\vdash\e_i\in \_\subtype\C^{\mh_i}\\\\
+\forall i\in 1..n\ \mh_i\subtype\mBody(\m^{\mh_i},\C)\\\\
+\forall i\in 1..k\ \Gamma(\x)=\T_i\\\\
+\forall\m\mbox{ such that }
+\mBody(\m,\C)=\mh\QM; \exists i\in 1..n\ \m^{\mh_i}=\m
+%\forall i\in 1\ldots n\ \Gamma_i=\Gamma,\f_1{:}\T_1,\ldots,\f_k{:}\T_k,\,\QM{this}{:}\C,\Gamma^{\mh_i}
+}{
+\Gamma \vdash\QM{new}\ \C\oR\cR\oC\T_1\ \f_1\QM=\x_1\QM;\ldots\T_k\ \f_k\QM=\x_k\QM;\
 \mh_1\oC\QM{return}\ \e_1\QM{;}\!\cC
 \ldots
 \mh_n\oC\QM{return}\ \e_n\QM{;}\!\cC
 \cC
 \in\C
 }
-\]
-
-
-\subsubsection{Interface and method Typing}
-
-\[ \inferrule[(T-Intf)]{
+\quad
+\inferrule[(T-Var)]{
+\Gamma(\x)=\C
+}{
+\Gamma \vdash x \in\C}
+\\[5ex]
+ \inferrule[(T-Intf)]{
 IT(\C_0) = \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_n \oC\methods\cC\\\\
  \forall \QM{default}\ \mh\oC\QM{return}\ \e\QM;\cC \in \methods,
 \ \Gamma^{\mh},\,\QM{this}{:}\C\vdash\e\in \_\subtype\C^{\mh} \\\\
@@ -131,9 +124,192 @@ IT(\C_0) = \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_n \oC\methods\
  }{
 I \text{ OK}
 }
- \]
+\end{array}$
+\caption{Typing}
+\label{ET}
+\end{figure}
+\subsection{Grammar and typing rules}${}_{}$\\
+
+
+
+In Figure~\ref{Grammar} we show the syntax of ClassLess Java.%
+\footnote{To be compatible with java, the concrete syntax for an interface declaration with empty supertype list $\C_1\ldots\C_n$ would also omit the \Q@extends@ keyword.}
+
+We formalize a minimal version of Java 8, focusing on Interfaces, default methods and object creation literals.
+As you can see, we have no syntax for classes.
+Expressions are the conventional variable and method call$\x$ and$\e\QM.\m\QM(\es)$, then we have conventional static method call
+$\C\QM.\m\QM(\es)$; for simplicity we do not consider the degenerate case of calling a static method over the this receiver as it considered a bad/confusing programming practice.
+Next we have the more interesting super call $\C\QM{.super.}\m\QM(\es)$, whose semantic is to call the (non static) method $\m$ over the $\this$ receiver, but statically dispatching to the version of the method defined in the interface $\C$.
+Finally, we consider the object initialization expression from an interface $\C$, where (for simplicity) all the fields are initialized with a variable present in scope.
+Note how our language is exactly a subset of Java 8.
+We allows the only annotation ... \marco{later}
+We consider an globally present Interface Table (\metaVar{IT}) mapping from interface names $\C$ to interface declarations \metaVar{I}.
+
+The environment $\Gamma$ is a mapping from variables to types.
+As tradition, we allows functional notation for $\Gamma$.
+However, to help us defining auxiliary functions, 
+we also allows functional notation set of methods $\methods$, using the method name $\m$ as a key.
+That is, we define $\methods(\m)=\method$ iff there is a unique $\method\in\methods$ whose name is $\m$.
+For convenience, we define $\methods(\m)=\none$ otherwise;
+moreover $\m\in\dom(\methods)\ \miff\ \methods(\m)=\method$.
+
+ Typing statement $\Gamma \vdash \e\in\C$ reads ``in the
+environment $\Gamma$, expression $\e$ has type $\C$.'' 
+As a shortcut, we write $\Gamma \vdash \e\in\C<:\C'$
+instead of $\Gamma \vdash \e\in\C$ and $\C<:\C'$.
+ From the interface table, we can read off the subtype relation between interfaces. The subtype relation is given by the \textbf{extends} clauses in the interfaces. We omit the definition of the usual, traditional subtyping relation between interfaces.%
+\footnote{
+Notice how there are no classes, thus there is no subclassing.
+We believe that this approach may scratch an old itching point in the long struggle of subtyping versus subclassing:
+According to some authors, from a software engineering perspective, interfaces are just a kind of classes. Others consider more opportune to  consider interfaces are pure types. In this vision our language would have no subclassing. We do not know how to conciliate those two viewpoints and ClassLess Java design. We do not have Classes purely in the Java sense.
+}
+
+In Figure~\ref{ET} we show the typing rules.
+We use the following auxiliary notation:
+$\Gamma^\mh$ trivially extract the environment from a method header, collect the types and the names of the method parameters.
+$\m^\mh$ and $\C^\mh$ extracts the method name and the return type from a method header.
+$\mBody(\m,\C)$ return the full method declaration as seen by $\C$, that is the method $\m$ can be declared in $\C$ or inherited from another interface.
+$\mBody(\m,\C)$ will be formally defined later.
+$\textsf{mtype}(\m,\C)$ and 
+$\textsf{mtypeS}(\m,\C)$ return the type signature from a method (using $\mBody(\m,\C)$ internally).
+$\textsf{mtype}(\m,\C)$ is defined only for non static methods, while
+$\textsf{mtypeS}(\m,\C)$ only on static ones.
 
 We use $\dom(\C)$ to denote the set of methods that are defined for type $\C$, that is: $\m\in\dom(\C)\ \miff \ \mBody(\m,\C)=\method$.
+
+We discuss first the most interesting rules, that is
+(t-Obj) and  (t-Intf) \marco{to complete}
+\marco{if we have space we can discuss the other rules too, but is not mandatory}
+
+
+
+
+\subsection{Auxiliary Definitions}
+
+\begin{comment}
+\subsubsection{Auxiliary function: \textsf{mtype}}
+- \textsf{mtype(m, C)} : the signature of method m in C.
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
+  E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
+{ \textsf{mtype(m,T)} = \overline{D} \to E } \]
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
+  m \notin M}
+{ \textsf{mtype(m,T)} = \emptyset } \]
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C \text{ extends } C_1,...,C_k \{ \overline{M} \} \\
+  E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
+{ \textsf{mtype(m,T)} = \overline{D} \to E } \]
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
+  \overline{M} \} \\
+  m \notin M}
+{ \textsf{mtype(m,T)} = \bigcup \textsf{mtype}(m,\overline{D}) } \]
+\end{comment}
+
+
+\subsubsection{Auxiliary function:\mBody}
+Defining \mBody is not trivial, and requires quite a lot of attention to the specific model of Java Interfaces, and on how it differs w.r.t. Java Class model.
+$\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns. It can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
+
+The body of a method $\m$ contains all the relevant information with respect to that method, like the type of $\m$ as well as the modifier.
+We use internally a special modifier $\conflicted$ to denote the case of two methods with conflicting implementation.\\*
+
+$\mBody(\m,\C_0) = \override(\methods(\m), 
+\shadow(\m,\Aux{tops}(\Cs)))
+$\\*
+Where 
+$\metaVar{IT}(C_0) =
+\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs \oC\methods\cC$
+
+As you can see, we are delegating the work to three others auxiliary functions: $\tops(\Cs), \shadow(\m,\Cs) and \override(\method,\method')$
+${}_{}$\\*
+\marco{we need to discuss the names tops, shadow and override}
+
+\tops{} leave only the ``needed'' superinterfaces, that is, the ones that are not transitivelly reachable by following another superinterface chain. Formally:\\*
+$\tops(\Cs)=\{\ \C\in\Cs\ |\ \nexists \C'\in\Cs\setminus\C,\ \C' \subtype \C\ \}$
+
+\shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
+We do not model overloading, so it is an error if multiple versions are available with different parameter types. Formally:\\*
+\!\!\!\!$\begin{array}{ll}
+\shadow(\m,\C_1\ldots\C_n)=\shadow(\methods)
+& \mBody(\m,\C_i)\in\methods
+\\ & \mif\ \mBody(\m,\C)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}
+%\\ &\mor\ \mBody(\m,\C)=\mh\QM;
+\\
+
+\shadow()=\none\\
+\shadow(\method)=\method\\
+\shadow(\methods)=\Aux{mostSpecific}(\methods) &\mif\   \methods=\mh_1\QM;\ldots\mh_n\QM;\\
+\shadow(\methods)=\conflicted\mh\QM;&\mif\ \Aux{mostSpecific}(\methods))\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
+\Aux{mostSpecific}(\methods)=\method &
+\mif\ \method \in \methods, \forall \method' \in \methods :  \method \subtype
+                                       \method', \\
+\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR & \mif\ \T\subtype \T'\\
+
+\method \subtype
+\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}=
+\method\subtype\mh\QM;
+\\
+\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\subtype\method=
+\mh\QM;\subtype\method
+\end{array}$
+Discuss about override\\*
+\!\!\!\!$\begin{array}{ll}
+\override(\none,\none)=\none\\
+\override(\method,\none)=\method\\
+
+\override(\none,\method)=\method &\mif\ \method\neq \conflicted\ \mh\QM;\\
+\override(\method,\method')
+=
+\override(\method,\mh\QM;) & \method'\in\{\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \}\\
+\override(\method,\mh')
+=\method &\mif\ \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \}\\
+& \mh\subtype\mh'
+%\override(\_,\_)=\error & Otherwise
+%\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
+%\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
+%\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
+\end{array}$
+
+
+
+%The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
+%exmples to motivate our design
+%interface A{static String m(){return "A";}}
+%interface C extends A{
+%	default String dm(){
+%		  this.m();//wrong in java
+%		  A.m();
+%		  C.m();//wrong in java
+%		}
+%}
+%
+%
+%(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
+
+\yanlin{for \textbf{shadow} conflicted mh;, one missing case is when there are
+  two conflicting default methods with same signature?? }
+
+
+
+\begin{comment}
+%Now it is correct, but may be we do not need it?
+We abbreviate typing statements on
+sequences in a simple way, writing $\Gamma \vdash \overline{t}:\overline{C}$ as
+shorthand for $\Gamma \vdash t_1:C_1,..., \Gamma \vdash t_n:C_n$.
+\end{comment}
+
+\marco{The notation mtype get only non static methods, the notation mtypeS get only static ones}
+
+%\subsubsection{Interface and method Typing}
+
+
 
 
 
@@ -192,16 +368,6 @@ Interface $I$ type checks well, if:
 \item All methods inside interface $I$ are OK.
 \item All methods that $I$ is inheriting from super-interfaces are OK.
 \end{itemize}
-\end{comment}
-\subsubsection{Context}
-\[ \Gamma :: = \overline{x}:\overline{C} \]
-
-The environment $\Gamma$ is a mapping from variables to types, written
-$\overline{x}:\overline{C}$. Typing statement $\Gamma \vdash t:C$ reads ``in the
-environment $\Gamma$, term $t$ has type $C$.'' We abbreviate typing statements on
-sequences in a simple way, writing $\Gamma \vdash \overline{t}:\overline{C}$ as
-shorthand for $\Gamma \vdash t_1:C_1,..., \Gamma \vdash t_n:C_n$.
-\marco{Something is wrong, do you really want to repeat $\Gamma$? do we ever really need the bars here?}
 \subsubsection{Subtyping}
 
 \[ \inferrule{}{T <: T} \]
@@ -210,11 +376,8 @@ shorthand for $\Gamma \vdash t_1:C_1,..., \Gamma \vdash t_n:C_n$.
 
 \[ \inferrule{\emph{ann} \spc \textbf{interface} \spc C_0 \spc \textbf{extends} \spc C_1,...,C_k \{...\}}
 {C_0 <: C_1 \\ ... \\ C_0 <: C_k} \]
-
-\subsubsection{Interface Table}
-The Interface Table (IT) mapping from types \texttt{T} to interface declarations \texttt{L}. From the
-interface table, we can read off the subtype relation between interfaces. The
-subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
+\end{comment}
+%\subsubsection{Interface Table}
 
 \subsection{Translation Function}
 
@@ -224,100 +387,6 @@ subtype relation is given by the \textbf{extends} clauses in \texttt{IT}.
 \haoyuan{Not $\{ \methods; ... \}$, actually. Should avoid duplication.}
 
 \textbf{THEOREM. } If $I \longmapsto I'$ and $I$ OK, then $I'$ OK.
-
-\subsection{Auxiliary Definitions}
-
-\begin{comment}
-\subsubsection{Auxiliary function: \textsf{mtype}}
-- \textsf{mtype(m, C)} : the signature of method m in C.
-
-\[ \inferrule{
-  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
-  E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
-{ \textsf{mtype(m,T)} = \overline{D} \to E } \]
-
-\[ \inferrule{
-  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
-  m \notin M}
-{ \textsf{mtype(m,T)} = \emptyset } \]
-
-\[ \inferrule{
-  IT(T) = \text{\emph{ann} interface } C \text{ extends } C_1,...,C_k \{ \overline{M} \} \\
-  E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
-{ \textsf{mtype(m,T)} = \overline{D} \to E } \]
-
-\[ \inferrule{
-  IT(T) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
-  \overline{M} \} \\
-  m \notin M}
-{ \textsf{mtype(m,T)} = \bigcup \textsf{mtype}(m,\overline{D}) } \]
-\end{comment}
-
-\subsubsection{Functional notation}
-We allows functional notation for set of methods $\methods$, using the method name $\m$ as a key.
-That is, we define $\methods(\m)=\method$ iff there is a unique $\method\in\methods$ whose name is $\m$.
-For convenience, we define $\methods(\m)=\none$ otherwise;
-moreover $\m\in\dom(\methods)\ \miff\ \methods(\m)=\method$.
-\subsubsection{Auxiliary function:\mBody}
-
-$\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns. It can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
-
-The body of a method $\m$ contains all the relevant information with respect to that method, like the type of $\m$ as well as the modifier.
-We use internally a special modifier $\conflicted$ to denote the case of two methods with conflicting implementation.
-%
-%\[ \inferrule{
-%  IT(C) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
-%  m \notin M}
-%{ \textsf{mbody}(m,C) = \emptyset } \]
-%
-%\[ \inferrule{
-%  IT(C) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
-%  m \in M}
-%{ \textsf{mbody}(m,C) = m } \]
-%
-%\[ \inferrule{
-%  IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
-%  \overline{M} \} \\
-%  m \notin M
-%  }
-%{ \textsf{mbody}(m,C_0) = \textsf{fold}_\textsf{shadow}\cdot\textsf{map}_{\textsf{mbody,}m}\cdot\textsf{subset}(\overline{C}) } \]
-
-\[ \inferrule[(ReviewedRule)]{
-  IT(C_0) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
-  \methods \}
-%\\
- % \methods(\m)=\method
-%\\
-%\Aux{tops}(\overline{C})=\C_1\ldots\C_n
-  }
-{ \mBody(\m,\C_0) = \override(\methods(\m), %\shadow(\mBody(\m,C_1)\ldots\mBody(\m,C_n))
-\shadow(\m,\Aux{tops}(\Cs)))
-} \]
-\subsubsection{Auxiliary function: $\tops(\Cs), \shadow(\m,\Cs),\override(\method,\method')$}
-${}_{}$\\*
-\marco{we need to discuss the names tops, shadow and override}
-
-\tops{} leave only the ``needed'' superinterfaces, that is, the ones that are not transitivelly reachable by following another superinterface chain.
-
-\shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
-We do not model overloading, so it is an error if multiple versions are available with different parameter types.
-
-%The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
-%exmples to motivate our design
-%interface A{static String m(){return "A";}}
-%interface C extends A{
-%	default String dm(){
-%		  this.m();//wrong in java
-%		  A.m();
-%		  C.m();//wrong in java
-%		}
-%}
-%
-%
-%(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
-
-\yanlin{for \textbf{shadow} conflicted mh;, one missing case is when there are
-  two conflicting default methods with same signature?? }
 
 
 \begin{comment}
@@ -352,48 +421,6 @@ and it should be the one that ``overrides'' all the others in $\overline{meth}$.
 \end{figure}
 \end{comment}
 
-\begin{equation*}
-\begin{array}{ll}
-\tops(\Cs)=\{\ \C\in\Cs\ |\ \nexists \C'\in\Cs\setminus\C,\ \C' \subtype \C\ \}
-\\
-\shadow(\m,\C_1\ldots\C_n)=\shadow(\methods)
-& \mBody(\m,\C_i)\in\methods
-\\ & \mif\ \mBody(\m,\C)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}
-%\\ &\mor\ \mBody(\m,\C)=\mh\QM;
-\\
-
-\shadow()=\none\\
-\shadow(\method)=\method\\
-\shadow(\methods)=\Aux{mostSpecific}(\methods) &\mif\   \methods=\mh_1\QM;\ldots\mh_n\QM;\\
-\shadow(\methods)=\conflicted\mh\QM;&\mif\ \Aux{mostSpecific}(\methods))\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
-\Aux{mostSpecific}(\methods)=\method &
-\mif\ \method \in \methods, \forall \method' \in \methods :  \method \subtype
-                                       \method', \\
-\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR & \mif\ \T\subtype \T'\\
-
-\method \subtype
-\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}=
-\method\subtype\mh\QM;
-\\
-\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\subtype\method=
-\mh\QM;\subtype\method
-\\
-\override(\none,\none)=\none\\
-\override(\method,\none)=\method\\
-
-\override(\none,\method)=\method &\mif\ \method\neq \conflicted\ \mh\QM;\\
-\override(\method,\method')
-=
-\override(\method,\mh\QM;) & \method'\in\{\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \}\\
-\override(\method,\mh')
-=\method &\mif\ \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \}\\
-& \mh\subtype\mh'\\
-\override(\_,\_)=\error & Otherwise
-%\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
-%\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
-%\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
-\end{array}
-\end{equation*}
 
 %\text{\yanlin{shouldn't mostSpecific be: $\forall \method' \in \methods : \method \subtype
 %  \method'$ ?}}

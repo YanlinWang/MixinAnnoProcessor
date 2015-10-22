@@ -1,4 +1,8 @@
-\newenvironment{grammar}{$\begin{array}[t]{lcll}}{\end{array}$}
+\newenvironment{grammar}{
+$
+\!\!\!\!\!\!\!\!
+\begin{array}[t]{lcll}}{\end{array}$
+}
 \newcommand{\production}[3]{#1&{:}{:}=&#2 & \mbox{{\small{#3}}}}
 \newcommand{\productionMore}[2]{&{}&#1 & \mbox{{\small{#2}}}}
 %\newcommand{\terminale}[1]{{\text{\tt #1}}}
@@ -9,9 +13,9 @@
 \newcommand{\x}{\metaVar{x}}
 \newcommand{\e}{\metaVar{e}}
 \newcommand{\T}{\metaVar{T}}
-\newcommand{\xs}{\metaVar{xs}}
+\newcommand{\xs}{\overline\x}
 \newcommand{\m}{\metaVar{m}}
-\newcommand{\es}{\metaVar{es}}
+\newcommand{\es}{\overline\e}
 \newcommand{\C}{\metaVar{C}}
 \newcommand{\f}{\metaVar{f}}
 \newcommand{\MCall}[3]{#1\mbox{\Q@.@}#2\oR#3\cR}
@@ -28,6 +32,8 @@
 \newcommand{\this}{\mbox{\Q@this@\xspace}}
 \newcommand{\mixinAnn}{\mbox{\Q$@Mixin$\xspace}}
 \newcommand{\method}{\metaVar{meth}}
+\newcommand{\field}{\metaVar{field}}
+\newcommand{\fields}{\overline\field}
 \newcommand{\mh}{\metaVar{mh}}
 \newcommand{\obj}{\metaVar{obj}}
 

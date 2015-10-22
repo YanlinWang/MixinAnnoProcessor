@@ -37,4 +37,7 @@ interface A1 {  int m();}
 interface B2  {  int m();}
 interface B3 extends B2{   default int m() { return 1;}}
 interface D extends B3,A1 {}
+interface AA{ default int m(){return 1;}}
+interface BB{ default int m(){return 2;}}
+interface CC extends AA,BB{}
 
