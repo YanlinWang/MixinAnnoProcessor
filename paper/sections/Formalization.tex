@@ -236,21 +236,29 @@ $\tops(\Cs)=\{\ \C\in\Cs\ |\ \nexists \C'\in\Cs\setminus\C,\ \C' \subtype \C\ \}
 
 \shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
 We do not model overloading, so it is an error if multiple versions are available with different parameter types. Formally:\\*
-\!\!\!\!$\begin{array}{ll}
+\!\!\!\!$\begin{array}{l}
 \shadow(\m,\C_1\ldots\C_n)=\shadow(\methods)
-& \mBody(\m,\C_i)\in\methods
-\\ & \mif\ \mBody(\m,\C)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}
+\whereNote
+ \mwhere\ \mBody(\m,\C_i)\in\methods
+\ \mif\ \mBody(\m,\C_i)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}
 %\\ &\mor\ \mBody(\m,\C)=\mh\QM;
 \\
 
 \shadow()=\none\\
 \shadow(\method)=\method\\
-\shadow(\methods)=\Aux{mostSpecific}(\methods) &\mif\   \methods=\mh_1\QM;\ldots\mh_n\QM;\\
-\shadow(\methods)=\conflicted\mh\QM;&\mif\ \Aux{mostSpecific}(\methods))\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
-\Aux{mostSpecific}(\methods)=\method &
-\mif\ \method \in \methods, \forall \method' \in \methods :  \method \subtype
+\shadow(\methods)=\Aux{mostSpecific}(\methods) 
+\whereNote
+\mwhere\   \methods\mbox{ is of the form }\mh_1\QM;\ldots\mh_n\QM;\\
+\shadow(\methods)=\conflicted\mh\QM;
+\whereNote
+\mwhere\ \Aux{mostSpecific}(\methods))\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
+\Aux{mostSpecific}(\methods)=\method
+\whereNote
+\mwhere\ \method \in \methods\ \mand\ \forall \method' \in \methods :  \method \subtype
                                        \method', \\
-\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR & \mif\ \T\subtype \T'\\
+\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR
+\whereNote
+ \mwhere\ \T\subtype \T'\\
 
 \method \subtype
 \QM{default}\ \mh\mbox{\Q@\{return \_;\}@}=
@@ -259,18 +267,29 @@ We do not model overloading, so it is an error if multiple versions are availabl
 \QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\subtype\method=
 \mh\QM;\subtype\method
 \end{array}$
-Discuss about override\\*
+${}_{}$\\*
+Where $\Aux{mostSpecific}$ return the most specific method using return type specialization as introduced in Java ??
+We just check the subtype between method headers, so we discard information abut method implementation.\\*
+${}_{}$\\*
+The override function models how the implementation in an interface can override implementation in the superinterface; even in case of a conflict.
+Note how we use the special value $\none$, and how (forth case) overriding can solve a conflict.
+\\*
 \!\!\!\!$\begin{array}{ll}
 \override(\none,\none)=\none\\
 \override(\method,\none)=\method\\
 
-\override(\none,\method)=\method &\mif\ \method\neq \conflicted\ \mh\QM;\\
+\override(\none,\method)=\method 
+\whereNote
+\mwhere\ \method\mbox{ not of the form } \conflicted\ \mh\QM;\\
 \override(\method,\method')
 =
-\override(\method,\mh\QM;) & \method'\in\{\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \}\\
-\override(\method,\mh')
-=\method &\mif\ \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \}\\
-& \mh\subtype\mh'
+\method 
+\whereNote
+\mwhere\ \method'\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \}\\
+%\override(\method,\mh')
+%=\method 
+%\whereNote
+%\mif\ \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \}, \mh\subtype\mh'
 %\override(\_,\_)=\error & Otherwise
 %\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
 %\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
