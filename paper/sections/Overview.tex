@@ -1,58 +1,170 @@
 \section{Overview}\label{sec:ep}
-The single inheritance support for classes in Java prohibits doing multiple
-inheritance in Java. Instead, the support of multiple inheritance support for
-interfaces makes us to think the possibility of using interfaces only, throwing
-away classes. But immediately we will face the following three problems of using
-interfaces in Java.
 
-\subsection{Problems with Java Interfaces}\label{sec:intf_prob}
-\paragraph{Instantiation Code}. If we use interfaces, then we cannot
-avoid instantiation code. 
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=4in]{PegasusDetail.png}
+\caption{Pegasus Example.}\label{fig:pegasus}
+\end{figure}
+
+\subsection{A Running Example: Animals}
+Suppose we want to model an animal system as shown in Fig~\ref{fig:pegasus}. In
+order to model \texttt{Pegasus}, \emph{multiple inheritance} is clearly needed
+in this example. Therefore, in Java we use interfaces instead of classes. An
+\texttt{Animal} has a \texttt{point} field, indicating the current position of
+the animal. \texttt{Horse} and \texttt{Bird} are subtypes of \texttt{Animal},
+with methods \texttt{run()} and \texttt{fly()}, respectively. Note that
+\texttt{Bird} can fly, therefore refines the type of \texttt{point} from
+\texttt{Point2D} to \texttt{Point3D}. Pegasus (one of the best known creatures
+in Greek mythology) can not only \emph{run} but also \emph{fly}! This is the
+place where \emph{``multiple inheritance''} is needed, because \texttt{Pegasus}
+need to obtain \texttt{fly} and \texttt{run} functionality from both
+\texttt{Horse} and \texttt{Bird}.
+
+\subsubsection{Model field members and constructors}
+Firstly, to model \texttt{Point2D} that has x-coordinate and y-coordinate by an
+interface, we immediately run into the problem of expressing the fields
+\texttt{x} and \texttt{y}. Since in Java there is no way to define member fields
+inside interfaces, we propose to simulate fields by abstract methods inside
+interfaces. Method \texttt{withX, withY} creates a new instance of
+\texttt{Point2D} with updated field \texttt{x,y}, respectively.
+
+% Firstly, to model \texttt{Animal} by an interface, we immediately run into the
+% problem of expressing the field \texttt{point}. Since in Java there is no way to
+% define member fields inside interfaces, we propose to simulate fields by
+% abstract methods inside interfaces:
+
+\lstinputlisting[linerange=46-52]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT2D
+
+\paragraph{Instantiation}
+In Java, to implement an interface like \texttt{Point2D}, a typical and trivial
+approach that programmers usually do is creating a class extending the interface
+and providing implementation for all methods inside. For example, this is the
+implementation for interface \texttt{Point2D}:
+
 \begin{lstlisting}
-interface P {
-    default m() { ... }
+class Point2DImpl implements Point2D {
+    private int _x;
+    private int _y;
+    public Point2DImpl(int x, int y) {
+        this._x = x;
+        this._y = y;
+    }
+    public int x() {
+        return _x;
+    }
+    public int y() {
+        return _y;
+    }
+    public Point2D withX(int x) {
+        x(x);
+        return this;
+    }
+    public void x(int x) {
+        _x = x;
+    }
+    public void y(int y) {
+        _y = y;
+    }
+    public Point2D withY(int y) {
+        y(y);
+        return this;
+    }
 }
 \end{lstlisting}
-For example, even if interface \texttt{P} is complete (does not contain any
-un-implemented method), to instantiate it programmers still need to create a
-class \texttt{PImpl} that has a constructor for instantiation:
+
+\texttt{Point2DImpl} implements \texttt{Point2D} and provides a constructor with
+quite mechanical code. What's worse, the implementation in \texttt{Point2DImpl}
+may not be reused in a single inheritance language.
+
+\paragraph{Our Approach}
+Instead of writing a whole another class to provide the implementation for
+\texttt{Point2D}, we annotate on interface \texttt{Point2D} directly with
+\mixin. The \mixin annotation will generate a static method \texttt{of} inside
+the interface. The \texttt{of} method mimics the functionality of constructors,
+it takes arguments same as constructors and return objects similar to
+constructors. It makes use of Java anonymous classes and achieves the same
+implementation as \texttt{Point2DImpl}.
+
+With our approach, we provide a Java annotation \mixin to provide default
+implementations for various methods (e.g. getters, setters, with-methods, etc)
+and a mechanism to instantiate objects. \mixin annotation helps programmers to
+write less cumbersome code and instantiate interfaces in Java.
+
 \begin{lstlisting}
-class PImpl extends P {}
+  // inside interface Point2D
+  static Point of(int x, int y) {
+      return new Point() {
+          int _x = x;
+          int _y = y;
+          public int x() {
+            return _x;
+          }
+          public int y() {
+            return _y;
+          }
+          public Point2D withX(int x) {
+            x(x);
+            return this;
+          }
+          public void x(int x) {
+            _x = x;
+          }
+          public void y(int y) {
+            _y = y;
+          }
+          public Point2D withY(int y) {
+            y(y);
+            return this;
+          }
+    }
+  }
 \end{lstlisting}
 
-\paragraph{Prohibition of Field Members Inside Interfaces}
-Only methods (abstract, static or default) are allowed to appear in the
-definition of interfaces. The use of interfaces prohibits defining field members
-inside. This limitation of interfaces hinders the adoption of using interfaces
-only. Because the need of using field members almost \emph{always} exists. Hence
-it forces programmers to use classes, but this gives up the ability of multiple
-inheritance in Java. So the trade-off is: if you use interfaces, then no field
-members; if you use classes, then no multiple inheritance.
+%\lstinputlisting[linerange=15-27]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT_OF
 
-\paragraph{Manual Type Refinement}
-We will introduce operations \texttt{with} and \texttt{clone}, which requires
-return type refinement in extensions. A \texttt{clone} method
-returns a copy of the current object. For example, interfaces \texttt{I} and its
-extension \texttt{I2}:
-\begin{lstlisting}
-interface I { I clone(); }
-interface I2 extends I { 
-  // inherit I clone() from super-interface I
-  // which should be refined to I2 clone();
-  I2 clone();
-}
-\end{lstlisting}
- 
-Interface \texttt{I} contains a \texttt{clone()} method which returns a copy of
-current object (of type \texttt{I}). Interface \texttt{I2} is an extension of
-interface \texttt{I}, so inheriting the \texttt{clone()} method from
-\texttt{I}. Since the current interface is \texttt{I2}, now the return type of
-\texttt{clone()} \texttt{should} be refined to \texttt{I2}. However, interfaces
-in Java does not provide this kind of automatic refinement. In order to achieve
-the same effect, programmers have to manually override it by a new
-\texttt{clone()} method with return type \texttt{I2}.
+\subsubsection{Model concrete methods}
+Now we proceed to define \texttt{Animal} with \texttt{point} ``member
+field''. Again, we model this member field with getter and setter methods:
+\lstinputlisting[linerange=64-67]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=ANIMAL
+\lstinputlisting[linerange=71-76]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
 
+For interface \texttt{Horse}, concrete implementation of \texttt{run()} method
+need to be defined. Before Java 8, concrete methods (except for static methods)
+are not allowed to appear in interfaces as in classes. But Java 8 introduces
+\emph{default methods}, which allow for implementation insides interfaces. We
+are making use of default methods to implement \texttt{run()}.  Interface also
+\texttt{Horse} shows the usage and advantage of \emph{with} methods by method
+\texttt{run()}: method \texttt{withX} returns a new point object with field
+\texttt{x} updated by the argument to \texttt{withX}. Without these
+\texttt{with} methods, operations like \texttt{run()} would be much harder to
+define.
 
+\subsubsection{Type Refinement}
+\texttt{Bird} needs a 3D position, thus we define \texttt{Point3D} and
+\texttt{Bird} as follows:
+\lstinputlisting[linerange=56-60]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
+\lstinputlisting[linerange=80-92]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
+
+Interface \texttt{Point3D} extends \texttt{Point2D} with a new abstract method
+\texttt{int z()} (treated as a getter for member field \texttt{z}). Note that
+the return type of various methods (e.g. with- methods, getters) get refined
+either by covariant method overriding or automatically by our annotation
+processor. Besides \emph{with}, other methods (including \emph{clone},
+\emph{of}) also do type-refinements automatically.
+
+\subsubsection{Multiple Inheritance}
+The \emph{``multiple inheritance''} case appears at interface
+\texttt{Pegasus}. Pegasuses can not only \emph{run} but also \emph{fly}!
+Interface \texttt{Pegasus} obtains \texttt{fly} and \texttt{run} functionality
+through interface \texttt{Horse} and \texttt{Bird}. Using \mixin annotation,
+actually these is no code at all programmers have to write. The idea of using
+default methods inside interfaces was proposed in ~\cite{}. It enables us to do
+multiple inheritance, which otherwise is hard to do in Java-like languages that
+do not support multiple inheritance, easily.
+
+\lstinputlisting[linerange=96-97]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
+
+\begin{comment}
 \subsection{A Running Example: \texttt{Point}}
 Suppose we want to create a point component that models the a point in space,
 that has x-coordinate and y-coordinate. For example, if we create the
@@ -102,6 +214,7 @@ objects. \mixin annotation helps programmers to write less cumbersome code and
 instantiate interfaces in Java. 
 
 \lstinputlisting[linerange=15-27]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT_OF
+\end{comment}
 
 \subsection{What  \mixin Generates}
 Apart from generating code for \emph{getter} methods, the annotation processor
@@ -154,6 +267,7 @@ generated:
   \end{itemize}
 \end{itemize}
 
+\begin{comment}
 \subsection{More On \mixin}
 Besides the benefit of freeing programmers from writing boilerplate code, our
 \mixin annotation can also allow programs to mimic multiple inheritance in a
@@ -190,16 +304,4 @@ actually these is no code at all programmers have to write. The idea of using
 default methods inside interfaces was proposed in ~\cite{}. It enables us to do
 multiple inheritance, which otherwise is hard to do in Java-like languages that
 do not support multiple inheritance, easily.
-
-In summary, our approach solves the three problems of interfaces
-(Section~\ref{sec:intf_prob}):
-\begin{itemize}
-\item Instantiation Code: Our approach solves the instantiation problem by
-  providing \texttt{of} methods, mimicking the behavior of constructors.
-\item No Fields Inside Interfaces: In our approach, abstract methods without
-  arguments stands for fields. The return type of the methods are the types of
-  member fields. Getters and setters are also generated automatically.
-\item Manual Type Refinement: The annotation processor is designed to do this
-  type refinement automatically, for \texttt{with-} methods, \texttt{clone}
-  methods, etc.
-\end{itemize}
+\end{comment}
