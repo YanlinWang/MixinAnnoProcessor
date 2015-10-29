@@ -71,22 +71,22 @@ $
 \!\!\!\!\!\!\!\!\!\!
 \begin{array}{l}
 \inferrule[(T-Invk)]{
-\forall i\in 0..n  \Gamma \vdash \e_i \in \_<:\C_i \\\\
+\forall i\in 0..n\  \Gamma \vdash \e_i \in \_<:\C_i \\\\
   \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
 %\textsf{mmodifier}(\m,\C_0) \neq \textbf{static} 
  }{
- \Gamma \vdash e_0.m(\overline{e}) \in \C }
+ \Gamma \vdash \e_0\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C }
 \quad
 \inferrule[(T-StaticInvk)]{
-\forall i\in 1..n  \Gamma \vdash \e_i\in \_<:\C_i \\\\
+\forall i\in 1..n\  \Gamma \vdash \e_i\in \_<:\C_i \\\\
 \textsf{mtypeS}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
 %\textsf{mmodifier}(\m,\C_0) = \textbf{static} 
 }{
 \Gamma \vdash \C_0\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
 \quad
 \inferrule[(T-SuperInvk)]{
-\Gamma(\this) <: \C \\\\
-\forall i\in 1..n  \Gamma \vdash \e_i\in \_<:\C_i \\\\
+\Gamma(\this) <: \C_0 \\\\
+\forall i\in 1..n\ \Gamma \vdash \e_i\in \_<:\C_i \\\\
   \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
 %\textsf{mmodifier}(\m,\C_0) \neq \textbf{static} \\\\
 }{\Gamma \vdash \C_0\QM.\QM{super}\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
