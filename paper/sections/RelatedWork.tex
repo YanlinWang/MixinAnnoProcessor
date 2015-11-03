@@ -1,7 +1,46 @@
 \section{Related Work}\label{sec:related}
 
+Multiple Inheritance in Java
+
+default methods and the paper that we found. 
+traits programming in java 8.
+- proposals for extending Java with traits/multiple inheritance/...
+
+Multiple Inheritance
+
 - traits (original, variations, scala)
 - mixins (original, scala)
 - multiple inheritance
-- expression problem
 - ...
+
+ThisType/MyType/Extensibility
+
+We are using covariant-return types to simulate some uses 
+of ThisType/MyType. Only works on positive positions, whereas 
+MyType is more general, as it works on any positions. Nevertheless 
+our approach is still useful (for example for fluent interfaces). 
+
+- expression problem
+
+
+Type-Directed Translations/Syntactic Sugar
+
+- SugarJ
+
+We can model certain types of language extensions with annotations 
+only, but those extensions do not introduce new syntax: they 
+merely do automatic code generation. 
+
+- Meta-programming techniques? 
+
+Annotations/Code Generation/Lombok
+
+What is the difference between our work and existing annotations? 
+What is it that we can do that, those annotations cannot?
+
+Fluent Interfaces
+
+Talk about existing libraries that use fluent interfaces (do any of 
+those use any code generation to assist in the implementation?). 
+
+
