@@ -1,19 +1,38 @@
 \section{Related Work}\label{sec:related}
+In this section we discuss related work and comparison to Classless Java.
 
-Multiple Inheritance in Java
+\subsection{Multiple Inheritance in Java}
+Since Java 8 default methods are introduced, which enables concrete method
+implementation to be defined (via the \textbf{default} keyword) inside
+interface. Since in Java supports extension on multiple interfaces (instead of
+classes), the introduction of default methods opens the gate of doing multiple
+inheritance in Java by using interfaces. Details on achieving multiple
+inheritance by mimicking trait programing through interfaces are summarized by
+Bono.et. al.~\cite{bono14}. There is also formalization proposed by
+Goetz and Field~\cite{goetz12fdefenders} to formalize defender (default) methods
+in Java. However this formalization is limited since they only model exactly one
+method inside classes/interfaces, where in our formalization multiple methods
+may be defined.
 
-default methods and the paper that we found. 
-traits programming in java 8.
-- proposals for extending Java with traits/multiple inheritance/...
+There are proposals for extending Java with traits. For example, FeatherTrait
+Java (FTJ)~\cite{Liquori08ftj} by Liquori et al. extends the calculus of
+Featherweight Java (FJ)~\cite{Igarashi01FJ} with statically-typed traits, adding
+trait-based inheritance in Java. \yanlin{Drawbacks to be added...}
 
-Multiple Inheritance
+\paragraph{Multiple Inheritance}
+Traits~\cite{} and mixins~\cite{} provides novel models of new programming
+architecture in object oriented programming paradim. As shown in
+section~\ref{sec:comparison}, although they solved some multiple inheritance
+problems, they are extremely restricting expressiveness.
+
 
 - traits (original, variations, scala)
 - mixins (original, scala)
+- c++ solution : virtual inheritance
 - multiple inheritance
 - ...
 
-ThisType/MyType/Extensibility
+\paragraph{ThisType/MyType/Extensibility}
 
 We are using covariant-return types to simulate some uses 
 of ThisType/MyType. Only works on positive positions, whereas 
@@ -23,7 +42,7 @@ our approach is still useful (for example for fluent interfaces).
 - expression problem
 
 
-Type-Directed Translations/Syntactic Sugar
+\paragraph{Type-Directed Translations/Syntactic Sugar}
 
 - SugarJ
 
@@ -31,14 +50,15 @@ We can model certain types of language extensions with annotations
 only, but those extensions do not introduce new syntax: they 
 merely do automatic code generation. 
 
-- Meta-programming techniques? 
+\paragraph{Meta-programming techniques}
+- MetaFJig*
 
 Annotations/Code Generation/Lombok
 
 What is the difference between our work and existing annotations? 
 What is it that we can do that, those annotations cannot?
 
-Fluent Interfaces
+\paragraph{Fluent Interfaces}
 
 Talk about existing libraries that use fluent interfaces (do any of 
 those use any code generation to assist in the implementation?). 
