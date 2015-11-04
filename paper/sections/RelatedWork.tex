@@ -64,31 +64,29 @@ causing no ambiguity in cases such as diamond problem. The drawback of this
 elegant design is limited expressiveness. 
 
 \paragraph{ThisType/MyType/Extensibility}
-\emph{This} is a polymorphic type variable.  Typical Type Systems
-forClass-Based Object-Oriented PLs. Class names as types.  Inheritance as
-subtyping Resulting in difficulty in reusing classes with recursive interfaces
-by inheritance Standard (non)solution: downcasts Self types (often called MyType
-[Bruce et al.])  OCaml
+Typical object-oriented programming languages (e.g. Java) use class names as
+types and inheritance as subtyping relations. This gives difficulty when
+extending classes/interfaces with recursive types. Problems such as binary
+methods, return type refinement, etc. emerge and hinders software extensibility
+greatly.
 
-Does our approach support binary methods?
+\emph{MyType}~\cite{bruce1994paradigmatic} was proposed by Bruce and Foster,
+which represents the type of \textbf{this} and changes its meaning along with
+inheritance. The addition of MyType to a language will allow easy definition of
+binary methods, methods with recursive types (i.e., the same type of the
+receiver appears in the argument or return positions of methods), etc. MyType
+greatly enhances the expressiveness and extensibility of object-oriented
+programming languages. 
 
-
-
-
-
-We are using covariant-return types to simulate some uses 
-of ThisType/MyType. Only works on positive positions, whereas 
-MyType is more general, as it works on any positions. Nevertheless 
-our approach is still useful (for example for fluent interfaces). 
-
-- expression problem
-
-
-
+In our approach, we are using covariant-return types to simulate some uses of
+MyType. But our approach only works on method positive positions, whereas MyType
+is more general, as it works on any positions. Nevertheless our approach is
+still useful for modeling fluent interfaces and solving expression
+problems,etc. 
 
 \paragraph{Type-Directed Translations/Syntactic Sugar}
 
-- SugarJ
+- SugarJ~\cite{erdweg11sugarj}
 
 We can model certain types of language extensions with annotations 
 only, but those extensions do not introduce new syntax: they 
