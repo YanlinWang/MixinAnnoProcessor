@@ -14,25 +14,67 @@ in Java. However this formalization is limited since they only model exactly one
 method inside classes/interfaces, where in our formalization multiple methods
 may be defined.
 
+\yanlin{need to discuss: whether the comments for FTJ is fair.}
 There are proposals for extending Java with traits. For example, FeatherTrait
 Java (FTJ)~\cite{Liquori08ftj} by Liquori et al. extends the calculus of
 Featherweight Java (FJ)~\cite{Igarashi01FJ} with statically-typed traits, adding
-trait-based inheritance in Java. \yanlin{Drawbacks to be added...}
+trait-based inheritance in Java. However, language extensions (including FTJ)
+have a natural drawback: the programmer has to learn new syntax. In contrast,
+our approach is completely compatible with the current Java language, so that
+programmers don't need to pay any learning cost to adapt to this new classless
+programming pattern. Another drawback which is particular for FTJ is that FTJ
+doesn't have type for traits, hence the correctness check of trait is done when
+type-checking classes. This choice makes the design of FTJ simpler but lost
+typechecking efficiency (one trait will be potentially checked multiple times if
+it is used in multiple classes).
 
-\paragraph{Multiple Inheritance}
-Traits~\cite{} and mixins~\cite{} provides novel models of new programming
-architecture in object oriented programming paradim. As shown in
+\subsection{Multiple Inheritance in General}
+Multiple inheritance is a great feature to have in a programming language, but
+it is difficult to model and implement. These difficulties include the famous
+diamond (fork-join) problem, conflicting methods, yo-yo problem, etc. In order
+to model multiple inheritance, lots of models have been proposed in the past few
+years, including mixins~\cite{bracha90mixin} and traits~\cite{scharli03traits}.
+Both traits and mixins provide novel models of new programming architecture in
+object oriented programming paradigm. 
+
+1) Mixins model named components that can be applied to various classes as
+reusable functionality units. However, the well-known limitation of mixins is
+that they suffer from linearization constraints, which hinders the
+expressiveness of mixins and the ability of resolving conflicts.  As shown in
 section~\ref{sec:comparison}, although they solved some multiple inheritance
-problems, they are extremely restricting expressiveness.
+problems, they are extremely restricting expressiveness. 
 
+2) Traits are a novel model to differentiate two functionalities out of classes:
+units of reusable components and object factories. In trait models, traits are
+responsible for units of reusable components, which contain pure methods as
+reusable functionalities; whereas classes act as object factories, which
+requires various functionalities from multiple traits. However drawbacks of
+traits are obvious: traits do not allow state; traits can't be instantiated
+directly.
 
-- traits (original, variations, scala)
-- mixins (original, scala)
-- c++ solution : virtual inheritance
-- multiple inheritance
-- ...
+3) C++ and Scala also try to provide solutions to multiple inheritance, but both
+suffer from object initialization problems. Virtual inheritance in C++ provides
+another solution to multiple inheritance (especially the diamond problem by
+keeping only one copy of the base class)~\cite{ellis1990annotated}, however
+suffers from object initialization problem as pointed out by Malayeri et
+al.~\cite{malayeri2009cz}. It bypasses all constructor calls to virtual
+superclasses, which would potentially cause serious semantic error. Scala
+solution (traits) avoids this problem by disallowing constructor parameters,
+causing no ambiguity in cases such as diamond problem. The drawback of this
+elegant design is limited expressiveness. 
 
 \paragraph{ThisType/MyType/Extensibility}
+\emph{This} is a polymorphic type variable.  Typical Type Systems
+forClass-Based Object-Oriented PLs. Class names as types.  Inheritance as
+subtyping Resulting in difficulty in reusing classes with recursive interfaces
+by inheritance Standard (non)solution: downcasts Self types (often called MyType
+[Bruce et al.])  OCaml
+
+Does our approach support binary methods?
+
+
+
+
 
 We are using covariant-return types to simulate some uses 
 of ThisType/MyType. Only works on positive positions, whereas 
@@ -40,6 +82,8 @@ MyType is more general, as it works on any positions. Nevertheless
 our approach is still useful (for example for fluent interfaces). 
 
 - expression problem
+
+
 
 
 \paragraph{Type-Directed Translations/Syntactic Sugar}
