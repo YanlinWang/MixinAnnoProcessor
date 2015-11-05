@@ -13,24 +13,24 @@ We need to show 2 things:
 
 \bruno{Some notes for discussion regarding formalization:
 \begin{itemize}
-\item Syntax and Rules: 
-We can make it more compact and consistent by use overline 
+\item Syntax and Rules:
+We can make it more compact and consistent by use overline
 notation more, instead of \ldots.
-\item Order of premisses: It may be worthwhile to swap the order of 
+\item Order of premisses: It may be worthwhile to swap the order of
 some premisses, so that it follows the order of the explanations.
-\item T-Invk: I think we need to type-check $e_0$ separately. Otherwise 
+\item T-Invk: I think we need to type-check $e_0$ separately. Otherwise
 $C_0$ shows up magically.
-\item T-Obj: small fixes on 3rd line. Suggestion, create two 
+\item T-Obj: small fixes on 3rd line. Suggestion, create two
 auxiliary functions: $sigvalid(C,\overline{mh})$ and $alldefined(C,\overline{mh})$
 \item T-INTF: $C_0$ is $I$. Type of this was $C$, modified it to $C_0$.
 In the last line, should it be $dom(\overline{meth})$ or just $\overline{meth}$?
 
-\item tops and shadow: tops seems redundant; 
-we use tops to collect classes, so just that in the next step we iterate 
-over those classes to collect methods that satisfy some property. 
+\item tops and shadow: tops seems redundant;
+we use tops to collect classes, so just that in the next step we iterate
+over those classes to collect methods that satisfy some property.
 I think we can merge those 2 steps.
 
-\item I have trouble following the definition of shadow; I think there 
+\item I have trouble following the definition of shadow; I think there
 are errors there.
 
 \end{itemize}
@@ -51,7 +51,7 @@ are errors there.
 \production{
 \obj
 }{
-\QM{new}\ \C\oR\cR\oC\fields\ 
+\QM{new}\ \C\oR\cR\oC\fields\
 \mh_1\oC\QM{return}\ \e_1\QM{;}\!\cC
 \ldots
 \mh_n\oC\QM{return}\ \e_n\QM{;}\!\cC
@@ -98,14 +98,14 @@ $
 \inferrule[(T-Invk)]{
 \forall i\in 0..n\  \Gamma \vdash \e_i \in \_<:\C_i \\\\
   \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
-%\textsf{mmodifier}(\m,\C_0) \neq \textbf{static} 
+%\textsf{mmodifier}(\m,\C_0) \neq \textbf{static}
  }{
  \Gamma \vdash \e_0\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C }
 \quad
 \inferrule[(T-StaticInvk)]{
 \forall i\in 1..n\  \Gamma \vdash \e_i\in \_<:\C_i \\\\
 \textsf{mtypeS}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
-%\textsf{mmodifier}(\m,\C_0) = \textbf{static} 
+%\textsf{mmodifier}(\m,\C_0) = \textbf{static}
 }{
 \Gamma \vdash \C_0\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
 \quad
@@ -118,7 +118,7 @@ $
 
 \\[5ex]
 \inferrule[(T-Obj)]{
-\forall i\in 1..n\ 
+\forall i\in 1..n\
 %\Gamma_i
 \Gamma,\f_1{:}\T_1,\ldots,\f_k{:}\T_k,\,\QM{this}{:}\C,\Gamma^{\mh_i}
 \vdash\e_i\in \_\subtype\C^{\mh_i}\\\\
@@ -172,14 +172,14 @@ We consider an globally present Interface Table (\metaVar{IT}) mapping from inte
 
 The environment $\Gamma$ is a mapping from variables to types.
 As tradition, we allows functional notation for $\Gamma$.
-However, to help us defining auxiliary functions, 
+However, to help us defining auxiliary functions,
 we also allows functional notation set of methods $\methods$, using the method name $\m$ as a key.
 That is, we define $\methods(\m)=\method$ iff there is a unique $\method\in\methods$ whose name is $\m$.
 For convenience, we define $\methods(\m)=\none$ otherwise;
 moreover $\m\in\dom(\methods)\ \miff\ \methods(\m)=\method$.
 
  Typing statement $\Gamma \vdash \e\in\C$ reads ``in the
-environment $\Gamma$, expression $\e$ has type $\C$.'' 
+environment $\Gamma$, expression $\e$ has type $\C$.''
 As a shortcut, we write $\Gamma \vdash \e\in\C<:\C'$
 instead of $\Gamma \vdash \e\in\C$ and $\C<:\C'$.
  From the interface table, we can read off the subtype relation between interfaces. The subtype relation is given by the \textbf{extends} clauses in the interfaces. We omit the definition of the usual, traditional subtyping relation between interfaces.%
@@ -195,7 +195,7 @@ $\Gamma^\mh$ trivially extract the environment from a method header, collect the
 $\m^\mh$ and $\C^\mh$ extracts the method name and the return type from a method header.
 $\mBody(\m,\C)$ return the full method declaration as seen by $\C$, that is the method $\m$ can be declared in $\C$ or inherited from another interface.
 $\mBody(\m,\C)$ will be formally defined later.
-$\textsf{mtype}(\m,\C)$ and 
+$\textsf{mtype}(\m,\C)$ and
 $\textsf{mtypeS}(\m,\C)$ return the type signature from a method (using $\mBody(\m,\C)$ internally).
 $\textsf{mtype}(\m,\C)$ is defined only for non static methods, while
 $\textsf{mtypeS}(\m,\C)$ only on static ones.
@@ -245,10 +245,10 @@ $\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns.
 The body of a method $\m$ contains all the relevant information with respect to that method, like the type of $\m$ as well as the modifier.
 We use internally a special modifier $\conflicted$ to denote the case of two methods with conflicting implementation.\\*
 
-$\mBody(\m,\C_0) = \override(\methods(\m), 
+$\mBody(\m,\C_0) = \override(\methods(\m),
 \shadow(\m,\Aux{tops}(\Cs)))
 $\\*
-Where 
+Where
 $\metaVar{IT}(C_0) =
 \ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs \oC\methods\cC$
 
@@ -271,7 +271,7 @@ We do not model overloading, so it is an error if multiple versions are availabl
 
 \shadow()=\none\\
 \shadow(\method)=\method\\
-\shadow(\methods)=\Aux{mostSpecific}(\methods) 
+\shadow(\methods)=\Aux{mostSpecific}(\methods)
 \whereNote
 \mwhere\   \methods\mbox{ is of the form }\mh_1\QM;\ldots\mh_n\QM;\\
 \shadow(\methods)=\conflicted\mh\QM;
@@ -303,18 +303,18 @@ Note how we use the special value $\none$, and how (forth case) overriding can s
 \override(\none,\none)=\none\\
 \override(\method,\none)=\method\\
 
-\override(\none,\method)=\method 
+\override(\none,\method)=\method
 \whereNote
 \mwhere\ \method\mbox{ not of the form } \conflicted\ \mh\QM;\\
 \override(\method,\method')
 =
-\method 
+\method
 \whereNote
 \mwhere\ \method'\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
 \method\subtype\method'
 \\
 %\override(\method,\mh')
-%=\method 
+%=\method
 %\whereNote
 %\mif\ \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \}, \mh\subtype\mh'
 %\override(\_,\_)=\error & Otherwise
@@ -324,6 +324,11 @@ Note how we use the special value $\none$, and how (forth case) overriding can s
 \end{array}$
 
 
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=5in]{table.png}
+\caption{Table.}\label{table_png}
+\end{figure}
 
 %The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
 %exmples to motivate our design
@@ -425,12 +430,23 @@ Interface $I$ type checks well, if:
 \end{comment}
 %\subsubsection{Interface Table}
 
+
 \subsection{Translation Function}
 
-\[ [\![\mixinAnn\ \QM{interface}\ C_0\ \QM{extends}\ \Cs \oC \methods \cC ]\!] = \]
-\[ \emptyset\ \QM{interface}\ C_0\ \QM{extends}\ \Cs \oC \methods;\ \ofMethod(C_0);\ \otherMethod(C_0) \cC \]
-
-\haoyuan{Not $\{ \methods; ... \}$, actually. Should avoid duplication.}
+\begin{equation*}
+\begin{array}{l}
+[\![\mixinAnn\ \QM{interface}\ C_0\ \QM{extends}\ \Cs \oC \methods \cC ]\!] \\
+\textit{cond 1. }\overline{T\ m\oR\cR\QM;} = \resolve(C_0) \\
+\textit{cond 2. }p_i = \QM{true}\ \mif\ \mBody(\QM{with}m_i, C_0)\ \isWith \\
+\textit{cond 3. }q = \QM{true}\ \mif\ \mBody(\clone, C_0)\ \isClone
+\end{array}\ =\
+\begin{array}{l}
+\emptyset\ \QM{interface}\ C_0\ \QM{extends}\ \Cs\ \oC \\
+\tab\methods \\
+\tab\bigcup\ofMethod(\overline{T\ m}, \overline{p}, q, C_0) \\
+\tab\bigcup\otherMethod(\overline{T\ m}, \overline{p}, q, C_0)\ \cC
+\end{array}
+\end{equation*}
 
 \textbf{THEOREM. } If $I \longmapsto I'$ and $I$ OK, then $I'$ OK.
 
@@ -459,14 +475,7 @@ even if there are conflicts in $\overline{meth}$.
 \[\textsf{mostSpecific}(\overline{meth})\]
 and it should be the one that ``overrides'' all the others in $\overline{meth}$. It means we should not only deal with the return types of methods, but also look into the subtyping relation of interfaces. But for abstract methods, only return types are taken into consideration.
 }
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=5in]{table.png}
-\caption{Table.}\label{table_png}
-\end{figure}
 \end{comment}
-
 
 %\text{\yanlin{shouldn't mostSpecific be: $\forall \method' \in \methods : \method \subtype
 %  \method'$ ?}}
@@ -505,37 +514,48 @@ and it should be the one that ``overrides'' all the others in $\overline{meth}$.
 %\end{array}
 %\end{equation*}
 
-\subsubsection{Auxiliary function: $\ofMethod(C_0)$, $\otherMethod(C_0)$}
+\subsubsection{Auxiliary function: $\ofMethod$, $\otherMethod$}
 
-\begin{equation*}
-\begin{array}{ll}
-\ofMethod(C_0) = \QM{static}\ C_0\ \QM{of} \oR T_1\ m_1\QM,\ldots T_k\ m_k\cR\ \QM{\{} &  \\
-\ \ \ \ \QM{return new}\ C_0 \oR\cR\ \QM{\{}  & \mif\ \resolve(C_0) = \methods \\
-\ \ \ \ \ \ \ \ T_1\ \_m_1 = m_1\QM;\ldots T_k\ \_m_k = m_k\QM; & \forall \method_i \in \methods, \method_i = T_i\ m_i\oR\cR\QM; \\
-\ \ \ \ \ \ \ \ T_i\ m_i\oR\cR\ \QM{\{return}\ \_m_i\QM{;\}}\ \ldots & T_i\ m_i\oR\cR \text{ included for all } i \\
-\ \ \ \ \ \ \ \ C_0\ \QM{with}m_i\oR T_i\ x_i\cR\ \QM{\{} & C_0\ \QM{with}m_i\oR T_i\ x_i\cR \text{ included if }\with(\method_i, C_0) \text{ defined} \\
-\ \ \ \ \ \ \ \ \ \ \ \ \QM{return this.of}\oR m_1\oR\cR\QM,\ldots x_i\QM,\ldots m_k\oR\cR\cR\QM{;} & \\
-\ \ \ \ \ \ \ \ \QM{\}}\ \ldots & \\
-\ \ \ \ \ \ \ \ C_0\ \QM{clone}\oR\cR\ \QM{\{} & C_0\ \QM{clone}\oR\cR \text{ included if }\clone(C_0) \text{ defined} \\
-\ \ \ \ \ \ \ \ \ \ \ \ \QM{return this.of}\oR m_1\oR\cR\QM,\ldots m_k\oR\cR \cR\QM; & \\
-\ \ \ \ \ \ \ \ \QM{\}} & \\
-\ \ \ \ \QM{\};} & \\
-\QM{\}} & \\
-\otherMethod(C_0) = \overline{\with(\method, C_0)}; \clone(C_0) \hspace{0.1in} & \mif\ \textsf{resolve}(C_0) = \methods \\
-\resolve(C_0) = \{\mBody(m, C_0)\ |\ \mBody(m, C_0)\ \isField\} & \forall m\in\dom(C_0), \text{one case is satisfied:} \\
-& (1)\ \mBody(m, C_0)\ \isField \\
-& (2)\ \mBody(m, C_0)\ \isWith \\
-& (3)\ \mBody(m, C_0)\ \isClone \\
-& (4)\ \mBody(m, C_0)\ \isDefault \\
-\mBody(m, C_0)\ \isField & \mif\ \mBody(m, C_0) = T\ m\oR\cR\QM;\ m\ne\QM{clone} \\
-\mBody(m, C_0)\ \isWith & \mif\ \mh^{\mBody(m, C_0)} = T'\ \QM{with}m' \oR T\ x\cR, C_0 <: T' \\
-& \mand\ \mBody(m', C_0) = T\ m'\oR\cR\QM;\ m'\ne\QM{clone} \\
-\mBody(m, C_0)\ \isClone & \mif\ \mh^{\mBody(m, C_0)} = T\ \QM{clone}\oR\cR, C_0 <: T \\
-\mBody(m, C_0)\ \isDefault & \mif\ \mBody(m, C_0) = \QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \\
-\with(\method, C_0) = C_0\ \QM{with}m\oR T\ x\cR\QM; & \mif\ \method = T\ m\oR\cR\QM;\ \mBody(\QM{with}m, C_0)\ \isWith \\
-\clone(C_0) = C_0\ \QM{clone}\oR\cR\QM; & \mif\ \mBody(\clone, C_0)\ \isClone \\
-\end{array}
-\end{equation*}
+~\\*
+
+\noindent$\begin{array}{l}
+\resolve(C_0) = \{\mBody(m, C_0)\ |\ \mBody(m, C_0)\ \isField\}
+\whereNote
+ \mwhere\ \forall m\in\dom(C_0), \text{one case is satisfied:} \\
+ \tab\tab(1)\ \mBody(m, C_0)\ \isField \\
+ \tab\tab(2)\ \mBody(m, C_0)\ \isWith \\
+ \tab\tab(3)\ \mBody(m, C_0)\ \isClone \\
+ \tab\tab(4)\ \mBody(m, C_0)\ \isDefault \\
+\mBody(m, C_0)\ \isField
+\whereNote
+ \mwhere\ \mBody(m, C_0) = T\ m\oR\cR\QM;\ m\ne\QM{clone} \\
+\mBody(m, C_0)\ \isWith
+\whereNote
+ \mwhere\ \mh^{\mBody(m, C_0)} = T'\ \QM{with}m' \oR T\ x\cR, C_0 <: T' \\
+ \quad\quad\mand\ \mBody(m', C_0) = T\ m'\oR\cR\QM;\ m'\ne\QM{clone} \\
+\mBody(m, C_0)\ \isClone
+\whereNote
+ \mwhere\ \mh^{\mBody(m, C_0)} = T\ \QM{clone}\oR\cR, C_0 <: T \\
+\mBody(m, C_0)\ \isDefault
+\whereNote
+ \mwhere\ \mBody(m, C_0) = \QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \\
+\ofMethod(\overline{T\ m}, \overline{p}, q, C_0) = \QM{static}\ C_0\ \QM{of} \oR T_1\ m_1\QM,\ldots T_k\ m_k\cR\
+\QM{\{ //}\ \overline{T\ m}\ \text{has}\ k\ \text{elements} \\
+\tab\QM{return new}\ C_0 \oR\cR\ \QM{\{} \\
+\tab\tab T_1\ \_m_1 = m_1\QM;\ldots T_k\ \_m_k = m_k\QM; \\
+\tab\tab T_i\ m_i\oR\cR\ \QM{\{return}\ \_m_i\QM{;\}}\ \ldots \QM{ //}\ \text{for}\ i = 1,2,\ldots,k\\
+\tab\tab C_0\ \QM{with}m_i\oR T_i\ x_i\cR\ \QM{\{ //}\ \text{if }p_i = \QM{true} \\
+\tab\tab\tab\QM{return this.of}\oR m_1\oR\cR\QM,\ldots x_i\QM,\ldots m_k\oR\cR\cR\QM{;} \\
+\tab\tab\QM{\}}\ \ldots \\
+\tab\tab C_0\ \QM{clone}\oR\cR\ \QM{\{ //}\ \text{if }q = \QM{true} \\
+\tab\tab\tab\QM{return this.of}\oR m_1\oR\cR\QM,\ldots m_k\oR\cR \cR\QM; \\
+\tab\tab\QM{\}} \\
+\tab\QM{\};} \\
+\QM{\}} \\
+\otherMethod(\overline{T\ m}, \overline{p}, q, C_0) = \\
+\tab C_0\ \QM{with}m_i\oR T_i\ x_i\cR\QM;\ \ldots\ \QM{//}\ \text{if }p_i = \QM{true} \\
+\tab C_0\ \QM{clone}\oR\cR\QM;\ \QM{//}\ \text{if }q = \QM{true}
+\end{array}$
 
 \subsubsection{Derived notations}
 
