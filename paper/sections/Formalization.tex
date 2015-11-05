@@ -59,7 +59,7 @@ are errors there.
   }{object creation}\\
 \production{\field}{\T\ \f \QM= \x\QM;}{field declaration}\\
 \production{
-\metaVar{I}
+\II
 }{
  \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_k \oC\method_1\ldots\method_n\cC
   }{interface declaration}\\
@@ -426,25 +426,26 @@ Interface $I$ type checks well, if:
 %\subsubsection{Interface Table}
 
 
+
+
+
+
+
+
 \subsection{Translation Function}
 
-\begin{equation*}
-[\![\mixinAnn\ \QM{interface}\ C_0\ \QM{extends}\ \Cs \oC \methods \cC ]\!] \ =\
-\begin{array}{l}
-\emptyset\ \QM{interface}\ C_0\ \QM{extends}\ \Cs\ \oC \\
-\tab\methods \\
-\tab\bigcup\ofMethod(\overline{T\ m}, \overline{p}, q, C_0) \\
-\tab\bigcup\otherMethod(\overline{T\ m}, \overline{p}, q, C_0)\ \cC
-\end{array}
-\end{equation*}
-\mwhere \[ \begin{array}{l}
-\textit{cond 1. }\valid(C_0) = \QM{true} \\
-\textit{cond 2. }\overline{T\ m\oR\cR\QM;} = \fieldsFunc(C_0) \\
-\textit{cond 3. }p_i = \isWith(\mh^{\mBody(\QM{with#}m_i, C_0)}, C_0) \\
-\textit{cond 4. }q = \isClone(\mh^{\mBody(\clone, C_0)}, C_0)
-\end{array} \]
+$[\![\mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs \oC \methods \cC ]\!] =$\\*
+${}_{}$\quad$\emptyset\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC 
+\methods\ 
+\ofMethod(\C_0) \ 
+\otherMethod(\C_0)\ \cC
+$\\*\tab
+where  $\valid(\C_0)$
+%\item $\overline{T\ m\oR\cR\QM;} = \fieldsFunc(C_0)$
+%\item $p_i = \isWith(\mh^{\mBody(\QM{with#}m_i, C_0)}, C_0)$
+%\item $q = \isClone(\mh^{\mBody(\clone, C_0)}, C_0)$
+%\end{itemize}
 
-\textbf{THEOREM. } If $I \longmapsto I'$ and $I$ OK, then $I'$ OK.
 
 
 \begin{comment}
@@ -510,47 +511,82 @@ and it should be the one that ``overrides'' all the others in $\overline{meth}$.
 %\end{array}
 %\end{equation*}
 
-\subsubsection{Auxiliary function: $\ofMethod$, $\otherMethod$}
+\subsubsection{Auxiliary function: $\valid, \ofMethod$, $\otherMethod$}${}_{}$\\*
 
-~\\*
+\noindent$\valid(C_0)$  holds if $\forall \m\in\dom(\C_0),$ if $\mh\QM; = \mBody(\m, \C_0),$ one case is satisfied:
+$\isField(\method)$,
+$\isWith(\method, \C_0)$
+or $\isClone(\method, \C_0)$.
+%or $\isImplemented(\method)$.
 
+We write $\QM{with#}\m$ to append $\m$ to \QM{with}, following the camelCase rule, so the first letter of
+$\m$ must be lowercase and is turned in uppercase upon merging.
+For example \QM{with#foo}=\QM{withFoo}.
+Special names $\specialName(\m)$ are \QM{clone},\QM{with} and all the identifiers of form $\QM{with#}\m$.
+
+We formally define $\ofMethod$, the function that generates the method \QM{of}, that behaves like a factory. To avoid boring digressions about well known ways to find unique names, for the sake of this formalization we assume that all the methods do not start with underscore, and we prefix method names with underscore to obtain valid field/parameter names.\\*
 \noindent$\begin{array}{l}
-\valid(C_0) = \QM{true}
-\whereNote
- \mwhere\ \forall m\in\dom(C_0), \text{let }\method = \mBody(m, C_0), \text{one case is satisfied}: \\
- \tab\tab(1)\ \isField(\method) = \QM{true} \\
- \tab\tab(2)\ \isWith(\mh^\method, C_0) = \QM{true} \\
- \tab\tab(3)\ \isClone(\mh^\method, C_0) = \QM{true} \\
- \tab\tab(4)\ \isImplemented(\method) = \QM{true} \\
-\fieldsFunc(C_0) = \{\mBody(m, C_0)\ |\ \isField(\mBody(m, C_0)) = \QM{true}\} \\
-\isField(T\ m\oR\cR\QM;) = \QM{true}
-\whereNote
- \mif\ m\ne\QM{clone} \\
-\isWith(T'\ \QM{with#}m \oR T\ x\cR, C_0) = \QM{true}
-\whereNote
- \mif\ C_0 <: T', \mand\ \mBody(m, C_0) = T\ m'\oR\cR\QM;\ m\ne\QM{clone} \\
-\isClone(T\ \QM{clone}\oR\cR, C_0) = \QM{true}
-\whereNote
- \mif\ C_0 <: T \\
-\isImplemented(\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
-\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
-\ofMethod(\overline{T\ m}, \overline{p}, q, C_0) = \QM{static}\ C_0\ \QM{of} \oR T_1\ m_1\QM,\ldots T_k\ m_k\cR\
-\QM{\{ //}\ \overline{T\ m}\ \text{has}\ k\ \text{elements} \\
-\tab\QM{return new}\ C_0 \oR\cR\ \QM{\{} \\
-\tab\tab T_1\ \_m_1 = m_1\QM;\ldots T_k\ \_m_k = m_k\QM; \\
-\tab\tab T_i\ m_i\oR\cR\ \QM{\{return}\ \_m_i\QM{;\}}\ \ldots \QM{ //}\ \text{for}\ i = 1,2,\ldots,k\\
-\tab\tab C_0\ \QM{with#}m_i\oR T_i\ x_i\cR\ \QM{\{ //}\ \text{if }p_i = \QM{true} \\
-\tab\tab\tab\QM{return this.of}\oR m_1\oR\cR\QM,\ldots x_i\QM,\ldots m_k\oR\cR\cR\QM{;} \\
-\tab\tab\QM{\}}\ \ldots \\
-\tab\tab C_0\ \QM{clone}\oR\cR\ \QM{\{ //}\ \text{if }q = \QM{true} \\
-\tab\tab\tab\QM{return this.of}\oR m_1\oR\cR\QM,\ldots m_k\oR\cR \cR\QM; \\
-\tab\tab\QM{\}} \\
-\tab\QM{\};} \\
-\QM{\}} \\
-\otherMethod(\overline{T\ m}, \overline{p}, q, C_0) = \\
-\tab C_0\ \QM{with#}m_i\oR T_i\ x_i\cR\QM;\ \ldots\ \QM{//}\ \text{if }p_i = \QM{true} \\
-\tab C_0\ \QM{clone}\oR\cR\QM;\ \QM{//}\ \text{if }q = \QM{true}
+\ofMethod(\C_0) = \
+ \QM{static}\ C_0\ \QM{of} \oR \C_1\ \m_1\QM,\ldots \C_n\ \m_n\cR\
+\QM{\{}
+\QM{return new}\ C_0 \oR\cR\ \QM{\{} \\
+\tab\tab\tab\tab\tab\tab\tab C_1\ \QM_\m_1 = \m_1\QM;\ldots \C_n\ \QM_\m_n = \m_n\QM; \\
+\tab\tab\tab\tab\tab\tab\tab
+\C_1\ \m_1\oR\cR\ \QM{\{return _}\m_1\QM{;\}}\ \ldots 
+\C_n\ \m_n\oR\cR\ \QM{\{return _}\m_n\QM{;\}}\\
+\tab\tab\tab\tab\tab\tab\tab\withMethod(\m_1,\C_0,\es_1)\ldots\withMethod(\m_n,\C_0,\es_n)\\
+\tab\tab\tab\tab\tab\tab\tab\cloneMethod(\C_0,\es)\\
+\tab\tab\tab\tab\tab\tab\QM{\};\}} \\
 \end{array}$
+\\*
+with $\fieldsFunc(\C_0)=\C_1\ \m_1\QM{();},\ldots \C_n\ \m_n\QM{();}$,\\*
+$\es_i=\QM{this.}\m_1\QM{(),}\ldots \QM{this.}\m_{1-i}\QM{(),}\QM{_val,}\QM{this.}\m_{i+1}\QM{(),}\ldots \QM{this.}\m_n\oR\cR$\\*
+and $\es=\QM{this.}\m_1\QM{(),}\ldots\ldots \QM{this.}\m_n\oR\cR$\\*
+
+\noindent{}Other auxiliary functions:\\*
+\noindent$\begin{array}{ll}
+\withMethod:&\withMethod(\C,\m,\C_0,\es)=\method=
+\C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\ \QM{\{}
+\QM{return} \C_0\QM{.of(}\es\QM{);\}} \\
+&\mbox{iff }\method<:\mBody(\QM{with#}\m,\C_0)\\
+&\withMethod(\C,\m,\C_0,\es)=\emptyset\mbox{ otherwise}\\
+\cloneMethod:&\cloneMethod(\C_0,\es)=\method=
+\C_0\ \QM{clone()\{return}\ \C_0\QM{.of(}\es\QM{);\}} \\
+&\mbox{iff }\method<:\mBody(\QM{clone},\C_0)\\
+&\cloneMethod(\C_0,\es)=\emptyset\mbox{ otherwise}\\
+
+
+\otherMethod:& \C_0\ \QM{with#}\m\oR \C_i\ \x_i\cR\QM;\in
+\otherMethod(\C_0) 
+\\&
+ \mbox{iff }
+\C\ \m\QM{();}\in \fieldsFunc(\C_0)\mbox{ and } \QM{with#}\m\notin\dom(\C_0)\\
+&\C_0\ \QM{clone}\oR\cR\QM;\in
+\otherMethod(\C_0)  \mbox{ iff } \isClone( \mBody(\m, \C_0))\\
+
+%other methos was wrong: we need the with to be NOT there to generate it.
+%no use isWith, any method with that name must be absent
+
+\fieldsFunc:&\method\in\fieldsFunc(\C_0) \mbox{ iff }
+\method\in \dom(\C_0)\ \mand\ \isField(\method)
+\\
+\isField:&\isField(\C\ \m\oR\cR\QM;)\tab \mif\ \mnot\ \specialName(\m)\\
+\isWith:&\isWith(\C'\ \QM{with#}\m \oR \C\ \x\cR\QM;, \C_0)
+\tab \mif\ \C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;\\
+& \mand\ \mnot\ \specialName(\m)\\
+\isClone:&\isClone(\C\ \QM{clone}\oR\cR\QM;, \C_0)\tab \mif\ \C_0 <: \C \\
+%\isImplemented:&\isImplemented(\method) \tab\mbox{iff }\method\mbox{ not of form }\mh\QM;
+%\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
+%&\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
+\end{array}$
+
+\subsubsection{Results}
+\textbf{THEOREM. } 
+For a given $\II_0\ldots\II_n$ interface table such that
+$\forall\II\in\II_0\ldots\II_n, \II$ OK, then in the interface table
+$[\![\II_0]\!]\II_1\ldots\II_n$
+$\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n, \II$ OK.
+
 
 \subsubsection{Derived notations}
 
