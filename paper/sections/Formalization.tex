@@ -61,7 +61,7 @@ are errors there.
 \production{
 \II
 }{
- \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_k \oC\method_1\ldots\method_n\cC
+ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\ \methods\ \cC
   }{interface declaration}\\
 \production{
 \method
@@ -70,7 +70,7 @@ are errors there.
 \mid
 \QM{default}\ \mh\oC\QM{return}\ \e\QM{;}\cC
 \mid
-\mh\QM{;}\quad
+\mh\QM{;}
   }{method declaration}\\
 \production{
 \mh
@@ -96,7 +96,8 @@ $
 \!\!\!\!\!\!\!\!\!\!
 \begin{array}{l}
 \inferrule[(T-Invk)]{
-\forall i\in 0..n\  \Gamma \vdash \e_i \in \_<:\C_i \\\\
+ \Gamma \vdash \e_0 \in \C_0 \\\\
+\forall i\in 1..n\  \Gamma \vdash \e_i \in \_<:\C_i \\\\
   \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
 %\textsf{mmodifier}(\m,\C_0) \neq \textbf{static}
  }{
@@ -145,9 +146,11 @@ $
 IT(\C_0) = \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_n \oC\methods\cC\\\\
  \forall \QM{default}\ \mh\oC\QM{return}\ \e\QM;\cC \in \methods,
 \ \Gamma^{\mh},\,\QM{this}{:}\C_0\vdash\e\in \_\subtype\C^{\mh} \\\\
+ \forall \QM{static}\ \mh\oC\QM{return}\ \e\QM;\cC \in \methods,
+\ \Gamma^{\mh}\vdash\e\in \_\subtype\C^{\mh} \\\\
 \dom(\C_0)=\dom(\C_1)\cup\ldots\cup\dom(C_n)\cup\dom(\methods)
  }{
-I \text{ OK}
+\C_0 \text{ OK}
 }
 \end{array}$
 \caption{Typing}
@@ -238,8 +241,7 @@ We discuss first the most interesting rules, that is
 \end{comment}
 
 
-\subsubsection{Auxiliary function:\mBody}
-Defining \mBody is not trivial, and requires quite a lot of attention to the specific model of Java Interfaces, and on how it differs w.r.t. Java Class model.
+Defining \mBody{} is not trivial, and requires quite a lot of attention to the specific model of Java Interfaces, and on how it differs w.r.t. Java Class model.
 $\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns. It can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
 
 The body of a method $\m$ contains all the relevant information with respect to that method, like the type of $\m$ as well as the modifier.
@@ -256,27 +258,29 @@ As you can see, we are delegating the work to three others auxiliary functions: 
 ${}_{}$\\*
 \marco{we need to discuss the names tops, shadow and override}
 
-\tops{} leave only the ``needed'' superinterfaces, that is, the ones that are not transitivelly reachable by following another superinterface chain. Formally:\\*
-$\tops(\Cs)=\{\ \C\in\Cs\ |\ \nexists \C'\in\Cs\setminus\C,\ \C' \subtype \C\ \}$
+\tops{} recover from the interface table only the ``needed'' methods, that is, 
+the non static ones that are not transitively reachable by following another, less specific, superinterface chain. Formally:\\*
+$\method\in\tops(\m,\Cs) \mbox{ iff }\C\in\Cs\ ,\method=\mBody(\m,\C), \method\mbox{ not a static method}$\\*
+${}_{}$\tab and $\nexists \C'\in\Cs\setminus\C$ such that $\C' \subtype \C$.
 
 \shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
 We do not model overloading, so it is an error if multiple versions are available with different parameter types. Formally:\\*
 \!\!\!\!$\begin{array}{l}
-\shadow(\m,\C_1\ldots\C_n)=\shadow(\methods)
-\whereNote
- \mwhere\ \mBody(\m,\C_i)\in\methods
-\ \mif\ \mBody(\m,\C_i)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}
+%\shadow(\m,\C_1\ldots\C_n)=\shadow(\methods)
+%\whereNote
+% \mwhere\ \mBody(\m,\C_i)\in\methods
+%\ \mif\ \mBody(\m,\C_i)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}
 %\\ &\mor\ \mBody(\m,\C)=\mh\QM;
-\\
+%\\
 
 \shadow()=\none\\
 \shadow(\method)=\method\\
-\shadow(\methods)=\Aux{mostSpecific}(\methods)
-\whereNote
-\mwhere\   \methods\mbox{ is of the form }\mh_1\QM;\ldots\mh_n\QM;\\
+\shadow(\overline{\mh\QM;})=\Aux{mostSpecific}(\overline{\mh\QM;})\\
 \shadow(\methods)=\conflicted\mh\QM;
 \whereNote
-\mwhere\ \Aux{mostSpecific}(\methods))\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
+\mwhere\ 
+\methods\mbox{ not of the form }\overline{\mh\QM;}\mbox{ and }
+\Aux{mostSpecific}(\methods)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
 \Aux{mostSpecific}(\methods)=\method
 \whereNote
 \mwhere\ \method \in \methods\ \mand\ \forall \method' \in \methods :  \method \subtype
