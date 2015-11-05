@@ -1,5 +1,51 @@
 \section{Introduction}\label{sec:intro}
 
+\bruno{Notes for the introduction.}
+
+Default methods were introduced in Java; they allow a simple form 
+of multiple-inheritance similar to traits. However, trying to 
+use default methods to simulate multiple inheritance quickly becomes 
+cumbersome
+
+\begin{itemize}
+
+\item interfaces have no constructors; classes are still required to
+create objects, leading to boilerplate code for initialization.
+
+\item interfaces do not have instance fields; using setter and getter 
+methods is a way out of this; but this requires tedious boilerplate 
+classes that latter implement those methods.
+
+\item Useful methods, general purpose methods, such as $clone$, or 
+\emph{fluent} setters~\cite{} can only be defined 
+with access to the internal state, which is not available in 
+an interface. Moreover such methods require special care in the 
+presence of subtypes. 
+
+\end{itemize}
+
+This paper proposes \emph{concrete interfaces}: a simple extension 
+to Java interfaces where all interface methods have an implementation. 
+Concrete interfaces have a single constructor that is derived from the 
+interface; they support various common utility methods (such as getters 
+and setters, or clone methods) without boilerplate; and they automatically 
+they with utility methods in the presence of subtyping. 
+
+To formalize concrete interfaces, we propose FeatherweightConcrete (FC): 
+a FeatherweightJava-style calculus, which captures the essence 
+of interfaces with default methods. The semantics of concrete interfaces 
+is given as a type-directed translation from FC to FC itself. 
+In the resulting FC code all concrete interfaces are translated into 
+regular FC (and Java) interfaces with default methods. The translation 
+is proved to be type-preserving, ensuring that the tranlation does 
+not introduce new errors. One interesting aspect of the theorem is that 
+if we ignore the concrete annotations, the program still type-checks 
+under the regular typing rules of FC.
+
+We implement concrete interfaces, purely using Java annotations. As such 
+no new syntax is required, and existing Java tools (such as IDE's) work 
+with our implementation. 
+
 \begin{itemize}
 
 \item Using annotattions to implement a rich notion of traits with a
