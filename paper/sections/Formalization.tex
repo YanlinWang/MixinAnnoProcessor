@@ -344,11 +344,6 @@ Note how we use the special value $\none$, and how (forth case) overriding can s
 %
 %(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
 
-\yanlin{for \textbf{shadow} conflicted mh;, one missing case is when there are
-  two conflicting default methods with same signature?? }
-
-
-
 \begin{comment}
 %Now it is correct, but may be we do not need it?
 We abbreviate typing statements on
@@ -434,12 +429,7 @@ Interface $I$ type checks well, if:
 \subsection{Translation Function}
 
 \begin{equation*}
-\begin{array}{l}
-[\![\mixinAnn\ \QM{interface}\ C_0\ \QM{extends}\ \Cs \oC \methods \cC ]\!] \\
-\textit{cond 1. }\overline{T\ m\oR\cR\QM;} = \resolve(C_0) \\
-\textit{cond 2. }p_i = \QM{true}\ \mif\ \mBody(\QM{with}m_i, C_0)\ \isWith \\
-\textit{cond 3. }q = \QM{true}\ \mif\ \mBody(\clone, C_0)\ \isClone
-\end{array}\ =\
+[\![\mixinAnn\ \QM{interface}\ C_0\ \QM{extends}\ \Cs \oC \methods \cC ]\!] \ =\
 \begin{array}{l}
 \emptyset\ \QM{interface}\ C_0\ \QM{extends}\ \Cs\ \oC \\
 \tab\methods \\
@@ -447,6 +437,12 @@ Interface $I$ type checks well, if:
 \tab\bigcup\otherMethod(\overline{T\ m}, \overline{p}, q, C_0)\ \cC
 \end{array}
 \end{equation*}
+\mwhere \[ \begin{array}{l}
+\textit{cond 1. }\valid(C_0) = \QM{true} \\
+\textit{cond 2. }\overline{T\ m\oR\cR\QM;} = \fieldsFunc(C_0) \\
+\textit{cond 3. }p_i = \isWith(\mh^{\mBody(\QM{with#}m_i, C_0)}, C_0) \\
+\textit{cond 4. }q = \isClone(\mh^{\mBody(\clone, C_0)}, C_0)
+\end{array} \]
 
 \textbf{THEOREM. } If $I \longmapsto I'$ and $I$ OK, then $I'$ OK.
 
@@ -519,32 +515,31 @@ and it should be the one that ``overrides'' all the others in $\overline{meth}$.
 ~\\*
 
 \noindent$\begin{array}{l}
-\resolve(C_0) = \{\mBody(m, C_0)\ |\ \mBody(m, C_0)\ \isField\}
+\valid(C_0) = \QM{true}
 \whereNote
- \mwhere\ \forall m\in\dom(C_0), \text{one case is satisfied:} \\
- \tab\tab(1)\ \mBody(m, C_0)\ \isField \\
- \tab\tab(2)\ \mBody(m, C_0)\ \isWith \\
- \tab\tab(3)\ \mBody(m, C_0)\ \isClone \\
- \tab\tab(4)\ \mBody(m, C_0)\ \isDefault \\
-\mBody(m, C_0)\ \isField
+ \mwhere\ \forall m\in\dom(C_0), \text{let }\method = \mBody(m, C_0), \text{one case is satisfied}: \\
+ \tab\tab(1)\ \isField(\method) = \QM{true} \\
+ \tab\tab(2)\ \isWith(\mh^\method, C_0) = \QM{true} \\
+ \tab\tab(3)\ \isClone(\mh^\method, C_0) = \QM{true} \\
+ \tab\tab(4)\ \isImplemented(\method) = \QM{true} \\
+\fieldsFunc(C_0) = \{\mBody(m, C_0)\ |\ \isField(\mBody(m, C_0)) = \QM{true}\} \\
+\isField(T\ m\oR\cR\QM;) = \QM{true}
 \whereNote
- \mwhere\ \mBody(m, C_0) = T\ m\oR\cR\QM;\ m\ne\QM{clone} \\
-\mBody(m, C_0)\ \isWith
+ \mif\ m\ne\QM{clone} \\
+\isWith(T'\ \QM{with#}m \oR T\ x\cR, C_0) = \QM{true}
 \whereNote
- \mwhere\ \mh^{\mBody(m, C_0)} = T'\ \QM{with}m' \oR T\ x\cR, C_0 <: T' \\
- \quad\quad\mand\ \mBody(m', C_0) = T\ m'\oR\cR\QM;\ m'\ne\QM{clone} \\
-\mBody(m, C_0)\ \isClone
+ \mif\ C_0 <: T', \mand\ \mBody(m, C_0) = T\ m'\oR\cR\QM;\ m\ne\QM{clone} \\
+\isClone(T\ \QM{clone}\oR\cR, C_0) = \QM{true}
 \whereNote
- \mwhere\ \mh^{\mBody(m, C_0)} = T\ \QM{clone}\oR\cR, C_0 <: T \\
-\mBody(m, C_0)\ \isDefault
-\whereNote
- \mwhere\ \mBody(m, C_0) = \QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \\
+ \mif\ C_0 <: T \\
+\isImplemented(\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
+\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
 \ofMethod(\overline{T\ m}, \overline{p}, q, C_0) = \QM{static}\ C_0\ \QM{of} \oR T_1\ m_1\QM,\ldots T_k\ m_k\cR\
 \QM{\{ //}\ \overline{T\ m}\ \text{has}\ k\ \text{elements} \\
 \tab\QM{return new}\ C_0 \oR\cR\ \QM{\{} \\
 \tab\tab T_1\ \_m_1 = m_1\QM;\ldots T_k\ \_m_k = m_k\QM; \\
 \tab\tab T_i\ m_i\oR\cR\ \QM{\{return}\ \_m_i\QM{;\}}\ \ldots \QM{ //}\ \text{for}\ i = 1,2,\ldots,k\\
-\tab\tab C_0\ \QM{with}m_i\oR T_i\ x_i\cR\ \QM{\{ //}\ \text{if }p_i = \QM{true} \\
+\tab\tab C_0\ \QM{with#}m_i\oR T_i\ x_i\cR\ \QM{\{ //}\ \text{if }p_i = \QM{true} \\
 \tab\tab\tab\QM{return this.of}\oR m_1\oR\cR\QM,\ldots x_i\QM,\ldots m_k\oR\cR\cR\QM{;} \\
 \tab\tab\QM{\}}\ \ldots \\
 \tab\tab C_0\ \QM{clone}\oR\cR\ \QM{\{ //}\ \text{if }q = \QM{true} \\
@@ -553,7 +548,7 @@ and it should be the one that ``overrides'' all the others in $\overline{meth}$.
 \tab\QM{\};} \\
 \QM{\}} \\
 \otherMethod(\overline{T\ m}, \overline{p}, q, C_0) = \\
-\tab C_0\ \QM{with}m_i\oR T_i\ x_i\cR\QM;\ \ldots\ \QM{//}\ \text{if }p_i = \QM{true} \\
+\tab C_0\ \QM{with#}m_i\oR T_i\ x_i\cR\QM;\ \ldots\ \QM{//}\ \text{if }p_i = \QM{true} \\
 \tab C_0\ \QM{clone}\oR\cR\QM;\ \QM{//}\ \text{if }q = \QM{true}
 \end{array}$
 
