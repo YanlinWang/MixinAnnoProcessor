@@ -11,6 +11,31 @@ We need to show 2 things:
 \bruno{The implementation is still missing the type system (rejecting some
   programs)!}
 
+\bruno{Some notes for discussion regarding formalization:
+\begin{itemize}
+\item Syntax and Rules: 
+We can make it more compact and consistent by use overline 
+notation more, instead of \ldots.
+\item Order of premisses: It may be worthwhile to swap the order of 
+some premisses, so that it follows the order of the explanations.
+\item T-Invk: I think we need to type-check $e_0$ separately. Otherwise 
+$C_0$ shows up magically.
+\item T-Obj: small fixes on 3rd line. Suggestion, create two 
+auxiliary functions: $sigvalid(C,\overline{mh})$ and $alldefined(C,\overline{mh})$
+\item T-INTF: $C_0$ is $I$. Type of this was $C$, modified it to $C_0$.
+In the last line, should it be $dom(\overline{meth})$ or just $\overline{meth}$?
+
+\item tops and shadow: tops seems redundant; 
+we use tops to collect classes, so just that in the next step we iterate 
+over those classes to collect methods that satisfy some property. 
+I think we can merge those 2 steps.
+
+\item I have trouble following the definition of shadow; I think there 
+are errors there.
+
+\end{itemize}
+}
+
 \footnote{Future work: updating multiple fields in one method call,
   \texttt{with(T v)}}
 
@@ -98,7 +123,7 @@ $
 \Gamma,\f_1{:}\T_1,\ldots,\f_k{:}\T_k,\,\QM{this}{:}\C,\Gamma^{\mh_i}
 \vdash\e_i\in \_\subtype\C^{\mh_i}\\\\
 \forall i\in 1..n\ \mh_i\subtype\mBody(\m^{\mh_i},\C)\\\\
-\forall i\in 1..k\ \Gamma(\x)=\T_i\\\\
+\forall i\in 1..k\ \Gamma(\x_i)\subtype\T_i\\\\
 \forall\m\mbox{ such that }
 \mBody(\m,\C)=\mh\QM; \exists i\in 1..n\ \m^{\mh_i}=\m
 %\forall i\in 1\ldots n\ \Gamma_i=\Gamma,\f_1{:}\T_1,\ldots,\f_k{:}\T_k,\,\QM{this}{:}\C,\Gamma^{\mh_i}
@@ -119,7 +144,7 @@ $
  \inferrule[(T-Intf)]{
 IT(\C_0) = \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_n \oC\methods\cC\\\\
  \forall \QM{default}\ \mh\oC\QM{return}\ \e\QM;\cC \in \methods,
-\ \Gamma^{\mh},\,\QM{this}{:}\C\vdash\e\in \_\subtype\C^{\mh} \\\\
+\ \Gamma^{\mh},\,\QM{this}{:}\C_0\vdash\e\in \_\subtype\C^{\mh} \\\\
 \dom(\C_0)=\dom(\C_1)\cup\ldots\cup\dom(C_n)\cup\dom(\methods)
  }{
 I \text{ OK}
