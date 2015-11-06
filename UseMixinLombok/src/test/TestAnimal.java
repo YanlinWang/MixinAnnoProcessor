@@ -55,7 +55,7 @@ interface Point2D {
 //BEGIN_POINT3D
 @Mixin
 interface Point3D extends Point2D {
-	int z();
+	int z(); Point3D with(Point val);
 	Point3D withZ(int z);
 }
 //END_POINT3D
@@ -81,16 +81,16 @@ interface Horse extends Animal {
 interface Bird extends Animal {
 	Point3D point();
 	void point(Point3D val);
-	default void point(Point2D val) {
-		if(val instanceof Point3D) { point((Point3D) val); }
-		Point3D newPoint = point().withX(val.x()).withY(val.y());
-		point(newPoint);
-	}
+	default void point(Point2D val) { point(point().with(val));}
 	default void fly() {
 		point(point().withX(point().x() + 40));
 	}
 }
 //END_BIRD
+
+
+
+
 
 //BEGIN_PEGASUS
 @Mixin

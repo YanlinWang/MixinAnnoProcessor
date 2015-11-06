@@ -213,6 +213,7 @@ interface Point3D extends Point2D{
   Point3D withX(int val);
   Point3D withY(int val);
   Point3D withZ(int val);
+  Point3D with(Point2D val);
   public static Point3D of(int x, int y, int z){return new Point3D(){
     public int x(){return x;} 
     public int y(){return y;}
@@ -220,13 +221,24 @@ interface Point3D extends Point2D{
     public Point3D withX(int val){return Point3D.of(val,this.y(),this.z());}
     public Point3D withY(int val){return Point3D.of(this.x(),val,this.z());}
     public Point3D withZ(int val){return Point3D.of(this.x(),this.y(),val);}
-    }
+    public Point3D with(Point2D val){
+      if(val instanceof Point3D){return (Point3D)val;}
+      return Point3D.of(val.x(),val.y(),this.z());
+      }
+    };
   }
 }
 \end{lstlisting}
 Note how \Q@with-@ methods are automatically refined in their return type, so that code like 
 \Q@Point3D p=Point3D.of(1,2,3); p=p.withX(42);@ will be accepted and behave as expected. If the programmer wishes to suppress this behaviour and keep the signature as it was, it is sufficient to redefine the \Q@with-@ methods in the new class repeating the old signature.
 Again, the philosophy is that if the programmer provides something directly, \mixin do not touch it.
+\Q@with-@ methods (functionally) update a field/property at a time.
+This can be inefficient, and sometime hard to maintain.
+Often we want to update many fields at the same time, for example using another object as source.
+Following this idea, the method \Q@with(Point2D)@ is an example of a (functional) properties updater: 
+it takes a certain type and in the current object update all field in that type that match fields in the current type.
+The idea is that we want as result something that is still like \Q@this@, but modified to be as much as possible similar to the parameter.
+The cast in \Q@with(Point2D)@ is trivially safe since it is guarded by an \Q@instanceof@ test. The idea is that if the parameter is a subtype of the current exact type, then we can just return the parameter, as something that is just ``more'' than \Q@this@.
 
 \Q@Bird@s are \Q@Animal@s, 
 but while \Q@Animal@s, only need 2D locations,
@@ -247,7 +259,7 @@ This solution scales to the multiple programmers approach, but requires ugly cas
 Many here would think that a language extension is needed.
 Instead, with our language \emph{restriction} the problem can be easily challenged\footnote{Often in programming languages ``freedom is slavery''.}:
 
-\lstinputlisting[linerange=80-92]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
+\lstinputlisting[linerange=80-88]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
 
 %Interface \texttt{Point3D} extends \texttt{Point2D} with a new abstract method
 %\texttt{int z()} (treated as a getter for member field \texttt{z}). Note that
@@ -262,39 +274,11 @@ Note how
 \item by \emph{overloading} we define a new setter with the more precise type
 \item by default method we provide an implementation for the setter called with the old signature.
 \end{itemize}
-The cast is trivially safe since it is guarded by an \Q@instanceof@ test.
-The chain of \Q@with-@ methods is not fully satisfactory: it requires \Q@Bird@ to know of all the fields of \Q@Point2D@. We are planning to extend our \mixin annotation so that 
-we can write \Q@point(point().with(val))@, where the \Q@with(T val)@ method would behave like calling all the \Q@with-@ where a compliant getter exists in \Q@T@.
-\marco{We need to discuss this, we may just implement it? --in this case the text would just become:}
-In Point3D:
-\begin{lstlisting}
-@Mixin interface Point3D extends Point2D{
-  int z(); Point3D withZ(int val);
-  Point3D with(Point val);
-  }
-\end{lstlisting}
-expandend in 
-\begin{lstlisting}
-interface Point3D extends Point2D{
-  ....
-  Point3D with(Point2D val){
-    if(val instanceof Point3D){return (Point3D)val;}
-    return Point3D.of(val.x(),val.y(),this.z());
-    }
-  ...
-  }
-\end{lstlisting}
-and here some discussion about the new with method,
-and then the Bird becomes 
-\begin{lstlisting}
-@Mixin interface Bird extends Animal{
-  Point3D point();
-  void point(Point3D val);
-  default void point(Point2D val){ return point(point().with(val));}
-  default void fly(){...}
-  }
-\end{lstlisting}
-\marco{what do we think?}
+
+From the type perspective, the key is the covariant method overriding; however from the semantic perspective the key is the implementation for the setter with the old signature:
+by using the \Q@with@ method we may use the information for \Q@z@ already stored in the object to forge an appropriate \Q@Point3D@ to store.
+Note how all the informations about what fields sits in \Q@Point3D@ and what in \Q@Point2D@ is properly encapsulated in the \Q@with@ method, and is transparent for the implementer of \Q@Bird@.
+
 \subsubsection{\Q@Pegasus@ and multiple Inheritance}
 The \emph{``multiple inheritance''} case appears at interface
 \texttt{Pegasus}.
@@ -362,56 +346,6 @@ instantiate interfaces in Java.
 \lstinputlisting[linerange=15-27]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT_OF
 \end{comment}
 
-\subsection{What  \mixin Generates}
-Apart from generating code for \emph{getter} methods, the annotation processor
-can also generate \emph{setter} methods, \emph{with} methods, \texttt{clone}
-methods, etc. We summarize all the forms of method \mixin  supports below. Inside
-the anonymous class in the annotated interface, the following code are
-generated:
-
-\begin{itemize}
-\item For methods inside the interface with the form \texttt{Tx x()}:
-  \begin{itemize}
-   \item \texttt{x} is the getter method, with return type
-     \texttt{Tx}. Conceptually, it is a member field with name \texttt{x} and
-     type \texttt{Tx}.
-   \item generate member field \texttt{\_x} of type \texttt{Tx}, initialized
-     with \texttt{x}.
-   \item generate implemented getter method:
-       \begin{lstlisting}
-           public Tx x() { return _x; }
-       \end{lstlisting}
-   \end{itemize}
-
-\item For methods inside the interface with the form \texttt{void x(Tx x)}:
-  \begin{itemize}
-    \item check if exist method \texttt{Tx x()}. If not, generate error.
-    \item generate implemented setter method:
-       \begin{lstlisting}
-           public void x(Tx x) { this.x = x; }
-       \end{lstlisting}
-    \end{itemize}
-
-\item For methods with the form \texttt{T withX(Tx \_)}:
-  \begin{itemize}
-  \item if there is no \texttt{x} field, or type \texttt{Tx} does not match,
-    then generate error.
-  \item implement `withX` using the `of` method.
-  \end{itemize}
-
-\item For methods with the form of \texttt{T clone()}: Use \texttt{of} method as
-  the constructor, to create a new object with the same field values as the
-  current one.
-
-\item For methods with the form of \texttt{T x(Tx \_)}:
-  \begin{itemize}
-    \item check if exist method \texttt{T x()}, if not, generate error.
-    \item inside the inner class, generate
-      \begin{lstlisting}
-          public T x(Tx x) { this.x = x; return this;}
-      \end{lstlisting}
-  \end{itemize}
-\end{itemize}
 
 \begin{comment}
 \subsection{More On \mixin}
