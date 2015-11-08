@@ -18,7 +18,7 @@ fi
 
 ruby computePositions.rb
 xelatex paper.tex
-open *.pdf
+open paper.pdf
 
 rm footempfile.txt
 rm *.bbl

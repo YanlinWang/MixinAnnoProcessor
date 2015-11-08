@@ -43,6 +43,10 @@ Dir['../UseMixinLombok/src/*/*.java'].each do |file|
   scan(file, beginpos, endpos, fileloc)
 end
 
+Dir['../UseMixinLombok/src/*/*/*.java'].each do |file| 
+  scan(file, beginpos, endpos, fileloc)
+end
+
 
 
 Dir['*.tex'].each do |file| 
