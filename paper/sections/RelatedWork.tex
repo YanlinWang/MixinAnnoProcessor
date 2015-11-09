@@ -63,7 +63,7 @@ solution (traits) avoids this problem by disallowing constructor parameters,
 causing no ambiguity in cases such as diamond problem. The drawback of this
 elegant design is limited expressiveness. 
 
-\paragraph{ThisType/MyType/Extensibility}
+\subsection{ThisType/MyType/Extensibility}
 Typical object-oriented programming languages (e.g. Java) use class names as
 types and inheritance as subtyping relations. This gives difficulty when
 extending classes/interfaces with recursive types. Problems such as binary
@@ -84,9 +84,22 @@ is more general, as it works on any positions. Nevertheless our approach is
 still useful for modeling fluent interfaces and solving expression
 problems,etc. 
 
-\paragraph{Type-Directed Translations/Syntactic Sugar}
+\subsection{Type-Directed Translations/Syntactic Sugar}
+Language extensions are often implemented as syntactic sugar of the base
+language. For example, Scala compiler supports XML syntax in normal Scala code
+directly (after Scala ?, users need to import \texttt{scala-xml} library
+manually). However, this approach is hard in terms of implementation, because it
+requires extending the compiler. Also, this approach does not support combining
+multiple extensions into one.
 
-- SugarJ~\cite{erdweg11sugarj}
+SugarJ~\cite{erdweg11sugarj} is a Java-based extensible programming language
+that allows programmers to extend the base language with custom language
+features by definitions in meta-DSLs (SDF, Stratego, etc). 
+\yanlin{Is new syntax really a ``drawback''? I think for some system, like
+  SugarJ, one of purpose IS to introduce these new syntax.}  Drawbacks: new
+syntax. To create the extension, programmers have to work with multiple
+languages (SDF, stratego, etc) while our approach works totally in Java
+environment.
 
 We can model certain types of language extensions with annotations 
 only, but those extensions do not introduce new syntax: they 
@@ -94,6 +107,7 @@ merely do automatic code generation.
 
 \paragraph{Meta-programming techniques}
 - MetaFJig*
+\yanlin{Maybe Marco can help with the text for MetaFJig?}
 
 Annotations/Code Generation/Lombok
 

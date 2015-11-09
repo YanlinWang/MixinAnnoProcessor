@@ -1,4 +1,33 @@
 \section{Formal Semantics}\label{sec:formal}
+
+\subsection{Method Overriding Bug in Java}
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=5in]{table.png}
+\caption{Table.}\label{fig:javabug}
+\end{figure}
+
+Figure~\ref{fig:javabug} shows the method overriding mechanism in Java. In the
+example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
+named as \texttt{m} which are either abstract or default methods. If we define a
+new interface \texttt{M} that extends two of these interfaces, then the method
+overriding result is shown in the table. For example, row2 col2 means \texttt{M
+  extends A1,B1}. The result is \texttt{ERROR} because the abstract method
+\texttt{T m();} in \texttt{A1} conflicts with the method \texttt{default T m()
+  {...}} in \texttt{B1}. Readers may also figure out other extending cases by
+following this way of interpretation. The interesting case in row4 col2 where
+\texttt{M extends A1,B3}, the result should be \texttt{ERROR}, however in Java
+the experimental result is \texttt{B3.m}. Because if we think consistently, this
+case is esencially a method conflicting situation with abstract methods and
+default methods, which is no different than the first case. 
+
+\lstinputlisting[linerange=5-10]{../UseMixinLombok/src/methodshadowing/test5/Test5.java} % APPLY:linerange=JAVABUG
+
+
+In our approach, we overcome this bug by detecting method correctness when
+typechecking all interfaces.
+
+
 \marco{Old notes: new text is later}
 Yanlin and Haoyuan
 
@@ -337,12 +366,6 @@ Note how we use the special value $\none$, and how (forth case) overriding can s
 %\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
 \end{array}$
 
-
-\begin{figure}[tbp]
-\centering
-\includegraphics[width=5in]{table.png}
-\caption{Table.}\label{table_png}
-\end{figure}
 
 %The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
 %exmples to motivate our design
