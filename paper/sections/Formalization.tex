@@ -1,5 +1,39 @@
 \section{Formal Semantics}\label{sec:formal}
 
+\subsection{Method Overriding Mechanism}
+We summarize the mechanism for method overriding below (all methods considered
+here are methods with the same name and argument types):
+
+1. Two abstract methods with subtyping relation do not cause conflict, and the
+most specific one wins. Subtyping relation for two methods means they have the
+same arguments' types and one return type is a subtype of the other one. For
+example:
+\begin{lstlisting}
+interface A1 { Object m(); }
+interface B1 { Integer m();}
+interface C1 extends A1,B1 {} //accepted
+\end{lstlisting}
+Method \texttt{Integer m()} in \texttt{B} wins over method \texttt{Object m()}
+in \texttt{A} because \texttt{Integer <: Object}.
+
+2. A default method conflict with another default method or abstract method. For
+example:
+\begin{lstlisting}
+interface A2 { default int m() {return 1;}}
+interface B2 { int m(); }
+interface C2 { default int m() {return 2;}}
+interface D2 extends A2,B2 {} //rejected due to conflicting methods
+interface E2 extends A2,C2 {} //rejected due to conflicting methods
+\end{lstlisting}
+
+3. The method in the current interface wins over any methods defined in its
+super-interfaces, provided that the method conform to the subtype of all methods
+in its super-interfaces, i.e., the method is the most specific one. For example:
+\begin{lstlisting}
+interface D3 extends A2,B2 { int m(); } //accepted
+interface E3 extends A2,C2 { int m(); } //accepted
+\end{lstlisting}
+
 \subsection{Method Overriding Bug in Java}
 \begin{figure}[tbp]
 \centering
@@ -7,7 +41,7 @@
 \caption{Table.}\label{fig:javabug}
 \end{figure}
 
-Figure~\ref{fig:javabug} shows the method overriding mechanism in Java. In the
+Figure~\ref{fig:javabug} shows the method overriding bug in Java. In the
 example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
 named as \texttt{m} which are either abstract or default methods. If we define a
 new interface \texttt{M} that extends two of these interfaces, then the method
@@ -19,10 +53,9 @@ following this way of interpretation. The interesting case in row4 col2 where
 \texttt{M extends A1,B3}, the result should be \texttt{ERROR}, however in Java
 the experimental result is \texttt{B3.m}. Because if we think consistently, this
 case is esencially a method conflicting situation with abstract methods and
-default methods, which is no different than the first case. 
+default methods, which is no different than the first case.
 
 \lstinputlisting[linerange=5-10]{../UseMixinLombok/src/methodshadowing/test5/Test5.java} % APPLY:linerange=JAVABUG
-
 
 In our approach, we overcome this bug by detecting method correctness when
 typechecking all interfaces.
