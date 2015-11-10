@@ -1,4 +1,5 @@
 \section{Implementation}
+\begin{comment}
 Haoyuan
 
 discuss implementation in lombok; and limitations.
@@ -10,9 +11,49 @@ discuss implementation in lombok; and limitations.
 \haoyuan{https://blog.frankel.ch/lombok-reduces-your-boilerplate-code}
 
 \haoyuan{https://projectlombok.org/}
+\end{comment}
 
-Our implementation is based on an extension to the Lombok framework[ref]. Lombok is a Java library aiming at reducing boilerplate code by using code generation via annotations, whereas such code generation is performed at compile time to modify bytecode. There are a number of annotations provided by the original Lombok, including \textbf{@Getter}, \textbf{@Setter}, \textbf{@ToString} for generating getters, setters and \QM{toString} methods respectively, and so on. And during compile time, these methods are only generated in class files, with neither the source code modified nor new Java files generated.
+One of the downside of Java is the code verbosity, e.g., getter and setter
+methods for fields, unneeded type annotation, etc. Lombok project~\cite{} is a
+Java tool that aims at removing (or reducing) these boilerplate code as far as
+possible, via annotations. There are a number of annotations provided by the
+original Lombok, including \textbf{@Getter}, \textbf{@Setter},
+\textbf{@ToString} for generating getters, setters and \QM{toString} methods,
+respectively.
 
-Furthermore, Lombok provides a number of interfaces for users to create custom transformations, as extensions to the original framework. By realizing these transformations, with new annotations supported, users can generate new field and method members, and inject them to current class types automatically at compile time. More specifically, a transformation is based on a handler, which acts on the AST from parsing the annotated node and returns a modified AST for analysis and generation afterwards. Such a handler can either be a Javac handler or an Eclipse handler. At this stage our implementation only realizes the Eclipse handler and our experiments are all conducted in Eclipse.
+Furthermore, Lombok provides a number of interfaces for users to create custom
+transformations, as extensions to the original framework. By realizing these
+transformations, with new annotations supported, users can generate new field
+and method members, and inject them to current class types automatically at
+compile time. More specifically, a transformation is based on a handler, which
+acts on the AST from parsing the annotated node and returns a modified AST for
+analysis and generation afterwards. Such a handler can either be a Javac handler
+or an Eclipse handler.
 
-In Eclipse, with an interface annotated by \mixin, the automatic annotation processing is performed and the information of the interface from compilation is captured in the ``Outline'' window, including all the methods inside the interface as well as the generated ones. The custom transformation is easy and convenient to use, however, a certain limitation is that our implementation doesn't support separate compilation yet at this stage, for in the implementation it is hard to capture a type declaration from its reference. 
+Our implementation is based on extension to Lombok. In Eclipse, with an
+interface annotated by \mixin, the automatic annotation processing is performed
+and the information of the interface from compilation is captured in the
+``Outline'' window, including all the methods inside the interface as well as
+the generated ones. The custom transformation is easy and convenient to use.
+
+The biggest reasons to use Lombok rather than using conventional Java annotation
+processor are:
+\begin{itemize}
+\item Lombok is byte-code based instead of source-code based, which makes client
+  code concise and easy to maintain. Such code generation is performed at
+  compile time to modify bytecode. And during compile time, these methods are
+  only generated in class files, with neither the source code modified nor new
+  Java files generated.
+\item Moreover, and probably more importantly, Lombok is capable of generating
+  code \emph{inside} a class/interface.This is the ability that conventional
+  Java annotation processor can not provide.
+\end{itemize}
+
+The implementation using Lombok has certain limitation: 
+\begin{itemize}
+\item Our implementation does not support separate compilation yet at this
+  stage, for in the implementation it is hard to capture a type declaration from
+  its reference.
+\item At this stage our implementation only realizes the Eclipse handler and our
+  experiments are all conducted in Eclipse.
+\end{itemize}
