@@ -1,67 +1,102 @@
 \section{Related Work}\label{sec:related}
 In this section we discuss related work and comparison to Classless Java.
 
-\subsection{Multiple Inheritance in Java}
-Since Java 8 default methods are introduced, which enables concrete method
-implementation to be defined (via the \textbf{default} keyword) inside
-interface. Since in Java supports extension on multiple interfaces (instead of
-classes), the introduction of default methods opens the gate of doing multiple
-inheritance in Java by using interfaces. Details on achieving multiple
-inheritance by mimicking trait programing through interfaces are summarized by
-Bono.et. al.~\cite{bono14}. There is also formalization proposed by
+
+\subsection{Formalization of Java8}
+\marco{this go later, when we compare our formalization}
+There is also formalization proposed by
 Goetz and Field~\cite{goetz12fdefenders} to formalize defender (default) methods
 in Java. However this formalization is limited since they only model exactly one
 method inside classes/interfaces, where in our formalization multiple methods
 may be defined.
 
-\yanlin{need to discuss: whether the comments for FTJ is fair.}
-There are proposals for extending Java with traits. For example, FeatherTrait
-Java (FTJ)~\cite{Liquori08ftj} by Liquori et al. extends the calculus of
-Featherweight Java (FJ)~\cite{Igarashi01FJ} with statically-typed traits, adding
-trait-based inheritance in Java. However, language extensions (including FTJ)
-have a natural drawback: the programmer has to learn new syntax. In contrast,
-our approach is completely compatible with the current Java language, so that
-programmers don't need to pay any learning cost to adapt to this new classless
-programming pattern. Another drawback which is particular for FTJ is that FTJ
-doesn't have type for traits, hence the correctness check of trait is done when
-type-checking classes. This choice makes the design of FTJ simpler but lost
-typechecking efficiency (one trait will be potentially checked multiple times if
-it is used in multiple classes).
 
-\subsection{Multiple Inheritance in General}
-Multiple inheritance is a great feature to have in a programming language, but
-it is difficult to model and implement. These difficulties include the famous
-diamond (fork-join) problem, conflicting methods, yo-yo problem, etc. In order
-to model multiple inheritance, lots of models have been proposed in the past few
+
+%\yanlin{need to discuss: whether the comments for FTJ is fair.}
+
+%No, was not fair, I know that work, it does modular type checking, and 
+%more work after that they extend with more safe/modular typing things.
+%also, Java8 IS a language extension on Java
+%However, language extensions (including FTJ)
+%have a natural drawback: the programmer has to learn new syntax. In contrast,
+%our approach is completely compatible with the current Java language, so that
+%programmers don't need to pay any learning cost to adapt to this new classless
+%programming pattern. Another drawback which is particular for FTJ is that FTJ
+%doesn't have type for traits, hence the correctness check of trait is done when
+%type-checking classes. This choice makes the design of FTJ simpler but lost
+%typechecking efficiency (one trait will be potentially checked multiple times if
+%it is used in multiple classes).
+
+\subsection{Multiple Inheritance in Object oriented languages}
+Many authors have argued in favour or against multiple inheritance.
+It provides expressive power, but it is difficult to model, and implement and can create programs that are hard to reason about.
+These difficulties include the famous
+diamond (fork-join) problem, conflicting methods, and the yo-yo problem.
+\marco{add citation on the text over}
+
+To conciliate the need for expressive power and the need for simplicity, 
+lots of models have been proposed in the past few
 years, including mixins~\cite{bracha90mixin} and traits~\cite{scharli03traits}.
-Both traits and mixins provide novel models of new programming architecture in
-object oriented programming paradigm. 
+They provide novel programming architecture models in the
+OO paradigm. 
+\begin{enumerate}
+\item  Mixins allows to name components that can be applied to various classes as
+reusable functionality units. However,  they suffer from linearisation: the order of mixin application is relevant in often subtitle and undesired ways. constraints. This hinders their
+usability and their ability of resolving conflicts:
+ the linearisation (total ordering) of mixin inheritance cannot provide a satisfactory resolution in all cases and restricts the flexibility of mixin composition.
 
-1) Mixins model named components that can be applied to various classes as
-reusable functionality units. However, the well-known limitation of mixins is
-that they suffer from linearization constraints, which hinders the
-expressiveness of mixins and the ability of resolving conflicts.  As shown in
-section~\ref{sec:comparison}, although they solved some multiple inheritance
-problems, they are extremely restricting expressiveness. 
+ To fight those limitations, an algebra of mixin operators is introduced~\cite{CMS elena zucca davide ancona}, but this raised the complexity of the approach, especially when constructors and fields are considered~\cite{Ecoop FJigsaw marco}.
 
-2) Traits are a novel model to differentiate two functionalities out of classes:
-units of reusable components and object factories. In trait models, traits are
-responsible for units of reusable components, which contain pure methods as
-reusable functionalities; whereas classes act as object factories, which
-requires various functionalities from multiple traits. However drawbacks of
-traits are obvious: traits do not allow state; traits can't be instantiated
-directly.
+\item 
+Simplifying the mixin algebras approach, traits draw a strong line between units of reuse (traits) and object factories (classes)
+In this model, traits~\cite{Scharli2003} units of reusable code,  containing only methods as
+reusable functionalities. Thus, no state/state initialization is considered.
 
-3) C++ and Scala also try to provide solutions to multiple inheritance, but both
+Classes act as object factories, requiring functionalities from multiple traits.
+Traits offers a trait algebra  with operations like sum, alias and exclusion, provided for explicit conflict resolution.
+
+
+Concluding, (pure) traits do not allow state and they do not offers any reuse instrument to ensure that state is coherently initialized when finally defined in classes.
+Traits can't be instantiated. This model requires two concepts (traits and classes) to coexist and cooperate.
+
+Some authors see this as good language design fostering good software development by helping programmers to think about the structure of their programs.
+However, other authors see the need of two concepts and the absence of state as drawbacks of this model.
+
+\item C++ and Scala also try to provide solutions to multiple inheritance, but both
 suffer from object initialization problems. Virtual inheritance in C++ provides
 another solution to multiple inheritance (especially the diamond problem by
 keeping only one copy of the base class)~\cite{ellis1990annotated}, however
 suffers from object initialization problem as pointed out by Malayeri et
 al.~\cite{malayeri2009cz}. It bypasses all constructor calls to virtual
 superclasses, which would potentially cause serious semantic error. Scala
-solution (traits) avoids this problem by disallowing constructor parameters,
-causing no ambiguity in cases such as diamond problem. The drawback of this
-elegant design is limited expressiveness. 
+solution (very similar to linearised mixins, but misleadingly called traits in the language) avoids this problem by disallowing constructor parameters,
+causing no ambiguity in cases such as diamond problem. 
+This approach has limited expressiveness, and suffers from all the problems of linearised mixin composition.
+Python also offers multiple inheritance via linearised mixins. Indeed python any class is implicitly a mixin, and mixin composition informally expressed as\\*
+\Q@ class A use B,C {...new methods...}@\\*
+can be expressed in python as \\*
+\Q@ class Aux: ...new methods...@\\*
+\Q@ class A(B,C,Aux):  pass@ 
+\end{enumerate}
+
+\subsection{Multiple Inheritance in Java}
+Since Java 8 default methods are introduced, which enables concrete method
+implementation to be defined (via the \textbf{default} keyword) inside
+interfaces. Since Java supports implementation of multiple interfaces (instead of extension of a single
+class), the introduction of default methods opens the gate for various flavours of multiple
+inheritance in Java, using interfaces. 
+Former work by Bono.et. al.~\cite{bono14}.
+provides details on mimicking traits~\cite{sharly thesis} through interfaces.
+
+
+There are proposals for extending Java (before Java8) with traits. For example, FeatherTrait
+Java (FTJ)~\cite{Liquori08ftj} by Liquori et al. extends the calculus of
+Featherweight Java (FJ)~\cite{Igarashi01FJ} with statically-typed traits, adding
+trait-based inheritance in Java.
+Except for few, mostly syntactic details, their work can be emulated/rephrased with Java8 interface.
+
+
+\input{sections/Compare.tex}
 
 \subsection{ThisType/MyType/Extensibility}
 Typical object-oriented programming languages (e.g. Java) use class names as
@@ -120,3 +155,54 @@ Talk about existing libraries that use fluent interfaces (do any of
 those use any code generation to assist in the implementation?). 
 
 
+\section{Future work}
+
+\subsection{Private state/state initialization}
+The biggest limitation of our approach is the absence in Java8 of support for private/protected methods in interfaces.That is, in Java8 all members of interfaces are public, including static methods.
+Since we use abstract methods to encode the state, our state is always all public; however is impossible for the user to know if a certain method maps directly to a field or if it have a default implementation.
+If the use wants a constructor that does not directly maps to the fields, (as for secondary constructors in Scala) he can simply define its own \Q@of@ method and delegate on the generated one, as in
+\begin{lstlisting}
+@Mixin interface Point{
+  int x(); int y();
+  static Point of(int val){return Point.of(val,val);}  
+  }
+\end{lstlisting}
+However, the generated \Q@of@ method would also be present and public.
+If a future version of Java was to support \emph{static private methods in interfaces} we could extend our code generation to handle also encapsulation.
+Currently, is possible to use a public nested class with private static methods inside, but this is ugly and cumbersome. We are considering if our annotation processor can take code with \Q!@Private! annotation and turn it into static private methods of a nested class. In this extension,  also the of method could be made private following the same pattern. 
+
+\subsection{Class invariants in ClassLess Java}
+Since the objects are created by automatically generate methods,
+another limitation of our current approach is that there is no place where the user can dynamically check for class invariants.
+In Java often we see code like
+\begin{lstlisting}
+class Point{ int x; int y;
+  Point(int x; int y){this.x=x;this.y=y; assert this.checkInvariant();}
+  private boolean checkInvariant(){... x>0,y>0...}
+\end{lstlisting} 
+
+We are considering an extension of our annotation where 
+default methods with the special name \Q@checkInvariant()@ will be called inside of the \Q@of@ methods.
+if multiple interfaces are implemented, and more then one offers
+\Q@checkInvariant()@,  a composed implementation could be automatically generated, composing by \Q@&&@ the various competing implementations.
+
+\subsection{Clone, toString, equals and hashCode}
+Methods originally defined in \Q@Object@, as \Q@clone@ and \Q@toString@ can be supported by our approach, but they need special care. If an interface annotated with \mixin ask an implementation for \Q@clone@, \Q@toString@ \Q@equls@ or \Q@hashCode@ we can easily generate one from the fields.\footnote{In particular, for clone we can do automatic return type refinement as we do for \Q@with-@ and fluent setters. Note how this would solve most of the Java ugliness related to \Q@clone@ methods.}
+
+However, if the user wish to provide its own implementation, since the method is also implemented in \Q@Object@ we would have a conflict, that we have to explicitly resolve inside of \Q@of@, by implementing the method and delegating it to the user implementation, thus
+
+\begin{lstlisting}
+@Mixin interface Point{ int x(); int y();
+  default Point clone(){ return Point.of(0,0);}//user defined clone
+  }
+\end{lstlisting} 
+Would expand into 
+
+\begin{lstlisting}
+interface Point{ int x(); int y();
+  default Point clone(){ return Point.of(0,0);}//user defined clone
+  public static Point of(int _x,int_y){
+    return new Point(){...
+      public Point clone(){ return Point.super.clone();}
+      };  }  }
+\end{lstlisting} 

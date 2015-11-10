@@ -1,5 +1,5 @@
-\section{Comparing to traits and mixins}\label{sec:comparison}
-
+%\section{Comparing to traits and mixins}\label{sec:comparison}
+\subsection{Multiple Inheritance in ClassLess Java}
 \begin{comment}
 Haoyuan
 
@@ -15,11 +15,18 @@ Haoyuan
    better for reasoning.
 \end{comment}
 
-Our approach is based on code generation by Java annotations. The model we generate encourages composability and reusability in object-oriented programming, and is considered to be an alternative to traits or mixins,  meanwhile achieving better performance in some situations. Hence it is necessary for us to make a comparison between this approach and traits (or mixins) we commonly used before.
+Our approach is based on forbidding the use of certain language constructs (classes), in order to rely on the modular composition offered by the rest of the language (interfaces).
+Since Java was designed for classes, a direct class-less programming style is verbose and feel unnatural. However, annotation driven code generation is enough to overcome this difficulty, and
+the resulting programming style encourages modularity, composability and reusability, by keeping a strong object oriented feel.
+We consider our approach as an alternative to traits or mixins.
 
-Our approach is quite different from mixins, in the sense that we use the trait model of explicitly resolving conflicts. Just as [Scharli2003] demonstrated in the paper, mixin inheritance is a good approach of achieving code reuse, nevertheless, the mixin model is not so expressive to resolve conflicts from many mixins. In the trait model, aliases and exclusions are provided for explicit conflict resolution. Such operations can actually be modelled in the mechanism of our approach. On the other hand, the total ordering property [Scharli2003] restricts the composition of units of behavior. The linearization of mixin inheritance cannot provide a perfect total ordering for various requirements, however, in Java, we have multiple inheritance of interfaces, where methods are inherited at the same time from super interfaces.
+We now compare our approach to the original operations on traits, showing how are supported by our model.\footnote{This comparison shares  similarities with the encoding shown in \cite{bono14};
+we differ in the 
+proposed representation of
+ \textbf{exclusion}.
+The author of ~\cite{bono14} agree that our revised version is cleaner, typesafe and more direct.
+}
 
-Here we present how the original operations on traits are supported by our model.
 \begin{itemize}
 \item \textbf{Symmetric sum}: the symmetric composition of two disjoint traits is achieved by simply implementing two interfaces in Java correspondingly, without overriding any method. The composition relies on multiple inheritance on interfaces, which is supported by Java. Below is a simple example.
     \begin{lstlisting}
@@ -27,7 +34,7 @@ Here we present how the original operations on traits are supported by our model
     interface B { int y(); }
     interface C extends A, B {}
     \end{lstlisting}
-\item \textbf{Override}: the overriding operation (also known as asymmetric sum) is modelled by implementing many interfaces, while overriding some methods inside. The code below gives an example of explicitly specifying which super interface to refer to, regarding two methods with the same name.
+\item \textbf{Override}: the overriding operation (also known as asymmetric/preferential sum) is modelled by implementing many interfaces, while overriding some methods inside. The code below gives an example of explicitly specifying which super interface take precedence, regarding conflict on a specific method.
     \begin{lstlisting}
     interface A { default int m() {return 1;} }
     interface B { default int m() {return 2;} }
@@ -49,8 +56,15 @@ Here we present how the original operations on traits are supported by our model
 Besides, we support more features than the original trait model:
 \begin{itemize}
 \item We provide \texttt{of} methods for the annotated interfaces. During annotation processing time, the ``fields'' inside an interface are observed and a static method \texttt{of} is automatically injected to the interface with its arguments correspondingly. Such a method is a replacement to the constructors in original traits, making instantiation more convenient to use.
-\item We provide \texttt{with-} and \texttt{clone} methods as auxiliary constructors. A \texttt{with-} method is generated for each field, just like record update, returning the new object with that field updated. A \texttt{clone} method is generated for the interface, returning a copy of the current object. Furthermore, we do automatic return type refinement for these two kind of methods. This feature is comparatively useful in big examples, making operations and behaviors more flexible, which we will demonstrate later.
+That is, in our approach there are only interfaces, our model requires a single concept, while the trait model requires traits \emph{and} classes.
+
+\item We provide \texttt{with-} methods as auxiliary constructors. A \texttt{with-} method is generated for each field, just like record update, returning the new object with that field updated
+%. A \texttt{clone} method is generated for the interface, returning a copy of the current object.
+Furthermore, we do automatic return type refinement for these kind of methods. This feature is comparatively useful in big examples, making operations and behaviours more flexible.%, which we will demonstrate later.
 \item We provide two options for generating setters. There are two kind of setters which are commonly used, namely \textit{void setters} and \textit{fluent setters}. The only difference is that a fluent setter returns the object itself after setting, thus supporting a pipeline of such operations. The generation depends on which type of setter is declared in the interface by users.
 \end{itemize}
 
 These are the additional features supported by our model, conversely, there are certain operations we cannot model, such as method renaming (as in [Reppy2006]), which breaks structural subtyping.
+
+There are other limitations of our current approach, but they may be addressed in future work. See \marco{reference to future work when there}
+

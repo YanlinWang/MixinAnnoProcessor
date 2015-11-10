@@ -207,8 +207,10 @@ we also show the convenience of \emph{with} methods.
 as follows:
 \lstinputlisting[linerange=56-60]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
 
-Just to give you a feeling on how much boring code \mixin is generating,  we show the correspondent code without then \mixin annotation.\footnote{Can you spot our intentional typo? This kind of code is so boring that our brain refuse to process it. Programmers should not be required to write this kind of code.}
-\begin{lstlisting}
+Just to give you a feeling on how much boring code \mixin is generating,  we show the correspondent code without then \mixin annotation\footnote{
+As you can see, the generated code is very repetitive, writing such code by hand can easily induce bugs, for example a distract programmer may
+swap the arguments of one of the many calls of \Q@Point3D.of@.
+}.\begin{lstlisting}
 interface Point3D extends Point2D{
   Point3D withX(int val);
   Point3D withY(int val);
