@@ -3,19 +3,21 @@ package test;
 import lombok.Mixin;
 
 public class TestExpression {
-	public static void main(String[] args) {
+	public static String runTest() {
+		String res = "";
 		Lit e1 = Lit.of(3);
-		System.out.println(e1.eval());
+		res += e1.eval() + "\n"; // 3
 		Lit e2 = Lit.of(4);
 		Add e3 = Add.of(e1, e2);
-		System.out.println(e3.eval());
+		res += e3.eval() + "\n"; // 7
 		Sub e4 = Sub.of(e1, e2);
-		System.out.println(e4.eval());
+		res += e4.eval() + "\n"; // -1
 		LitP e5 = LitP.of(3);
 		LitP e6 = LitP.of(4);
 		AddP e7 = AddP.of(e5, e6);
-		System.out.println(e5.print() + " = " + e5.eval());
-		System.out.println(e7.print() + " = " + e7.eval());
+		res += e5.print() + " = " + e5.eval() + "\n"; // 3 = 3
+		res += e7.print() + " = " + e7.eval() + "\n"; // (3 + 4) = 7
+		return res;
 	}
 }
 
