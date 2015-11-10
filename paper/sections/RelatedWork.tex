@@ -2,14 +2,6 @@
 In this section we discuss related work and comparison to Classless Java.
 
 
-\subsection{Formalization of Java8}
-\marco{this go later, when we compare our formalization}
-There is also formalization proposed by
-Goetz and Field~\cite{goetz12fdefenders} to formalize defender (default) methods
-in Java. However this formalization is limited since they only model exactly one
-method inside classes/interfaces, where in our formalization multiple methods
-may be defined.
-
 
 
 %\yanlin{need to discuss: whether the comments for FTJ is fair.}
@@ -155,6 +147,16 @@ What is it that we can do that, those annotations cannot?
 Talk about existing libraries that use fluent interfaces (do any of 
 those use any code generation to assist in the implementation?). 
 
+
+
+\subsection{Formalization of Java8}
+We provide a simple and well designed formalization for a subset of Java including default/static interface methods and object initialization literals (often called anonymous local inner classes).
+A similar formalization was drafted by\marco{ I use the term draft because I seams to remember it was just a technical report, I'm right?}
+Goetz and Field~\cite{goetz12fdefenders} to formalize defender (default) methods
+in Java. However this formalization is limited to model exactly one
+method inside classes/interfaces.
+
+As a evidence of the attention and care present in our formalization work, while double-checking the behaviour of Java in side cases we have discovered a likely bug in the current \texttt{javac}.\marco{refer to before when we explain the issue.}
 
 \section{Future work}
 
