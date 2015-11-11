@@ -134,19 +134,31 @@ only, but those extensions do not introduce new syntax: they
 merely do automatic code generation. 
 
 \paragraph{Meta-programming techniques}
-- MetaFJig*
+- MetaFJig*~\cite{}
 \yanlin{Maybe Marco can help with the text for MetaFJig?}
 
 Annotations/Code Generation/Lombok
 
-What is the difference between our work and existing annotations? 
+What is the difference between our work and existing annotations?
 What is it that we can do that, those annotations cannot?
+
+-Lombok~\cite{} project provides a set of predefined annotations, including
+constructor generators similar as ours (\textbf{@NoArgsConstructor},
+\textbf{@RequiredArgsConstructor} and \textbf{@AllArgsConstructor}). They
+generate various kinds of constructors for \emph{classes}, with or without
+constructor arguments. This set of annotations is of great use, especially when
+they are used together with other features provided in Lombok (e.g.,
+\textbf{@Data}). Moreover, the implementation of these annotations in Lombok
+gives us hints on how to implement \mixin. However, none of these annotations
+can model what we are doing with \mixin - generating a constructor for
+\emph{interfaces}. Apart from constructors, \mixin also provides other
+convenient features (including generating fluent setters, type refinement,etc)
+that the base Lombok project could not provide.
 
 \paragraph{Fluent Interfaces}
 
-Talk about existing libraries that use fluent interfaces (do any of 
-those use any code generation to assist in the implementation?). 
-
+Talk about existing libraries that use fluent interfaces (do any of
+those use any code generation to assist in the implementation?).
 
 
 \subsection{Formalization of Java8}
