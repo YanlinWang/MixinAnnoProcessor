@@ -123,6 +123,29 @@ keywordstyle=\ttfamily\bfseries,
 
 \begin{abstract}
 
+Java 8 introduced \emph{default methods}, allowing interfaces to
+have method implementations. When combined with (multiple) interface
+inheritance, default methods provide a basic form of multiple
+inheritance. However, using this combination to simulate multiple
+inheritance quickly becomes cumbersome, and appears to be quite
+restricted.
+
+This paper shows that, with some minor syntactic sugar, default
+methods and interface inheritance are in fact be very expressive. Our
+proposed syntax sugar, called \emph{concrete interfaces}, enables
+powerful object-oriented idioms, using multiple inheritance, to be
+expressed directly in Java. Concrete interfaces avoid some syntactic
+boilerplate caused by Java being originally designed to work mainly
+with classes. Moreover, concrete interfaces come with their own object
+instantiation mechanism, providing an alternative to class
+constructors. As a result many Java programs can be built without
+using a single class! An implementation of concrete interfaces using 
+Java annotations and a formalization of the static and dynamic
+semantics are presented. Moreover the usefulness of concrete
+interfaces is illustrated through various examples and case studies.
+\bruno{a first draft of the abstract. still missing ``lightweight
+  language extensions''.}
+
 \end{abstract}
 
 %if False
