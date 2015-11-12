@@ -22,20 +22,13 @@ public class TestExpression {
 }
 
 //BEGIN_EXPRESSION_INIT
-interface Exp {
-    int eval();
-}
-
-@Mixin
-interface Lit extends Exp {
+interface Exp { int eval(); }
+@Mixin interface Lit extends Exp {
 	int x();
 	default int eval() { return x(); }
 }
-
-@Mixin
-interface Add extends Exp {
-	Exp e1();
-	Exp e2();
+@Mixin interface Add extends Exp {
+	Exp e1(); Exp e2();
 	default int eval() {
 		return e1().eval() + e2().eval();
 	}
@@ -43,10 +36,8 @@ interface Add extends Exp {
 //END_EXPRESSION_INIT
 
 //BEGIN_EXPRESSION_SUB
-@Mixin
-interface Sub extends Exp {
-	Exp e1();
-	Exp e2();
+@Mixin interface Sub extends Exp {
+	Exp e1(); Exp e2();
 	default int eval() {
 		return e1().eval() - e2().eval();
 	}
@@ -54,23 +45,14 @@ interface Sub extends Exp {
 //END_EXPRESSION_SUB
 
 //BEGIN_EXPRESSION_PRINT
-interface ExpP extends Exp {
-	String print();
+interface ExpP extends Exp { String print(); }
+@Mixin interface LitP extends Lit, ExpP {
+	default String print() {return "" + x();}
 }
-
-@Mixin
-interface LitP extends Lit, ExpP {
-	default String print() {
-		return "" + x();
-	}
-}
-
-@Mixin
-interface AddP extends Add, ExpP {
+@Mixin interface AddP extends Add, ExpP {
+    ExpP e1(); ExpP e2();
 	default String print() {
 		return "(" + e1().print() + " + " + e2().print() + ")";
 	}
-	ExpP e1();
-	ExpP e2();
 }
 //END_EXPRESSION_PRINT

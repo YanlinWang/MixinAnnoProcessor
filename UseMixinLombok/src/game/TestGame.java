@@ -3,6 +3,7 @@ package game;
 import static java.lang.System.out;
 import lombok.Mixin;
 
+/* Defines a base-door with no particular features */
 @Mixin interface TDoor {
     public boolean locked();
     public int doorMaxCoins();
@@ -33,13 +34,11 @@ import lombok.Mixin;
     }
 }
 
-@Mixin
-interface TCounter {
-    /* State references */
+/* Provides a counter that after a limit releases coins */
+@Mixin interface TCounter {
     public int counter();
     public void counter(int c);
     public int limit();
-    /* Coin management */
     public int counterMaxCoins();
     default void incrementCounter() {
         counter(counter() + 1);
@@ -58,9 +57,9 @@ interface TCounter {
     }
 }
 
+/* Provides a chest that contains coins */
 interface TChest {
-    /* Coin management */
-    public int chestMaxCoins(); /* Opens the chest */
+    public int chestMaxCoins();
     default int open() {
         out.print("The chest is now opened!");
         double rnd = Math.random();
@@ -70,8 +69,9 @@ interface TChest {
         return c;
     }
 }
+
+/* Provides an enchantment that can give or take coins */
 interface TEnchantment {
-    /* Coin management */
     public int enchantMaxCoins();
     /** An enchantment can give coins
     (max getEnchantMaxCoins()) or
@@ -79,7 +79,7 @@ interface TEnchantment {
     default int applyEnchantment() {
         out.println("\nThis is an enchantment!");
         out.print("\"If the luck is up, ");
-        out.println("of coins you’ll have a cup,");
+        out.println("of coins you will have a cup,");
         out.print("but if no luck you got, ");
         out.println("you are gonna lose a lot.\"");
         int max = enchantMaxCoins();
@@ -97,8 +97,8 @@ interface TEnchantment {
     }
 }
 
-@Mixin
-interface TEnchantedDoor extends TDoor, TEnchantment {
+/* Puts together a door and an enchantment */
+@Mixin interface TEnchantedDoor extends TDoor, TEnchantment {
     /** When you open an enchanted door,
     you break the enchantment and so
     you apply it. **/
@@ -109,9 +109,9 @@ interface TEnchantedDoor extends TDoor, TEnchantment {
         return coins;
     }
 }
-@Mixin
-interface TChestedDoor
-        extends TDoor, TChest {
+
+/* Puts together a door and a chest */ 
+@Mixin interface TChestedDoor extends TDoor, TChest {
     /** When you open a chested door,
     you also get the prize from the chest.
     This overrides the TDoor’s open(). **/
@@ -126,8 +126,9 @@ interface TChestedDoor
         return TChest.super.open();
     }
 }
-@Mixin
-interface TKnockDoor extends TDoor, TCounter {
+
+/* Puts together a door and a counter */
+@Mixin interface TKnockDoor extends TDoor, TCounter {
     /** Every know makes the counter increment.
      * If the limit is reached, more coins are released. **/
     default int knock() {
@@ -148,41 +149,7 @@ interface TKnockDoor extends TDoor, TCounter {
     }
 }
 
-class PlayerOri {
-    private final String nickname;
-    private int bag = 150; //contains the coins 
-    // Constructor
-    public PlayerOri(String n) {
-        nickname = n;
-    }
-    // Setters and getters 
-    public int getCoins()
-    {
-        return bag;
-    }
-    public String getNickname()
-    {
-        return this.nickname;
-    }
-    // Helpful methods
-    public void addInBag(int amount)
-    {
-        this.bag += amount;
-    }
-    public void removeFromBag(int amount)
-    {
-        this.bag -= amount;
-    }
-    public String toString() {
-        String s = "I’m " + getNickname();
-        s += " and i’ve got " + getCoins();
-        s += " coins in my bag.";
-        return s;
-    }
-}
-
-@Mixin
-interface Player {
+@Mixin interface Player {
     int coins();
     String nickname();
     void coins(int Coins);
@@ -193,8 +160,8 @@ interface Player {
         coins(coins() - amount);
     }
     default String toS() {
-        String s = "I’m " + nickname();
-        s += " and i’ve got " + coins();
+        String s = "I am " + nickname();
+        s += " and i got " + coins();
         s += " coins in my bag.";
         return s;
     }
