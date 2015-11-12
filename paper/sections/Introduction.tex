@@ -1,35 +1,75 @@
 \section{Introduction}\label{sec:intro}
 
-\bruno{Notes for the introduction.}
-
-Default methods were introduced in Java; they allow a simple form 
-of multiple-inheritance similar to traits. However, trying to 
-use default methods to simulate multiple inheritance quickly becomes 
-cumbersome
+Java 8 introduced \emph{default methods}, allowing interfaces to have
+method implementations. The main motivation behind the introduction of
+default methods in Java 8 is \emph{interface evolution}. That is, to
+allow interfaces to be extended over time, while preserving backwards
+compatibility. It soon became clear that default methods could also be
+used to emulate something similar to \emph{traits}~\cite{}. The
+original notion of traits by Scharli et al. prescribes, among other
+things, that: 1) a trait provides a set of methods that implement
+behaviour; and 2) a trait does not specify any state variables, so the
+methods provided by traits do not access state variables directly.  A
+detailed description of how to emulate trait-oriented programming in
+Java 8 can be found in the work by Bono et al.~\cite{}.  The Java 8
+team designing default interfaces, was also fully aware of that
+secondary use of traits, but it was not their objective to model
+traits: ``The key goal of adding default methods to Java was
+"interface evolution", not "poor man's traits"''~\cite{mailing list}. As
+a result they were happy to support the secondary use of default
+methods as long as it did not make the implementation and language
+more complex. 
+ 
+Still, the design has been criticised for being too conservative and 
+not very useful in its current form to model traits or multiple 
+inheritance~\cite{}. \bruno{mention scala traits here?}
+Indeed, our own personal experience of combining default methods 
+and multiple interface inheritance to achieve multiple implementation 
+inheritance is that many workarounds and boilerplate code are needed. 
+In particular, we encountered difficulties because:
 
 \begin{itemize}
 
-\item interfaces have no constructors; classes are still required to
-create objects, leading to boilerplate code for initialization.
+\item {\em Interfaces have no constructors.} As a result classes are 
+still required to create objects, leading to substantial boilerplate 
+code for initialization.
 
-\item interfaces do not have instance fields; using setter and getter 
-methods is a way out of this; but this requires tedious boilerplate 
-classes that latter implement those methods.
+\item {\em Interfaces do not have state.} This creates a tension between 
+ using multiple inheritance and having state. Using setter and
+  getter methods is a way out of this tension, but this workaround
+  requires tedious boilerplate classes that latter implements those
+  methods.
 
-\item Useful methods, general purpose methods, such as $clone$, or 
-\emph{fluent} setters~\cite{} can only be defined 
-with access to the internal state, which is not available in 
-an interface. Moreover such methods require special care in the 
-presence of subtypes. 
+\item {\em Useful, general purpose methods, require special care in
+  the presence of subtyping.} Methods such as $clone$, or
+  \emph{fluent} setters~\cite{}, not only require access to the
+  internal state of an object, but they also require their types to be
+  refined in subtypes.
 
 \end{itemize}
 
-This paper proposes \emph{concrete interfaces}: a simple extension 
-to Java interfaces where all interface methods have an implementation. 
-Concrete interfaces have a single constructor that is derived from the 
-interface; they support various common utility methods (such as getters 
-and setters, or clone methods) without boilerplate; and they automatically 
-they with utility methods in the presence of subtyping. 
+\noindent Clearly, a way around those difficulties would be to try 
+to change the language and just remove these limitations. Scala's 
+own notion of traits, for example, allows state in traits. Ofcourse 
+this would complicate the language and require changes in the compiler, 
+and this would go beyond the goals of Java 8 development team. 
+
+This paper takes a different approach. Rather than trying to get
+around the diffulculties by extending the language in quite
+fundamental ways, we show that, with some minor syntactic sugar,
+default methods and interface inheritance are in fact be very
+expressive. Our proposed syntax sugar, called \emph{concrete
+  interfaces}, enables powerful object-oriented idioms, using multiple
+inheritance, to be expressed directly in the current Java
+language. Concrete interfaces avoid some syntactic boilerplate caused
+by Java being originally designed to work mainly with
+classes. Moreover, concrete interfaces come with their own object
+instantiation mechanism, providing an alternative to class
+constructors. Finally concrete interfaces support various common
+utility methods (such as getters and setters, or clone methods)
+without boilerplate; and they automatically they with utility methods
+in the presence of subtyping. As a result many Java programs can be 
+built without using a single class! \bruno{integrate more of Marco's text.}
 
 To formalize concrete interfaces, we propose FeatherweightConcrete (FC): 
 a FeatherweightJava-style calculus, which captures the essence 
@@ -40,27 +80,38 @@ regular FC (and Java) interfaces with default methods. The translation
 is proved to be type-preserving, ensuring that the tranlation does 
 not introduce new errors. One interesting aspect of the theorem is that 
 if we ignore the concrete annotations, the program still type-checks 
-under the regular typing rules of FC.
+under the regular typing rules of FC.\bruno{double-check!}
 
-We implement concrete interfaces, purely using Java annotations. As such 
-no new syntax is required, and existing Java tools (such as IDE's) work 
-with our implementation. 
+An implementation of concrete interfaces using Java annotations and a
+formalization of the static and dynamic semantics are presented. We
+implement concrete interfaces, purely using Java annotations. As such
+no new syntax is required, and existing Java tools (such as IDE's)
+work with our implementation.
+
+Moreover the usefulness of concrete
+interfaces is illustrated through various examples and case studies.
+
+The contributions of this paper are:
 
 \begin{itemize}
 
-\item Using annotattions to implement a rich notion of traits with a
-mechanism to instantiate objects (the of method). Goal 1: is to reduce
-the amount of code that is required to program with interfaces and default
-methods. Goal 2: To provide a convenient means to do multiple inheritance
-in Java.
+\item {\bf Concrete interfaces:} A simple language feature that allows 
+various powerful programming idioms in Java 8 to be expressed conveniently. 
+Concrete interfaces are pure sugar: they can be desugared into standard Java 
+code, without loss of modularity or type-safety. 
 
-\item Specify the system more formally.
+\item {\bf Featherweight Concrete (FC):} A simple formal calculus that models 
+the essential features of Java 8 interfaces with default methods, and 
+can be used to formally define the desugaring of concrete interfaces. 
+We prove ...
 
-\item Show that we can model all trait operations
-
-\item Implementation using Lombok
-
-\item Case studies: The expression problem, Trivially
-Case Studies from traits paper.
+\item {\bf Implementation and Case Studies:} We have a prototype implementation 
+  of concrete interfaces, using Java annotations. Moreover the usefulness
+  of concrete interfaces is illustrated through various examples and
+  case studies.
 
 \end{itemize}
+
+\bruno{Useful reference, perhaps, on the discussion of why not override object 
+methods: 
+\url{http://mail.openjdk.java.net/pipermail/lambda-dev/2013-March/008435.html}}
