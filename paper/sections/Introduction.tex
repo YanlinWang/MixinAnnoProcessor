@@ -74,7 +74,9 @@ of subtyping. As a result, with object interfaces, many Java programs
 can be built without using a single class!  \bruno{integrate more of
   Marco's text.}
 
-To formalize object interfaces, we propose Featherweight Object Interfaces (FOI): 
+To formalize object interfaces, we propose Featherweight Object
+Interfaces (FOI)\bruno{should we just call it Featherweight Classless
+  Java?}: 
 a FeatherweightJava-style calculus, which captures the essence 
 of interfaces with default methods. The semantics of object interfaces 
 is given as a type-directed translation from FOI to itself. 
@@ -84,6 +86,12 @@ is proved to be type-preserving, ensuring that the translation does
 not introduce type-errors. One interesting aspect of the theorem is that, 
 if we ignore the object annotations, the program still type-checks 
 under the regular typing rules of FOI (and Java).\bruno{double-check!}
+
+FOI's usefulness goes beyond serving as a calculus to formalize object
+interfaces. During the development process of FOI, we encountered an 
+incoherent behaviour in Java's implementation of default methods that 
+could be classified as a bug. \bruno{Should we report bug to the Java
+  developers mailing list?}
 
 We also present a prototype implementation of object interfaces using
 Java annotations. One benefit of an annotation-based implementation 
@@ -113,15 +121,18 @@ In summary, the contributions of this paper are:
 
 \begin{itemize}
 
-\item {\bf Object interfaces:} A simple language feature that allows 
+\item {\bf Object Interfaces:} A simple language feature that allows 
 various powerful programming idioms to be expressed conveniently in
 Java. Object interfaces are pure sugar: they can be desugared into standard Java 
 code, without loss of modularity or type-safety. 
 
-\item {\bf Featherweight Object (FC):} A simple formal calculus that models 
+\item {\bf Featherweight Object Interfaces (FOI):} A simple formal calculus that models 
 the essential features of Java 8 interfaces with default methods, and 
 can be used to formally define the desugaring of object interfaces. 
 We prove ...
+
+\item {\bf A Bug in the Implementation of Java 8:}\bruno{state this as
+  a contrib?}
 
 \item {\bf Implementation and Case Studies:} We have a prototype implementation 
   of object interfaces, using Java annotations. Moreover the usefulness
@@ -134,3 +145,6 @@ We prove ...
 \bruno{Useful reference, perhaps, on the discussion of why not override object 
 methods: 
 \url{http://mail.openjdk.java.net/pipermail/lambda-dev/2013-March/008435.html}}
+\bruno{Maybe Marco's text can be in the conclusion, which I think is
+  ok to be more provocative. I tried to be a bit more contained in the
+Introduction.}
