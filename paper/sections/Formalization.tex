@@ -35,13 +35,23 @@ interface E3 extends A2,C2 { int m(); } //accepted
 \end{lstlisting}
 
 \subsection{Method Overriding Bug in Java}
-\begin{figure}[tbp]
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{table}[]
 \centering
-\includegraphics[width=5in]{table.png}
-\caption{Table.}\label{fig:javabug}
-\end{figure}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
+\textbf{B1}        & ERROR                        & ERROR       & ERROR       \\ \hline
+\textbf{B2}        & A1/B2                        & ERROR       & A3/B2       \\ \hline
+\textbf{B3}        & \cellcolor[HTML]{C0C0C0}B3.m & ERROR       & ERROR       \\ \hline
+\end{tabular}
+\caption{M extends $A_i, B_j$}
+\label{table:javabug}
+\end{table}
 
-Figure~\ref{fig:javabug} shows the method overriding bug in Java. In the
+Table~\ref{table:javabug} shows the method overriding bug in Java. In the
 example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
 named as \texttt{m} which are either abstract or default methods. If we define a
 new interface \texttt{M} that extends two of these interfaces, then the method
