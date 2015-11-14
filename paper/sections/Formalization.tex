@@ -168,26 +168,26 @@ $
 \!\!\!\!\!\!\!\!\!\!
 \begin{array}{l}
 \inferrule[(T-Invk)]{
- \Gamma \vdash \e_0 \in \C_0 \\\\
+ \Gamma \vdash \e \in \C \\\\
 \forall i\in 1..n\  \Gamma \vdash \e_i \in \_<:\C_i \\\\
-  \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
-%\textsf{mmodifier}(\m,\C_0) \neq \textbf{static}
+  \textsf{mtype}(\m,\C) \!=\! \overline{\C} \!\!\to\! \C'
+%\textsf{mmodifier}(\m,\C) \neq \textbf{static}
  }{
- \Gamma \vdash \e_0\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C }
+ \Gamma \vdash \e\QM.\m\QM(\overline{\e}\QM) \in \C' }
 \quad
 \inferrule[(T-StaticInvk)]{
 \forall i\in 1..n\  \Gamma \vdash \e_i\in \_<:\C_i \\\\
-\textsf{mtypeS}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
-%\textsf{mmodifier}(\m,\C_0) = \textbf{static}
+\textsf{mtypeS}(\m,\C) \!=\! \overline{\C} \!\to\! \C'
+%\textsf{mmodifier}(\m,\C) = \textbf{static}
 }{
-\Gamma \vdash \C_0\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
+\Gamma \vdash \C\QM.\m\QM(\overline{\e}\QM) \in \C'}
 \quad
 \inferrule[(T-SuperInvk)]{
-\Gamma(\this) <: \C_0 \\\\
+\Gamma(\this) <: \C \\\\
 \forall i\in 1..n\ \Gamma \vdash \e_i\in \_<:\C_i \\\\
-  \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
+  \textsf{mtype}(\m,\C) \!=\! \overline{\C} \!\!\to\! \C'
 %\textsf{mmodifier}(\m,\C_0) \neq \textbf{static} \\\\
-}{\Gamma \vdash \C_0\QM.\QM{super}\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
+}{\Gamma \vdash \C\QM.\QM{super}\QM.\m\QM(\overline{\e}\QM) \in \C'}
 
 \\[5ex]
 \inferrule[(T-Obj)]{
