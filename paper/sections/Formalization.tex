@@ -498,35 +498,46 @@ interface B3 extends B2{default T m(){ ... } }
 \end{lstlisting}
 
 What happens if we define a new interface \Q@M@ implementing one \Q@A@${}_i$ and one \Q@B@${}_i$? we have 9 cases, that can fit nicely a table:\\*
-
+\noindent
 \begin{tabular}{|l|l|l|l|}
 \hline
 \textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
-\textbf{B1}        & error                        & error      &error       \\ \hline
-\textbf{B2}        & accepted                        & error       & accepted       \\ \hline
-\textbf{B3}        & \cellcolor[HTML]{C0C0C0}accepted &error       & error      \\ \hline
+\textbf{B1}        & conservative error                        & conflict error      & conservative error       \\ \hline
+\textbf{B2}        & both abstract, accepted                        & conservative error       & both abstract, accepted       \\ \hline
+\textbf{B3}        & \cellcolor[HTML]{C0C0C0} accepted? &conflict  error       & conservative error      \\ \hline
 \end{tabular}
 \\*
- and we have found that javac\footnote{We refer to \texttt{javac} as in JDK version is\marco{add}}
-have a very strange behaviour in the following case
+We try to classify the results out of the table:
+\begin{itemize}
+\item \textbf{conflict error} happens when the method from \Q@A@${}_i$ and one \Q@B@${}_i$ are both implemented. This is also considered an error in most trait models.
+\item \textbf{both abstract, accepted} happens when the method from \Q@A@${}_i$ and one \Q@B@${}_i$ are both abstract. This is also considered correct in all trait models.
+\item \textbf{conservative error}
+ happens when the method from \Q@A@${}_i$ and one \Q@B@${}_i$ is implemented in only one side.
+The is different from what we would expect in a trait model, but it may make sense with the conservative idea that a method defined in an interface
+should not silently satisfy a method in another one.
+\end{itemize}
 
-Table~\ref{table:javabug} shows the method overriding bug in Java. In the
-example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
-named as \texttt{m} which are either abstract or default methods. If we define a
-new interface \texttt{M} that extends two of these interfaces, then the method
-overriding result is shown in the table. For example, row2 col2 means \texttt{M
-  extends A1,B1}. The result is \texttt{ERROR} because the abstract method
-\texttt{T m();} in \texttt{A1} conflicts with the method \texttt{default T m()
-  {...}} in \texttt{B1}. Readers may also figure out other extending cases by
-following this way of interpretation. The interesting case in row4 col2 where
-\texttt{M extends A1,B3}, the result should be \texttt{ERROR}, however in Java
-the experimental result is \texttt{B3.m}. Because if we think consistently, this
-case is esencially a method conflicting situation with abstract methods and
-default methods, which is no different than the first case.
+We are very confused on the result for \textbf{B3},\textbf{A1}, and we can not find any rational for this behaviour.
+\footnote{We refer to the behaviour of \texttt{javac} as in JDK version is\marco{add}.}
 
-\lstinputlisting[linerange=5-10]{../UseMixinLombok/src/methodshadowing/test5/Test5.java} % APPLY:linerange=JAVABUG
+%Table~\ref{table:javabug} shows the method overriding bug in Java. In the
+%example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
+%named as \texttt{m} which are either abstract or default methods. If we define a
+%new interface \texttt{M} that extends two of these interfaces, then the method
+%overriding result is shown in the table. For example, row2 col2 means \texttt{M
+%  extends A1,B1}. The result is \texttt{ERROR} because the abstract method
+%\texttt{T m();} in \texttt{A1} conflicts with the method \texttt{default T m()
+%  {...}} in \texttt{B1}. Readers may also figure out other extending cases by
+%following this way of interpretation.
 
-In our approach, we overcome this bug by detecting method correctness when
-typechecking all interfaces. Internally, algorithm in the auxiliary function
-$\mBody(\m,\C)$ apply the correct method overriding mechanism and returns the
-correct method signature.
+% The interesting case in row4 col2 where
+To be coherent with the idea of \textbf{conservative error}, the case should not be accepted.
+We do not see how this should behave differently from \textbf{B1},\textbf{A1}, and \textbf{B3},\textbf{A3}.
+We fear that the only retro-compatible fix for this strange behaviour is to accept all the cases of \textbf{conservative error} in a future version of Java.
+%the experimental result is \texttt{B3.m}. Because if we think consistently, this
+
+%\lstinputlisting[linerange=5-10]{../UseMixinLombok/src/methodshadowing/test5/Test5.java} % APPLY:linerange=JAVABUG
+
+In our approach, we choose to not model this strange behaviour (a bug?).
+Our auxiliary function $\mBody(\m,\C)$ enforce the \textbf{conservative error} strategy.
+The rest of our formalization is parametric with the definition of $\mBody(\m,\C)$, thus if Java change its resolution strategy to a more permissive one, only minor adaptations in $\mBody(\m,\C)$ would be needed.
