@@ -4,7 +4,7 @@ if [ $1 ]
 then
     case "$1" in
     bib )       
-        xelatex paper.tex
+        pdflatex paper.tex
         bibtex paper     
     ;;
     * )
@@ -17,7 +17,7 @@ then
 fi
 
 ruby computePositions.rb
-xelatex paper.tex
+pdflatex paper.tex
 open paper.pdf
 
 rm footempfile.txt
