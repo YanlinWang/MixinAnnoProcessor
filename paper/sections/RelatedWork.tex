@@ -91,26 +91,35 @@ Except for few, mostly syntactic details, their work can be emulated/rephrased w
 \input{sections/Compare.tex}
 
 \subsection{ThisType/MyType/Extensibility}
-\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namelly it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolish most advantages of interfaces.}
-Typical object-oriented programming languages (e.g. Java) use class names as
-types and inheritance as subtyping relations. This gives difficulty when
-extending classes/interfaces with recursive types. Problems such as binary
-methods, return type refinement, etc. emerge and hinders software extensibility
-greatly.
+%\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namelly it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolish most advantages of interfaces.}
 
-\emph{MyType}~\cite{bruce1994paradigmatic} was proposed by Bruce and Foster,
-which represents the type of \textbf{this} and changes its meaning along with
-inheritance. The addition of MyType to a language will allow easy definition of
-binary methods, methods with recursive types (i.e., the same type of the
-receiver appears in the argument or return positions of methods), etc. MyType
-greatly enhances the expressiveness and extensibility of object-oriented
-programming languages. 
+In certain situations, our approach allows automatic refinement for return types. This is part of a bigger topic in class based languages: expressing and preserving type recursion and (nominal/structural) subtyping at the same time. 
 
-In our approach, we are using covariant-return types to simulate some uses of
-MyType. But our approach only works on method positive positions, whereas MyType
-is more general, as it works on any positions. Nevertheless our approach is
-still useful for modeling fluent interfaces and solving expression
-problems,etc. 
+One famous attempt in this direction is provided by 
+\emph{MyType}~\cite{bruce1994paradigmatic}, representing the type of \textbf{this}, changing its meaning along with
+inheritance.
+However when invoking a method with MyType in a parameter position, the exact type of the receiver must be known.
+This is huge limitation in class based object oriented programming,
+and is exasperated by interface-only programming as we propose: no type is ever exact since classes are not part of the language.
+A recent article~\cite{igarashi Matching MyType to subtyping}
+lights up this topic, since
+they propose two features: exact statements and non-inheritable methods; both related to our work:
+any method generated inside of the \Q@of@ method is indeed non-inheritable, since there is no class name to extends from, and exact statements (a form of wild-card capture on the exact run-time type)
+could capture the ``exact type'' of an object even in a class-less environment.
+
+
+
+% The addition of MyType to a language will allow easy definition of
+%binary methods, methods with recursive types (i.e., the same type of the
+%receiver appears in the argument or return positions of methods), etc. MyType
+%greatly enhances the expressiveness and extensibility of object-oriented
+%programming languages. 
+
+%In our approach, we are using covariant-return types to simulate some uses of
+%MyType. But our approach only works on method positive positions, whereas MyType
+%is more general, as it works on any positions. Nevertheless our approach is
+%still useful for modeling fluent interfaces and solving expression
+%problems,etc. 
 
 \subsection{Type-Directed Translations/Syntactic Sugar}
 Language extensions are often implemented as syntactic sugar of the base
@@ -179,7 +188,7 @@ As a evidence of the attention and care present in our formalization work, while
 
 \section{Future work}
 
-\subsection{Private state/state initialization}
+\subsection{Private state}
 The biggest limitation of our approach is the absence in Java8 of support for private/protected methods in interfaces.That is, in Java8 all members of interfaces are public, including static methods.
 Since we use abstract methods to encode the state, our state is always all public; however is impossible for the user to know if a certain method maps directly to a field or if it have a default implementation.
 If the use wants a constructor that does not directly maps to the fields, (as for secondary constructors in Scala) he can simply define its own \Q@of@ method and delegate on the generated one, as in
@@ -192,6 +201,27 @@ If the use wants a constructor that does not directly maps to the fields, (as fo
 However, the generated \Q@of@ method would also be present and public.
 If a future version of Java was to support \emph{static private methods in interfaces} we could extend our code generation to handle also encapsulation.
 Currently, is possible to use a public nested class with private static methods inside, but this is ugly and cumbersome. We are considering if our annotation processor can take code with \Q!@Private! annotation and turn it into static private methods of a nested class. In this extension,  also the of method could be made private following the same pattern. 
+
+\subsection{State initialization}
+
+As discuss before, the user can trivially define its own \Q@of@ method, and initialize a portion of the state with default values.
+However, the initialization code would not be reused/reusable, and subinterfaces would have to repeat such initialization code.
+If a field has no setters, a simple alternative is to just define the ``field'' as a default method as in 
+\begin{lstlisting}
+@Mixin interface Box{ default int val(){return 0;} }
+\end{lstlisting}
+if setters are required, a possible extension of our code expansion could recognize a field if the getter is provided and the setter is required, and could generate the following code:
+\begin{lstlisting}
+interface Box{ 
+  default int val(){return 0;} 
+  void val(int _val);
+  static Box of(){return new Box(){
+    int val=Box.super.val();
+    int val(){return val;}
+    void val(int _val){val=_val;}
+    };}}
+\end{lstlisting}
+We are unsure of the value of this solution: is very tricky, the user define a method that (contrary to our usual expectation) is actually overridden in a way that the behaviour change, but change only after the first setter is called, plus this code would cache the result instead of re-computing it every time. This can be very relevant and tricky in a non functional setting.
 
 \subsection{Class invariants in ClassLess Java}
 Since the objects are created by automatically generate methods,
