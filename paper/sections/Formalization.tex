@@ -1,76 +1,5 @@
 \section{Formal Semantics}\label{sec:formal}
 
-\subsection{Method Overriding Mechanism}
-We summarize the mechanism for method overriding below (all methods considered
-here are methods with the same name and argument types):
-
-1. Two abstract methods with subtyping relation do not cause conflict, and the
-most specific one wins. Subtyping relation for two methods means they have the
-same arguments' types and one return type is a subtype of the other one. For
-example:
-\begin{lstlisting}
-interface A1 { Object m(); }
-interface B1 { Integer m();}
-interface C1 extends A1,B1 {} //accepted
-\end{lstlisting}
-Method \texttt{Integer m()} in \texttt{B} wins over method \texttt{Object m()}
-in \texttt{A} because \texttt{Integer <: Object}.
-
-2. A default method conflict with another default method or abstract method. For
-example:
-\begin{lstlisting}
-interface A2 { default int m() {return 1;}}
-interface B2 { int m(); }
-interface C2 { default int m() {return 2;}}
-interface D2 extends A2,B2 {} //rejected due to conflicting methods
-interface E2 extends A2,C2 {} //rejected due to conflicting methods
-\end{lstlisting}
-
-3. The method in the current interface wins over any methods defined in its
-super-interfaces, provided that the method conform to the subtype of all methods
-in its super-interfaces, i.e., the method is the most specific one. For example:
-\begin{lstlisting}
-interface D3 extends A2,B2 { int m(); } //accepted
-interface E3 extends A2,C2 { int m(); } //accepted
-\end{lstlisting}
-
-\subsection{Method Overriding Bug in Java}
-% Please add the following required packages to your document preamble:
-% \usepackage[table,xcdraw]{xcolor}
-% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
-\begin{table}[]
-\centering
-\begin{tabular}{|l|l|l|l|}
-\hline
-\textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
-\textbf{B1}        & ERROR                        & ERROR       & ERROR       \\ \hline
-\textbf{B2}        & A1/B2                        & ERROR       & A3/B2       \\ \hline
-\textbf{B3}        & \cellcolor[HTML]{C0C0C0}B3.m & ERROR       & ERROR       \\ \hline
-\end{tabular}
-\caption{M extends $A_i, B_j$}
-\label{table:javabug}
-\end{table}
-
-Table~\ref{table:javabug} shows the method overriding bug in Java. In the
-example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
-named as \texttt{m} which are either abstract or default methods. If we define a
-new interface \texttt{M} that extends two of these interfaces, then the method
-overriding result is shown in the table. For example, row2 col2 means \texttt{M
-  extends A1,B1}. The result is \texttt{ERROR} because the abstract method
-\texttt{T m();} in \texttt{A1} conflicts with the method \texttt{default T m()
-  {...}} in \texttt{B1}. Readers may also figure out other extending cases by
-following this way of interpretation. The interesting case in row4 col2 where
-\texttt{M extends A1,B3}, the result should be \texttt{ERROR}, however in Java
-the experimental result is \texttt{B3.m}. Because if we think consistently, this
-case is esencially a method conflicting situation with abstract methods and
-default methods, which is no different than the first case.
-
-\lstinputlisting[linerange=5-10]{../UseMixinLombok/src/methodshadowing/test5/Test5.java} % APPLY:linerange=JAVABUG
-
-In our approach, we overcome this bug by detecting method correctness when
-typechecking all interfaces.
-
-
 \marco{Old notes: new text is later}
 Yanlin and Haoyuan
 
@@ -515,3 +444,75 @@ Interface $I$ type checks well, if:
 {C_0 <: C_1 \\ ... \\ C_0 <: C_k} \]
 \end{comment}
 %\subsubsection{Interface Table}
+
+\subsection{Method Overriding Mechanism}
+We summarize the mechanism for method overriding below (all methods considered
+here are methods with the same name and argument types):
+
+1. Two abstract methods with subtyping relation do not cause conflict, and the
+most specific one wins. Subtyping relation for two methods means they have the
+same arguments' types and one return type is a subtype of the other one. For
+example:
+\begin{lstlisting}
+interface A1 { Object m(); }
+interface B1 { Integer m();}
+interface C1 extends A1,B1 {} //accepted
+\end{lstlisting}
+Method \texttt{Integer m()} in \texttt{B} wins over method \texttt{Object m()}
+in \texttt{A} because \texttt{Integer <: Object}.
+
+2. A default method conflict with another default method or abstract method. For
+example:
+\begin{lstlisting}
+interface A2 { default int m() {return 1;}}
+interface B2 { int m(); }
+interface C2 { default int m() {return 2;}}
+interface D2 extends A2,B2 {} //rejected due to conflicting methods
+interface E2 extends A2,C2 {} //rejected due to conflicting methods
+\end{lstlisting}
+
+3. The method in the current interface wins over any methods defined in its
+super-interfaces, provided that the method conform to the subtype of all methods
+in its super-interfaces, i.e., the method is the most specific one. For example:
+\begin{lstlisting}
+interface D3 extends A2,B2 { int m(); } //accepted
+interface E3 extends A2,C2 { int m(); } //accepted
+\end{lstlisting}
+
+\subsection{Method Overriding Incoherence in Java}
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
+\textbf{B1}        & ERROR                        & ERROR       & ERROR       \\ \hline
+\textbf{B2}        & A1/B2                        & ERROR       & A3/B2       \\ \hline
+\textbf{B3}        & \cellcolor[HTML]{C0C0C0}B3.m & ERROR       & ERROR       \\ \hline
+\end{tabular}
+\caption{M extends $A_i, B_j$}
+\label{table:javabug}
+\end{table}
+
+Table~\ref{table:javabug} shows the method overriding bug in Java. In the
+example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
+named as \texttt{m} which are either abstract or default methods. If we define a
+new interface \texttt{M} that extends two of these interfaces, then the method
+overriding result is shown in the table. For example, row2 col2 means \texttt{M
+  extends A1,B1}. The result is \texttt{ERROR} because the abstract method
+\texttt{T m();} in \texttt{A1} conflicts with the method \texttt{default T m()
+  {...}} in \texttt{B1}. Readers may also figure out other extending cases by
+following this way of interpretation. The interesting case in row4 col2 where
+\texttt{M extends A1,B3}, the result should be \texttt{ERROR}, however in Java
+the experimental result is \texttt{B3.m}. Because if we think consistently, this
+case is esencially a method conflicting situation with abstract methods and
+default methods, which is no different than the first case.
+
+\lstinputlisting[linerange=5-10]{../UseMixinLombok/src/methodshadowing/test5/Test5.java} % APPLY:linerange=JAVABUG
+
+In our approach, we overcome this bug by detecting method correctness when
+typechecking all interfaces. Internally, algorithm in the auxiliary function
+$\mBody(\m,\C)$ apply the correct method overriding mechanism and returns the
+correct method signature.
