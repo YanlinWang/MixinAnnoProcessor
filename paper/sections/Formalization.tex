@@ -276,7 +276,8 @@ Where
 $\metaVar{IT}(C_0) =
 \ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs \oC\methods\cC$
 
-As you can see, we are delegating the work to three others auxiliary functions: $\tops(\Cs), \shadow(\m,\Cs) and \override(\method,\method')$
+As you can see, we are delegating the work to three others auxiliary functions:\\*
+ $\tops(\Cs), \shadow(\m,\Cs)$ and $\override(\method,\method')$
 ${}_{}$\\*
 \marco{we need to discuss the names tops, shadow and override}
 
@@ -312,14 +313,14 @@ We do not model overloading, so it is an error if multiple versions are availabl
  \mwhere\ \T\subtype \T'\\
 
 \method \subtype
-\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}=
+\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}=
 \method\subtype\mh\QM;
 \\
-\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\subtype\method=
+\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}\subtype\method=
 \mh\QM;\subtype\method
 \end{array}$
 ${}_{}$\\*
-Where $\Aux{mostSpecific}$ return the most specific method using return type specialization as introduced in Java ??
+Where $\Aux{mostSpecific}$ return the most specific method using return type specialization as introduced in Java\marco{insert the version number}
 We just check the subtype between method headers, so we discard information abut method implementation.\\*
 ${}_{}$\\*
 The override function models how the implementation in an interface can override implementation in the superinterface; even in case of a conflict.
@@ -336,7 +337,7 @@ Note how we use the special value $\none$, and how (forth case) overriding can s
 =
 \method
 \whereNote
-\mwhere\ \method'\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
+\mwhere\ \method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
 \method\subtype\method'
 \\
 %\override(\method,\mh')
@@ -448,8 +449,8 @@ Interface $I$ type checks well, if:
 \subsection{Method Overriding Mechanism}
 We summarize the mechanism for method overriding below (all methods considered
 here are methods with the same name and argument types):
-
-1. Two abstract methods with subtyping relation do not cause conflict, and the
+\begin{enumerate}
+\item Two abstract methods with subtyping relation do not cause conflict, and the
 most specific one wins. Subtyping relation for two methods means they have the
 same arguments' types and one return type is a subtype of the other one. For
 example:
@@ -461,7 +462,7 @@ interface C1 extends A1,B1 {} //accepted
 Method \texttt{Integer m()} in \texttt{B} wins over method \texttt{Object m()}
 in \texttt{A} because \texttt{Integer <: Object}.
 
-2. A default method conflict with another default method or abstract method. For
+\item A default method conflict with another default method or abstract method. For
 example:
 \begin{lstlisting}
 interface A2 { default int m() {return 1;}}
@@ -470,31 +471,44 @@ interface C2 { default int m() {return 2;}}
 interface D2 extends A2,B2 {} //rejected due to conflicting methods
 interface E2 extends A2,C2 {} //rejected due to conflicting methods
 \end{lstlisting}
+Note how this is in contrast with what happens in most trait models, where \Q@D2@ would be accepted, and the implementation in \Q@A2@ would be part of the behaviour of \Q@D2@.
 
-3. The method in the current interface wins over any methods defined in its
+\item The method in the current interface wins over any methods defined in its
 super-interfaces, provided that the method conform to the subtype of all methods
 in its super-interfaces, i.e., the method is the most specific one. For example:
 \begin{lstlisting}
 interface D3 extends A2,B2 { int m(); } //accepted
 interface E3 extends A2,C2 { int m(); } //accepted
 \end{lstlisting}
-
+\end{enumerate}
 \subsection{Method Overriding Incoherence in Java}
 % Please add the following required packages to your document preamble:
 % \usepackage[table,xcdraw]{xcolor}
 % If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
-\begin{table}[]
-\centering
+While trying to formally encode the Java specification we have done some tests to clarify corner case behaviour.
+Consider the following correct declarations:
+\begin{lstlisting}
+interface A1{T m(); }
+interface A2 extends A1{default T m(){ ... } }
+interface A3 extends A2{T m(); } 
+
+interface B1{default T m(){ ... } }
+interface B2 extends B1{T m(); }
+interface B3 extends B2{default T m(){ ... } }
+\end{lstlisting}
+
+What happens if we define a new interface \Q@M@ implementing one \Q@A@${}_i$ and one \Q@B@${}_i$? we have 9 cases, that can fit nicely a table:\\*
+
 \begin{tabular}{|l|l|l|l|}
 \hline
 \textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
-\textbf{B1}        & ERROR                        & ERROR       & ERROR       \\ \hline
-\textbf{B2}        & A1/B2                        & ERROR       & A3/B2       \\ \hline
-\textbf{B3}        & \cellcolor[HTML]{C0C0C0}B3.m & ERROR       & ERROR       \\ \hline
+\textbf{B1}        & error                        & error      &error       \\ \hline
+\textbf{B2}        & accepted                        & error       & accepted       \\ \hline
+\textbf{B3}        & \cellcolor[HTML]{C0C0C0}accepted &error       & error      \\ \hline
 \end{tabular}
-\caption{M extends $A_i, B_j$}
-\label{table:javabug}
-\end{table}
+\\*
+ and we have found that javac\footnote{We refer to \texttt{javac} as in JDK version is\marco{add}}
+have a very strange behaviour in the following case
 
 Table~\ref{table:javabug} shows the method overriding bug in Java. In the
 example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all

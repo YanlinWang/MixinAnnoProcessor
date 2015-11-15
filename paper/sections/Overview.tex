@@ -49,6 +49,13 @@ interface Point2D{ int x(); int y();}
 \end{lstlisting}
 That is, since Java disallows fields inside interfaces,
  we simulate state by abstract methods.
+By using the new Java8 \Q@default@ methods, we can easily add implemented methods inside the interface. For example:
+\begin{lstlisting}
+interface Point2D{ int x(); int y();
+  default float distanceFromOrigin(){ return Math.sqrt(x()*x()+y()*y());}
+  }
+\end{lstlisting}
+resemble a class that have fields (getters) and methods.
 However, how can we create an instance of \Q@Point2D@ without using classes? 
 we can just provide an implementation for \Q@x()@ and \Q@y()@ as in
 \begin{lstlisting}
@@ -80,17 +87,37 @@ where we return a new point, using \Q@42@ as x-coordinate, and
 taking all the other informations (only \Q@y@ in this case) from another point.
 This pattern is very common when programming with immutable data-structures; it is so common that we decided to support it in our code generation as \Q@with-@ methods, that is:
 \begin{lstlisting}
-@Mixin interface Point2D{ int x(); int y();
-  Point2D withX(int val); 
-  Point2D withY(int val);}
+@Mixin interface Point2D{ int x();    int y();
+  Point2D withX(int val);    Point2D withY(int val);}
 \end{lstlisting}
-is equivalent to 
+is expanded by our annotation into
+
+\begin{lstlisting}
+interface Point2D{ int x(); int y();
+  static Point2D of(int _x, int _y){return new Point2D(){
+    int x=_x; int y=_y;
+    public int x(){return x;}   public int y(){return y;}
+    Point2D withX(int val){ return Point2D.of(val,this.y());}    
+    Point2D withY(int val){ return Point2D.of(this.x(),val);}  
+    };}
+  Point2D withX(int val);    Point2D withY(int val);}
+\end{lstlisting}
+If the programmer would like a different implementation, they can just provide it using \Q@default@; that is:
 \begin{lstlisting}
 @Mixin interface Point2D{ int x(); int y();
-  default Point2D withX(int val){ return Point2D.of(val,this.y());}
-  default Point2D withY(int val){ return Point2D.of(this.x(),val);}  }
+  default Point2D withX(int val){ ... };    default Point2D withY(int val){ ... }}
 \end{lstlisting}
-Notice how we can provide implementation for methods in an interface, 
+is expanded into
+\begin{lstlisting}
+interface Point2D{ int x(); int y();
+  static Point2D of(int _x, int _y){return new Point2D(){
+    int x=_x;    int y=_y;
+    public int x(){return x;}    public int y(){return y;}
+    };}
+  default Point2D withX(int val){ ... }    default Point2D withY(int val){ ... }}
+\end{lstlisting}
+
+That is, we can provide implementation for methods in an interface, 
 and our annotation generate code only if the method \emph{needs} implementation. In this way is trivial for the programmer to personalize the behaviour if they have any special need.
 
 %Firstly, to model \texttt{Point2D} that has x-coordinate and y-coordinate by an
@@ -207,29 +234,24 @@ we also show the convenience of \emph{with} methods.
 as follows:
 \lstinputlisting[linerange=56-60]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
 
-Just to give you a feeling on how much boring code \mixin is generating,  we show the correspondent code without then \mixin annotation\footnote{
+Just to give you a feeling on how much boring code \mixin is generating,  we show the expanded code without then \mixin annotation\footnote{
 As you can see, the generated code is very repetitive, writing such code by hand can easily induce bugs, for example a distract programmer may
 swap the arguments of one of the many calls of \Q@Point3D.of@.
 }.\begin{lstlisting}
 interface Point3D extends Point2D{
-  Point3D withX(int val);
-  Point3D withY(int val);
-  Point3D withZ(int val);
+  Point3D withX(int val);    Point3D withY(int val);    Point3D withZ(int val);
   Point3D with(Point2D val);
-  public static Point3D of(int x, int y, int z){return new Point3D(){
-    public int x(){return x;} 
-    public int y(){return y;}
-    public int z(){return z;}
-    public Point3D withX(int val){return Point3D.of(val,this.y(),this.z());}
-    public Point3D withY(int val){return Point3D.of(this.x(),val,this.z());}
-    public Point3D withZ(int val){return Point3D.of(this.x(),this.y(),val);}
-    public Point3D with(Point2D val){
-      if(val instanceof Point3D){return (Point3D)val;}
-      return Point3D.of(val.x(),val.y(),this.z());
-      }
-    };
-  }
-}
+  public static Point3D of(int _x, int _y, int _z){
+    int x=_x;    int y=_y;    int z=_z;
+    return new Point3D(){
+      public int x(){return x;}    public int y(){return y;}    public int z(){return z;}
+      public Point3D withX(int val){return Point3D.of(val,this.y(),this.z());}
+      public Point3D withY(int val){return Point3D.of(this.x(),val,this.z());}
+      public Point3D withZ(int val){return Point3D.of(this.x(),this.y(),val);}
+      public Point3D with(Point2D val){
+        if(val instanceof Point3D){return (Point3D)val;}
+        return Point3D.of(val.x(),val.y(),this.z());
+        }      };    }  }
 \end{lstlisting}
 Note how \Q@with-@ methods are automatically refined in their return type, so that code like 
 \Q@Point3D p=Point3D.of(1,2,3); p=p.withX(42);@ will be accepted and behave as expected. If the programmer wishes to suppress this behaviour and keep the signature as it was, it is sufficient to redefine the \Q@with-@ methods in the new class repeating the old signature.
@@ -249,7 +271,7 @@ In Java if we define an animal class with a field we have a set of unsatisfactor
 \begin{itemize}
 \item Define a \Q@Point3D@ field in \Q@Animal@:
 this is bad since all animals would require more that is needed, and also it may requires the programmer to predict the future, or it may require to adapt the old code to accommodate for new evolutions.
-\item Define a \Q@Point2D@ field in \Q@Animal@ and...
+\item Define a \Q@Point2D@ field in \Q@Animal@ and:
 \item Define an extra \Q@int z@ field in \Q@Bird@.
 This solution is very at-hoc, requires to basically duplicate the difference between \Q@Point2D@ and \Q@Point3D@ inside of \mbox{\Q@Bird@}.
 Again, there are many reasons this would be bad, the most dramatic is that it would not scale to a scenario when the programmer of \Q@Bird@ and the programmer of \Q@Point3D@ are different.
