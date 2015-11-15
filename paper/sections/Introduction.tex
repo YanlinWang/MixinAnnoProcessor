@@ -5,18 +5,18 @@ method implementations. The main motivation behind the introduction of
 default methods in Java 8 is \emph{interface evolution}. That is, to
 allow interfaces to be extended over time, while preserving backwards
 compatibility. It soon became clear that default methods could also be
-used to emulate something similar to \emph{traits}~\cite{}. The
+used to emulate something similar to \emph{traits}~\cite{scharli03traits}. The
 original notion of traits by Scharli et al. prescribes, among other
 things, that: 1) a trait provides a set of methods that implement
 behaviour; and 2) a trait does not specify any state variables, so the
 methods provided by traits do not access state variables
 directly. Java 8 interfaces follow similar principles too. Indeed, a
 detailed description of how to emulate trait-oriented programming in
-Java 8 can be found in the work by Bono et al.~\cite{}.  The Java 8
+Java 8 can be found in the work by Bono et al.~\cite{bono14}. The Java 8
 team designing default methods, was also fully aware of that secondary
 use of interfaces, but it was not their objective to model traits:
 ``The key goal of adding default methods to Java was "interface
-evolution", not "poor man's traits"''~\cite{mailing list}. As a result
+evolution", not "poor man's traits"''~\cite{goetz13default}. As a result
 they were happy to support the secondary use of interfaces with
 default methods as long as it did not make the implementation and
 language more complex.
@@ -43,7 +43,7 @@ code for initialization.
 
 \item {\em Useful, general purpose methods, require special care in
   the presence of subtyping.} Methods such as $clone$, or
-  \emph{fluent} setters~\cite{}, not only require access to the
+  \emph{fluent} setters~\cite{fowler2005fluentinterface}, not only require access to the
   internal state of an object, but they also require their types to be
   refined in subtypes.
 
@@ -108,14 +108,14 @@ case studies.
 
 To evaluate the usefulness of object interfaces, we illustrate 3
 applications and case studies. The first application is a simple 
-solution to the Expression Problem~\cite{}, supporting independent 
-extensibility~\cite{}, and without boilerplate code. The second
+solution to the Expression Problem~\cite{wadler98expression}, supporting independent 
+extensibility~\cite{zenger05independentlyextensible}, and without boilerplate code. The second
 application is to show how embedded DSLs using fluent interfaces~\cite{} 
 can be easily defined using object interfaces. Finally, the last
 application is a larger case study for a simple Maze game implemented with 
 multiple inheritance. For the last application we show that there is a
 significant reduction in the numbers of lines of code when compared 
-to an existing implementation~\cite{} using plain Java 8. 
+to an existing implementation~\cite{bono14} using plain Java 8. 
 Noteworthy, is the fact that all applications are implemented 
 without defining a single class.
 

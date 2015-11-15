@@ -21,7 +21,7 @@ pdflatex paper.tex
 open paper.pdf
 
 rm footempfile.txt
-rm *.bbl
-rm *.blg
+# rm *.bbl
+# rm *.blg
 rm *.log
 rm *-old
