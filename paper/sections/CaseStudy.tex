@@ -14,7 +14,7 @@ this paper we show that the EP can be solved with our \mixin annotation in a
 trivial way. We will use a canonical example of implementing arithmetic
 expressions gradually to illustrate the usage. 
 
-\paragraph{\textbf{Initial System}}
+\subsubsection{Initial System}
 The initial system expresses arithmetic expressions with only literals and
 addition structure:
 
@@ -27,14 +27,14 @@ operation. The number field (\texttt{x}) of a literal is represented as a getter
 method \texttt{x()} and expression fields (\texttt{e1,e2}) of an addition as
 getter methods \texttt{e1()} and \texttt{e2()}.
 
-\paragraph{\textbf{Adding a New Variant}} 
+\subsubsection{Adding a New Variant}
 It is easy to add new data variants to the code in the initial system in a
 modular way. For example, the following code how to add the subtraction variant.
 
 \lstinputlisting[linerange=39-44]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
 
-\paragraph{\textbf{Adding a New Operation}}
+\subsubsection{Adding a New Operation}
 Adding new operations to the previous system is still straightforward (although
 requires longer code). The following code shows an example of adding a new
 operation \texttt{print}. 
@@ -49,6 +49,36 @@ base interfaces \texttt{Lit} and \texttt{Add}, respectively. Importantly, note
 that in \texttt{AddP}, the types of ``\emph{fields}'' \texttt{e1,e2} are refined via
 the \emph{return types refinement} of getter methods \texttt{e1()} and
 \texttt{e2()}. 
+
+
+\subsection{A Small Game Example}
+We now present a variant of a classic game example, which is often used to
+evaluate reuse ability related to inheritance and design patterns. The code
+using our approach and the solution by Bono et. al~\cite{bono14} in online, for
+space constraints, we will omit it here. In the game, there is a player with the
+goal of collecting as many coins as possible. She may enter a room with several
+doors to be chosen among. This is a good example because it involves code reuse
+(different kinds of doors inherit a common type, with different features and
+behaviour), multiple inheritance (a special kind of door may require features
+from two other door types). It also shows how to model symmetric sum, override
+and alias as trait-oriented programming. Moreover, the code is provided in
+~\cite{bono14} so that we can have a clear and fair comparison with our
+approach, as shown in Table~\ref{table:codereduction}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccc}
+\hline
+            & SLOC   & \# of classes/interfaces \\ \hline
+Bono et al. & 335    & 14                       \\
+Ours        & 199    & 11                       \\
+\rowcolor[HTML]{C0C0C0} 
+Reduced by  & 40.6\% & 21.4\%                   \\ \hline
+\end{tabular}
+\caption{Code Reduction and Reuse.}
+\label{table:codereduction}
+\end{table}
+
 
 \subsection{Other case studies}
 \marco{should we put here the DB with fluent setters?}

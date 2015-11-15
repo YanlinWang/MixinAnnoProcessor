@@ -186,7 +186,7 @@ interface TEnchantment {
     }
 }
 
-public class TestGame {
+public interface TestGame {
     public static void main(String[] args) {
         Player player = Player.of("Grace");
         TDoor l = TDoor.of(200, false);
@@ -194,9 +194,6 @@ public class TestGame {
         TDoor f = TKnockDoor.of(200, 0, 100, 200, true);
         DoorsRoom doorsRoom = DoorsRoom.of(l, r, f);
         Game game = Game.of(doorsRoom, player);
-        game.doorsRoom().leftDoor().open();
-        game.doorsRoom().rightDoor().open();
         game.doorsRoom().frontDoor().open();
-
     }
 }
