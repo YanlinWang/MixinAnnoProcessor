@@ -34,26 +34,30 @@ Our implementation is based on extension to Lombok. In Eclipse, with an
 interface annotated by \mixin, the automatic annotation processing is performed
 and the information of the interface from compilation is captured in the
 ``Outline'' window, including all the methods inside the interface as well as
-the generated ones. The custom transformation is easy and convenient to use.
+the generated ones.
+ The custom transformation is easy and convenient to use.
+ For example this means that the IDE functionality 
+ content assist autocomplete will work for the newly generated methods.
+
 
 The biggest reasons to use Lombok rather than using conventional Java annotation
-processor are:
+processor is
 \begin{itemize}
-\item Lombok is byte-code based instead of source-code based, which makes client
-  code concise and easy to maintain. Such code generation is performed at
-  compile time to modify bytecode. And during compile time, these methods are
-  only generated in class files, with neither the source code modified nor new
-  Java files generated.
+%this seamd like a commercial spot
+%\item Lombok is byte-code based instead of source-code based, which makes client
+%  code concise and easy to maintain. Such code generation is performed at
+%  compile time to modify bytecode.
+\item Lombock modify the generation process of the class files.
+neither the source code is modified nor new  Java files are generated.
 \item Moreover, and probably more importantly, Lombok is capable of generating
   code \emph{inside} a class/interface.This is the ability that conventional
-  Java annotation processor can not provide.
+  Java annotation processor do not provide.
 \end{itemize}
 
-The implementation using Lombok has certain limitation: 
+Our prototype implementation using Lombok has certain limitation: 
 \begin{itemize}
-\item Our implementation does not support separate compilation yet at this
+\item We do not support separate compilation yet at this
   stage, for in the implementation it is hard to capture a type declaration from
   its reference.
-\item At this stage our implementation only realizes the Eclipse handler and our
-  experiments are all conducted in Eclipse.
+\item At this stage our implementation only realizes the Eclipse handler and our experiments are all conducted in Eclipse.
 \end{itemize}
