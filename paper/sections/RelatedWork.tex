@@ -154,14 +154,18 @@ On the other side, when the starting language have a flexible enough syntax and 
 Java-like language tends to sits in the middle of this two extremes:
 libraries can not influence the type system, so many solutions valid in python or other languages could not be applicable, or may be applicable at the cost of loosing safety.
 
-We can model certain types of language extensions with annotations 
-only, but those extensions do not introduce new syntax: they 
-merely do automatic code generation. 
+Here (compile/load time) code generation come at the rescue: 
+if for a certain feature (\mixin in our case) it is possible to use the original language syntax to
+\emph{express-describe} any specific instantiation of such feature
+(annotating a class and provide getters), then we can insert in the compilation process a tool that exam and enrich the code before compilation. No need to modify the original, source, we can work on temporary enriched source.
+Java is a particular good candidate for this kind of manipulation since it already provide ways to define and integrate such tools in its own compilation process.
 
+Other languages offers even stronger support to safe code manipulation:
+Template Haskell~\cite{}, F\# (type providers)~\cite{} and MetaFjig (Active Libraries)~\cite{}
+all allows to execute code at compile time and to generate code/classes that are transparently integrated in the program that is being generated/processed/compiled.
+In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or non nonsensical) would never generate ill-typed code. This is roughly equivalent to what we state and manually proof in Lemma 2 for our particular transformation.
+Since MetaFjig is not working on annotated classes, there is no direct equivalence on the overall theorem of safety we shown.
 
-
-- MetaFJig*~\cite{}
-\yanlin{Maybe Marco can help with the text for MetaFJig?}
 
 Annotations/Code Generation/Lombok
 
