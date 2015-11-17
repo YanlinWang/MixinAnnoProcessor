@@ -114,7 +114,7 @@ receiver must be known.  This is huge limitation in class based object oriented
 programming, and is exasperated by interface-only programming as we propose: no
 type is ever exact since classes are not part of the language.  A recent
 article~\cite{Saito2013933} lights up this topic, since they propose two
-features: exact statements \yanlin{do we support exact statements?} and
+features: exact statements \yanlin{do we support exact statements?}\marco{no we do not. When is that it may seams we do?} and
 non-inheritable methods; both related to our work: any method generated inside
 of the \Q@of@ method is indeed non-inheritable, since there is no class name to
 extends from, and exact statements (a form of wild-card capture on the exact
@@ -135,6 +135,7 @@ class-less environment.
 %still useful for modeling fluent interfaces and solving expression
 %problems,etc. 
 
+\begin{comment}
 \subsection{Type-Directed Translations/Syntactic Sugar}
 \marco{I'm tring to merge this and the next one}
 Language extensions are often implemented as syntactic sugar of the base
@@ -156,14 +157,14 @@ environment.
 We can model certain types of language extensions with annotations 
 only, but those extensions do not introduce new syntax: they 
 merely do automatic code generation. 
-
+\end{comment}
 \subsection{Meta-programming competes with Language extensions}
-The most obvious solution to add features to a language, is language extension.
-They are often implemented as syntactic sugar of the base
+The most obvious solution to add features to a language is language extension.
+They are often implemented as syntactic extensions that can be desugared to the base
 language. For example, the Scala compiler was extended to directly supports XML syntax. However, this approach does not support combining multiple extensions into one. We are de facto creating a fork in the language, and rarely the new fork gain enough traction to become the main language release.
 On this topic we mention SugarJ~\cite{erdweg11sugarj}; a Java-based extensible language allowing programmers to extend it with custom features by definitions in meta-DSLs (SDF, Stratego, etc). 
 
-On the other side, when the starting language have a flexible enough syntax and a fast and powerful enough reflection, we may just need to play with operator overloading and other language tricks to discover that the language feature we need can be expressed a a simple library in our language. For example, consider SQL alchemy in python.
+On the other side, when the starting language have a flexible enough syntax and a fast and powerful enough reflection, we may just need to play with operator overloading and other language tricks to discover that the language feature we need can be expressed as a simple library in our language. For example, consider SQL alchemy in python.
 
 Java-like language tends to sits in the middle of this two extremes:
 libraries can not influence the type system, so many solutions valid in python or other languages could not be applicable, or may be applicable at the cost of loosing safety.
@@ -171,8 +172,8 @@ libraries can not influence the type system, so many solutions valid in python o
 Here (compile/load time) code generation come at the rescue: 
 if for a certain feature (\mixin in our case) it is possible to use the original language syntax to
 \emph{express-describe} any specific instantiation of such feature
-(annotating a class and provide getters), then we can insert in the compilation process a tool that exam and enrich the code before compilation. No need to modify the original, source, we can work on temporary enriched source.
-Java is a particular good candidate for this kind of manipulation since it already provide ways to define and integrate such tools in its own compilation process.
+(annotating a class and provide getters), then we can insert in the compilation process a tool that exam and enrich the code before compilation. No need to modify the original source; for example we can work on temporary files.
+Java is a particular good candidate for this kind of manipulation since it already provide ways to define and integrate such tools in its own compilation process: in this way there is no need of temporary files, and there is a well defined way of putting multiple extensions together.
 
 Other languages offers even stronger support to safe code manipulation:
 Template Haskell~\cite{}, F\# (type providers)~\cite{} and MetaFjig (Active Libraries)~\cite{}
@@ -180,7 +181,7 @@ all allows to execute code at compile time and to generate code/classes that are
 In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or non nonsensical) would never generate ill-typed code. This is roughly equivalent to what we state and manually proof in Lemma 2 for our particular transformation.
 Since MetaFjig is not working on annotated classes, there is no direct equivalence on the overall theorem of safety we shown.
 
-
+\marco{text under still to revise. Sould all the lombock discussion go in the implementation section? -- just to keep stuff together?}
 Annotations/Code Generation/Lombok
 
 What is the difference between our work and existing annotations?
@@ -248,9 +249,9 @@ If a field has no setters, a simple alternative is to just define the ``field'' 
 if setters are required, a possible extension of our code expansion could recognize a field if the getter is provided and the setter is required, and could generate the following code:
 \begin{lstlisting}
 interface Box{ 
-  default int val(){return 0;} 
-  void val(int _val);
-  static Box of(){return new Box(){
+  default int val(){return 0;} //provided
+  void val(int _val);//provided
+  static Box of(){return new Box(){//generated
     int val=Box.super.val();
     int val(){return val;}
     void val(int _val){val=_val;}
@@ -259,7 +260,7 @@ interface Box{
 We are unsure of the value of this solution: is very tricky, the user define a method that (contrary to our usual expectation) is actually overridden in a way that the behaviour change, but change only after the first setter is called, plus this code would cache the result instead of re-computing it every time. This can be very relevant and tricky in a non functional setting.
 
 \subsection{Class invariants in ClassLess Java}
-Since the objects are created by automatically generate methods,
+Since the objects are created by automatically generated methods,
 another limitation of our current approach is that there is no place where the user can dynamically check for class invariants.
 In Java often we see code like
 \begin{lstlisting}
@@ -274,7 +275,7 @@ if multiple interfaces are implemented, and more then one offers
 \Q@checkInvariant()@,  a composed implementation could be automatically generated, composing by \Q@&&@ the various competing implementations.
 
 \subsection{Clone, toString, equals and hashCode}
-Methods originally defined in \Q@Object@, as \Q@clone@ and \Q@toString@ can be supported by our approach, but they need special care. If an interface annotated with \mixin ask an implementation for \Q@clone@, \Q@toString@ \Q@equls@ or \Q@hashCode@ we can easily generate one from the fields.\footnote{In particular, for clone we can do automatic return type refinement as we do for \Q@with-@ and fluent setters. Note how this would solve most of the Java ugliness related to \Q@clone@ methods.}
+Methods originally defined in \Q@Object@, as \Q@clone@ and \Q@toString@ can be supported by our approach, but they need special care. If an interface annotated with \mixin ask an implementation for \Q@clone@, \Q@toString@, \Q@equals@ or \Q@hashCode@ we can easily generate one from the fields.\footnote{In particular, for clone we can do automatic return type refinement as we do for \Q@with-@ and fluent setters. Note how this would solve most of the Java ugliness related to \Q@clone@ methods.}
 
 However, if the user wish to provide its own implementation, since the method is also implemented in \Q@Object@ we would have a conflict, that we have to explicitly resolve inside of \Q@of@, by implementing the method and delegating it to the user implementation, thus
 
