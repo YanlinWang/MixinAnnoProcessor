@@ -20,72 +20,83 @@ In this section we discuss related work and comparison to Classless Java.
 %it is used in multiple classes).
 
 \subsection{Multiple Inheritance in Object oriented languages}
-Many authors have argued in favour or against multiple inheritance.
-It provides expressive power, but it is difficult to model, and implement and can create programs that are hard to reason about.
-These difficulties include the famous
-diamond (fork-join) problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, and the yo-yo problem~\cite{taenzer1989problems}.
-\marco{add citation on the text over.}
-\yanlin{added.}
-To conciliate the need for expressive power and the need for simplicity, 
-lots of models have been proposed in the past few
-years, including mixins~\cite{bracha90mixin} and traits~\cite{scharli03traits}.
-They provide novel programming architecture models in the
-OO paradigm. 
+Many authors have argued in favour or against multiple inheritance.  It provides
+expressive power, but it is difficult to model, and implement and can create
+programs that are hard to reason about.  These difficulties include the famous
+diamond (fork-join) problem~\cite{bracha90mixin,Sak89dis}, conflicting methods,
+and the yo-yo problem~\cite{taenzer1989problems}.  To conciliate the need for
+expressive power and the need for simplicity, lots of models have been proposed
+in the past few years, including mixins~\cite{bracha90mixin} and
+traits~\cite{scharli03traits}.  They provide novel programming architecture
+models in the OO paradigm.
+
 \begin{enumerate}
-\item  Mixins allows to name components that can be applied to various classes as
-reusable functionality units. However,  they suffer from linearisation: the order of mixin application is relevant in often subtitle and undesired ways. constraints. This hinders their
-usability and their ability of resolving conflicts:
- the linearisation (total ordering) of mixin inheritance cannot provide a satisfactory resolution in all cases and restricts the flexibility of mixin composition.
+\item Mixins allows to name components that can be applied to various classes as
+  reusable functionality units. However, they suffer from linearisation: the
+  order of mixin application is relevant in often subtitle and undesired
+  ways. constraints. This hinders their usability and their ability of resolving
+  conflicts: the linearisation (total ordering) of mixin inheritance cannot
+  provide a satisfactory resolution in all cases and restricts the flexibility
+  of mixin composition.
 
- To fight those limitations, an algebra of mixin operators is introduced~\cite{CMS-elena-zucca-davide-ancona}, but this raised the complexity of the approach, especially when constructors and fields are considered~\cite{Ecoop-FJigsaw-marco}.
+  To fight those limitations, an algebra of mixin operators is
+  introduced~\cite{ancona2002calculus}, but this raised the complexity of the
+  approach, especially when constructors and fields are
+  considered~\cite{marco09FJigsaw}.
 
-\item 
-Simplifying the mixin algebras approach, traits draw a strong line between units of reuse (traits) and object factories (classes)
-In this model, traits~\cite{Scharli2003} units of reusable code,  containing only methods as
-reusable functionalities. Thus, no state/state initialization is considered.
+\item Simplifying the mixin algebras approach, traits draw a strong line between
+  units of reuse (traits) and object factories (classes) In this model,
+  traits~\cite{scharli03traits} units of reusable code, containing only methods
+  as reusable functionalities. Thus, no state/state initialization is
+  considered.
 
-Classes act as object factories, requiring functionalities from multiple traits.
-Traits offers a trait algebra  with operations like sum, alias and exclusion, provided for explicit conflict resolution.
+  Classes act as object factories, requiring functionalities from multiple
+  traits.  Traits offers a trait algebra with operations like sum, alias and
+  exclusion, provided for explicit conflict resolution.
 
+  Concluding, (pure) traits do not allow state and they do not offers any reuse
+  instrument to ensure that state is coherently initialized when finally defined
+  in classes.  Traits can't be instantiated. This model requires two concepts
+  (traits and classes) to coexist and cooperate.
 
-Concluding, (pure) traits do not allow state and they do not offers any reuse instrument to ensure that state is coherently initialized when finally defined in classes.
-Traits can't be instantiated. This model requires two concepts (traits and classes) to coexist and cooperate.
+  Some authors see this as good language design fostering good software
+  development by helping programmers to think about the structure of their
+  programs.  However, other authors see the need of two concepts and the absence
+  of state as drawbacks of this model.
 
-Some authors see this as good language design fostering good software development by helping programmers to think about the structure of their programs.
-However, other authors see the need of two concepts and the absence of state as drawbacks of this model.
-
-\item C++ and Scala also try to provide solutions to multiple inheritance, but both
-suffer from object initialization problems. Virtual inheritance in C++ provides
-another solution to multiple inheritance (especially the diamond problem by
-keeping only one copy of the base class)~\cite{ellis1990annotated}, however
-suffers from object initialization problem as pointed out by Malayeri et
-al.~\cite{malayeri2009cz}. It bypasses all constructor calls to virtual
-superclasses, which would potentially cause serious semantic error. Scala
-solution (very similar to linearised mixins, but misleadingly called traits in the language) avoids this problem by disallowing constructor parameters,
-causing no ambiguity in cases such as diamond problem. 
-This approach has limited expressiveness, and suffers from all the problems of linearised mixin composition.
-Python also offers multiple inheritance via linearised mixins. Indeed python any class is implicitly a mixin, and mixin composition informally expressed as\\*
-\Q@ class A use B,C {...new methods...}@\\*
-can be expressed in python as \\*
-\Q@ class Aux: ...new methods...@\\*
-\Q@ class A(B,C,Aux):  pass@ 
+\item C++ and Scala also try to provide solutions to multiple inheritance, but
+  both suffer from object initialization problems. Virtual inheritance in C++
+  provides another solution to multiple inheritance (especially the diamond
+  problem by keeping only one copy of the base class)~\cite{ellis1990annotated},
+  however suffers from object initialization problem as pointed out by Malayeri
+  et al.~\cite{malayeri2009cz}. It bypasses all constructor calls to virtual
+  superclasses, which would potentially cause serious semantic error. Scala
+  solution (very similar to linearised mixins, but misleadingly called traits in
+  the language) avoids this problem by disallowing constructor parameters,
+  causing no ambiguity in cases such as diamond problem.  This approach has
+  limited expressiveness, and suffers from all the problems of linearised mixin
+  composition.
+  Python also offers multiple inheritance via linearised mixins. Indeed python any class is implicitly a mixin, and mixin composition informally expressed as\\*
+  \Q@ class A use B,C {...new methods...}@\\*
+  can be expressed in python as \\*
+  \Q@ class Aux: ...new methods...@\\*
+  \Q@ class A(B,C,Aux): pass@
 \end{enumerate}
 
 \subsection{Multiple Inheritance in Java}
-Since Java 8 default methods are introduced, which enables concrete method
-implementation to be defined (via the \textbf{default} keyword) inside
-interfaces. Since Java supports implementation of multiple interfaces (instead of extension of a single
-class), the introduction of default methods opens the gate for various flavours of multiple
-inheritance in Java, using interfaces. 
-Former work by Bono.et. al.~\cite{bono14}.
-provides details on mimicking traits~\cite{sharly-thesis} through interfaces.
+Since Java 8 default methods are introduced, concrete method implementation are
+allowed to be defined (via the \textbf{default} keyword) inside
+interfaces. Since Java supports implementation of multiple interfaces (instead
+of extension of a single class), the introduction of default methods opens the
+gate for various flavours of multiple inheritance in Java, using interfaces.
+Former work by Bono.et. al.~\cite{bono14}. provides details on mimicking traits
+through interfaces.
 
-
-There are proposals for extending Java (before Java8) with traits. For example, FeatherTrait
-Java (FTJ)~\cite{Liquori08ftj} by Liquori et al. extends the calculus of
-Featherweight Java (FJ)~\cite{Igarashi01FJ} with statically-typed traits, adding
-trait-based inheritance in Java.
-Except for few, mostly syntactic details, their work can be emulated/rephrased with Java8 interface.
+There are proposals for extending Java (before Java8) with traits. For example,
+FeatherTrait Java (FTJ)~\cite{Liquori08ftj} by Liquori et al. extends the
+calculus of Featherweight Java (FJ)~\cite{Igarashi01FJ} with statically-typed
+traits, adding trait-based inheritance in Java.  Except for few, mostly
+syntactic details, their work can be emulated/rephrased with Java8 interface.
 
 
 \input{sections/Compare.tex}
@@ -95,17 +106,20 @@ Except for few, mostly syntactic details, their work can be emulated/rephrased w
 
 In certain situations, our approach allows automatic refinement for return types. This is part of a bigger topic in class based languages: expressing and preserving type recursion and (nominal/structural) subtyping at the same time. 
 
-One famous attempt in this direction is provided by 
-\emph{MyType}~\cite{bruce1994paradigmatic}, representing the type of \textbf{this}, changing its meaning along with
-inheritance.
-However when invoking a method with MyType in a parameter position, the exact type of the receiver must be known.
-This is huge limitation in class based object oriented programming,
-and is exasperated by interface-only programming as we propose: no type is ever exact since classes are not part of the language.
-A recent article~\cite{igarashi Matching MyType to subtyping}
-lights up this topic, since
-they propose two features: exact statements and non-inheritable methods; both related to our work:
-any method generated inside of the \Q@of@ method is indeed non-inheritable, since there is no class name to extends from, and exact statements (a form of wild-card capture on the exact run-time type)
-could capture the ``exact type'' of an object even in a class-less environment.
+One famous attempt in this direction is provided by
+\emph{MyType}~\cite{bruce1994paradigmatic}, representing the type of
+\textbf{this}, changing its meaning along with inheritance.  However when
+invoking a method with MyType in a parameter position, the exact type of the
+receiver must be known.  This is huge limitation in class based object oriented
+programming, and is exasperated by interface-only programming as we propose: no
+type is ever exact since classes are not part of the language.  A recent
+article~\cite{Saito2013933} lights up this topic, since they propose two
+features: exact statements \yanlin{do we support exact statements?} and
+non-inheritable methods; both related to our work: any method generated inside
+of the \Q@of@ method is indeed non-inheritable, since there is no class name to
+extends from, and exact statements (a form of wild-card capture on the exact
+run-time type) could capture the ``exact type'' of an object even in a
+class-less environment.
 
 
 
