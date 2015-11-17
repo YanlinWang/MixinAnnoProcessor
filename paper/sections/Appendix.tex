@@ -1,6 +1,13 @@
 \section{Appendix}\label{sec:appendix}
 
 \subsection{Proof of LEMMA 1}\label{subsec:proof1}
+\textbf{LEMMA 1. }
+Assume that
+\begin{align*}
+\II_0\ &=\ \mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC\\
+[\![\II_0]\!]\ &=\ \emptyset\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \methods' \cC
+\end{align*}
+If $\II_0$ satisfies $\dom(\C_0)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)$, then $[\![\II_0]\!]$ satisfies $\dom([\![\II_0]\!])=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)\cup\dom(\methods')$.
 \begin{proof}
 It suffices to prove $\dom([\![\II_0]\!])=\dom(\C_0)\cup\dom(\methods')$.
 \begin{itemize}
@@ -10,6 +17,8 @@ It suffices to prove $\dom([\![\II_0]\!])=\dom(\C_0)\cup\dom(\methods')$.
 \end{proof}
 
 \subsection{Proof of LEMMA 2}\label{subsec:proof2}
+\textbf{LEMMA 2. }
+If $\II_0$ OK, then $[\![\II_0]\!]$ OK.
 \begin{proof}
 By the rule \rn{t-Intf} in Figure~\ref{ET}, we divide it into two parts.
 
@@ -17,25 +26,30 @@ By the rule \rn{t-Intf} in Figure~\ref{ET}, we divide it into two parts.
 
 Since $\II_0$ OK, all the existing default and static methods are well typed in $[\![\II_0]\!]$, except for the new method \QM{of}. It suffices to prove that it still holds for $\ofMethod(\C_0)$.
 
+\haoyuan{How to more explicitly say the default methods are ok in the new interface table, so that it is sufficient to only prove the generated ofMethod is ok?}
+
 By the definition of $\ofMethod(\C_0)$, the return value is an object $$\QM{return new}\ \C_0 \oR\cR\ \QM{\{}...\ \QM{\}}$$
 To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
+
+\haoyuan{The order of conditions in \rn{t-Obj} is not clear below.}
+
 \begin{itemize}
 \item For field typing,
 \[\Gamma(\QM_ m_i)=\C_i\subtype \C_i\]
 \item For method typing of getters,
 \[\Gamma, m_i:\C_i, \QM{this}:\C_0, \Gamma^{\mh_i}\vdash m_i\in \C_i=\C^{\mh_i}\]
-\item For method typing of nonempty \QM{with-} methods, by \rn{t-StaticInvk}, \haoyuan{how to do typing for the generated method itself?}
+\item For method typing of \QM{with-} methods, by \rn{t-StaticInvk}, \haoyuan{how to do typing for the generated method itself?}
 \[\Gamma, \overline{m_i:\C_i}, \QM{this}:\C_0, \es_i:\Cs_i, \Gamma^{\mh_i}\vdash \C_0\QM{.of}\oR\es_i\cR\in \C_0=C^{\mh_i}\]
-\item For method typing of nonempty setter methods, \haoyuan{what about the \QM{with} method?}
+\item For method typing of setter methods, \haoyuan{what about the \QM{with} method?}
 \[\Gamma, \QM{this}:\C_0, \Gamma^{\mh_i}\vdash\QM{this}\in \C_0=\C^{\mh_i}\]
 \item To prove that $\forall i$, $\mh_i\subtype\mBody(m^{\mh_i}, \C_0)$,
  \begin{itemize}
  \item For getters, \[\C_i\ m_i\oR\cR\QM; \in \fieldsFunc(\C_0) \Rightarrow \C_i\ m_i\oR\cR\QM; \in \dom(\C_0)\]
- \item For nonempty \QM{with-} methods,
+ \item For \QM{with-} methods,
   \[\begin{array}{l}
   \mBody(\QM{with#}\m_i,\C_0) \mbox{ is of form }\mh\QM; \\ \valid(\C_0)
   \end{array}\Rightarrow \isWith\Rightarrow \C_0\subtype\mBody(m^{\mh_i}, \C_0)\]
- \item For nonempty setters,
+ \item For setters,
   \[\begin{array}{l}
   \mBody(\m_i,\C_0) \mbox{ is of form }\mh\QM; \\ \valid(\C_0)
   \end{array}\Rightarrow \isSetter\Rightarrow \C_0\subtype\mBody(m^{\mh_i}, \C_0)\]
@@ -43,12 +57,17 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
 \item To prove that such a created object indeed implements all the abstract methods in $\dom(\C_0)$, we simply refer to $\valid(\C_0)$, since it guarantees each abstract method $\method$ to satisfy $\isField$, $\isWith$ or $\isSetter$. But that object includes all implementations for those cases, hence it is of type $\C_0$ by \rn{t-Obj}.
 \end{itemize}
 
-\noindent\textbf{Part II.} Next we check that in $[\![\II_0]\!]$, $$\dom(\C_0)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)\cup\dom(\methods')$$
+\noindent\textbf{Part II.} Next we check that in $[\![\II_0]\!]$, $$\dom([\![\II_0]\!])=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)\cup\dom(\methods')$$
 And actually it is guaranteed by \textbf{LEMMA 1}.
 
 \end{proof}
 
 \subsection{Proof of THEOREM}\label{subsec:proof3}
+\textbf{THEOREM. }
+For a given $\II_0\ldots\II_n$ interface table such that
+$\forall\II\in\II_0\ldots\II_n, \II$ OK, then in the interface table
+$[\![\II_0]\!]\II_1\ldots\II_n$
+$\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ either $\II$ OK or $\II$ is a subtype of $\II_0$.
 \begin{proof}
 \textbf{LEMMA 2} already proves that $[\![\II_0]\!]$ is OK. On the other hand, if some $\II$ is not a subtype of $\II_0$, the generated code in translation has no way to affect the domain of $\II$, which finishes our proof.
 \end{proof}
