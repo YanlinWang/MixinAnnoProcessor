@@ -1,16 +1,3 @@
-\marco{an improvement of this may become part of intro?}
-
-Before Java 8, concrete methods and static methods where not allowed to appear in interfaces.
-Java 8 allows static interface methods and introduces
-\emph{default methods}, which allow for implementation insides interfaces. This had an important positive consequence that was probably overlooked by the Java design team: the concept of class (in java) is now redundant and unneeded.
-We define a subset of Java, called ClassLess Java, where programs and (reusable) libraries can be easily defined and used.
-To avoid for some syntactic boilerplate caused by Java not being originally designed to work without classes, we introduce a new annotation:\mixin  provide default
-implementations for various methods (e.g. getters, setters, with-methods)
-and a mechanism to instantiate objects. \mixin annotation helps programmers to
-write less cumbersome code while coding in ClassLess Java;
-indeed we think the obtained gain is so high that ClassLess Java with \mixin annotation can be less cumbersome than full Java.
-
-
 \section{A Running Example: Animals}\label{sec:ep}
 
 \begin{figure}
