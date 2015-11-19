@@ -1,5 +1,7 @@
 package test;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Mixin;
 
 public class TestExpression {
@@ -56,3 +58,37 @@ interface ExpP extends Exp { String print(); }
 	}
 }
 //END_EXPRESSION_PRINT
+
+//BEGIN_EXPRESSION_COLLECTLIT
+interface ExpC extends Exp { List<Integer> collectLit(); }
+@Mixin interface LitC extends Lit, ExpC {
+    default List<Integer> collectLit() {
+        List<Integer> list = new ArrayList<Integer>();
+        list.add(x());
+        return list;
+    }
+}
+@Mixin interface AddC extends Add, ExpC {
+    ExpC e1(); ExpC e2();
+    default List<Integer> collectLit() {
+        List<Integer> list = new ArrayList<Integer>();
+        list.addAll(e1().collectLit());
+        list.addAll(e2().collectLit());
+        return list;
+    }
+}
+//END_EXPRESSION_COLLECTLIT
+
+//BEGIN_INDEPENDENT_EXTENSIBILITY
+interface ExpPC extends ExpP, ExpC {}
+/**
+ * rejected.
+ * error message: The return types are incompatible for the inherited 
+ *                methods LitP.clone(), LitC.clone(), Object.clone()
+ * TODO to Haoyuan: the prototype is still generating clone methods (even if user is not asking)              
+ */
+interface LitPC extends ExpPC, LitP, LitC {}
+interface AddPC extends ExpPC, AddP, AddC {
+    ExpPC e1(); ExpPC e2();
+}
+//END_INDEPENDENT_EXTENSIBILITY
