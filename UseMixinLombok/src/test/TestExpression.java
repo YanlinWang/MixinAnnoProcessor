@@ -21,6 +21,13 @@ public class TestExpression {
 		res += e7.print() + " = " + e7.eval() + "\n"; // (3 + 4) = 7
 		return res;
 	}
+	public static void main(String[] args) {
+	    System.out.println(runTest());
+	    
+	    //independent extensibility
+	    AddPC e8 = AddPC.of(LitPC.of(3), LitPC.of(4));
+	    System.out.println(e8.print() + " = " + e8.eval() + "\nLiterals" + e8.collectLit().toString());
+	}
 }
 
 //BEGIN_EXPRESSION_INIT
@@ -81,14 +88,8 @@ interface ExpC extends Exp { List<Integer> collectLit(); }
 
 //BEGIN_INDEPENDENT_EXTENSIBILITY
 interface ExpPC extends ExpP, ExpC {}
-/**
- * rejected.
- * error message: The return types are incompatible for the inherited 
- *                methods LitP.clone(), LitC.clone(), Object.clone()
- * TODO to Haoyuan: the prototype is still generating clone methods (even if user is not asking)              
- */
-interface LitPC extends ExpPC, LitP, LitC {}
-interface AddPC extends ExpPC, AddP, AddC {
+@Mixin interface LitPC extends ExpPC, LitP, LitC {}
+@Mixin interface AddPC extends ExpPC, AddP, AddC {
     ExpPC e1(); ExpPC e2();
 }
 //END_INDEPENDENT_EXTENSIBILITY
