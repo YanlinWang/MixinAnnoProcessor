@@ -181,25 +181,6 @@ all allows to execute code at compile time and to generate code/classes that are
 In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or non nonsensical) would never generate ill-typed code. This is roughly equivalent to what we state and manually proof in Lemma 2 for our particular transformation.
 Since MetaFjig is not working on annotated classes, there is no direct equivalence on the overall theorem of safety we shown.
 
-\marco{text under still to revise. Sould all the lombock discussion go in the implementation section? -- just to keep stuff together?}
-Annotations/Code Generation/Lombok
-
-What is the difference between our work and existing annotations?
-What is it that we can do that, those annotations cannot?
-
--Lombok~\cite{} project provides a set of predefined annotations, including
-constructor generators similar as ours (\textbf{@NoArgsConstructor},
-\textbf{@RequiredArgsConstructor} and \textbf{@AllArgsConstructor}). They
-generate various kinds of constructors for \emph{classes}, with or without
-constructor arguments. This set of annotations is of great use, especially when
-they are used together with other features provided in Lombok (e.g.,
-\textbf{@Data}). Moreover, the implementation of these annotations in Lombok
-gives us hints on how to implement \mixin. However, none of these annotations
-can model what we are doing with \mixin - generating a constructor for
-\emph{interfaces}. Apart from constructors, \mixin also provides other
-convenient features (including generating fluent setters, type refinement,etc)
-that the base Lombok project could not provide.
-
 \subsection{Fluent Interfaces}
 Talk about existing libraries that use fluent interfaces (do any of
 those use any code generation to assist in the implementation?).

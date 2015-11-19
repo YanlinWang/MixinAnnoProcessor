@@ -1,17 +1,4 @@
 \section{Implementation}
-\begin{comment}
-Haoyuan
-
-discuss implementation in lombok; and limitations.
-
-\bruno{The implementation does not support separate compilation yet. Can we fix this?}
-
-\haoyuan{http://notatube.blogspot.hk/2010/12/project-lombok-creating-custom.html}
-
-\haoyuan{https://blog.frankel.ch/lombok-reduces-your-boilerplate-code}
-
-\haoyuan{https://projectlombok.org/}
-\end{comment}
 
 One of the downside of Java is the code verbosity, e.g., getter and setter
 methods for fields, unneeded type annotation, etc. Lombok project~\cite{} is a
@@ -39,25 +26,45 @@ the generated ones.
  For example this means that the IDE functionality 
  content assist autocomplete will work for the newly generated methods.
 
-
-The biggest reasons to use Lombok rather than using conventional Java annotation
-processor is
+ The biggest reasons to use Lombok rather than using a conventional Java
+ annotation processor are:
 \begin{itemize}
 %this seamd like a commercial spot
 %\item Lombok is byte-code based instead of source-code based, which makes client
 %  code concise and easy to maintain. Such code generation is performed at
 %  compile time to modify bytecode.
-\item Lombock modify the generation process of the class files.
-neither the source code is modified nor new  Java files are generated.
+\item Lombok modifies the generation process of the class files. Neither the
+  source code is modified nor new Java files are generated.
 \item Moreover, and probably more importantly, Lombok is capable of generating
   code \emph{inside} a class/interface.This is the ability that conventional
   Java annotation processor do not provide.
 \end{itemize}
 
+\paragraph{Limitation}
 Our prototype implementation using Lombok has certain limitation: 
 \begin{itemize}
-\item We do not support separate compilation yet at this
-  stage, for in the implementation it is hard to capture a type declaration from
-  its reference.
-\item At this stage our implementation only realizes the Eclipse handler and our experiments are all conducted in Eclipse.
+\item The prototype does not support separate compilation yet. Currently all
+  related interfaces have to appear in a single Java file. Therefore, changes to
+  a single interface would require re-compiling the whole file. This compilation
+  limitation is not caused by our algorithm. It is Lombok implementation related
+  issue: in Lombok it is hard to capture a type declaration from its reference,
+  even harder when the type declaration is in other files (we have not found a
+  way to do this currently).
+\item At this stage our implementation only realizes the Eclipse handler and our
+  experiments are all conducted in Eclipse. The implementation for
+  \texttt{javac} is missing.
 \end{itemize}
+
+\paragraph{Comparison with other Lombok annotations}
+Lombok project provides a set of predefined annotations, including constructor
+generators similar as ours (e.g., \textbf{@NoArgsConstructor},
+\textbf{@RequiredArgsConstructor} and \textbf{@AllArgsConstructor}). They
+generate various kinds of constructors for \emph{classes}, with or without
+constructor arguments. This set of annotations is of great use, especially when
+used together with other features provided in Lombok (e.g.,
+\textbf{@Data}). Moreover, the implementation of these annotations in Lombok
+gives us hints on how to implement \mixin. However, none of these annotations
+can model what we are doing with \mixin - generating constructor-methods
+(\textbf{of}) for \emph{interfaces}. Apart from constructors, \mixin also
+provides other convenient features (including generating fluent setters, type
+refinement,etc) which the base Lombok project could not provide.
