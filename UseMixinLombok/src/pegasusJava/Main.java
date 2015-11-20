@@ -25,5 +25,4 @@ public interface Main {
 		Bird b = new BirdImpl();
 		Pegasus p = new PegasusImpl();	
 	}
-
 }
