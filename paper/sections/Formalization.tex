@@ -243,6 +243,7 @@ that all abstract and conflicted methods (that is methods, that need
 to be explicitly overriden) in the superinterfaces have been
 implemented. The definitions $\sigvalid$ and $\alldefined$ take care
 of this: \\
+\marco{there can be no conflicted method in I, the user need to manually solve the conflict for mixin to work}
 
 $
 \begin{array}{lll}
@@ -310,7 +311,7 @@ $\mBody(\m,\C_0) = \override(\methods(\m),
 $\\*
 Where
 $\metaVar{IT}(C_0) =
-\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs \oC\methods\cC$
+\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\cC$
 
 As you can see, we are delegating the work to three others auxiliary functions:\\*
  $\tops(\Cs), \shadow(\m,\Cs)$ and $\override(\method,\method')$

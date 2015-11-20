@@ -224,7 +224,8 @@ we also show the convenience of \emph{with} methods.
 \Q@Bird@ needs a 3D location, thus first of all we define \Q@Point3D@ and
 as follows:
 \lstinputlisting[linerange=56-60]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
-
+\marco{Fix over: with(Point must be with(Point2D
+and it should be after withZ, and on more lines}
 Just to give you a feeling on how much boring code \mixin is generating,  we show the expanded code without then \mixin annotation\footnote{
 As you can see, the generated code is very repetitive, writing such code by hand can easily induce bugs, for example a distract programmer may
 swap the arguments of one of the many calls of \Q@Point3D.of@.
