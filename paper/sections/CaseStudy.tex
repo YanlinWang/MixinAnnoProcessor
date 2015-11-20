@@ -18,7 +18,7 @@ expressions gradually to illustrate the usage.
 The initial system expresses arithmetic expressions with only literals and
 addition structure:
 
-\lstinputlisting[linerange=25-35]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
+\lstinputlisting[linerange=34-44]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
 
 \texttt{Exp} is the common super-interface with an evaluation operation
 \texttt{eval()} inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend
@@ -31,7 +31,7 @@ getter methods \texttt{e1()} and \texttt{e2()}.
 It is easy to add new data variants to the code in the initial system in a
 modular way. For example, the following code shows how to add the subtraction variant.
 
-\lstinputlisting[linerange=39-44]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
+\lstinputlisting[linerange=48-53]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
 
 \subsubsection{Adding a New Operation}
@@ -39,7 +39,7 @@ Adding new operations to the previous system is still straightforward (although
 requires longer code). The following code shows an example of adding a new
 operation \texttt{print}. 
 
-\lstinputlisting[linerange=48-57]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\lstinputlisting[linerange=57-66]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
 
 The basic idea is to define interfaces for extending old interfaces.  The
 interface \texttt{ExpP} extending interface \texttt{Exp} is defined with the

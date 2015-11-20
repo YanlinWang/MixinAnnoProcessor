@@ -13,65 +13,176 @@ Birds can \Q@fly@, thus their location need to be a three dimensional \Q@Point3D
 Finally, we model \Q@Pegasus@ as a kind of \Q@Animal@ with the skills of both \Q@Horse@s and \Q@Bird@s.\footnote{
 Some research argues in favour of using subtyping for modelling taxonomies, other research argue against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
 
-%Suppose we want to model an animal system as shown in Fig~\ref{fig:pegasus}. In
-%order to model \texttt{Pegasus}, \emph{multiple inheritance} is clearly needed
-%in this example. Therefore, in Java we use interfaces instead of classes. An
-%\texttt{Animal} has a \texttt{point} field, indicating the current position of
-%the animal. \texttt{Horse} and \texttt{Bird} are subtypes of \texttt{Animal},
-%with methods \texttt{run()} and \texttt{fly()}, respectively. Note that
-%\texttt{Bird} can fly, therefore refines the type of \texttt{point} from
-%\texttt{Point2D} to \texttt{Point3D}. Pegasus (one of the best known creatures
-%in Greek mythology) can not only \emph{run} but also \emph{fly}! This is the
-%place where \emph{``multiple inheritance''} is needed, because \texttt{Pegasus}
-%need to obtain \texttt{fly} and \texttt{run} functionality from both
-%\texttt{Horse} and \texttt{Bird}.
-%---------------
-% We can put more in dept discussion while discussing the classes in details.
-%--------------
-\subsection{\Q@Point2D@: simple immutable data with fields}
-Since in ClassLess Java there are no classes, our \Q@Point2D@ must be an interface, as for example:
+\subsection{Simple Traits with Default Methods}
+
+Suppose that we want to model an animal system as shown in
+Fig~\ref{fig:pegasus}. \texttt{Horse} and \texttt{Bird} are subtypes
+of \texttt{Animal}, with methods \texttt{run()} and \texttt{fly()},
+respectively. Pegasus (one of the best known creatures in Greek
+mythology) can not only \emph{run} but also \emph{fly}! This is the
+place where \emph{``multiple inheritance''} is needed, because
+\texttt{Pegasus} needs to obtain \texttt{fly} and \texttt{run}
+functionality from both \texttt{Horse} and \texttt{Bird}.
+Ignoring points, for the moment, a 
+first attempt to model the animal system in Java 8 is shown next:
+
+\lstinputlisting[linerange=6-13]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_JAVA
+
+Note that the implementations of the methods \texttt{run}
+and \texttt{fly} are defined inside interfaces, using default
+methods. Moreover, because interfaces support multiple interface
+inheritance, the interface for \texttt{Pegasus} can inherit behaviour
+from both \texttt{Horse} and \texttt{Bird}. Although Java interfaces
+do not allow instance fields, no form of state is needed so far to
+model the animal system.  Therefore this example provides a simple
+illustratation how a basic form of multiple inheritance, similar to
+what can be done with traits, can be accomplished in Java 8.
+
+\bruno{
+Note that \texttt{Bird} can fly, therefore refines the
+type of \texttt{point} from \texttt{Point2D} to
+\texttt{Point3D}. 
+}
+
+\paragraph{Instantiation}
+To use \texttt{Horse}, \texttt{Bird} and \texttt{Pegasus}, some
+objects must be instantiated first. A first problem with using
+interfaces to model the animal system is simply that interfaces 
+cannot directly be instantiated: a class is needed. Therefore, we have
+to first create some classes, such as: 
+
+\lstinputlisting[linerange=17-19]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_INST
+
+\noindent in order to create animal objects. With those classes, 
+a Pegasus animal, can be created using the class constructor:
+
+\begin{lstlisting}
+Pegasus p = new PegasusImpl();
+\end{lstlisting}
+
+\noindent There are a couple of annoyances here. Firstly, the sole
+purpose of the classes is to provide a way to instantiate the
+objects. Although (in this case) it takes only one line code to
+provide each of those classes, this code is essentially boilerplate
+code, which does not add behaviour to the system. Secondly, 
+the namespace gets filled with three additional types. For example, 
+both \texttt{Horse} and \texttt{HorseImpl} are needed: \texttt{Horse}
+is needed because it needs to be an inferface so that \texttt{Pegasus}
+can use multiple inheritance; and \texttt{HorseImpl} is needed to
+provide object instantiation. 
+
+Note that, for this very simple animal system, plain Java 8 anonymous
+classes can be used to avoid these problems.  We could have simply
+instantiated Pegasus using:
+
+\begin{lstlisting}
+Pegasus p = new Pegasus() {}; // anonymous class
+\end{lstlisting}
+
+However, as we shall see, once the system gets a little more
+complicated, the code for instantiation quickly becomes more 
+complex and verbose (even with anonymous classes). 
+
+\subsection{Object Interfaces and Instantiation} 
+
+To model the animal system with object interfaces all that a user
+needs to do is to add a \mixin annotation to the \texttt{Horse}, 
+\texttt{Bird}, and \texttt{Pegasus} interfaces.  For example, 
+for \texttt{Bird} and \texttt{Pegasus} the code would be as follows: 
+
+\lstinputlisting[linerange=11-14]{../UseMixinLombok/src/pegasusLombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
+
+The effect of the annotations is that a static \emph{factory} method called
+\texttt{of} is automatically added to the interfaces. With the
+\texttt{of} method a Pegasus object is instantiated as follows:
+
+\begin{lstlisting}
+Pegasus p = Pegasus.of();
+\end{lstlisting}
+
+\noindent The \texttt{of} method provides an alternative to a
+constructor, which is missing from interfaces. The following code,
+shows the code correponding to the \texttt{Pegasus} interface
+after the \mixin annotation is processed:
+
+\begin{lstlisting}
+interface Pegasus extends Horse, Bird { // generated code not visible to users
+	static Pegasus of() {return new Pegasus() {};}
+}
+\end{lstlisting}
+
+\noindent Note that the generated code is transparent to a user, which
+only sees the original code with the \mixin annotation. Compared to the pure
+Java solution in Section~\ref{}, the solution using object interfaces
+has the advantage of providing a direct mechanism for object
+instantiation, which avoids adding boilerplate classes to the
+namespace. 
+
+\subsection{Object Interfaces with State}
+
+The animal system modelled so far, is a simplified version of the
+system presented in Figure~\ref{}. \bruno{emphasize that, so far the
+  need for \mixin is not justified?} Lets now move on to modelling 
+the complete animal system. In order to do this, animals will include 
+a notion of points, representing their location in space. 
+
+\paragraph{\Q@Point2D@: simple immutable data with fields}
+Two dimensional points should keep track of their coordinates. 
+The usual approach to model points in Java would be to use a class 
+with fields for the coordinates. However here we will illustrate how 
+points are modelled with interfaces, providing a simple 
+example of how to model state with interfaces. Since Java disallows fields 
+inside interfaces, the state is modelled using abstract (getter) methods:
+
 \begin{lstlisting}
 interface Point2D{ int x(); int y();}
 \end{lstlisting}
-That is, since Java disallows fields inside interfaces,
- we simulate state by abstract methods.
-By using the new Java8 \Q@default@ methods, we can easily add implemented methods inside the interface. For example:
+
+\noindent Unfortunatelly, creating a new point object is quite cumbersome, even 
+when using anonymous classes: 
+
 \begin{lstlisting}
-interface Point2D{ int x(); int y();
-  default float distanceFromOrigin(){ return Math.sqrt(x()*x()+y()*y());}
-  }
+Point2D p = new Point2D(){ public int x(){return 4;} public int y(){return 2;}}
 \end{lstlisting}
-resemble a class that have fields (getters) and methods.
-However, how can we create an instance of \Q@Point2D@ without using classes? 
-we can just provide an implementation for \Q@x()@ and \Q@y()@ as in
-\begin{lstlisting}
-new Point2D(){ public int x(){return 4;} public int y(){return 2;}}
-\end{lstlisting}
-However we are not required to use this cumbersome syntax\footnote{Available in Java from version ...} for every object allocation.
-As programmes do, for ease or reuse, we can encapsulate boring long repetitive code in a method. A static factory method in this case is appropriate:
+
+However we are not required to use this cumbersome
+syntax\footnote{Available in Java from version ...} for every object
+allocation.  As programmers do, for ease or reuse, we can encapsulate
+boring long repetitive code in a method. A static factory method in
+this case is appropriate:
 \begin{lstlisting}
 interface Point2D{ int x(); int y();
   static Point2D of(int x, int y){return new Point2D(){
     public int x(){return x;} public int y(){return y;}};}
   }
 \end{lstlisting}
-This obvious constructor code can be automatically generated by our \mixin annotation.
 
-By annotating the interface \Q@Point2D@, the annotation will generate a variation of the shown static method \texttt{of}, mimicking the functionality of a simple minded constructor:
-By looking the the methods that need implementation it first detects what are the fields, then 
-generate an \Q@of@ method with one argument for each of them.
+\paragraph{\Q@Point2D@ with Object Interfaces}
+This obvious constructor code can be automatically generated by our
+\mixin annotation.  By annotating the interface \Q@Point2D@, the
+annotation will generate a variation of the shown static method
+\texttt{of}, mimicking the functionality of a simple minded
+constructor: By looking at the methods that need implementations it
+first detects what are the fields, then generates an \Q@of@ method with
+one argument for each of them.That is, we can just write
 
-That is, we can just write
 \begin{lstlisting}
 @Mixin interface Point2D{ int x(); int y();}
 \end{lstlisting}
 
-More precisely, a field or factory parameter is generated for every no-args method requiring implementation whose name does not have special meaning\footnote{Formal definition of \mixin behaviour is provided later.}.
-An example of code using \Q@Point2D@ is 
-\Q@Point2D.of(42,myPoint.y())@
-where we return a new point, using \Q@42@ as x-coordinate, and 
-taking all the other informations (only \Q@y@ in this case) from another point.
-This pattern is very common when programming with immutable data-structures; it is so common that we decided to support it in our code generation as \Q@with-@ methods, that is:
+More precisely, a field or factory parameter is generated for every
+no-args method requiring implementation whose name does not have
+special meaning\footnote{Formal definition of \mixin behaviour is
+  provided later.}.  An example of code using \Q@Point2D@ is
+\Q@Point2D.of(42,myPoint.y())@ where we return a new point, using
+\Q@42@ as x-coordinate, and taking all the other informations (only
+\Q@y@ in this case) from another point.  
+
+\paragraph{\texttt{with} methods in Object Interfaces}
+This pattern is very common
+when programming with immutable data-structures; it is so common that
+we decided to support it in our code generation as \Q@with-@ methods,
+that is:
 \begin{lstlisting}
 @Mixin interface Point2D{ int x();    int y();
   Point2D withX(int val);    Point2D withY(int val);}
