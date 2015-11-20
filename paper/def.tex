@@ -1,3 +1,13 @@
+\usepackage{array}
+\newcommand\InTextDef[3]{
+\begin{array}{c p{#1} c l }
+\ensuremath{\bigoplus}&\ensuremath{#2} & \ensuremath{=} & \ensuremath{#3}
+\end{array}
+}
+\newcommand\InTextWith[1]{
+{}_{}\quad\quad\mbox{with }#1
+}
+
 \newenvironment{grammar}{
 $
 \begin{array}[t]{lcll}}{\end{array}$

@@ -305,13 +305,17 @@ $\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns.
 
 The body of a method $\m$ contains all the relevant information with respect to that method, like the type of $\m$ as well as the modifier.
 We use internally a special modifier $\conflicted$ to denote the case of two methods with conflicting implementation.\\*
-
-$\mBody(\m,\C_0) = \override(\methods(\m),
+\noindent
+$\begin{array}{l}
+\InTextDef{15ex}{
+\mBody(\m,\C_0)
+}{
+\override(\methods(\m),
 \shadow(\m,\Aux{tops}(\Cs)))
-$\\*
-Where
-$\metaVar{IT}(C_0) =
-\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\cC$
+}\\
+\InTextWith{\metaVar{IT}(\C_0) =
+\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\cC}
+\end{array}$
 
 As you can see, we are delegating the work to three others auxiliary functions:\\*
  $\tops(\Cs), \shadow(\m,\Cs)$ and $\override(\method,\method')$
