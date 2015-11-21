@@ -29,7 +29,7 @@ later}.
 \production{
 \II
 }{
- \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC
+ \ann\ \QM{interface}\ \C\ \QM{extends}\ \Cs\ \oC \methods\ \cC
   }{interface declaration}\\
 \production{
 \method
@@ -145,28 +145,28 @@ $
 \inferrule[(T-Invk)]{
  \Gamma \vdash \e \in \C \\\\
 \forall i\in 1..n\ \ \Gamma \vdash \e_i \in \_<:\C_i \\\\
-  \textsf{mtype}(\m,\C) \!=\! \overline{\C} \!\!\to\! \C'
+  \textsf{mtype}(\m,\C) \!=\! \C_1\ldots\C_n \!\!\to\! \C'
 %\textsf{mmodifier}(\m,\C) \neq \textbf{static}
  }{
- \Gamma \vdash \e\QM.\m\QM(\overline{\e}\QM) \in \C' }
+ \Gamma \vdash \e\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C' }
 \quad\quad
 
 %%T-StaticInvk
 \inferrule[(T-StaticInvk)]{
 \forall i\in 1..n\  \ \Gamma \vdash \e_i\in \_<:\C_i \\\\
-\textsf{mtypeS}(\m,\C) \!=\! \overline{\C} \!\to\! \C'
+\textsf{mtypeS}(\m,\C) \!=\! \C_1\ldots\C_n \!\to\! \C'
 %\textsf{mmodifier}(\m,\C) = \textbf{static}
 }{
-\Gamma \vdash \C\QM.\m\QM(\overline{\e}\QM) \in \C'}
+\Gamma \vdash \C\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C'}
 \quad\quad
 
 %%T-SuperInvk
 \inferrule[(T-SuperInvk)]{
 \Gamma(\this) <: \C \\\\
 \forall i\in 1..n\ \ \Gamma \vdash \e_i\in \_<:\C_i \\\\
-  \textsf{mtype}(\m,\C) \!=\! \overline{\C} \!\!\to\! \C'
+  \textsf{mtype}(\m,\C) \!=\! \C_1\ldots\C_n \!\!\to\! \C'
 %\textsf{mmodifier}(\m,\C_0) \neq \textbf{static} \\\\
-}{\Gamma \vdash \C\QM.\QM{super}\QM.\m\QM(\overline{\e}\QM) \in \C'}
+}{\Gamma \vdash \C\QM.\QM{super}\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C'}
 
 
 %%T-Var
@@ -213,11 +213,11 @@ $
 
 %%T-Intf
  \inferrule[(T-Intf)]{
-IT(\C) = \ann\ \QM{interface}\ \C\ \QM{extends}\ \overline{I} \
+IT(\C) = \ann\ \QM{interface}\ \C\ \QM{extends}\ \C_1\ldots\C_n \
 \oC\methods\ \cC\\\\
- \forall \QM{default}\ \mh\oC\QM{return}\ \e\QM;\cC \in \methods,
+ \forall \QM{default}\ \mh\ \oC\QM{return}\ \e\QM;\cC \in \methods,
 \ \ \Gamma^{\mh},\,\QM{this}{:}\C\vdash\e\in \_\subtype\C^{\mh} \\\\
- \forall \QM{static}\ \mh\oC\QM{return}\ \e\QM;\cC \in \methods,
+ \forall \QM{static}\ \mh\ \oC\QM{return}\ \e\QM;\cC \in \methods,
 \ \ \Gamma^{\mh}\vdash\e\in \_\subtype\C^{\mh} \\\\
 \dom(\C)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)
  }{
@@ -237,28 +237,54 @@ subtype of the field type. Secondly, we check that all method bodies are
 well-typed. To do this the enviroment used to check the method body
 needs to be extended appropriately: we add all fields and their types;
 add $\this:I$; and add the arguments (and types) of the respective
-method. Finally, we need to check that all method headers are valid
-with respect to the superinterfaces of $I$; and we also need to check
-that all abstract and conflicted methods (that is methods, that need
-to be explicitly overriden) in the superinterfaces have been
-implemented. The definitions $\sigvalid$ and $\alldefined$ take care
-of this: \\
-\marco{there can be no conflicted method in I, the user need to manually solve the conflict for mixin to work}
+method.
+Now we need to check if the object is a valid extension for that specific interface.
+This can be logically diveded in two steps:
+First  we check that all method headers are valid
+with respect to the corresponding method already present in $\C$;
 
-$
-\begin{array}{lll}
-\sigvalid(\mh_1\ldots\mh_n,I) & = &
-\forall i\in 1..n\ \ \mh_i\subtype\mBody(\m^{\mh_i},\C)\\
+\noindent$\begin{array}{l}
+\InTextDef{10em}{\sigvalid(\mh_1\ldots\mh_n,I)
+}{
+\forall i\in 1..n\ \ \mh_i\QM;\subtype\mBody(\m^{\mh_i},\C)
+}
+\end{array}$
 
-\alldefined(\mh_1\ldots\mh_n,I) & = &
-\forall\m\mbox{ such that } \mBody(\m,\C)=\mh\QM; \exists i\in 1..n\ \m^{\mh_i}=\m
-\end{array}
-$\bruno{Marco, you probably want to double-check the explanation. Any
-  more explanation needed?}
-\bruno{Also, according to the text above, mbody returns the full
-  method body, so in sigvalid, shouldn't we use mtype instead? The
-  same for alldefined, should it be mtype? Still not very confident
-  about alldefined. }
+Here we require that for all newly declared methods, there is a
+method with the same name defined in the interface $\C$, and that such method is a subtype of the newly introduced one. We formally define here subtyping between method, in a more general form that will be useful later.
+
+\noindent$\begin{array}{l}
+\InTextDef{18em}{
+\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR
+}{
+\T\subtype \T'
+}\\
+\InTextDef{18em}{\method \subtype
+\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}
+}{
+\method\subtype\mh\QM;
+}\\
+\InTextDef{18em}{\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}\subtype\method
+}{
+\mh\QM;\subtype\method
+}\\
+\end{array}$
+
+Two method headers are subtypes if all the parameter types are the same and the return types are subtypes.
+That is, we allows return type specialization as introduced in Java\marco{insert the version number}.
+Default methods are subtypes if their method headers are subtypes.
+
+
+Finally, all abstract methods in the interface (that is methods that need
+to be explicitly overridden) have been
+implemented. That is, we define a method with the same name.
+
+\noindent$\begin{array}{l}
+\InTextDef{11em}{\alldefined(\mh_1\ldots\mh_n,I)}{
+\forall\m\mbox{ such that } \mBody(\m,\C)=\mh\QM; \exists i\in 1..n\ \m^{\mh_i}=\m}
+\end{array}$
+
+
 
 The rule \rn{(t-intf)} checks that an interface $\C$ is correctly
 typed.  First we check that the body of all the default and static
@@ -305,8 +331,7 @@ $\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns.
 
 The body of a method $\m$ contains all the relevant information with respect to that method, like the type of $\m$ as well as the modifier.
 We use internally a special modifier $\conflicted$ to denote the case of two methods with conflicting implementation.\\*
-\noindent
-$\begin{array}{l}
+\noindent$\begin{array}{l}
 \InTextDef{15ex}{
 \mBody(\m,\C_0)
 }{
@@ -324,71 +349,48 @@ ${}_{}$\\*
 
 \tops{} recover from the interface table only the ``needed'' methods, that is,
 the non static ones that are not transitively reachable by following another, less specific, superinterface chain. Formally:\\*
-$\method\in\tops(\m,\Cs) \mbox{ iff }\C\in\Cs\ ,\method=\mBody(\m,\C), \method\mbox{ not a static method}$\\*
-${}_{}$\tab and $\nexists \C'\in\Cs\setminus\C$ such that $\C' \subtype \C$.
+
+\noindent$\begin{array}{l}
+\InTextAssert{25ex}{
+\method\in\tops(\m,\Cs)}\\
+\InTextWith{\C\in\Cs\ ,\method=\mBody(\m,\C), \method\mbox{ not a static method and } \nexists \C'\in\Cs\setminus\C \mbox{ such that } \C' \subtype \C}
+\end{array}$
 
 \shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
 We do not model overloading, so it is an error if multiple versions are available with different parameter types. Formally:\\*
-\!\!\!\!$\begin{array}{l}
-%\shadow(\m,\C_1\ldots\C_n)=\shadow(\methods)
-%\whereNote
-% \mwhere\ \mBody(\m,\C_i)\in\methods
-%\ \mif\ \mBody(\m,\C_i)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}
-%\\ &\mor\ \mBody(\m,\C)=\mh\QM;
-%\\
-
-\shadow()=\none\\
-\shadow(\method)=\method\\
-\shadow(\overline{\mh\QM;})=\Aux{mostSpecific}(\overline{\mh\QM;})\\
-\shadow(\methods)=\conflicted\mh\QM;
-\whereNote
-\mwhere\
-\methods\mbox{ not of the form }\overline{\mh\QM;}\mbox{ and }
-\Aux{mostSpecific}(\methods)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}\\
-\Aux{mostSpecific}(\methods)=\method
-\whereNote
-\mwhere\ \method \in \methods\ \mand\ \forall \method' \in \methods :  \method \subtype
-                                       \method', \\
-\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR
-\whereNote
- \mwhere\ \T\subtype \T'\\
-
-\method \subtype
-\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}=
-\method\subtype\mh\QM;
-\\
-\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}\subtype\method=
-\mh\QM;\subtype\method
+\noindent
+$\begin{array}{l}
+\InTextDef{15ex}{
+\shadow()}{\none}\\
+\InTextDef{15ex}{\shadow(\method)}{\method}\\
+\InTextDef{15ex}{\shadow(\overline{\mh\QM;})}{\Aux{mostSpecific}(\overline{\mh\QM;})}\\
+\InTextDef{15ex}{\shadow(\methods)}{\conflicted\mh\QM;}\\
+\InTextWith{\methods\mbox{ not of the form }\overline{\mh\QM;}\mbox{ and }
+\Aux{mostSpecific}(\methods)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}}\\
 \end{array}$
-${}_{}$\\*
-Where $\Aux{mostSpecific}$ return the most specific method using return type specialization as introduced in Java\marco{insert the version number}
-We just check the subtype between method headers, so we discard information abut method implementation.\\*
+
+Where $\Aux{mostSpecific}$ return the most specific method , that is a method whose type is the subtype of all the others.
+Since method subtyping is a partial ordering, this may be not defined, this in turn makes \shadow{}, and the whole \mBody{} not defined for that specific $\m$. Rule  \rn{(t-intf)}  rely on this behaviour.
+
+\noindent$\begin{array}{l}
+\InTextDef{18ex}{\Aux{mostSpecific}(\methods)}{\method}\\
+\InTextWith{\method \in \methods\ \mand\ \forall \method' \in \methods :  \method \subtype \method'}
+
+\end{array}$
+
 ${}_{}$\\*
 The override function models how the implementation in an interface can override implementation in the superinterface; even in case of a conflict.
 Note how we use the special value $\none$, and how (forth case) overriding can solve a conflict.
-\\*
-\!\!\!\!$\begin{array}{ll}
-\override(\none,\none)=\none\\
-\override(\method,\none)=\method\\
 
-\override(\none,\method)=\method
-\whereNote
-\mwhere\ \method\mbox{ not of the form } \conflicted\ \mh\QM;\\
-\override(\method,\method')
-=
-\method
-\whereNote
-\mwhere\ \method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
-\method\subtype\method'
-\\
-%\override(\method,\mh')
-%=\method
-%\whereNote
-%\mif\ \method\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@} \}, \mh\subtype\mh'
-%\override(\_,\_)=\error & Otherwise
-%\textsf{shadow}(body_1, body_2)=\emptyset & \textsf{if }body_1.\textsf{modifier}=body_2.\textsf{modifier}=\textbf{static}\\
-%\textsf{shadow}(body_1, body_2)=body_1 & \textsf{if }body_2=\emptyset\textsf{ or }body_2.\textsf{modifier}=\textbf{static}\\
-%\textsf{shadow}(body_1, body_2)=body_2 \hspace{.1in}  & \textsf{if }body_1=\emptyset\textsf{ or }body_1.\textsf{modifier}=\textbf{static}
+\noindent$\begin{array}{l}
+\InTextDef{18ex}{\override(\none,\none)}{\none}\\
+\InTextDef{18ex}{\override(\method,\none)}{\method}\\
+
+\InTextDef{18ex}{\override(\none,\method)}{\method}\\
+\InTextWith{\method\mbox{ not of the form } \conflicted\ \mh\QM;}\\
+\InTextDef{18ex}{\override(\method,\method')}{\method}\\
+\InTextWith{\method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
+\method\subtype\method'}
 \end{array}$
 
 
@@ -412,12 +414,6 @@ We abbreviate typing statements on
 sequences in a simple way, writing $\Gamma \vdash \overline{t}:\overline{C}$ as
 shorthand for $\Gamma \vdash t_1:C_1,..., \Gamma \vdash t_n:C_n$.
 \end{comment}
-
-\marco{The notation mtype get only non static methods, the notation mtypeS get only static ones}
-
-%\subsubsection{Interface and method Typing}
-
-
 
 
 
