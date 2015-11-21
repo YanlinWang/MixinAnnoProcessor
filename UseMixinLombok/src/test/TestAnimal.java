@@ -7,29 +7,29 @@ public class TestAnimal {
 	public static void main(String[] args) {
 		Horse horse = Horse.of(Point2D.of(0, 0));
 		System.out.print("horse initialized at ");
-		print(horse.point());
+		print(horse.location());
 		horse.run();
 		System.out.print("horse.run(); now at ");
-		print(horse.point());
+		print(horse.location());
 		System.out.println();
 		
 		Bird bird = Bird.of(Point3D.of(10, 10, 10));
 		System.out.print("bird initialized at ");
-		print(bird.point());
+		print(bird.location());
 		bird.fly();
 		System.out.print("bird.fly(); now at ");
-		print(bird.point());
+		print(bird.location());
 		System.out.println();
 		
 		Pegasus pegasus = Pegasus.of(Point3D.of(100, 100, 100));
 		System.out.print("pegasus initialized at ");
-		print(pegasus.point());
+		print(pegasus.location());
 		pegasus.run();
 		System.out.print("pegasus.run(); now at ");
-		print(pegasus.point());
+		print(pegasus.location());
 		pegasus.fly();
 		System.out.print("pegasus.fly(); now at ");
-		print(pegasus.point());
+		print(pegasus.location());
 	}
 	
 	static void print(Point2D p) {
@@ -62,28 +62,26 @@ interface Point3D extends Point2D {
 
 //BEGIN_ANIMAL
 interface Animal {
-	Point2D point();
-	void point(Point2D val);
+	Point2D location();
+	void location(Point2D val);
 }
 //END_ANIMAL
 
 //BEGIN_HORSE
 @Mixin
 interface Horse extends Animal {
-	default void run() {
-		point(point().withX(point().x() + 20));
-	}
+	default void run() {location(location().withX(location().x() + 20));}
 }
 //END_HORSE
 
 //BEGIN_BIRD
 @Mixin
 interface Bird extends Animal {
-	Point3D point();
+	Point3D location();
 	void point(Point3D val);
-	default void point(Point2D val) { point(point().with(val));}
+	default void location(Point2D val) { location(location().with(val));}
 	default void fly() {
-		point(point().withX(point().x() + 40));
+		location(location().withX(location().x() + 40));
 	}
 }
 //END_BIRD
