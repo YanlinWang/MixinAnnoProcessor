@@ -5,7 +5,11 @@ import lombok.Mixin;
 public class TestAnimal {
 	
 	public static void main(String[] args) {
-		Horse horse = Horse.of(Point2D.of(0, 0));
+//BEGIN_USINGHORSE
+Point2D p = Point2D.of(0, 0);
+Horse horse = Horse.of(p);
+horse.location(p.withX(42));
+//END_USINGHORSE
 		System.out.print("horse initialized at ");
 		print(horse.location());
 		horse.run();
