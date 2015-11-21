@@ -1,13 +1,108 @@
+\section{Interaction of interface methods with interface composition}
+From Java8 interfaces can have three type of methods:
+abstract methods, default methods, static methods.
+\begin{itemize}
+\item Static methods are handled in a very clean way: they are visible only on the interface they are explicitly declared. This means that 
+\begin{lstlisting}
+interface A0 { static int m(){return 1;} }
+interface B0 extends A0 {}
+...
+B0.m()//ill typed
+\end{lstlisting}
+Note how this is different w.r.t. the way static methods are handled in classes.
+In this way static methods have simply no interaction with interface composition (\Q@extends@ or \Q@implements@).
+
+\item Abstract methods composition is accepted when there is one that is the most specific.  For example in 
+\begin{lstlisting}
+interface A1 { Object m(); }
+interface B1 { Integer m();}
+interface C1 extends A1,B1 {} //accepted
+\end{lstlisting}
+Method \texttt{Integer m()} is visible in \Q@C1@.
+
+\item Default methods conflict with any other default or abstract method. For
+example:
+\begin{lstlisting}
+interface A2 { default int m() {return 1;}}
+interface B2 { int m(); }
+interface C2 { default int m() {return 2;}}
+interface D2 extends A2,B2 {} //rejected due to conflicting methods
+interface E2 extends A2,C2 {} //rejected due to conflicting methods
+\end{lstlisting}
+Note how this is in contrast with what happens in most trait models, where \Q@D2@ would be accepted, and the implementation in \Q@A2@ would be part of the behaviour of \Q@D2@.
+
+\item The method in the current interface wins over any methods defined in its
+super-interfaces, provided that the method conform to the subtype of all methods
+in its super-interfaces, i.e., the method is the most specific one.
+This also override rejection due to conflicting methods. For example:
+\begin{lstlisting}
+interface D3 extends A2,B2 { int m(); } //accepted
+interface E3 extends A2,C2 { int m(); } //accepted
+\end{lstlisting}
+\end{itemize}
+
+While trying to formally encode the Java specification we have done some tests to clarify corner case behaviour.
+Consider the following correct declarations:
+\begin{lstlisting}
+interface A1{T m(); }
+interface A2 extends A1{default T m(){ ... } }
+interface A3 extends A2{T m(); } 
+
+interface B1{default T m(){ ... } }
+interface B2 extends B1{T m(); }
+interface B3 extends B2{default T m(){ ... } }
+\end{lstlisting}
+
+What happens if we define a new interface \Q@M@ extending one \Q@A@${}_i$ and one \Q@B@${}_i$? we have 9 cases, that can fit nicely a table:\\*
+\noindent
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
+\textbf{B1}        & conservative error                        & conflict error      & conservative error       \\ \hline
+\textbf{B2}        & both abstract, accepted                        & conservative error       & both abstract, accepted       \\ \hline
+\textbf{B3}        & \cellcolor[HTML]{C0C0C0} conservative error &conflict  error       & conservative error      \\ \hline
+\end{tabular}
+\\*
+We try to classify the results out of the table:
+\begin{itemize}
+\item \textbf{conflict error} happens when the method from \Q@A@${}_i$ and one \Q@B@${}_i$ are both implemented. This is also considered an error in most trait models.
+\item \textbf{both abstract, accepted} happens when the method from \Q@A@${}_i$ and one \Q@B@${}_i$ are both abstract. This is also considered correct in all trait models.
+\item \textbf{conservative error}
+ happens when the method from \Q@A@${}_i$ and one \Q@B@${}_i$ is implemented in only one side.
+This is different from what we would expect in a trait model, but is coherent with the conservative idea that a method defined in an interface
+should not silently satisfy a method in another one.
+\end{itemize}
+
+During our experimentation, we found a bug in ECJ (eclipse version of javac): The case \textbf{B3},\textbf{A1}
+is accepted by ECJ4.5.1 and rejected by javac.
+By email communication with Brian Goetz (lead Java8 designer) we have confirmation that the expected behaviour is rejection, and that this is a bug in ECJ.
+%Table~\ref{table:javabug} shows the method overriding bug in Java. In the
+%example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
+%named as \texttt{m} which are either abstract or default methods. If we define a
+%new interface \texttt{M} that extends two of these interfaces, then the method
+%overriding result is shown in the table. For example, row2 col2 means \texttt{M
+%  extends A1,B1}. The result is \texttt{ERROR} because the abstract method
+%\texttt{T m();} in \texttt{A1} conflicts with the method \texttt{default T m()
+%  {...}} in \texttt{B1}. Readers may also figure out other extending cases by
+%following this way of interpretation.
+
+% The interesting case in row4 col2 where
+%Indeed, to be coherent with the idea of \textbf{conservative error}, the case should not be accepted.
+%We do not see how this should behave differently from \textbf{B1},\textbf{A1}, and \textbf{B3},\textbf{A3}.
+%We fear that the only retro-compatible fix for this strange behaviour is to accept all the cases of \textbf{conservative error} in a future version of Java.
+%the experimental result is \texttt{B3.m}. Because if we think consistently, this
+
+%\lstinputlisting[linerange=4-9]{../UseMixinLombok/src/methodshadowing/test5/Test5.java} % APPLY:linerange=JAVABUG
+
+%In our approach, we choose to not model this strange behaviour (a bug?).
+%Our auxiliary function $\mBody(\m,\C)$ enforce the \textbf{conservative error} strategy.
+%The rest of our formalization is parametric with the definition of $\mBody(\m,\C)$, thus if Java change its resolution strategy to a more permissive one, only minor adaptations in $\mBody(\m,\C)$ would be needed.
+
 \section{Formal Semantics}\label{sec:formal}
 
 This section presents a formalization of ClassLess Java: a minimal
 FeatherweightJava-like calculus which models the essence of Java 
-interfaces with default methods. This calculus also supports a minimal
-extension to Java to account for the \mixin annotation for object
-interfaces. The syntax, typing rules and method lookup mechanisms 
-of CJ are modelled. Finally, using our formalization, we discuss
-examples of real Java programs that seem to be incoherent\bruno{revise
-later}.
+interfaces with default methods. 
 
 \begin{figure}[t]
 \begin{grammar}
@@ -58,16 +153,16 @@ later}.
 \label{Grammar}
 \end{figure}
 
-\subsection{Syntax and Typing}\marco{Future work: updating multiple fields in one method call,
-  \texttt{with(T v)}}
+\subsection{Syntax}
 
-\paragraph{Syntax}
-Figure~\ref{Grammar} shows the syntax of ClassLess Java.  \footnote{To
+Figure~\ref{Grammar} shows the syntax of ClassLess Java.%
+\footnote{To
   be compatible with java, the concrete syntax for an interface
   declaration with empty supertype list $\C_1\ldots\C_n$ would also
   omit the \Q@extends@ keyword.}  The syntax formalizes a minimal
 version of Java 8, focusing on interfaces, default methods and object
-creation literals.  There is no syntax for classes.  Expressions
+creation literals.  There is no syntax for classes.
+To help readability we use many metavariables to represent identifiers: $C,x,f$ and $m$; however they all maps to a single set of identifiers as in Java.  Expressions
 consist of conventional constructs such as variables ($\x$), method
 calls ($\e\QM.\m\QM(\es)$) and static method calls
 ($\C\QM.\m\QM(\es)$). For simplicity the degenerate case of calling a
@@ -75,7 +170,7 @@ static method over the $\this$ receiver is not considered.  A more
 interesting type of expressions are super calls
 ($\C\QM{.super.}\m\QM(\es)$), whose semantic is to call the (non
 static) method $\m$ over the $\this$ receiver, but statically
-dispatching to the version of the method defined in the interface
+dispatching to the version of the method as visible in the interface
 $\C$. A simple form of field updates ($\x\QM=\e\QM;\e'$) is also
 modelled. In the syntax of field updates $\x$ is expected to be a
 field name. After updating the field $\x$ using the value of $\e$, the
@@ -85,11 +180,14 @@ method body of the form \Q@return@ $\x\QM=\e\QM;\e'$ to represent
 $\x\QM=\e\QM;\QM{return}\ \e'$ in Java.  Finally, there is an object
 initialization expression from an interface $\C$, where (for
 simplicity) all the fields are initialized with a variable present in
-scope. Note how our language is a subset of Java 8.  The single
-non-Java 8 piece of syntax is the \mixin annotation, which is the only
-one interesting piece of syntax in this article.  Following standard
+scope. Note how our language is a subset of Java 8.
+% The single
+%non-Java 8 piece of syntax is the \mixin annotation, which is the only
+%one interesting piece of syntax in this article.
+%??? how is @Mixin not java8? in the sense that is java5?
+  Following standard
 practise, we consider a global Interface Table (\metaVar{IT}) mapping
-from interface names $\C$ to interface declarations \metaVar{I}.
+from interface names $\C$ to interface declarations $\II$.
 
 The environment $\Gamma$ is a mapping from variables to types.  As
 usual, we allow a functional notation for $\Gamma$ to do variable
@@ -100,8 +198,8 @@ iff there is a unique $\method\in\methods$ whose name is $\m$.  For
 convenience, we define $\methods(\m)=\none$ otherwise; moreover
 $\m\in\dom(\methods)\ \miff\ \methods(\m)=\method$.
 
+\subsection{Typing}
 
-\paragraph{Typing} 
 Typing statement $\Gamma \vdash \e\in\C$ reads ``in the environment
 $\Gamma$, expression $\e$ has type $\C$.''. 
 Before discussing the typing rules we discuss some of the used notation.
@@ -110,8 +208,8 @@ $\Gamma \vdash \e\in\C<:\C'$ instead of $\Gamma \vdash \e\in\C$ and
 $\C<:\C'$.  From the interface table, we can read off the subtype
 relation between interfaces. The subtype relation is given by the
 \textbf{extends} clauses in the interfaces. We omit the definition of
-the usual\bruno{where can it be found? add reference here?}, traditional subtyping relation between interfaces.%
-\footnote{ Notice how there are no classes, thus there is no
+the usual traditional subtyping relation between interfaces, that is the transitive and reflexive closure of the declared \Q@extends@ relation.%
+\footnote{\marco{find a better place for} Notice how there are no classes, thus there is no
   subclassing.  We believe that this approach may scratch an old
   itching point in the long struggle of subtyping versus subclassing:
   According to some authors, from a software engineering perspective,
@@ -119,8 +217,7 @@ the usual\bruno{where can it be found? add reference here?}, traditional subtypi
   opportune to consider interfaces are pure types. In this vision our
   language would have no subclassing. We do not know how to conciliate
   those two viewpoints and ClassLess Java design. We do not have
-  Classes purely in the Java sense.}\bruno{is a footnote here the
-  appropriate place to have this discussion?}
+  Classes purely in the Java sense.}
 The auxiliary notation $\Gamma^\mh$ trivially
 extracts the environment from a method header, by collecting the all types
 and names of the method parameters.  The
@@ -143,30 +240,30 @@ $
 
 %% T-Invk
 \inferrule[(T-Invk)]{
- \Gamma \vdash \e \in \C \\\\
+ \Gamma \vdash \e \in \C_0 \\\\
 \forall i\in 1..n\ \ \Gamma \vdash \e_i \in \_<:\C_i \\\\
-  \textsf{mtype}(\m,\C) \!=\! \C_1\ldots\C_n \!\!\to\! \C'
+  \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
 %\textsf{mmodifier}(\m,\C) \neq \textbf{static}
  }{
- \Gamma \vdash \e\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C' }
+ \Gamma \vdash \e\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C }
 \quad\quad
 
 %%T-StaticInvk
 \inferrule[(T-StaticInvk)]{
 \forall i\in 1..n\  \ \Gamma \vdash \e_i\in \_<:\C_i \\\\
-\textsf{mtypeS}(\m,\C) \!=\! \C_1\ldots\C_n \!\to\! \C'
+\textsf{mtypeS}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\to\! \C
 %\textsf{mmodifier}(\m,\C) = \textbf{static}
 }{
-\Gamma \vdash \C\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C'}
+\Gamma \vdash \C_0\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
 \quad\quad
 
 %%T-SuperInvk
 \inferrule[(T-SuperInvk)]{
-\Gamma(\this) <: \C \\\\
+\Gamma(\this) <: \C_0 \\\\
 \forall i\in 1..n\ \ \Gamma \vdash \e_i\in \_<:\C_i \\\\
-  \textsf{mtype}(\m,\C) \!=\! \C_1\ldots\C_n \!\!\to\! \C'
+  \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
 %\textsf{mmodifier}(\m,\C_0) \neq \textbf{static} \\\\
-}{\Gamma \vdash \C\QM.\QM{super}\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C'}
+}{\Gamma \vdash \C_0\QM.\QM{super}\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
 
 
 %%T-Var
@@ -483,98 +580,3 @@ Interface $I$ type checks well, if:
 \end{comment}
 %\subsubsection{Interface Table}
 
-\subsection{Method Overriding Mechanism}
-We summarize the mechanism for method overriding below (all methods considered
-here are methods with the same name and argument types):
-\begin{enumerate}
-\item Two abstract methods with subtyping relation do not cause conflict, and the
-most specific one wins. Subtyping relation for two methods means they have the
-same arguments' types and one return type is a subtype of the other one. For
-example:
-\begin{lstlisting}
-interface A1 { Object m(); }
-interface B1 { Integer m();}
-interface C1 extends A1,B1 {} //accepted
-\end{lstlisting}
-Method \texttt{Integer m()} in \texttt{B} wins over method \texttt{Object m()}
-in \texttt{A} because \texttt{Integer <: Object}.
-
-\item A default method conflict with another default method or abstract method. For
-example:
-\begin{lstlisting}
-interface A2 { default int m() {return 1;}}
-interface B2 { int m(); }
-interface C2 { default int m() {return 2;}}
-interface D2 extends A2,B2 {} //rejected due to conflicting methods
-interface E2 extends A2,C2 {} //rejected due to conflicting methods
-\end{lstlisting}
-Note how this is in contrast with what happens in most trait models, where \Q@D2@ would be accepted, and the implementation in \Q@A2@ would be part of the behaviour of \Q@D2@.
-
-\item The method in the current interface wins over any methods defined in its
-super-interfaces, provided that the method conform to the subtype of all methods
-in its super-interfaces, i.e., the method is the most specific one. For example:
-\begin{lstlisting}
-interface D3 extends A2,B2 { int m(); } //accepted
-interface E3 extends A2,C2 { int m(); } //accepted
-\end{lstlisting}
-\end{enumerate}
-\subsection{Method Overriding Incoherence in Java}
-% Please add the following required packages to your document preamble:
-% \usepackage[table,xcdraw]{xcolor}
-% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
-While trying to formally encode the Java specification we have done some tests to clarify corner case behaviour.
-Consider the following correct declarations:
-\begin{lstlisting}
-interface A1{T m(); }
-interface A2 extends A1{default T m(){ ... } }
-interface A3 extends A2{T m(); } 
-
-interface B1{default T m(){ ... } }
-interface B2 extends B1{T m(); }
-interface B3 extends B2{default T m(){ ... } }
-\end{lstlisting}
-
-What happens if we define a new interface \Q@M@ implementing one \Q@A@${}_i$ and one \Q@B@${}_i$? we have 9 cases, that can fit nicely a table:\\*
-\noindent
-\begin{tabular}{|l|l|l|l|}
-\hline
-\textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
-\textbf{B1}        & conservative error                        & conflict error      & conservative error       \\ \hline
-\textbf{B2}        & both abstract, accepted                        & conservative error       & both abstract, accepted       \\ \hline
-\textbf{B3}        & \cellcolor[HTML]{C0C0C0} accepted? &conflict  error       & conservative error      \\ \hline
-\end{tabular}
-\\*
-We try to classify the results out of the table:
-\begin{itemize}
-\item \textbf{conflict error} happens when the method from \Q@A@${}_i$ and one \Q@B@${}_i$ are both implemented. This is also considered an error in most trait models.
-\item \textbf{both abstract, accepted} happens when the method from \Q@A@${}_i$ and one \Q@B@${}_i$ are both abstract. This is also considered correct in all trait models.
-\item \textbf{conservative error}
- happens when the method from \Q@A@${}_i$ and one \Q@B@${}_i$ is implemented in only one side.
-The is different from what we would expect in a trait model, but it may make sense with the conservative idea that a method defined in an interface
-should not silently satisfy a method in another one.
-\end{itemize}
-
-We are very confused on the result for \textbf{B3},\textbf{A1}, and we can not find any rational for this behaviour.
-\footnote{We refer to the behaviour of \texttt{javac} as in JDK version is\marco{add}.}
-
-%Table~\ref{table:javabug} shows the method overriding bug in Java. In the
-%example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
-%named as \texttt{m} which are either abstract or default methods. If we define a
-%new interface \texttt{M} that extends two of these interfaces, then the method
-%overriding result is shown in the table. For example, row2 col2 means \texttt{M
-%  extends A1,B1}. The result is \texttt{ERROR} because the abstract method
-%\texttt{T m();} in \texttt{A1} conflicts with the method \texttt{default T m()
-%  {...}} in \texttt{B1}. Readers may also figure out other extending cases by
-%following this way of interpretation.
-
-% The interesting case in row4 col2 where
-To be coherent with the idea of \textbf{conservative error}, the case should not be accepted.
-We do not see how this should behave differently from \textbf{B1},\textbf{A1}, and \textbf{B3},\textbf{A3}.
-We fear that the only retro-compatible fix for this strange behaviour is to accept all the cases of \textbf{conservative error} in a future version of Java.
-%the experimental result is \texttt{B3.m}. Because if we think consistently, this
-
-%\lstinputlisting[linerange=4-9]{../UseMixinLombok/src/methodshadowing/test5/Test5.java} % APPLY:linerange=JAVABUG
-
-In our approach, we choose to not model this strange behaviour (a bug?).
-Our auxiliary function $\mBody(\m,\C)$ enforce the \textbf{conservative error} strategy.
-The rest of our formalization is parametric with the definition of $\mBody(\m,\C)$, thus if Java change its resolution strategy to a more permissive one, only minor adaptations in $\mBody(\m,\C)$ would be needed.
