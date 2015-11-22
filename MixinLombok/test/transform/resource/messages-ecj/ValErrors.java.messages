@@ -1,0 +1,2 @@
+6 d cannot be resolved to a variable
+10 'val' is not compatible with array initializer expressions. Use the full form (new int[] { ... } instead of just { ... })
