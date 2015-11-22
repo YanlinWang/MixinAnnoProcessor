@@ -3,6 +3,7 @@ From Java8 interfaces can have three type of methods:
 abstract methods, default methods, static methods.
 \begin{itemize}
 \item Static methods are handled in a very clean way: they are visible only on the interface they are explicitly declared. This means that 
+the following code is ill-typed.
 \begin{lstlisting}
 interface A0 { static int m(){return 1;} }
 interface B0 extends A0 {}
@@ -13,15 +14,16 @@ Note how this is different w.r.t. the way static methods are handled in classes.
 In this way static methods have simply no interaction with interface composition (\Q@extends@ or \Q@implements@).
 
 \item Abstract methods composition is accepted when there is one that is the most specific.  For example in 
+method \texttt{Integer m()} is visible in \Q@C1@.
+
 \begin{lstlisting}
 interface A1 { Object m(); }
 interface B1 { Integer m();}
 interface C1 extends A1,B1 {} //accepted
 \end{lstlisting}
-Method \texttt{Integer m()} is visible in \Q@C1@.
 
 \item Default methods conflict with any other default or abstract method. For
-example:
+example the following code is rejected due to conflicting methods.
 \begin{lstlisting}
 interface A2 { default int m() {return 1;}}
 interface B2 { int m(); }
@@ -34,10 +36,10 @@ Note how this is in contrast with what happens in most trait models, where \Q@D2
 \item The method in the current interface wins over any methods defined in its
 super-interfaces, provided that the method conform to the subtype of all methods
 in its super-interfaces, i.e., the method is the most specific one.
-This also override rejection due to conflicting methods. For example:
+This also override rejection due to conflicting methods. For example, the following code is accepted, but would be rejected (see before) if the method \Q@m@ was not redefined.
 \begin{lstlisting}
 interface D3 extends A2,B2 { int m(); } //accepted
-interface E3 extends A2,C2 { int m(); } //accepted
+interface E3 extends A2,C2 { default int m(){return 42;} } //accepted
 \end{lstlisting}
 \end{itemize}
 
@@ -156,10 +158,7 @@ interfaces with default methods.
 \subsection{Syntax}
 
 Figure~\ref{Grammar} shows the syntax of ClassLess Java.%
-\footnote{To
-  be compatible with java, the concrete syntax for an interface
-  declaration with empty supertype list $\C_1\ldots\C_n$ would also
-  omit the \Q@extends@ keyword.}  The syntax formalizes a minimal
+  The syntax formalizes a minimal
 version of Java 8, focusing on interfaces, default methods and object
 creation literals.  There is no syntax for classes.
 To help readability we use many metavariables to represent identifiers: $C,x,f$ and $m$; however they all maps to a single set of identifiers as in Java.  Expressions
@@ -181,6 +180,9 @@ $\x\QM=\e\QM;\QM{return}\ \e'$ in Java.  Finally, there is an object
 initialization expression from an interface $\C$, where (for
 simplicity) all the fields are initialized with a variable present in
 scope. Note how our language is a subset of Java 8.
+To  be compatible with java, the concrete syntax for an interface
+  declaration with empty supertype list  would also
+  omit the \Q@extends@ keyword.
 % The single
 %non-Java 8 piece of syntax is the \mixin annotation, which is the only
 %one interesting piece of syntax in this article.
@@ -205,10 +207,11 @@ $\Gamma$, expression $\e$ has type $\C$.''.
 Before discussing the typing rules we discuss some of the used notation.
 As a shortcut, we write
 $\Gamma \vdash \e\in\C<:\C'$ instead of $\Gamma \vdash \e\in\C$ and
-$\C<:\C'$.  From the interface table, we can read off the subtype
-relation between interfaces. The subtype relation is given by the
-\textbf{extends} clauses in the interfaces. We omit the definition of
-the usual traditional subtyping relation between interfaces, that is the transitive and reflexive closure of the declared \Q@extends@ relation.%
+$\C<:\C'$.  
+
+We omit the definition of
+the usual traditional subtyping relation between interfaces, that is the transitive and reflexive closure of the declared \Q@extends@ relation, that can be read off the interface table and given by the
+\textbf{extends} clauses in the interfaces. %
 \footnote{\marco{find a better place for} Notice how there are no classes, thus there is no
   subclassing.  We believe that this approach may scratch an old
   itching point in the long struggle of subtyping versus subclassing:
@@ -348,7 +351,7 @@ with respect to the corresponding method already present in $\C$;
 \end{array}$
 
 Here we require that for all newly declared methods, there is a
-method with the same name defined in the interface $\C$, and that such method is a subtype of the newly introduced one. We formally define here subtyping between method, in a more general form that will be useful later.
+method with the same name defined in the interface $\C$, and that such method is a subtype of the newly introduced one. We define subtyping between methods in a general form that will be useful also later.
 
 \noindent$\begin{array}{l}
 \InTextDef{18em}{
@@ -368,7 +371,7 @@ method with the same name defined in the interface $\C$, and that such method is
 \end{array}$
 
 Two method headers are subtypes if all the parameter types are the same and the return types are subtypes.
-That is, we allows return type specialization as introduced in Java\marco{insert the version number}.
+That is, we allows return type specialization as introduced in Java5.
 Default methods are subtypes if their method headers are subtypes.
 
 
@@ -392,7 +395,6 @@ undefined in many cases: notably if a method $\method\in\methods$ is
 not compatible with some method in $\dom(\C_1)\ldots\dom(\C_n)$ or if
 any method in both $\dom(\C_i)$ and $\dom(\C_j)$ ($i,j\in 1..n$) is
 conflicting.
-\marco{if we have space we can discuss the other rules too, but is not mandatory}
 
 \subsection{Auxiliary Definitions}
 
@@ -441,15 +443,19 @@ We use internally a special modifier $\conflicted$ to denote the case of two met
 As you can see, we are delegating the work to three others auxiliary functions:\\*
  $\tops(\Cs), \shadow(\m,\Cs)$ and $\override(\method,\method')$
 ${}_{}$\\*
-\marco{we need to discuss the names tops, shadow and override}
 
-\tops{} recover from the interface table only the ``needed'' methods, that is,
+\tops{} recovers from the interface table only the ``needed'' methods, that is,
 the non static ones that are not transitively reachable by following another, less specific, superinterface chain. Formally:\\*
 
 \noindent$\begin{array}{l}
-\InTextAssert{25ex}{
-\method\in\tops(\m,\Cs)}\\
-\InTextWith{\C\in\Cs\ ,\method=\mBody(\m,\C), \method\mbox{ not a static method and } \nexists \C'\in\Cs\setminus\C \mbox{ such that } \C' \subtype \C}
+\InTextAssert{35ex}{
+\mBody(\m,\C)\in\tops(\m,\Cs)}{
+}\\
+\InTextWith{
+  \mBody(\m,\C)\mbox{ not a static method and } 
+  \C\in\Cs\ \mbox{ such that }
+\forall \C'\in\Cs\setminus\C \mbox{ not } \C' \subtype \C
+}
 \end{array}$
 
 \shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
@@ -466,7 +472,7 @@ $\begin{array}{l}
 \end{array}$
 
 Where $\Aux{mostSpecific}$ return the most specific method , that is a method whose type is the subtype of all the others.
-Since method subtyping is a partial ordering, this may be not defined, this in turn makes \shadow{}, and the whole \mBody{} not defined for that specific $\m$. Rule  \rn{(t-intf)}  rely on this behaviour.
+Since method subtyping is a partial ordering, this may be not defined, this in turn makes \shadow{}, and the whole \mBody{} not defined for that specific $\m$. Rule  \rn{t-intf}  relies on this behaviour.
 
 \noindent$\begin{array}{l}
 \InTextDef{18ex}{\Aux{mostSpecific}(\methods)}{\method}\\
@@ -479,12 +485,12 @@ The override function models how the implementation in an interface can override
 Note how we use the special value $\none$, and how (forth case) overriding can solve a conflict.
 
 \noindent$\begin{array}{l}
-\InTextDef{18ex}{\override(\none,\none)}{\none}\\
-\InTextDef{18ex}{\override(\method,\none)}{\method}\\
+\InTextDef{20ex}{\override(\none,\none)}{\none}\\
+\InTextDef{20ex}{\override(\method,\none)}{\method}\\
 
-\InTextDef{18ex}{\override(\none,\method)}{\method}\\
+\InTextDef{20ex}{\override(\none,\method)}{\method}\\
 \InTextWith{\method\mbox{ not of the form } \conflicted\ \mh\QM;}\\
-\InTextDef{18ex}{\override(\method,\method')}{\method}\\
+\InTextDef{20ex}{\override(\method,\method')}{\method}\\
 \InTextWith{\method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
 \method\subtype\method'}
 \end{array}$
