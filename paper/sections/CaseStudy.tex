@@ -127,5 +127,47 @@ Reduced by  & 40.6\% & 21.4\%                   \\ \hline
 \end{table}
 
 
-\subsection{Other case studies}
-\marco{should we put here the DB with fluent setters?}
+\subsection{Embedded DSLs with Fluent Interfaces}
+Since the style of fluent interfaces was invented in Smalltalk as method
+cascading, more and more languages came to support fluent interfaces, including
+JavaScript, Java, C++, D, Ruby, Scala, etc. For most languages, to create fluent
+interfaces, programmers have to either handwritten everything or create a
+wrapper around the original non-fluent interfaces, using \textbf{this}. In Java,
+several libraries help create fluent APIs easily (by code generation), including
+jOOQ, op4j, fluflu, JaQue, etc. These libraries have given us hints on the
+implementation of fluent setters in ClassLess Java.
+
+When creating fluent interfaces, our approach has two main advantages:
+\begin{enumerate}
+\item Instead of forcing programmers to hand write code using \textbf{return
+    this}, our approach with \mixin annotation removes this verbosity and
+  automatically generate fluent setters.
+\item Along the extension direction, the return types of fluent setters are
+  automatically refined.
+\end{enumerate} 
+
+\noindent We use embedded DSLs of two simple SQL query languages to illustrate.
+The first query language \texttt{Database} (conceptually) models
+\texttt{select}, \texttt{from} and \texttt{where} clause:
+\lstinputlisting[linerange=6-13]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE
+
+\noindent Note that we are only illustrating the idea of modeling embedded DSLs
+with the database example, no concrete implementation of database connection nor
+operations are provided in this case study. One benefit that fluent methods give
+us is method chaining convenience. So when making a query using \texttt{select},
+\texttt{from} and \texttt{where}, instead of writing code like:
+\lstinputlisting[linerange=26-29]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=NORMAL_QUERY
+
+\noindent We can write more concise code below:
+\lstinputlisting[linerange=35-38]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY1
+
+\noindent Now we extend the first query language with a new feature
+\texttt{orderBy} which orders the result records by a field that users
+specified. The key is to extend interface \texttt{Database} with only the
+feature we need to add and the return type of fluent setters in
+\texttt{Database} is automatically refined to \texttt{ExtendedDatabase}:
+\lstinputlisting[linerange=17-20]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
+
+% \lstinputlisting[linerange=44-48]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
+
+

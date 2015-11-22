@@ -181,19 +181,6 @@ all allows to execute code at compile time and to generate code/classes that are
 In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or non nonsensical) would never generate ill-typed code. This is roughly equivalent to what we state and manually proof in Lemma 2 for our particular transformation.
 Since MetaFjig is not working on annotated classes, there is no direct equivalence on the overall theorem of safety we shown.
 
-\subsection{Fluent Interfaces}
-Talk about existing libraries that use fluent interfaces (do any of
-those use any code generation to assist in the implementation?).
-
-Since the style of fluent interfaces was invented in Smalltalk as method
-cascading, more and more languages came to support fluent interfaces, including
-JavaScript, Java, C++, D, Ruby, Scala, etc. For most languages, to create fluent
-interfaces, programmers have to either handwritten everything or create a
-wrapper around the original non-fluent interfaces, using \textbf{this}. In Java,
-several libraries help create fluent APIs easily (by code generation), including
-jOOQ, op4j, fluflu, JaQue, etc. These libraries have given us hints on the
-implementation of fluent setters in ClassLess Java.
-
 \subsection{Formalization of Java8}
 We provide a simple and well designed formalization for a subset of Java including default/static interface methods and object initialization literals (often called anonymous local inner classes).
 A similar formalization was drafted by\marco{ I use the term draft because I seams to remember it was just a technical report, I'm right?}
