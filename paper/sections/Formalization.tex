@@ -60,7 +60,7 @@ What happens if we define a new interface \Q@M@ extending one \Q@A@${}_i$ and on
 \textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
 \textbf{B1}        & conservative error                        & conflict error      & conservative error       \\ \hline
 \textbf{B2}        & both abstract, accepted                        & conservative error       & both abstract, accepted       \\ \hline
-\textbf{B3}        & \cellcolor[HTML]{C0C0C0} conservative error &conflict  error       & conservative error      \\ \hline
+\textbf{B3}        & \textbf{conservative error} &conflict  error       & conservative error      \\ \hline
 \end{tabular}
 \\*
 We try to classify the results out of the table:
@@ -424,9 +424,8 @@ conflicting.
 
 
 Defining \mBody{} is not trivial, and requires quite a lot of attention to the specific model of Java Interfaces, and on how it differs w.r.t. Java Class model.
-$\mBody(\m,\C)$ denotes the actual body of method $\m$ that interface $\C$ owns. It can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
+$\mBody(\m,\C)$ denotes the actual method $\m$ (body included) that interface $\C$ owns. It can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
 
-The body of a method $\m$ contains all the relevant information with respect to that method, like the type of $\m$ as well as the modifier.
 We use internally a special modifier $\conflicted$ to denote the case of two methods with conflicting implementation.\\*
 \noindent$\begin{array}{l}
 \InTextDef{15ex}{
