@@ -9,11 +9,14 @@ For the same reason we do not include \Q@void@ returning setters, since they are
 
 \subsection{Translation Function}${}_{}$\\*
 
-\noindent$[\![\mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!] =
+\noindent$\begin{array}{l}
+\InTextDef{18em}{[\![\mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
+}{
 \emptyset\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
 \methods\ \methods' \cC
-$\\*${}_{}$\tab
-where  $\valid(\C_0)$,\Q@of@$\notin\dom(\methods)$ and $\methods'=\ofMethod(\C_0) \ \otherMethod(\C_0,\methods)$.\\*
+}\\
+\InTextWith{\valid(\C_0),\QM{of}\notin\dom(\methods) \mbox{ and } \methods'=\ofMethod(\C_0) \cup \otherMethod(\C_0,\methods)}
+\end{array}$
 
 To translate an annotated interface, we add the \Q@of@ method, and then we add some other methods.
 However, first of all we check if the interface is valid for annotation:

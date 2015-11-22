@@ -13,69 +13,203 @@ Birds can \Q@fly@, thus their location need to be a three dimensional \Q@Point3D
 Finally, we model \Q@Pegasus@ as a kind of \Q@Animal@ with the skills of both \Q@Horse@s and \Q@Bird@s.\footnote{
 Some research argues in favour of using subtyping for modelling taxonomies, other research argue against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
 
-%Suppose we want to model an animal system as shown in Fig~\ref{fig:pegasus}. In
-%order to model \texttt{Pegasus}, \emph{multiple inheritance} is clearly needed
-%in this example. Therefore, in Java we use interfaces instead of classes. An
-%\texttt{Animal} has a \texttt{point} field, indicating the current position of
-%the animal. \texttt{Horse} and \texttt{Bird} are subtypes of \texttt{Animal},
-%with methods \texttt{run()} and \texttt{fly()}, respectively. Note that
-%\texttt{Bird} can fly, therefore refines the type of \texttt{point} from
-%\texttt{Point2D} to \texttt{Point3D}. Pegasus (one of the best known creatures
-%in Greek mythology) can not only \emph{run} but also \emph{fly}! This is the
-%place where \emph{``multiple inheritance''} is needed, because \texttt{Pegasus}
-%need to obtain \texttt{fly} and \texttt{run} functionality from both
-%\texttt{Horse} and \texttt{Bird}.
-%---------------
-% We can put more in dept discussion while discussing the classes in details.
-%--------------
-\subsection{\Q@Point2D@: simple immutable data with fields}
-Since in ClassLess Java there are no classes, our \Q@Point2D@ must be an interface, as for example:
+\subsection{Simple Multiple Inheritance with Default Methods}
+
+Suppose that we want to model an animal system as shown in
+Fig~\ref{fig:pegasus}. \texttt{Horse} and \texttt{Bird} are subtypes
+of \texttt{Animal}, with methods \texttt{run()} and \texttt{fly()},
+respectively. Pegasus (one of the best known creatures in Greek
+mythology) can not only \emph{run} but also \emph{fly}! This is the
+place where \emph{``multiple inheritance''} is needed, because
+\texttt{Pegasus} needs to obtain \texttt{fly} and \texttt{run}
+functionality from both \texttt{Horse} and \texttt{Bird}.
+Ignoring points, for the moment, a 
+first attempt to model the animal system in Java 8 is shown next:
+
+\lstinputlisting[linerange=6-13]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_JAVA
+
+Note that the implementations of the methods \texttt{run}
+and \texttt{fly} are defined inside interfaces, using default
+methods. Moreover, because interfaces support multiple interface
+inheritance, the interface for \texttt{Pegasus} can inherit behaviour
+from both \texttt{Horse} and \texttt{Bird}. Although Java interfaces
+do not allow instance fields, no form of state is needed so far to
+model the animal system.  Therefore this example provides a simple
+illustratation how a basic form of multiple inheritance, similar to
+what can be done with traits, can be accomplished in Java 8.
+
+\bruno{
+Note that \texttt{Bird} can fly, therefore refines the
+type of \texttt{point} from \texttt{Point2D} to
+\texttt{Point3D}. 
+}
+
+\paragraph{Instantiation}
+To use \texttt{Horse}, \texttt{Bird} and \texttt{Pegasus}, some
+objects must be instantiated first. A first problem with using
+interfaces to model the animal system is simply that interfaces 
+cannot directly be instantiated: a class is needed. Therefore, we have
+to first create some classes, such as: 
+
+\lstinputlisting[linerange=17-19]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_INST
+
+\noindent in order to create animal objects. With those classes, 
+a Pegasus animal, can be created using the class constructor:
+
+\begin{lstlisting}
+Pegasus p = new PegasusImpl();
+\end{lstlisting}
+
+\noindent There are a couple of annoyances here. Firstly, the sole
+purpose of the classes is to provide a way to instantiate the
+objects. Although (in this case) it takes only one line code to
+provide each of those classes, this code is essentially boilerplate
+code, which does not add behaviour to the system. Secondly, 
+the namespace gets filled with three additional types. For example, 
+both \texttt{Horse} and \texttt{HorseImpl} are needed: \texttt{Horse}
+is needed because it needs to be an inferface so that \texttt{Pegasus}
+can use multiple inheritance; and \texttt{HorseImpl} is needed to
+provide object instantiation. 
+
+Note that, for this very simple animal system, plain Java 8 anonymous
+classes can be used to avoid these problems.  We could have simply
+instantiated Pegasus using:
+
+\begin{lstlisting}
+Pegasus p = new Pegasus() {}; // anonymous class
+\end{lstlisting}
+
+However, as we shall see, once the system gets a little more
+complicated, the code for instantiation quickly becomes more 
+complex and verbose (even with anonymous classes). 
+
+\subsection{Object Interfaces and Instantiation} 
+
+To model the animal system with object interfaces all that a user
+needs to do is to add a \mixin annotation to the \texttt{Horse}, 
+\texttt{Bird}, and \texttt{Pegasus} interfaces.  For example, 
+for \texttt{Bird} and \texttt{Pegasus} the code would be as follows: 
+
+\lstinputlisting[linerange=11-14]{../UseMixinLombok/src/pegasusLombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
+
+The effect of the annotations is that a static \emph{factory} method called
+\texttt{of} is automatically added to the interfaces. With the
+\texttt{of} method a Pegasus object is instantiated as follows:
+
+\begin{lstlisting}
+Pegasus p = Pegasus.of();
+\end{lstlisting}
+
+\noindent The \texttt{of} method provides an alternative to a
+constructor, which is missing from interfaces. The following code,
+shows the code correponding to the \texttt{Pegasus} interface
+after the \mixin annotation is processed:
+
+\begin{lstlisting}
+interface Pegasus extends Horse, Bird { // generated code not visible to users
+	static Pegasus of() {return new Pegasus() {};}
+}
+\end{lstlisting}
+
+\noindent Note that the generated code is transparent to a user, which
+only sees the original code with the \mixin annotation. Compared to the pure
+Java solution in Section~\ref{}, the solution using object interfaces
+has the advantage of providing a direct mechanism for object
+instantiation, which avoids adding boilerplate classes to the
+namespace. 
+
+\subsection{Object Interfaces with State}
+
+The animal system modelled so far, is a simplified version of the
+system presented in Figure~\ref{}, and still does not appear to 
+justify the \mixin annotation. Lets now move on to modelling 
+the complete animal system. In order to do this, animals will include 
+a notion of points, representing their location in space. As we shall
+see, modelling stateful components using plain Java 8 quickly becomes 
+cumbersome. The \mixin annotation comes to rescue here and 
+allows avoiding significant amounts of boilerplate code.
+
+\paragraph{\Q@Point2D@: simple immutable data with fields}
+Two dimensional points should keep track of their coordinates. 
+The usual approach to model points in Java would be to use a class 
+with fields for the coordinates. However here we will illustrate how 
+points are modelled with interfaces, providing a simple 
+example of how to model state with interfaces. Since Java disallows fields 
+inside interfaces, the state is modelled using abstract (getter) methods:
+
 \begin{lstlisting}
 interface Point2D{ int x(); int y();}
 \end{lstlisting}
-That is, since Java disallows fields inside interfaces,
- we simulate state by abstract methods.
-By using the new Java8 \Q@default@ methods, we can easily add implemented methods inside the interface. For example:
+
+\noindent Unfortunatelly, creating a new point object is quite cumbersome, even 
+when using anonymous classes: 
+
 \begin{lstlisting}
-interface Point2D{ int x(); int y();
-  default float distanceFromOrigin(){ return Math.sqrt(x()*x()+y()*y());}
-  }
+Point2D p = new Point2D(){ public int x(){return 4;} public int y(){return 2;}}
 \end{lstlisting}
-resemble a class that have fields (getters) and methods.
-However, how can we create an instance of \Q@Point2D@ without using classes? 
-we can just provide an implementation for \Q@x()@ and \Q@y()@ as in
-\begin{lstlisting}
-new Point2D(){ public int x(){return 4;} public int y(){return 2;}}
-\end{lstlisting}
-However we are not required to use this cumbersome syntax\footnote{Available in Java from version ...} for every object allocation.
-As programmes do, for ease or reuse, we can encapsulate boring long repetitive code in a method. A static factory method in this case is appropriate:
+
+However programmers are not required to use this cumbersome syntax for
+every object allocation. As programmers do, for ease or reuse, the
+boring long repetitive code can be encapsulate in a method. A
+generalization of the \texttt{of} static factory
+method is appropriate in this case:
 \begin{lstlisting}
 interface Point2D{ int x(); int y();
   static Point2D of(int x, int y){return new Point2D(){
     public int x(){return x;} public int y(){return y;}};}
-  }
+}
 \end{lstlisting}
-This obvious constructor code can be automatically generated by our \mixin annotation.
 
-By annotating the interface \Q@Point2D@, the annotation will generate a variation of the shown static method \texttt{of}, mimicking the functionality of a simple minded constructor:
-By looking the the methods that need implementation it first detects what are the fields, then 
-generate an \Q@of@ method with one argument for each of them.
+\vspace{-5pt}
+\paragraph{\Q@Point2D@ with Object Interfaces}
+This obvious constructor code can be automatically generated by our
+\mixin annotation.  By annotating the interface \Q@Point2D@, the
+annotation will generate a variation of the shown static method
+\texttt{of}, mimicking the functionality of a simple minded
+constructor: By looking at the methods that need implementations it
+first detects what are the fields, then generates an \Q@of@ method with
+one argument for each of them. That is, we can just write
 
-That is, we can just write
 \begin{lstlisting}
 @Mixin interface Point2D{ int x(); int y();}
 \end{lstlisting}
 
-More precisely, a field or factory parameter is generated for every no-args method requiring implementation whose name does not have special meaning\footnote{Formal definition of \mixin behaviour is provided later.}.
-An example of code using \Q@Point2D@ is 
-\Q@Point2D.of(42,myPoint.y())@
-where we return a new point, using \Q@42@ as x-coordinate, and 
-taking all the other informations (only \Q@y@ in this case) from another point.
-This pattern is very common when programming with immutable data-structures; it is so common that we decided to support it in our code generation as \Q@with-@ methods, that is:
+\noindent More precisely, a field or factory parameter is generated for every
+no-args method requiring implementation (except for methods whose name have
+special meaning).  An example of code using \Q@Point2D@ is:
+
 \begin{lstlisting}
-@Mixin interface Point2D{ int x();    int y();
-  Point2D withX(int val);    Point2D withY(int val);}
+Point2D p = Point2D.of(42,myPoint.y());
 \end{lstlisting}
+
+\noindent where we return a new point, using \Q@42@ as x-coordinate,
+and taking all the other informations (only \Q@y@ in this case) from
+another point.
+
+\paragraph{\texttt{with} methods in Object Interfaces}
+The pattern of creating a new piece of data by reusing most
+information from an old piece of data is very common
+when programming with immutable data-structures; it is so common that
+we decided to support it in our code generation as \Q@with@ methods,
+that is:
+\begin{lstlisting}
+@Mixin interface Point2D { 
+  int x();    int y(); // getters
+  Point2D withX(int val);    Point2D withY(int val); // with methods
+}
+\end{lstlisting}
+
+\noindent Using \texttt{with} methods, the point \texttt{p} could have
+been created instead using:
+
+\begin{lstlisting}
+Point2D p = myPoint.withX(42);
+\end{lstlisting}
+
+\noindent If there is a large number of fields, \texttt{with} methods
+will save programmers from writting large amounts of tedious code that
+simply copies the values of fields. 
+\begin{comment}
 is expanded by our annotation into\footnote{
 Note how we actually generate a real field \Q@int x=_x;@.
 This provide a more uniform translation that can work also for mutable datastructures, where setters are required.
@@ -91,11 +225,19 @@ interface Point2D{ int x(); int y();
     };}
   Point2D withX(int val);    Point2D withY(int val);}
 \end{lstlisting}
-If the programmer would like a different implementation, they can just provide it using \Q@default@; that is:
+\end{comment}
+Moreover, if the programmer wants a different implementation, they
+just provide it using a \Q@default@ method. For example:
 \begin{lstlisting}
-@Mixin interface Point2D{ int x(); int y();
+@Mixin interface Point2D{ 
+  int x(); int y();
   default Point2D withX(int val){ ... };    default Point2D withY(int val){ ... }}
 \end{lstlisting}
+
+\noindent can be used by programmers to define their own behaviour for 
+the \texttt{with} methods. 
+
+\begin{comment}
 is expanded into
 \begin{lstlisting}
 interface Point2D{ int x(); int y();
@@ -108,6 +250,7 @@ interface Point2D{ int x(); int y();
 
 That is, we can provide implementation for methods in an interface, 
 and our annotation generate code only if the method \emph{needs} implementation. In this way is trivial for the programmer to personalize the behaviour if they have any special need.
+\end{comment}
 
 %Firstly, to model \texttt{Point2D} that has x-coordinate and y-coordinate by an
 %interface, we immediately run into the problem of expressing the fields
@@ -120,7 +263,7 @@ and our annotation generate code only if the method \emph{needs} implementation.
 % define member fields inside interfaces, we propose to simulate fields by
 % abstract methods inside interfaces:
 
-%\lstinputlisting[linerange=46-52]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT2D
+%\lstinputlisting[linerange=50-56]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT2D
 
 %\paragraph{Instantiation}
 %In Java, to implement an interface like \texttt{Point2D}, a typical and trivial
@@ -197,34 +340,79 @@ and our annotation generate code only if the method \emph{needs} implementation.
 %
 %\lstinputlisting[linerange=15-27]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT_OF
 
-\subsection{\Q@Animal@ and \Q@Horse@: simple mutable data with fields}
-\Q@Points2D@ are mathematical entities, thus we chosen to use immutable data structure to model them; however animals are real world entities, and when an animal moves, it is the same animal that have now a different location. We model this with mutable state.
+\paragraph{\Q@Animal@ and \Q@Horse@: simple mutable data with fields}
+Two dimensional points are mathematical entities, thus we chosen to
+use immutable data structure to model them. However animals are real
+world entities, and when an animal moves, it is the same animal that
+now has a different location. We model this with mutable state.
+
 %Now we proceed to define \texttt{Animal} with \texttt{point} ``member
 %field''.
 %%Not again, before we used only getters!
 % Again, we model this member field with getter and setter methods:
-\lstinputlisting[linerange=64-67]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=ANIMAL
-\marco{TODO: change point into ``location''}
-Here we declare abstract getter and setter for the mutable ``field'' \Q@location@.
-As you see, we do not apply the \mixin annotation. This is morally equivalent to an abstract class in full Java; that is we do not provide a convenient way to instantiate it.
+\lstinputlisting[linerange=68-71]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=ANIMAL
 
-\lstinputlisting[linerange=71-76]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
+\noindent Here we declare abstract getter and setter for the mutable ``field'' \Q@location@.
+The \mixin annotation is not used. This is morally
+equivalent to an abstract class in full Java; and there is no
+convenient way to instantiate it.
+For \texttt{Horse}, the \mixin annotation is used and a concrete implementation of \texttt{run()} method
+is defined using a default method, which also further illustrates the convenience of \emph{with} methods.
 
-For \texttt{Horse}, concrete implementation of \texttt{run()} method
-need to be defined in a default method, where 
-we also show the convenience of \emph{with} methods.
+\lstinputlisting[linerange=75-78]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
+
+\noindent Creating and using a horse animal is quite simple:
+
+\lstinputlisting[linerange=9-11]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=USINGHORSE
+
+\noindent Note how the \texttt{of}, \texttt{withX} and
+\texttt{location} methods (all generated automatically) provide a
+basic interface for dealing with animals.
+
+\paragraph{Summary} Dealing with state (whether mutable or immutable)
+in object interfaces relies on a notion of abstract state, where only
+methods to interact with state are available to users. Object
+interfaces provides support for four different types abstract state
+operations, which are summarized in Figure~\ref{fig:abstractstate}.
+The abstract state operations are determined by naming conventions and the
+types of the methods. Fluent setters are a variant of mutable setters,
+and are discussed in the case study in Section~\ref{}.
+
+\begin{figure}
+\begin{tabular}{|l|l|l|}
+\hline
+ & \textbf{Example}                  & \textbf{Description } \\ \hline
+\textbf{``fields''/getters}        &   \Q@int x();@                  & Retrieves value from field \texttt{x}.          \\ \hline
+{\bf withers}        &   \Q@Point2D withX(int val);@                & Clones
+object; updates field \texttt{x} to \texttt{val}.             \\ \hline
+\textbf{mutable setters}        & \Q@void x(int val);@ & Sets the field
+\texttt{x} to a  new value \texttt{val}.        \\ \hline
+\textbf{fluent setters}        & \Q@Point2D x(int val);@ &Sets the field
+\texttt{x} to \texttt{val} and returns \texttt{\this}.           \\ \hline
+\end{tabular}
+
+\caption{Abstract state operations, for a field \texttt{x}, allowed by the \mixin
+  annotation. }
+
+\label{fig:abstractstate}
+
+\end{figure}
+
 % by method
 %\texttt{run()}: method \texttt{withX} returns a new point object with field
 %\texttt{x} updated by the argument to \texttt{withX}. Without these
 %\texttt{with} methods, operations like \texttt{run()} would be much harder to define.
+
+\subsection{Object Interfaces and Subtyping}
 
 \subsection{\Q@Bird@:  field type refinement}
 
 \subsubsection*{\Q@Point3D@ and properties updater}
 \Q@Bird@ needs a 3D location, thus first of all we define \Q@Point3D@ and
 as follows:
-\lstinputlisting[linerange=56-60]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
-
+\lstinputlisting[linerange=60-64]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
+\marco{Fix over: with(Point must be with(Point2D
+and it should be after withZ, and on more lines}
 Just to give you a feeling on how much boring code \mixin is generating,  we show the expanded code without then \mixin annotation\footnote{
 As you can see, the generated code is very repetitive, writing such code by hand can easily induce bugs, for example a distract programmer may
 swap the arguments of one of the many calls of \Q@Point3D.of@.
@@ -277,7 +465,7 @@ Many readers would now think that a language extension is needed.
 Instead, with our language \emph{restriction} the problem can be easily challenged\footnote{Often in programming languages ``freedom is slavery''.}.
 \subsubsection*{Our approach to field type refinement}
 
-\lstinputlisting[linerange=80-88]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
+\lstinputlisting[linerange=82-90]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
 
 %Interface \texttt{Point3D} extends \texttt{Point2D} with a new abstract method
 %\texttt{int z()} (treated as a getter for member field \texttt{z}). Note that
@@ -298,7 +486,7 @@ by using the \Q@with@ method we may use the information for \Q@z@ already stored
 Note how all the informations about what fields sits in \Q@Point3D@ and what in \Q@Point2D@ is properly encapsulated in the \Q@with@ method, and is transparent for the implementer of \Q@Bird@.
 
 
-\subsection{\Q@Pegasus@ and multiple Inheritance}
+\subsection{Advanced Multiple Inheritance with Object Interfaces}
 The \emph{``multiple inheritance''} case appears at interface
 \texttt{Pegasus}.
 Pegasus (one of the best known creatures
@@ -308,7 +496,7 @@ It would be handy if they could obtain \texttt{fly} and \texttt{run} functionali
  Using interfaces and \mixin annotation,
 this can happen transparently.
 
-\lstinputlisting[linerange=96-97]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
+\lstinputlisting[linerange=98-99]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
 
 Note how  even the non trivial pattern for field type refinement is transparently composed, and our pegasus have a \Q@Point3D@ \Q@location@.
 Note that this works because \Q@Horse@ do not perform any field type refinement , otherwise we may have to choose/create a common subtype in order for pegasus to exists.
@@ -372,17 +560,17 @@ Besides the benefit of freeing programmers from writing boilerplate code, our
 \mixin annotation can also allow programs to mimic multiple inheritance in a
 restricted form easily.
 
-\lstinputlisting[linerange=46-52]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT2D
+\lstinputlisting[linerange=50-56]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT2D
 
-\lstinputlisting[linerange=56-60]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
+\lstinputlisting[linerange=60-64]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
 
-\lstinputlisting[linerange=64-67]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=ANIMAL
+\lstinputlisting[linerange=68-71]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=ANIMAL
 
-\lstinputlisting[linerange=71-76]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
+\lstinputlisting[linerange=75-78]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
 
-\lstinputlisting[linerange=80-88]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
+\lstinputlisting[linerange=82-90]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
 
-\lstinputlisting[linerange=96-97]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
+\lstinputlisting[linerange=98-99]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
 
 Interface \texttt{Point3D} extends \texttt{Point/Point2D} with a new abstract
 method \texttt{int z()} (treated as a getter for member field

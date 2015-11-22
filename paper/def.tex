@@ -1,3 +1,18 @@
+\usepackage{array}
+\newcommand\InTextDef[3]{
+\!\!\!\!\begin{array}{c p{#1} c l }
+\ensuremath{\!\!\bullet\!\!\!}&\ensuremath{#2} & \ensuremath{=} & \ensuremath{#3}
+\end{array}
+}
+\newcommand\InTextAssert[2]{
+\!\!\!\!\begin{array}{c p{#1} c l }
+\ensuremath{\!\!\bullet\!\!\!}&\ensuremath{#2} 
+\end{array}
+}
+\newcommand\InTextWith[1]{
+{}_{}\quad\quad\mbox{with }#1
+}
+
 \newenvironment{grammar}{
 $
 \begin{array}[t]{lcll}}{\end{array}$
@@ -11,7 +26,7 @@ $
 \newcommand{\ann}{\metaVar{ann}}
 \newcommand{\x}{\metaVar{x}}
 \newcommand{\e}{\metaVar{e}}
-\newcommand{\T}{\metaVar{T}}
+\newcommand{\T}{\metaVar{I}}
 \newcommand{\xs}{\overline\x}
 \newcommand{\m}{\metaVar{m}}
 \newcommand{\es}{\overline\e}

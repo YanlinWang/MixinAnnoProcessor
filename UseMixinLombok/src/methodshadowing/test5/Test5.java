@@ -1,6 +1,5 @@
 package methodshadowing.test5;
 
-
 //BEGIN_JAVABUG
 interface A1 { int m(); }
 interface B1 { default int m() { return 0; }}
