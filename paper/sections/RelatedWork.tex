@@ -19,12 +19,13 @@ In this section we discuss related work and comparison to Classless Java.
 %typechecking efficiency (one trait will be potentially checked multiple times if
 %it is used in multiple classes).
 
-\subsection{Multiple Inheritance in Object oriented languages}
+\subsection{Multiple Inheritance in Object Oriented Languages}
 Many authors have argued in favour or against multiple inheritance.  It provides
-expressive power, but it is difficult to model, and implement and can create
+expressive power, but it is difficult to model and implement, and can create
 programs that are hard to reason about.  These difficulties include the famous
-diamond (fork-join) problem~\cite{bracha90mixin,Sak89dis}, conflicting methods,
-and the yo-yo problem~\cite{taenzer1989problems}.  To conciliate the need for
+diamond (fork-join) problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.
+%and the yo-yo problem~\cite{taenzer1989problems}.  
+To conciliate the need for
 expressive power and the need for simplicity, lots of models have been proposed
 in the past few years, including mixins~\cite{bracha90mixin} and
 traits~\cite{scharli03traits}.  They provide novel programming architecture
@@ -37,13 +38,12 @@ models in the OO paradigm.
   ways. constraints. This hinders their usability and their ability of resolving
   conflicts: the linearisation (total ordering) of mixin inheritance cannot
   provide a satisfactory resolution in all cases and restricts the flexibility
-  of mixin composition.
-
-  To fight those limitations, an algebra of mixin operators is
-  introduced~\cite{ancona2002calculus}, but this raised the complexity of the
-  approach, especially when constructors and fields are
-  considered~\cite{marco09FJigsaw}.
-
+  of mixin composition.  To fight those limitations, an algebra of mixin
+  operators is introduced~\cite{ancona2002calculus}, but this raised the
+  complexity of the approach, especially when constructors and fields are
+  considered~\cite{marco09FJigsaw}.  Our approach does not have the
+  linearisation problem, in that the semantics of Java \textbf{extends} clause
+  is unordered and symmetric.
 \item Simplifying the mixin algebras approach, traits draw a strong line between
   units of reuse (traits) and object factories (classes) In this model,
   traits~\cite{scharli03traits} units of reusable code, containing only methods
@@ -62,7 +62,8 @@ models in the OO paradigm.
   Some authors see this as good language design fostering good software
   development by helping programmers to think about the structure of their
   programs.  However, other authors see the need of two concepts and the absence
-  of state as drawbacks of this model.
+  of state as drawbacks of this model. Our approach takes interfaces as units of
+  reuse, and meanwhile generates factory method for instantiation.
 
 \item C++ and Scala also try to provide solutions to multiple inheritance, but
   both suffer from object initialization problems. Virtual inheritance in C++
@@ -76,18 +77,22 @@ models in the OO paradigm.
   causing no ambiguity in cases such as diamond problem.  This approach has
   limited expressiveness, and suffers from all the problems of linearised mixin
   composition.
-  Python also offers multiple inheritance via linearised mixins. Indeed python any class is implicitly a mixin, and mixin composition informally expressed as\\*
+  Python also offers multiple inheritance via linearised mixins. Indeed in python any class is implicitly a mixin, and mixin composition informally expressed as\\*
   \Q@ class A use B,C {...new methods...}@\\*
   can be expressed in python as \\*
   \Q@ class Aux: ...new methods...@\\*
   \Q@ class A(B,C,Aux): pass@
+  Our approach not only does not involve linearised mixin problem, but also
+  support proper constructor mechanism.
 \end{enumerate}
 
 \subsection{Multiple Inheritance in Java}
 Since Java 8 default methods are introduced, concrete method implementation are
 allowed to be defined (via the \textbf{default} keyword) inside
-interfaces. Since Java supports implementation of multiple interfaces (instead
-of extension of a single class), the introduction of default methods opens the
+interfaces. 
+% Since Java supports implementation of multiple interfaces (instead
+% of extension of a single class), 
+The introduction of default methods opens the
 gate for various flavours of multiple inheritance in Java, using interfaces.
 Former work by Bono.et. al.~\cite{bono14}. provides details on mimicking traits
 through interfaces.
