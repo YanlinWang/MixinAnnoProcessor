@@ -5,20 +5,42 @@ Haoyuan and Yanlin
 
 The \emph{Expression Problem} (EP)~\cite{wadler98expression-problem} is coined
 by Wadler about modular extensibility issues in software evolution and has been
-a hot topic in programming languages since. Today we know of various solutions
-to the EP that either rely on \emph{new programming language
-  features}~\cite{chambers95multimethods,clifton00multiJava,madsen89virtual,nystrom06j,bruce98astatically,McDirmid01jiazzi,garrigue98polymorphic,zenger01extensible,loh06open,wehr11javaGI},
-or can be used as \emph{design patterns}~\cite{gof} in existing
-languages~\cite{torgersen04theexpression,oliveira06extensible,wouter08datatypes,oliveira09modular,oliveira12extensibility}. In
-this paper we show that the EP can be solved with our \mixin annotation in a
-trivial way. We will use a canonical example of implementing arithmetic
-expressions gradually to illustrate the usage. 
+a hot topic in programming languages since. The requirements of a solution to
+the EP can be summarized as: 
+\begin{itemize}
+\item \emph{Extensibility in both dimensions}: A solution must allow
+  the addition of new data variants and new operations and support
+  extending existing operations.
+\item \emph{Strong static type safety}: A solution must prevent
+  applying an operation to a data variant which it cannot handle using
+  static checks.
+\item \emph{No modification or duplication}: Existing code must not be
+  modified nor duplicated.
+\item \emph{Separate compilation and type-checking}: Safety checks or
+  compilation steps must not be deferred until link or runtime.
+\item \emph{Independent extensibility}~\cite{zenger05independentlyextensible}:
+  It should be possible to combine independently developed extensions so that
+  they can be used jointly.
+\end{itemize}
 
-\subsubsection{Initial System}
+Today we know of various solutions to the EP that either rely on \emph{new
+  programming language features}
+% ~\cite{chambers95multimethods, clifton00multiJava, madsen89virtual, nystrom06j,
+%   bruce98astatically, McDirmid01jiazzi, garrigue98polymorphic,
+%   zenger01extensible, loh06open, wehr11javaGI}, 
+or can be used as \emph{design patterns}%~\cite{gof}
+in existing languages.
+% ~\cite{torgersen04theexpression, oliveira06extensible,
+%  wouter08datatypes, oliveira09modular, oliveira12extensibility}. 
+Now we show that the EP can be solved with our \mixin annotation in a trivial
+way. We will use the canonical example of implementing arithmetic expressions
+gradually to illustrate the usage.
+
+\paragraph{Initial System}
 The initial system expresses arithmetic expressions with only literals and
 addition structure:
 
-\lstinputlisting[linerange=25-35]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
+\lstinputlisting[linerange=34-44]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
 
 \texttt{Exp} is the common super-interface with an evaluation operation
 \texttt{eval()} inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend
@@ -27,29 +49,47 @@ operation. The number field (\texttt{x}) of a literal is represented as a getter
 method \texttt{x()} and expression fields (\texttt{e1,e2}) of an addition as
 getter methods \texttt{e1()} and \texttt{e2()}.
 
-\subsubsection{Adding a New Variant}
+\paragraph{Adding a New Variant}
 It is easy to add new data variants to the code in the initial system in a
-modular way. For example, the following code shows how to add the subtraction variant.
+modular way. For example, the following code shows how to add the subtraction
+variant.
 
-\lstinputlisting[linerange=39-44]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
+\lstinputlisting[linerange=48-53]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
 
-\subsubsection{Adding a New Operation}
+\paragraph{Adding a New Operation}
 Adding new operations to the previous system is still straightforward (although
 requires longer code). The following code shows an example of adding a new
-operation \texttt{print}. 
+operation \texttt{print}.
 
-\lstinputlisting[linerange=48-57]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\lstinputlisting[linerange=57-66]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
 
 The basic idea is to define interfaces for extending old interfaces.  The
 interface \texttt{ExpP} extending interface \texttt{Exp} is defined with the
 extra function \texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are
 defined with default implementations of operation \texttt{print()}, extending
 base interfaces \texttt{Lit} and \texttt{Add}, respectively. Importantly, note
-that in \texttt{AddP}, the types of ``\emph{fields}'' \texttt{e1,e2} are refined via
-the \emph{return types refinement} of getter methods \texttt{e1()} and
-\texttt{e2()}. 
+that in \texttt{AddP}, the types of ``\emph{fields}'' \texttt{e1,e2} are refined
+via the \emph{return types refinement} of getter methods \texttt{e1()} and
+\texttt{e2()}.
 
+\paragraph{Independent Extensibility}
+To show that our approach supports independent extensibility, we first define a
+new operation \texttt{collectLit}(which collects all
+literal components in an expression) on expressions: 
+
+\lstinputlisting[linerange=70-86]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_COLLECTLIT
+
+\noindent Now we combine the two extensions (\texttt{print} and
+\texttt{collectLit}) together:
+
+\lstinputlisting[linerange=90-94]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
+
+\noindent \texttt{ExpPC} is the new expression interface supporting
+\texttt{print} and \texttt{collectLit} operations; \texttt{LitPC} and
+\texttt{AddPC} are the extended variants. Notice that except for the routine of
+\textbf{extends} clauses, no glue code is required. Return types of
+\texttt{e1,e2} are also automatically refined to \texttt{ExpPC}.
 
 \subsection{A Small Game Example}
 We now present a variant of a classic game example, which is often used to

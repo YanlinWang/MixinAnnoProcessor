@@ -26,7 +26,7 @@ public class TestExpression {
 	    
 	    //independent extensibility
 	    AddPC e8 = AddPC.of(LitPC.of(3), LitPC.of(4));
-	    System.out.println(e8.print() + " = " + e8.eval() + "\nLiterals" + e8.collectLit().toString());
+	    System.out.println(e8.print() + " = " + e8.eval() + " Literals: " + e8.collectLit().toString());
 	}
 }
 
