@@ -82,7 +82,7 @@ interface Horse extends Animal {
 @Mixin
 interface Bird extends Animal {
 	Point3D location();
-	void point(Point3D val);
+	void location(Point3D val);
 	default void location(Point2D val) { location(location().with(val));}
 	default void fly() {
 		location(location().withX(location().x() + 40));
