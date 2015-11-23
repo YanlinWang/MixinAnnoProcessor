@@ -158,6 +158,7 @@ We have not formally modelled non fluent setters and the \Q@with@ method; inform
     \end{itemize}
 \item For methods with the form $\C'\ $\QM{with(}$\C\ \x$\QM{);}:
   \begin{itemize}
+   \item $\C$ must be an interface type (no classes or primitive types).
     \item As for before, check that $\C'$ is a supertype of the current interface type $\C_0$.
     \item Generate implemented \Q@with@ method inside \Q@of@:\\*
            \Q@public @$\C_0\ $\Q@with(@$\C$\Q@ _val) { @\\*
