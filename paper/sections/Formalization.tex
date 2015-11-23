@@ -434,7 +434,7 @@ We use internally a special modifier $\conflicted$ to denote the case of two met
 \mBody(\m,\C_0)
 }{
 \override(\methods(\m),
-\shadow(\m,\Aux{tops}(\Cs)))
+\shadow(\m,\tops(\m,\Cs)))
 }\\
 \InTextWith{\metaVar{IT}(\C_0) =
 \ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\cC}
@@ -449,13 +449,13 @@ the non static ones that are not transitively reachable by following another, le
 
 \noindent$\begin{array}{l}
 \InTextAssert{35ex}{
-\mBody(\m,\C)\in\tops(\m,\Cs)}{
+\method\in\tops(\m,\Cs)}{
 }\\
 \InTextWith{
-  \mBody(\m,\C)\mbox{ not a static method and } 
-  \C\in\Cs\ \mbox{ such that }
+  \mBody(\m,\C)=\method,\ \method\mbox{ not a static method, and }}\\ 
+\tab\tab  \C\in\Cs\ \mbox{ such that }
 \forall \C'\in\Cs\setminus\C \mbox{ not } \C' \subtype \C
-}
+
 \end{array}$
 
 \shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
