@@ -28,6 +28,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 	TypeReference meType;
 	ASTNode _ast;
 	Annotation _src;
+	String errorMsg = "";
 	
 	ArrayList<MethodDeclaration> ofMethods;
 	ArrayList<Argument> ofArgs;
@@ -45,12 +46,13 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		_src = ast;
 		meAnno = annotationNode;
 		meType = new SingleTypeReference(meDecl.name, p);		
-		if (checkValid()) genOfMethod();	
+		if (checkValid()) genOfMethod();
+		if (errorMsg.length() > 0) meAnno.addError(errorMsg);
 	}
 	
 	private boolean checkValid() {
 		if (!Util.isInterface(meDecl)) {
-			throwError("@Obj is only supported on an interface.");
+			throwError("In checkValid(): @Obj is only supported on an interface");
 			return false;
 		}
 		fieldsMap = new HashMap<String, TypeReference>();
@@ -60,7 +62,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		ofFields = new ArrayList<FieldDeclaration>();
 		Type thisType = mBody(me);
 		if (thisType == null) {
-			throwError("Nothing to generate.");
+			throwError("In checkValid(): mBody is undefined for " + String.valueOf(meDecl.name));
 			return false;
 		}
 		for (Method m : thisType.methods) {
@@ -70,7 +72,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		fieldNames = fieldsMap.keySet().toArray(new String[fieldsMap.keySet().size()]);
 		Arrays.sort(fieldNames);
 		if (ofAlreadyExists()) {
-			throwError("Of method already defined.");
+			throwError("In checkValid(): of method already defined");
 			return false;
 		}
 		for (int i = 0; i < fieldNames.length; i++) {
@@ -88,7 +90,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 			if (name.equals("with") && args != null && args.length == 1 && subType(meType, type)) {
 				MethodDeclaration generalWith = genGeneralWith(copyType(args[0].type));
 				if (generalWith == null) {
-					throwError("Type of with method not applicable");
+					throwError("In checkValid(): type of with method not applicable");
 					return false;
 				} else {
 					if (!Util.sameType(meType, type)) genAbstractGeneralWith(copyType(args[0].type));
@@ -118,54 +120,26 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 				unresolved.put(m, false);
 				continue;
 			}
-			throwError("Unresolved method: " + m.toString());
+			throwError("In checkValid(): unresolved method: " + m.toString());
 			return false;
 		}
 		return true;
 	}
 	
+	// Need to check for all subtypes, mbody is defined?
 	private Type mBody(EclipseNode node) {
-		if (!(node.get() instanceof TypeDeclaration)) return null;
+		if (!(node.get() instanceof TypeDeclaration)) {
+			throwError("In mBody(): instanceof fails");
+			return null;
+		}
 		TypeDeclaration decl = (TypeDeclaration) node.get();
-		if (!Util.isInterface(decl)) return null;
-		HashMap<Method, ArrayList<Method>> allMethods = new HashMap<Method, ArrayList<Method>>();
-		ArrayList<Method> res = new ArrayList<Method>();
-		for (TypeReference superType : tops(decl)) {
-			if (!(superType instanceof SingleTypeReference)) {
-				throwError("SuperInterface has unexpected type.");
-				return null;
-			}
-			char[] tempSuper = ((SingleTypeReference) superType).token;
-			EclipseNode tempSuperDecl = getTypeDecl(tempSuper);
-			if (tempSuperDecl == null) {
-				throwError("SuperInterface not found.");
-				return null;
-			}
-			Type tempSuperType = mBody(tempSuperDecl);
-			if (tempSuperType == null) return null;
-			allMethods = Util.mergeType(allMethods, tempSuperType);
-		}
-		for (EclipseNode x : node.down()) {
-			if (!(x.get() instanceof MethodDeclaration)) continue;
-			Method m = new Method((MethodDeclaration) x.get());
-			if (m.method.isStatic()) continue;
-			Method key = null;
-			for (Method temp : allMethods.keySet()) if (m.equals(temp)) {key = temp; break;}
-			if (key == null) res.add(m);
-			else if (canOverride(m, allMethods.get(key))) {res.add(m); allMethods.remove(key);}
-			else {
-				throwError("Method overriding fails with incompatible type.");
-				return null;
-			}
-		}
-		for (Method key : allMethods.keySet()) {
-			Method mostSpecific = mostSpecific(allMethods.get(key));
-			if (mostSpecific == null) {
-				throwError("Conflicted methods in super interfaces.");
-				return null;
-			} else res.add(mostSpecific);
-		}
-		return new Type(res.toArray(new Method[res.size()]));
+		if (!Util.isInterface(decl)) {
+			throwError("In mBody(): isInterface fails");
+			return null;
+		}	
+		ArrayList<Method> allMethods = collectAllMethods(node, true);
+		if (allMethods == null) return null;
+		return new Type(allMethods.toArray(new Method[allMethods.size()]));
 	}
 	
 	private boolean canOverride(Method m, ArrayList<Method> ms) {
@@ -189,22 +163,85 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		return res;
 	}
 	
-	private ArrayList<TypeReference> tops(TypeDeclaration decl) {
-		if (decl.superInterfaces == null) return new ArrayList<TypeReference>();
-		HashMap<TypeReference, Boolean> res = new HashMap<TypeReference, Boolean>();
-		for (int i = 0; i < decl.superInterfaces.length; i++) {
-			TypeReference t = decl.superInterfaces[i];
-			boolean add = true;
-			for (TypeReference key : res.keySet()) {
-				if (!res.get(key)) continue;
-				if (subType(t, key)) res.put(key, false);
-				if (subType(key, t)) {add = false; break;}
-			}
-			if (add) res.put(t, true);
+	// Didn't take static methods into consideration.
+	private ArrayList<Method> collectAllMethods(EclipseNode node, boolean root) {
+		if (!(node.get() instanceof TypeDeclaration)) {
+			throwError("In collectAllMethods(): instanceof_1 fails");
+			return null;
 		}
-		ArrayList<TypeReference> res2 = new ArrayList<TypeReference>();
-		for (TypeReference key : res.keySet()) if (res.get(key)) res2.add(key);
-		return res2;
+		TypeDeclaration decl = (TypeDeclaration) node.get();
+		if (!Util.isInterface(decl)) {
+			throwError("In collectAllMethods(): isInterface fails");
+			return null;
+		}
+		ArrayList<Method> allMethods = new ArrayList<Method>();		
+		if (decl.superInterfaces != null) {
+			for (int i = 0; i < decl.superInterfaces.length; i++) {
+				if (!(decl.superInterfaces[i] instanceof SingleTypeReference)) {
+					throwError("In collectAllMethods(): instanceof_2 fails");
+					return null;
+				}
+				ArrayList<Method> getMethods = collectAllMethods(getTypeDecl(((SingleTypeReference) decl.superInterfaces[i]).token), false);
+				allMethods.addAll(getMethods);
+			}
+		}
+		if (!root) {
+			for (EclipseNode x : node.down()) {
+				if (!(x.get() instanceof MethodDeclaration)) continue;
+				Method m = new Method((MethodDeclaration) x.get(), new SingleTypeReference(decl.name, p));
+				if (!m.method.isStatic()) allMethods.add(m);
+			}
+			return allMethods;
+		} else {
+			ArrayList<Method> res = new ArrayList<Method>();
+			HashMap<Method, ArrayList<Method>> map = shadow(allMethods);
+			Set<Method> keySet = map.keySet();
+			for (EclipseNode x : node.down()) {
+				if (!(x.get() instanceof MethodDeclaration)) continue;
+				Method m = new Method((MethodDeclaration) x.get(), new SingleTypeReference(decl.name, p));
+				if (m.method.isStatic()) continue; // ?
+				Method key = null;
+				for (Method temp : map.keySet()) if (temp.equals(m)) {key = temp; break;}
+				if (key == null) res.add(m);
+				else if (canOverride(m, map.get(key))) {res.add(m); keySet.remove(key);}
+				else return null;
+			}
+			for (Method m : keySet) {
+				if (map.get(m).size() < 1) continue;
+				Method mostSpecific = mostSpecific(map.get(m));			
+				if (mostSpecific == null) {
+					throwError("In collectAllMethods(): conflicts with method " + m.toString());
+					return null;
+				}
+				res.add(mostSpecific);
+			}
+			return res;
+		}
+	}
+	
+	private HashMap<Method, ArrayList<Method>> shadow(ArrayList<Method> allMethods) {
+		HashMap<Method, ArrayList<Method>> res = new HashMap<Method, ArrayList<Method>>();
+		for (Method m : allMethods) {
+			boolean add = true;
+			for (Method key : res.keySet()) {
+				if (key.equals(m)) {
+					ArrayList<Method> value = res.get(key);
+					ArrayList<Method> newValue = new ArrayList<Method>();
+					boolean add2 = true;
+					for (Method temp : value) {
+						if (subType(temp.origin, m.origin)) {add2 = false; break;}
+						if (!subType(m.origin, temp.origin)) newValue.add(temp);
+					}
+					if (add2) {newValue.add(m); res.put(key, newValue);}
+					add = false;
+					break;
+				}
+			}
+			ArrayList<Method> singleton = new ArrayList<Method>();
+			singleton.add(m);
+			if (add) res.put(m, singleton);
+		}
+		return res;
 	}
 	
 	private FieldDeclaration genField(char[] name, TypeReference type) {
@@ -424,7 +461,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 	}
 	
 	/* Auxiliary: throw an error. */
-	private void throwError(String s) { meAnno.addError(s); }
+	private void throwError(String s) { errorMsg = s; }
 	
 	/* Auxiliary: print out information for debugging. */
 	@SuppressWarnings("unused") private void print(String s) {
@@ -452,23 +489,6 @@ class Util {
 	}
 	static boolean isInterface(TypeDeclaration t) {
 		return (t.modifiers & ClassFileConstants.AccInterface) != 0;
-	}
-	static HashMap<Method, ArrayList<Method>> mergeType(HashMap<Method, ArrayList<Method>> map, Type t) {
-		for (int i = 0; i < t.methods.length; i++) {
-			Method key = null, value = t.methods[i];
-			if (value.method.isStatic()) continue;
-			for (Method m : map.keySet()) if (m.equals(value)) {key = m; break;}
-			if (key == null) {
-				ArrayList<Method> singleton = new ArrayList<Method>();
-				singleton.add(value);
-				map.put(value, singleton);
-			} else {
-				ArrayList<Method> oldList = map.get(key);
-				oldList.add(value);
-				map.put(key, oldList);
-			}
-		}
-		return map;
 	}
 	static String toString(TypeReference t) {
 		return (t instanceof SingleTypeReference) ? String.valueOf(((SingleTypeReference) t).token) : "***";
@@ -508,7 +528,8 @@ class Util {
 
 class Method {
 	MethodDeclaration method;
-	Method(MethodDeclaration method) { this.method = method; }
+	TypeReference origin;
+	Method(MethodDeclaration method, TypeReference origin) { this.method = method; this.origin = origin; }
 	boolean equals(Method _m) {
 		MethodDeclaration m = _m.method;
 		if (!Arrays.equals(m.selector, method.selector)) return false;
