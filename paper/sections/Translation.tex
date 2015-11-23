@@ -187,31 +187,46 @@ This allows for convenient and chains of setters, as we will show later \marco{i
 \subsection{Results}
 \textbf{THEOREM. }
 For a given $\II_0\ldots\II_n$ interface table such that
-$\forall\II\in\II_0\ldots\II_n, \II$ OK, then in the interface table
-$[\![\II_0]\!]\II_1\ldots\II_n$
+$\forall\II\in\II_0\ldots\II_n, \II$ OK,\\*
+if  
+$\valid(\C_0)$  and $\QM{of}\notin\dom(\C_0)$,
+then in the interface table
+$[\![\II_0]\!]\II_1\ldots\II_n$\\*
 $\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ either $\II$ OK or $\II$ is a subtype of $\II_0$.
 
 \haoyuan{In theorem: $\C_0$ is valid and $\QM{of}\notin\dom(\C_0)$. To prove the theorem we need an extra lemma: if the translation is well defined, then $[\![\II_0]\!]$ is well formed.}
 
 To understand this theorem statement, we need to understand three kind of guarantees that we can offer for safety:
 \begin{itemize}
-\item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not written.
+\item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not wrote.
+In our case it means that either \mixin{} produces in controlled way an understandable error, or the class can be successfully annotate and the generated code is well typed.
+We guarantee \textit{Self coherence}.
+
 \item \textit{Client coherence}: all the client code (as for example method calls) that is well typed without the generation/instrumentation process is well typed also after the generation.
+That is, the annotation do not remove any functionality, is just
+adding more behaviour.
+We guarantee \textit{Client coherence}.
+
 \item \textit{Heir coherence}: Interfaces (and in general classes) inheriting from instrumented code are well typed if they was well typed without the instrumentation.
-\end{itemize}
-The first two levels of safety are essential to our lightweight framework, nevertheless, the third one is not needed. In Java it implies not touching the annotated interface, and surely an alternative approach is to create a new interface and generate what we need. But since we are using Lombok for the translation, the transformation is applied to the annotated interface itself. But heir coherence is indeed an issue. See below how this is affected by our approach:
+This would require to not add any (default or abstract) method to the annotated interfaces, including type refinement.
+We do not guarantee \textit{Heir coherence}.
+Indeed consider the following example
 
 \begin{lstlisting}
 interface A { int x(); A withX(int x); }
 @Mixin interface B extends A {}
 interface C extends B { A withX(int x); }
 \end{lstlisting}
+ 
+By the translation rule, \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
+This would break \Q@C@.
 
-Here is the client code for our example. With interface \Q@B@ annotated with \mixin, by the translation rule, it will generate a method ``\Q@B withX(int x);@'' inside, as an automatic return type refinement. But in that case, interface \Q@C@ doesn't type check.
+\end{itemize}
+%The first two levels of safety are essential to our lightweight framework, nevertheless, the third one is not needed. In Java it implies not touching the annotated interface, and surely an alternative approach is to create a new interface and generate what we need. But since we are using Lombok for the translation, the transformation is applied to the annotated interface itself. But heir coherence is indeed an issue. See below how this is affected by our approach:
 
-Now we go back and read the statement of our theorem again. It illustrates that a program with the translation of \mixin applied still type checks if it did, except for the subtypes of the annotated interface (type safety of them is not guaranteed).
+%Now we go back and read the statement of our theorem again. It illustrates that a program with the translation of \mixin applied still type checks if it did, except for the subtypes of the annotated interface (type safety of them is not guaranteed).
 
-\haoyuan{Text needs improving.}
+%\haoyuan{Text needs improving.}
 
 To prove the theorem we introduce two lemmas below. The complete proof is available in Appendix \ref{subsec:proof1}, \ref{subsec:proof2} and \ref{subsec:proof3}.\\
 
@@ -223,8 +238,10 @@ Assume that
 \end{align*}
 If $\II_0$ satisfies $\dom(\C_0)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)$, then $[\![\II_0]\!]$ satisfies $\dom([\![\II_0]\!])=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)\cup\dom(\methods')$.\\
 
+\marco{ you need to use the Lemma/theorem macros}
 \noindent\textbf{LEMMA 2. }
 If $\II_0$ OK, then $[\![\II_0]\!]$ OK.
+This is what we defined as self coherence before.
 
 
 
