@@ -1,28 +1,21 @@
 package test;
 
-import lombok.Mixin;
+import lombok.Obj;
 
 public class TestLombok {
 	public static String runTest() {
 		String res = "";
 		Point p1 = Point.of(2, 3);
 		res += "p1 = Point.of(2, 3);\n";
-		Point p2 = p1.clone();
-		res += "p2 = p1.clone();\n";
 		res += "print p1: " + p1.x() + " " + p1.y() + "\n";
 		p1.x(4); p1.y(5);
 		res += "p1.x(4); p1.y(5);\n";
 		res += "print p1: " + p1.x() + " " + p1.y() + "\n";
-//		p1 = p1.withX(6);
-//		System.out.println("p1 = p1.withX(6);");
-//		System.out.print("print p1: ");
-//		print(p1);
-		res += "print p2: " + p2.x() + " " + p2.y() + "\n";
 		return res;
 	}
 }
 
-@Mixin
+@Obj
 interface Point {
     int x();
     int y();

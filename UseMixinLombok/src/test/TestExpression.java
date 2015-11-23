@@ -2,7 +2,7 @@ package test;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Mixin;
+import lombok.Obj;
 
 public class TestExpression {
 	public static String runTest() {
@@ -32,11 +32,11 @@ public class TestExpression {
 
 //BEGIN_EXPRESSION_INIT
 interface Exp { int eval(); }
-@Mixin interface Lit extends Exp {
+@Obj interface Lit extends Exp {
 	int x();
 	default int eval() { return x(); }
 }
-@Mixin interface Add extends Exp {
+@Obj interface Add extends Exp {
 	Exp e1(); Exp e2();
 	default int eval() {
 		return e1().eval() + e2().eval();
@@ -45,7 +45,7 @@ interface Exp { int eval(); }
 //END_EXPRESSION_INIT
 
 //BEGIN_EXPRESSION_SUB
-@Mixin interface Sub extends Exp {
+@Obj interface Sub extends Exp {
 	Exp e1(); Exp e2();
 	default int eval() {
 		return e1().eval() - e2().eval();
@@ -55,10 +55,10 @@ interface Exp { int eval(); }
 
 //BEGIN_EXPRESSION_PRINT
 interface ExpP extends Exp { String print(); }
-@Mixin interface LitP extends Lit, ExpP {
+@Obj interface LitP extends Lit, ExpP {
 	default String print() {return "" + x();}
 }
-@Mixin interface AddP extends Add, ExpP {
+@Obj interface AddP extends Add, ExpP {
     ExpP e1(); ExpP e2();
 	default String print() {
 		return "(" + e1().print() + " + " + e2().print() + ")";
@@ -68,14 +68,14 @@ interface ExpP extends Exp { String print(); }
 
 //BEGIN_EXPRESSION_COLLECTLIT
 interface ExpC extends Exp { List<Integer> collectLit(); }
-@Mixin interface LitC extends Lit, ExpC {
+@Obj interface LitC extends Lit, ExpC {
     default List<Integer> collectLit() {
         List<Integer> list = new ArrayList<Integer>();
         list.add(x());
         return list;
     }
 }
-@Mixin interface AddC extends Add, ExpC {
+@Obj interface AddC extends Add, ExpC {
     ExpC e1(); ExpC e2();
     default List<Integer> collectLit() {
         List<Integer> list = new ArrayList<Integer>();
@@ -88,8 +88,8 @@ interface ExpC extends Exp { List<Integer> collectLit(); }
 
 //BEGIN_INDEPENDENT_EXTENSIBILITY
 interface ExpPC extends ExpP, ExpC {}
-@Mixin interface LitPC extends ExpPC, LitP, LitC {}
-@Mixin interface AddPC extends ExpPC, AddP, AddC {
+@Obj interface LitPC extends ExpPC, LitP, LitC {}
+@Obj interface AddPC extends ExpPC, AddP, AddC {
     ExpPC e1(); ExpPC e2();
 }
 //END_INDEPENDENT_EXTENSIBILITY
