@@ -1,12 +1,12 @@
 \section{Case Studies}
 In this section we conduct three case studies which reveals various advantages
-using \mixin annotation. 1st case study provides a easy and straightforward way
-to solve the Expression Problem. 2nd case study models a simple game and the
-comparison between our approach and others shows that code amount is reduced
-tremendously using \mixin. 3rd case study models an embedded DSL for SQL
-languages with fluent interfaces and shows that \mixin not only removes verbol
-code for defining fluent interfaces but also does implicit refinement along
-extension.
+using \mixin annotation. The first case study provides a easy and
+straightforward way to solve the Expression Problem. The second one models a
+simple game and the comparison between our approach and others shows that code
+amount is reduced tremendously using \mixin. The third one models an embedded
+DSL for SQL languages with fluent interfaces and shows that \mixin not only
+removes verbol code for defining fluent interfaces but also does implicit
+refinement along extension.
 
 \subsection{A Trivial Solution to the Expression Problem}
 
@@ -36,12 +36,16 @@ Today we know of various solutions to the EP that either rely on \emph{new
 %   bruce98astatically, McDirmid01jiazzi, garrigue98polymorphic,
 %   zenger01extensible, loh06open, wehr11javaGI}, 
 or can be used as \emph{design patterns}%~\cite{gof}
-in existing languages.
+in existing languages. 
 % ~\cite{torgersen04theexpression, oliveira06extensible,
 %  wouter08datatypes, oliveira09modular, oliveira12extensibility}. 
-Now we show that the EP can be solved with our \mixin annotation in a trivial
-way. We will use the canonical example of implementing arithmetic expressions
-gradually to illustrate the usage.
+A new solution~\cite{eptrivially} based on covariant type refinement solves EP
+and works in Java-like languages. It does not introduce new language features,
+does not even require generics support. However one of the limitation is certain
+code verbosity caused by ``Final'' classes for instantiation. Now we show that
+our \mixin annotation helps to remove these mechanical code in a trivial way. We
+will use the canonical example of implementing arithmetic expressions gradually
+as in \cite{eptrivially} to illustrate the usage.
 
 \paragraph{Initial System}
 The initial system expresses arithmetic expressions with only literals and
@@ -100,17 +104,21 @@ literal components in an expression) on expressions:
 
 \subsection{A Small Game Example}
 We now present a variant of a classic game example, which is often used to
-evaluate reuse ability related to inheritance and design patterns. The code
+evaluate code reuse ability related to inheritance and design patterns. The code
 using our approach and the solution by Bono et. al~\cite{bono14} in online, for
 space constraints, we will omit it here. In the game, there is a player with the
 goal of collecting as many coins as possible. She may enter a room with several
 doors to be chosen among. This is a good example because it involves code reuse
 (different kinds of doors inherit a common type, with different features and
 behaviour), multiple inheritance (a special kind of door may require features
-from two other door types). It also shows how to model symmetric sum, override
-and alias as trait-oriented programming. Moreover, the code is provided in
-~\cite{bono14} so that we can have a clear and fair comparison with our
-approach, as shown in Table~\ref{table:codereduction}.
+from two other door types) and it also shows how to model operations
+\texttt{symmetric sum}, \texttt{override} and \texttt{alias} as trait-oriented
+programming. Moreover, the code is provided in ~\cite{bono14} so that we can
+have a clear and fair comparison with our approach, as shown in
+Table~\ref{table:codereduction}. We reduced the interfaces/classes used by
+21.4\% (from 14 to 11) due to the replacement of instantiation classes with
+generated \texttt{of} methods. We reduced source lines of code (SLOC) by
+40\%. To ensure a fair comparison, we use the same code style as Bono's.
 
 \begin{table}[h]
 \centering
