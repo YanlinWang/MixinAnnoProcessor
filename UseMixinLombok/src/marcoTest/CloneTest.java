@@ -1,6 +1,6 @@
 package marcoTest;
 
-import lombok.Mixin;
+import lombok.Obj;
 
 
 //now mixin generate clone always. This prevent the user 

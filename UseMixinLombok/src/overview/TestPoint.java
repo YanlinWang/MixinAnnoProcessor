@@ -1,9 +1,9 @@
 package overview;
 
-import lombok.Mixin;
+import lombok.Obj;
 
 //BEGIN_POINT
-@Mixin
+@Obj
 interface Point {
     int x();
     int y();
