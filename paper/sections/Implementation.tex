@@ -1,12 +1,12 @@
-\section{Implementation}
+\section{Implementation with Lombok}
 
-One of the downside of Java is the code verbosity, e.g., getter and setter
-methods for fields, unneeded type annotation, etc. Lombok project~\cite{} is a
-Java tool that aims at removing (or reducing) these boilerplate code as far as
-possible, via annotations. There are a number of annotations provided by the
-original Lombok, including \textbf{@Getter}, \textbf{@Setter},
-\textbf{@ToString} for generating getters, setters and \QM{toString} methods,
-respectively.
+Our implementation is based on extension to Lombok. Lombok project~\cite{lombok}
+is a Java tool that aims at removing (or reducing) Java boilerplate code as far
+as possible, via annotations. Code verbosity is one of the downside of Java,
+usually caused by getter and setter methods for fields, unneeded type
+annotation, etc. There are a number of annotations provided by the original
+Lombok, including \textbf{@Getter}, \textbf{@Setter}, \textbf{@ToString} for
+generating getters, setters and \QM{toString} methods, respectively.
 
 Furthermore, Lombok provides a number of interfaces for users to create custom
 transformations, as extensions to the original framework. By realizing these
@@ -17,14 +17,13 @@ acts on the AST from parsing the annotated node and returns a modified AST for
 analysis and generation afterwards. Such a handler can either be a Javac handler
 or an Eclipse handler.
 
-Our implementation is based on extension to Lombok. In Eclipse, with an
-interface annotated by \mixin, the automatic annotation processing is performed
-and the information of the interface from compilation is captured in the
-``Outline'' window, including all the methods inside the interface as well as
-the generated ones.
- The custom transformation is easy and convenient to use.
- For example this means that the IDE functionality 
- content assist autocomplete will work for the newly generated methods.
+The annotation we created is \mixin. In Eclipse, with an interface annotated by
+\mixin, the automatic annotation processing is performed and the information of
+the interface from compilation is captured in the ``Outline'' window, including
+all the methods inside the interface as well as the generated ones.  The custom
+transformation is easy and convenient to use.  For example this means that the
+IDE functionality content assist autocomplete will work for the newly generated
+methods.
 
  The biggest reasons to use Lombok rather than using a conventional Java
  annotation processor are:

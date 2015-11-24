@@ -1,9 +1,9 @@
 package jooq;
 
-import lombok.Mixin;
+import lombok.Obj;
 
 //BEGIN_FLUENT_DATABASE
-@Mixin interface Database {
+@Obj interface Database {
 	String select();
 	Database select(String select);
 	String from();
@@ -14,7 +14,7 @@ import lombok.Mixin;
 //END_FLUENT_DATABASE
 
 //BEGIN_FLUENT_DATABASE_EXT
-@Mixin interface ExtendedDatabase extends Database {
+@Obj interface ExtendedDatabase extends Database {
 	String orderBy();
 	ExtendedDatabase orderBy(String orderBy);
 }

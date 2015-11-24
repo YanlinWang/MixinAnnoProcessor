@@ -1,8 +1,8 @@
 package marcoTest;
 
-import lombok.Mixin;
+import lombok.Obj;
 
-@Mixin
+@Obj
 interface Point {
     int x();
     int y();
@@ -16,7 +16,7 @@ interface Colored {
     int color();
     Colored withColor(int val);
 }
-@Mixin interface CPoint extends Point,Colored{}
+@Obj interface CPoint extends Point,Colored{}
 public class MarcoTest {
     public static void main(String[] arg) {
         CPoint p = CPoint.of(10, 20, 0);
