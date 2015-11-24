@@ -109,7 +109,7 @@ keywordstyle=\ttfamily\bfseries,
 \usepackage{xspace}
 
 % Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\title{Classless Java}
+\title{Classless Java: Tuning Java Interfaces}
 \titlerunning{Classless Java}
 
 \author[1]{John Q. Open}
@@ -124,6 +124,7 @@ keywordstyle=\ttfamily\bfseries,
 % mandatory. First: Use abbreviated first/middle names. Second (only in severe
 % cases): Use first author plus 'et. al.'
 
+\begin{comment}
 \Copyright{John Q. Open and Joan R. Access}
 % mandatory, please use full first names. LIPIcs license is "CC-BY";
 % http://creativecommons.org/licenses/by/3.0/
@@ -148,6 +149,7 @@ keywordstyle=\ttfamily\bfseries,
 \EventShortName{}
 \DOI{10.4230/LIPIcs.xxx.yyy.p}% to be completed by the volume editor
 % Editor-only macros::end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{comment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -162,20 +164,28 @@ inheritance. However, using this combination to simulate multiple
 inheritance quickly becomes cumbersome, and appears to be quite
 restricted.
 
-This paper shows that, with some minor syntactic sugar, default
-methods and interface inheritance are in fact very expressive. Our
-proposed syntax sugar, called \emph{object interfaces}, enables
-powerful object-oriented idioms, using multiple inheritance, to be
-expressed directly in Java. Object interfaces avoid some syntactic
-boilerplate caused by Java being originally designed to work mainly
-with classes. Moreover, object interfaces come with their own object
-instantiation mechanism, providing an alternative to class
-constructors. As a result many Java programs can be built without
-defining a single class! An implementation of object interfaces using
-Java annotations and a formalization of the static and dynamic
-semantics are presented. Moreover the usefulness of object
-interfaces is illustrated through various examples and case studies.
-\bruno{a first draft of the abstract. still missing ``language tuning''.}
+This paper shows that, with a simple language feature, default methods
+and interface inheritance are in fact very expressive. Our proposed
+language feature, called \emph{object interfaces}, enables powerful
+object-oriented idioms, using multiple inheritance, to be expressed
+conveniently in Java. Object interfaces refine conventional Java
+interfaces in three different ways. Firstly, object interfaces have
+their own object instantiation mechanism, providing an alternative to
+class constructors. Secondly, object interfaces support \emph{abstract
+  state operations}, providing a way to use multiple inheritance with
+state in Java. Finally, object interfaces allow type refinements that
+are often tricky to model in conventional class-based
+approaches. Interestingly, object interfaces do not require changes to
+the runtime, and they also do not introduce any new syntax (apart from
+a small annotation): all three features are achieved by reinterpreting
+existing Java syntax, and are translated into regular Java code
+without loss of type-safety. Since no new syntax is introduced, it
+would be incorrect to call object interfaces a language extension or
+syntactic sugar. So we use the term \emph{language tuning} to
+characterize this kind of language feature. An implementation of
+object interfaces using Java annotations and a formalization of the
+static and dynamic semantics are presented. Moreover the usefulness of
+object interfaces is illustrated through various examples.
 
 \end{abstract}
 
