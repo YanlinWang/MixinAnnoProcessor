@@ -166,7 +166,11 @@ all the fluent setters return the correct type, and not the old \texttt{Database
 \lstinputlisting[linerange=39-39]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
 
 \subsection{A Small Game Example}
-The last case study is a simple Maze game, which is used\bruno{where?}
+The last case study is a simple Maze game, which is often
+used~\cite{gof,bono14,vicentedesign} 
+\bruno{where?}
+\yanlin{the last one ``design patterns in OCaml''is not a proper paper, not sure
+whether to cite.}
 to evaluate code reuse ability related to inheritance and design
 patterns. In the game, there is a player with the goal of collecting
 as many coins as possible. She may enter a room with several doors to
@@ -197,5 +201,6 @@ Reduced by  & 40.6\% & 21.4\%                   \\ \hline
 in Bono et al.'s implementation by 21.4\% (from 14 to 11). The
 reductions was due to the replacement of instantiation classes with
 generated \texttt{of} methods. The number of source lines of code (SLOC)
-was reduced by 40\%\bruno{explain why? we generate code for getters/setters?}. 
+was reduced by 40\% due to both the removal of instantiation overhead and
+generation of getters/setters. %\bruno{explain why? we generate code for getters/setters?}. 
 To ensure a fair comparison, we used the same coding style as Bono et al.'s.
