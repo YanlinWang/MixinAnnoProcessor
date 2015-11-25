@@ -1,15 +1,16 @@
 \section{Future work}\label{sec:futurework}
 
-\subsection{Keywords in Classes} %{Private state}
+\subsection{Qualifiers in Methods} %{Private state}
 \yanlin{briefly mentioned ``synchronized'' keyword, didn't put the workaround
   here, it's in the code.}
-The biggest limitation of our approach is the inability to model all features
-for classes (private, protected, synchronized, etc.). For example, the absence
+The biggest limitation of our approach is the inability to model qualifiers
+for class methods (private, protected, synchronized, etc.). For example, the absence
 of the support for private/protected methods in Java8 interfaces forces all
 members of interfaces to be public, including static methods. Since we use
-abstract methods to encode the state, our state is always all public; however it
+abstract methods to encode the state, our state is always all public. Still, because 
+the state can only be accessed by methods, it 
 is impossible for the user to know if a certain method maps directly to a field
-or if it have a default implementation.  If the use wants a constructor that
+or if it has a default implementation.  If the user wants a constructor that
 does not directly maps to the fields, (as for secondary constructors in Scala)
 he can simply define its own \Q@of@ method and delegate on the generated one, as
 in
@@ -23,13 +24,13 @@ However, the generated \Q@of@ method would also be present and public.  If a
 future version of Java was to support \emph{static private methods in
   interfaces} we could extend our code generation to handle also encapsulation.
 Currently, it is possible to use a public nested class with private static
-methods inside, but this is ugly and cumbersome. We are considering if our
-annotation processor can take code with \Q!@Private! annotation and turn it into
+methods inside, but this is ugly and cumbersome. One possibility is that the
+annotation processor takes code with a \Q!@Private! annotation, and turns it into
 static private methods of a nested class. In this extension, also the \Q@of@
 method could be made private following the same pattern.
 
 \subsection{State initialization}
-As discuss before, the user can trivially define its own \Q@of@ method, and
+As discussed before, the user can trivially define its own \Q@of@ method, and
 initialize a portion of the state with default values.  However, the
 initialization code would not be reusable, and subinterfaces would have
 to repeat such initialization code.  If a field has no setters, a simple
@@ -57,7 +58,9 @@ method that (contrary to our usual expectation) is actually overridden in a way
 that the behaviour changes, but change only after the first setter is called,
 plus this code would cache the result instead of re-computing it every
 time. This can be very relevant and tricky in a non functional setting.
+\bruno{Yanlin please polish text/break long sentences.}
 
+\begin{comment}
 \subsection{Class Invariants in ClassLess Java}
 Since objects are created by automatically generated methods, another limitation
 of our current approach is that there is no place where the user can dynamically
@@ -73,12 +76,21 @@ We are considering an extension of our annotation where
 default methods with the special name \Q@checkInvariant()@ will be called inside the \Q@of@ methods.
 If multiple interfaces are implemented, and more then one offers
 \Q@checkInvariant()@,  a composed implementation could be automatically generated, composing by \Q@&&@ the various competing implementations.
+\end{comment}
+\bruno{removed the invariants stuff; we need space, I think.}
 
 \subsection{Clone, toString, equals and hashCode}
-Methods originally defined in Java class \Q@Object@, as \Q@clone@ and \Q@toString@, can be supported by our approach, but they need special care. If an interface annotated with \mixin asks an implementation for \Q@clone@, \Q@toString@, \Q@equals@ or \Q@hashCode@ we can easily generate one from the fields.\footnote{In particular, for clone we can do automatic return type refinement as we do for \Q@with-@ and fluent setters. Note how this would solve most of the Java ugliness related to \Q@clone@ methods.}
 
-However, if the user wish to provide his own implementation, since the method is
-also implemented in \Q@Object@, a conflict would arise. Then the user has to
+Methods originally defined in Java class \Q@Object@, as \Q@clone@ and
+\Q@toString@, can be supported by our approach, but they need special
+care. If an interface annotated with \mixin asks an implementation for
+\Q@clone@, \Q@toString@, \Q@equals@ or \Q@hashCode@ we can easily
+generate one from the fields.\footnote{In particular, for clone we can
+  do automatic return type refinement as we do for \Q@with-@ and
+  fluent setters. Note how this would solve most of the Java ugliness
+  related to \Q@clone@ methods.}
+However, if the user wishes to provide his own implementation, since the method is
+also implemented in \Q@Object@, a conflict arises. The user has to
 explicitly resolve the conflict inside \Q@of@, by implementing the method and
 delegating it to the user implementation, thus
 \begin{lstlisting}

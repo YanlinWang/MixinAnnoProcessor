@@ -22,9 +22,10 @@ We consider our approach as an alternative to traits or mixins.
 
 A comparison on how to to emulate the original operations on traits using Java8 can be find in\cite{bono14}. We briefly recall the main points of their encoding; however we propose a different representation of
  \textbf{exclusion}.
-The author of ~\cite{bono14} agree that our revised version is cleaner, typesafe and more direct.
+The author of ~\cite{bono14} agree that our revised version is cleaner, typesafe and more direct.\bruno{is this something to 
+say in the paper?}
 
-\newcommand\shortItem{\vspace{-1ex}}
+%%\newcommand\shortItem{\vspace{-1ex}}
 \begin{itemize}
 \begin{comment}%I shoreten up a lot after. I think this version is better but longer, and this content is just repeating bono at all.
 \item \textbf{Symmetric sum}: the symmetric composition of two disjoint traits is achieved by simply implementing two interfaces in Java correspondingly, without overriding any method. The composition relies on multiple inheritance on interfaces, which is supported by Java. Below is a simple example.
