@@ -25,7 +25,7 @@ public class TestExpression {
 	    System.out.println(runTest());
 	    
 	    //independent extensibility
-	    AddPC e8 = AddPC.of(LitPC.of(3), LitPC.of(4));
+	    ExpPC e8 = AddPC.of(LitPC.of(3), LitPC.of(4));
 	    System.out.println(e8.print() + " = " + e8.eval() + " Literals: " + e8.collectLit().toString());
 	}
 }
@@ -37,33 +37,28 @@ interface Exp { int eval(); }
 	default int eval() { return x(); }
 }
 @Obj interface Add extends Exp {
-	Exp e1(); Exp e2();
-	default int eval() {
+    Exp e1(); Exp e2();
+    default int eval() {
 		return e1().eval() + e2().eval();
 	}
 }
 //END_EXPRESSION_INIT
 
 //BEGIN_EXPRESSION_SUB
-@Obj interface Sub extends Exp {
-	Exp e1(); Exp e2();
-	default int eval() {
-		return e1().eval() - e2().eval();
-	}
-}
+@Obj interface Sub extends Exp {Exp e1(); Exp e2();
+	default int eval() {return e1().eval() - e2().eval();}}
 //END_EXPRESSION_SUB
 
 //BEGIN_EXPRESSION_PRINT
 interface ExpP extends Exp { String print(); }
 @Obj interface LitP extends Lit, ExpP {
-	default String print() {return "" + x();}
+    default String print() {return "" + x();}
 }
 @Obj interface AddP extends Add, ExpP {
-    ExpP e1(); ExpP e2();
-	default String print() {
+    ExpP e1(); ExpP e2();//return type refined!
+    default String print() {
 		return "(" + e1().print() + " + " + e2().print() + ")";
-	}
-}
+	}}
 //END_EXPRESSION_PRINT
 
 //BEGIN_EXPRESSION_COLLECTLIT
@@ -89,7 +84,5 @@ interface ExpC extends Exp { List<Integer> collectLit(); }
 //BEGIN_INDEPENDENT_EXTENSIBILITY
 interface ExpPC extends ExpP, ExpC {}
 @Obj interface LitPC extends ExpPC, LitP, LitC {}
-@Obj interface AddPC extends ExpPC, AddP, AddC {
-    ExpPC e1(); ExpPC e2();
-}
+@Obj interface AddPC extends ExpPC, AddP, AddC {ExpPC e1(); ExpPC e2();}
 //END_INDEPENDENT_EXTENSIBILITY
