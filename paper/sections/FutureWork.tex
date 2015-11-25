@@ -1,0 +1,98 @@
+\section{Future work}\label{sec:futurework}
+
+\subsection{Keywords in Classes} %{Private state}
+\yanlin{briefly mentioned ``synchronized'' keyword, didn't put the workaround
+  here, it's in the code.}
+The biggest limitation of our approach is the inability to model all features
+for classes (private, protected, synchronized, etc.). For example, the absence
+of the support for private/protected methods in Java8 interfaces forces all
+members of interfaces to be public, including static methods. Since we use
+abstract methods to encode the state, our state is always all public; however it
+is impossible for the user to know if a certain method maps directly to a field
+or if it have a default implementation.  If the use wants a constructor that
+does not directly maps to the fields, (as for secondary constructors in Scala)
+he can simply define its own \Q@of@ method and delegate on the generated one, as
+in
+\begin{lstlisting}
+@Mixin interface Point{
+  int x(); int y();
+  static Point of(int val){return Point.of(val,val);}  
+}
+\end{lstlisting}
+However, the generated \Q@of@ method would also be present and public.  If a
+future version of Java was to support \emph{static private methods in
+  interfaces} we could extend our code generation to handle also encapsulation.
+Currently, it is possible to use a public nested class with private static
+methods inside, but this is ugly and cumbersome. We are considering if our
+annotation processor can take code with \Q!@Private! annotation and turn it into
+static private methods of a nested class. In this extension, also the \Q@of@
+method could be made private following the same pattern.
+
+\subsection{State initialization}
+As discuss before, the user can trivially define its own \Q@of@ method, and
+initialize a portion of the state with default values.  However, the
+initialization code would not be reusable, and subinterfaces would have
+to repeat such initialization code.  If a field has no setters, a simple
+alternative is to just define the ``field'' as a default method as in
+\begin{lstlisting}
+@Mixin interface Box{ default int val(){return 0;} }
+\end{lstlisting}
+If setters are required, a possible extension of our code expansion could
+recognize a field if the getter is provided and the setter is required, and
+could generate the following code: \yanlin{both of the two generated val()
+  method should be public to pass compilation. Did you omit the public keyword
+  on purpose to make the code clean? }
+\begin{lstlisting}
+interface Box{ 
+  default int val(){return 0;} //provided
+  void val(int _val);//provided
+  static Box of(){return new Box(){//generated
+    int val=Box.super.val();
+    int val(){return val;}
+    void val(int _val){val=_val;}
+    };}}
+\end{lstlisting}
+We are unsure of the value of this solution: is very tricky, the user define a
+method that (contrary to our usual expectation) is actually overridden in a way
+that the behaviour changes, but change only after the first setter is called,
+plus this code would cache the result instead of re-computing it every
+time. This can be very relevant and tricky in a non functional setting.
+
+\subsection{Class Invariants in ClassLess Java}
+Since objects are created by automatically generated methods, another limitation
+of our current approach is that there is no place where the user can dynamically
+check for class invariants. In Java often we see code like
+\begin{lstlisting}
+class Point{ int x; int y;
+  Point(int x; int y){this.x=x;this.y=y; assert this.checkInvariant();}
+  private boolean checkInvariant(){... x>0,y>0...}
+}
+\end{lstlisting} 
+
+We are considering an extension of our annotation where 
+default methods with the special name \Q@checkInvariant()@ will be called inside the \Q@of@ methods.
+If multiple interfaces are implemented, and more then one offers
+\Q@checkInvariant()@,  a composed implementation could be automatically generated, composing by \Q@&&@ the various competing implementations.
+
+\subsection{Clone, toString, equals and hashCode}
+Methods originally defined in Java class \Q@Object@, as \Q@clone@ and \Q@toString@, can be supported by our approach, but they need special care. If an interface annotated with \mixin asks an implementation for \Q@clone@, \Q@toString@, \Q@equals@ or \Q@hashCode@ we can easily generate one from the fields.\footnote{In particular, for clone we can do automatic return type refinement as we do for \Q@with-@ and fluent setters. Note how this would solve most of the Java ugliness related to \Q@clone@ methods.}
+
+However, if the user wish to provide his own implementation, since the method is
+also implemented in \Q@Object@, a conflict would arise. Then the user has to
+explicitly resolve the conflict inside \Q@of@, by implementing the method and
+delegating it to the user implementation, thus
+\begin{lstlisting}
+@Mixin interface Point{ int x(); int y();
+  default Point clone(){ return Point.of(0,0);}//user defined clone
+}
+\end{lstlisting} 
+Would expand into 
+
+\begin{lstlisting}
+interface Point{ int x(); int y();
+  default Point clone(){ return Point.of(0,0);}//user defined clone
+  public static Point of(int _x,int_y){
+    return new Point(){...
+      public Point clone(){ return Point.super.clone();}
+      };  }  }
+\end{lstlisting} 
