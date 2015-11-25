@@ -244,24 +244,25 @@ Furthermore, we do automatic return type refinement for these kind of methods. T
 \subsection{ThisType/MyType/Extensibility}
 %\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namelly it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolish most advantages of interfaces.}
 
-In certain situations, our approach allows automatic refinement for return
-types. This is part of a bigger topic in class based languages: expressing and
+In certain situations, object interfaces allow automatic refinement for \emph{return
+types}. This is part of a bigger topic in class based languages: expressing and
 preserving type recursion and (nominal/structural) subtyping at the same time.
 
 One famous attempt in this direction is provided by
 \emph{MyType}~\cite{bruce1994paradigmatic}, representing the type of
 \textbf{this}, changing its meaning along with inheritance. However when
 invoking a method with MyType in a parameter position, the exact type of the
-receiver must be known.  This is huge limitation in class based object oriented
-programming, and is exasperated by interface-only programming as we propose: no
-type is ever exact since classes are not part of the language. A recent
-article~\cite{Saito2013933} lights up this topic, since they propose two
-features: exact statements \yanlin{do we support exact statements?}\marco{no we
-  do not. When is that it may seams we do?} and non-inheritable methods; both
+receiver must be known.  This is a big limitation in class based object oriented
+programming, and is exasperated by the interface-based programming we propose: no
+type is ever going to be exact since classes are not explicitly used. A recent
+article~\cite{Saito2013933} lights up this topic, proposing two
+new features: exact statements and non-inheritable methods. Both are
 related to our work: any method generated inside of the \Q@of@ method is indeed
-non-inheritable, since there is no class name to extends from, and exact
+non-inheritable, since there is no class name to extend from, and exact
 statements (a form of wild-card capture on the exact run-time type) could
 capture the ``exact type'' of an object even in a class-less environment.
+%Interestingly, our use of covariant type refinement is enough to emulate  
+
 
 
 
@@ -300,8 +301,10 @@ We can model certain types of language extensions with annotations
 only, but those extensions do not introduce new syntax: they 
 merely do automatic code generation. 
 \end{comment}
-\subsection{Meta-programming Competes with Language extensions}
-The most obvious solution to features addition to a language is language
+
+\subsection{Meta-programming Competes with Language Extensions}
+\bruno{needs to be polished better, I think}
+The most obvious solution to adding features to a language is language
 extension.  It is often implemented as syntactic extensions that can be
 desugared to the base language. For example, the Scala compiler was extended to
 directly supports XML syntax. However, this approach does not support combining
@@ -311,7 +314,7 @@ release.  On this topic we mention SugarJ~\cite{erdweg11sugarj} - a Java-based
 extensible language allowing programmers to extend it with custom features by
 definitions in meta-DSLs (SDF, Stratego, etc).
 
-On the other side, when the starting language have a flexible enough syntax and
+On the other side, when the base language has a flexible enough syntax and
 a fast and powerful enough reflection mechanism, we may just need to play with
 operator overloading and other language tricks to discover that the language
 feature we need can be expressed as a simple library in our language. For
@@ -319,14 +322,14 @@ example, consider SQLAlchemy in python.
 
 Java-like languages tend to sit in the middle of two extremes: libraries
 can not influence the type system, so many solutions valid in python or other
-languages could not be applicable, or may be applicable at the cost of loosing
+languages are not be applicable, or may be applicable at the cost of losing
 safety.
 
 Here (compile/load time) code generation comes at the rescue: if for a certain
 feature (\mixin in our case) it is possible to use the original language syntax
 to \emph{express-describe} any specific instantiation of such feature
 (annotating a class and provide getters), then we can insert in the compilation
-process a tool that exam and enrich the code before compilation. No need to
+process a tool that examins and enrichs the code before compilation. No need to
 modify the original source; for example we can work on temporary files
 \yanlin{Here what does temporary files mean? could explain more?}. Java is
 a particular good candidate for this kind of manipulation since it already
@@ -341,15 +344,15 @@ In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In
 Since MetaFjig is not working on annotated classes, there is no direct equivalence on the overall theorem of safety we shown.
 
 \subsection{Formalization of Java8}
-We provide a simple and well designed formalization for a subset of Java
+We provide a simple formalization for a subset of Java
 including default/static interface methods and object initialization literals
 (often called anonymous local inner classes).  A similar formalization was
 drafted by Goetz and Field~\cite{goetz12fdefenders} to formalize defender
 (default) methods in Java. However this formalization is limited to model
-exactly one method inside classes/interfaces.
+exactly one method inside classes/interfaces.\bruno{explain why having multiple 
+methods is significantly more challenging.}
 
 % As an evidence of the attention and care present in our formalization work,
 % while double-checking the behaviour of Java in side cases we have discovered a
 % likely bug in the current \texttt{javac}.\marco{refer to before when we explain
 %   the issue.}
-\yanlin{bug claim removed.}
