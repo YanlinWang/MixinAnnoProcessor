@@ -1,93 +1,76 @@
 \section{Case Studies}
-In this section we conduct three case studies which reveals various advantages
-using \mixin annotation. The first case study provides a easy and
-straightforward way to solve the Expression Problem. The second one models a
-simple game and the comparison between our approach and others shows that code
-amount is reduced tremendously using \mixin. The third one models an embedded
-DSL for SQL languages with fluent interfaces and shows that \mixin not only
-removes verbol code for defining fluent interfaces but also does implicit
-refinement along extension.
+In this section we conduct three case studies which reveals various
+advantages using \mixin annotation. The first case study provides a
+simple way to solve the Expression Problem, while supporting multiple,
+independent extensions in Java.  The second case study show how to model an
+embedded DSL for SQL languages with fluent interfaces. Finally, the third 
+case study models a simple game, and compares our implementation with an 
+existing one, showing that the amount of code is reduced significantly using \mixin.
 
-\subsection{A Trivial Solution to the Expression Problem}
+\subsection{A Trivial Solution to the Expression Problem with Object Interfaces}
 
-The \emph{Expression Problem} (EP)~\cite{wadler98expression-problem} is coined
-by Wadler about modular extensibility issues in software evolution and has been
-a hot topic in programming languages since. The requirements of a solution to
-the EP can be summarized as: 
-\begin{itemize}
-\item \emph{Extensibility in both dimensions}: A solution must allow
-  the addition of new data variants and new operations and support
-  extending existing operations.
-\item \emph{Strong static type safety}: A solution must prevent
-  applying an operation to a data variant which it cannot handle using
-  static checks.
-\item \emph{No modification or duplication}: Existing code must not be
-  modified nor duplicated.
-\item \emph{Separate compilation and type-checking}: Safety checks or
-  compilation steps must not be deferred until link or runtime.
-\item \emph{Independent extensibility}~\cite{zenger05independentlyextensible}:
-  It should be possible to combine independently developed extensions so that
-  they can be used jointly.
-\end{itemize}
-
-Today we know of various solutions to the EP that either rely on \emph{new
-  programming language features}
-% ~\cite{chambers95multimethods, clifton00multiJava, madsen89virtual, nystrom06j,
-%   bruce98astatically, McDirmid01jiazzi, garrigue98polymorphic,
-%   zenger01extensible, loh06open, wehr11javaGI}, 
-or can be used as \emph{design patterns}%~\cite{gof}
-in existing languages. 
-% ~\cite{torgersen04theexpression, oliveira06extensible,
-%  wouter08datatypes, oliveira09modular, oliveira12extensibility}. 
-A new solution~\cite{eptrivially} based on covariant type refinement solves EP
-and works in Java-like languages. It does not introduce new language features,
-does not even require generics support. However one of the limitation is certain
-code verbosity caused by ``Final'' classes for instantiation. Now we show that
-our \mixin annotation helps to remove these mechanical code in a trivial way. We
-will use the canonical example of implementing arithmetic expressions gradually
-as in \cite{eptrivially} to illustrate the usage.
+The \emph{Expression Problem} (EP)~\cite{wadler98expression-problem}
+is a well-known problem about modular extensibility issues in software
+evolution. Recently, a new solution~\cite{eptrivially} that uses only
+covariant type refinement that has been shown to work in Java. When
+that solution is modelled with interfaces and default methods, it can
+even provide independent extensibility: that is, the ability to
+assemble a system, from multiple, independently developed extensions.
+Unfortunatelly, a plain Java solution has alot of code verbosity in
+Java due to code required for instantiation, which makes the solution 
+cumbersome to use. The \mixin annotation helps to remove such code, and 
+makes the solution quite easy to use.
+\bruno{We should try to do some space saving in here. You could, for example 
+combine the code for the initial system with the code for a new operation in a figure/table 
+with 2 colums. Then just refer to the Table/Figure in the text.}
 
 \paragraph{Initial System}
-The initial system expresses arithmetic expressions with only literals and
-addition structure:
+In the formulation of the EP there is an initial system that models
+arithmetic expressions with only literals and addition, and an initial 
+operation:
 
 \lstinputlisting[linerange=34-44]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
 
-\texttt{Exp} is the common super-interface with an evaluation operation
+\noindent \texttt{Exp} is the common super-interface with an evaluation operation
 \texttt{eval()} inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend
-interface \texttt{Exp} with default implementations for \texttt{eval}
-operation. The number field (\texttt{x}) of a literal is represented as a getter
-method \texttt{x()} and expression fields (\texttt{e1,e2}) of an addition as
+interface \texttt{Exp} with default implementations for the \texttt{eval}
+operation. The number field \texttt{x} of a literal is represented as a getter
+method \texttt{x()} and expression fields (\texttt{e1} and \texttt{e2}) of an addition as
 getter methods \texttt{e1()} and \texttt{e2()}.
 
-\paragraph{Adding a New Variant}
-It is easy to add new data variants to the code in the initial system in a
-modular way. For example, the following code shows how to add the subtraction
-variant.
+\paragraph{Adding a New Type of Expressions}
+It is easy to add new types of expressions to the code in the initial system in a
+modular way. For example, the following code shows how to add subtraction.
 
 \lstinputlisting[linerange=48-53]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
 
-\paragraph{Adding a New Operation}
-Adding new operations to the previous system is still straightforward (although
-requires longer code). The following code shows an example of adding a new
-operation \texttt{print}.
+\paragraph{Adding a New Operation} The difficulty of the EP in object-oriented 
+languages arizes from adding new operations. For example, adding a pretty printing 
+operation, would typically involve changing all of the existing code. However, a solution 
+to the EP forbids this and it also forbids using casts. In other words, it should be possible 
+to add the pretty printing operation in a type-safe and modular way.  
+It turns out that, this can be done easily, using our object interfaces approach. 
+The following code shows how to add the new operation \texttt{print}.
 
 \lstinputlisting[linerange=57-66]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\bruno{Please add a Java comment to the code emphasizing that the types of the getters are refined!}
+\bruno{please indent code properly (the getters are not aligned with default))}
 
-The basic idea is to define interfaces for extending old interfaces.  The
-interface \texttt{ExpP} extending interface \texttt{Exp} is defined with the
-extra function \texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are
-defined with default implementations of operation \texttt{print()}, extending
+\noindent  The interface \texttt{ExpP} extending interface \texttt{Exp} is defined with the
+extra method \texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are
+defined with default implementations of \texttt{print()}, extending
 base interfaces \texttt{Lit} and \texttt{Add}, respectively. Importantly, note
-that in \texttt{AddP}, the types of ``\emph{fields}'' \texttt{e1,e2} are refined
-via the \emph{return types refinement} of getter methods \texttt{e1()} and
-\texttt{e2()}.
+that in \texttt{AddP}, the types of the ``\emph{fields}'' (i.e. the getter methods) \texttt{e1} 
+and \texttt{e2} are refined. If the types were not refined then the body of the \texttt{print}
+method in \texttt{AddP} would fail to type-check.
 
 \paragraph{Independent Extensibility}
-To show that our approach supports independent extensibility, we first define a
-new operation \texttt{collectLit}(which collects all
-literal components in an expression) on expressions: 
+To show that our approach supports independent extensibility~\cite{odersky}, we first define a
+new operation \texttt{collectLit} (which collects all
+literal components in an expression) on expressions. For space reasons, 
+we omit the definitions of the methods: 
+\bruno{No need to show full code in the paper. You can just put \ldots in the body of the collectLit methods.}
 
 \lstinputlisting[linerange=70-86]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_COLLECTLIT
 
@@ -96,56 +79,35 @@ literal components in an expression) on expressions:
 
 \lstinputlisting[linerange=90-94]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
 
+
 \noindent \texttt{ExpPC} is the new expression interface supporting
 \texttt{print} and \texttt{collectLit} operations; \texttt{LitPC} and
 \texttt{AddPC} are the extended variants. Notice that except for the routine of
 \textbf{extends} clauses, no glue code is required. Return types of
 \texttt{e1,e2} are also automatically refined to \texttt{ExpPC}.
 
-\subsection{A Small Game Example}
-We now present a variant of a classic game example, which is used to
-evaluate code reuse ability related to inheritance and design patterns. The code
-using our approach and the solution by Bono et. al~\cite{bono14} in online, for
-space constraints, we will omit it here. In the game, there is a player with the
-goal of collecting as many coins as possible. She may enter a room with several
-doors to be chosen among. This is a good example because it involves code reuse
-(different kinds of doors inherit a common type, with different features and
-behaviour), multiple inheritance (a special kind of door may require features
-from two other door types) and it also shows how to model operations
-\texttt{symmetric sum}, \texttt{override} and \texttt{alias} as trait-oriented
-programming. Moreover, the code is provided in ~\cite{bono14} so that we can
-have a clear and fair comparison with our approach, as shown in
-Table~\ref{table:codereduction}. We reduced the interfaces/classes used by
-21.4\% (from 14 to 11) due to the replacement of instantiation classes with
-generated \texttt{of} methods. We reduced source lines of code (SLOC) by
-40\%. To ensure a fair comparison, we use the same code style as Bono's.
+Note that the code for instantiation is automatically generated by \mixin. 
+So, for example creating a simple expression of type \texttt{ExpPC} is 
+as simple as:
 
-\begin{table}[h]
-\centering
-\begin{tabular}{ccc}
-\hline
-            & SLOC   & \# of classes/interfaces \\ \hline
-Bono et al. & 335    & 14                       \\
-Ours        & 199    & 11                       \\
-\rowcolor[HTML]{C0C0C0} 
-Reduced by  & 40.6\% & 21.4\%                   \\ \hline
-\end{tabular}
-\caption{Code Reduction and Reuse.}
-\label{table:codereduction}
-\end{table}
+\bruno{Add code here}
+
+\noindent In contrast, in a pure Java solution, the tedious instantiation code would need 
+to be defined manually. 
 
 
 \subsection{Embedded DSLs with Fluent Interfaces}
 Since the style of fluent interfaces was invented in Smalltalk as method
 cascading, more and more languages came to support fluent interfaces, including
 JavaScript, Java, C++, D, Ruby, Scala, etc. For most languages, to create fluent
-interfaces, programmers have to either handwritten everything or create a
-wrapper around the original non-fluent interfaces, using \textbf{this}. In Java,
-several libraries help create fluent APIs easily (by code generation), including
-jOOQ, op4j, fluflu, JaQue, etc. These libraries have given us hints on the
-implementation of fluent setters in ClassLess Java.
+interfaces, programmers have to either handwrite everything or create a
+wrapper around the original non-fluent interfaces using \textbf{this}. In Java,
+several libraries help create fluent APIs easily (by code generation)\bruno{do they use code 
+generation to produce the fluent interfaces?}, including
+jOOQ, op4j, fluflu, JaQue, etc. 
 
-When creating fluent interfaces, our approach has two main advantages:
+The \mixin annotation can also be used to create fluent interfaces. 
+When creating fluent interfaces with \mixin, there are two main advantages:
 \begin{enumerate}
 \item Instead of forcing programmers to hand write code using \textbf{return
     this}, our approach with \mixin annotation removes this verbosity and
@@ -155,27 +117,64 @@ When creating fluent interfaces, our approach has two main advantages:
 \end{enumerate} 
 
 \noindent We use embedded DSLs of two simple SQL query languages to illustrate.
-The first query language \texttt{Database} (conceptually) models
-\texttt{select}, \texttt{from} and \texttt{where} clause:
+The first query language \texttt{Database}  models
+\texttt{select}, \texttt{from} and \texttt{where} clauses:
 \lstinputlisting[linerange=6-13]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE
+\bruno{Wouldn't it be better to have a static method create() that calls of("","","")) and initializes all the fields? It seems awkward 
+to have to use the of explicitly to initialized all fields.}
 
-\noindent Note that we are only illustrating the idea of modeling embedded DSLs
-with the database example, no concrete implementation of database connection nor
-operations are provided in this case study. One benefit that fluent methods give
-us is method chaining convenience. So when making a query using \texttt{select},
-\texttt{from} and \texttt{where}, instead of writing code like:
-\lstinputlisting[linerange=26-29]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=NORMAL_QUERY
+\noindent The main benefit that fluent methods give
+us is the convinience of method chaining:
 
-\noindent We can write more concise code below:
 \lstinputlisting[linerange=35-38]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY1
+\bruno{write query in 1 line}
 
-\noindent Now we extend the first query language with a new feature
+\noindent Note how all the logic for the fluent setters is automatically provided by the \mixin annotation. 
+
+\paragraph{Extending the Query Language} The previous query language can be extended with a new feature
 \texttt{orderBy} which orders the result records by a field that users
-specified. The key is to extend interface \texttt{Database} with only the
-feature we need to add and the return type of fluent setters in
+specify. With \mixin programmers just need to extend the interface \texttt{Database} with new
+feature, and the return type of fluent setters in
 \texttt{Database} is automatically refined to \texttt{ExtendedDatabase}:
 \lstinputlisting[linerange=17-20]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
+This way, when a \texttt{ExtendedDatabase} query created, 
+all the fluent setters return the correct type, and not the old \texttt{Database} type, which would prevent calling 
+\texttt{orderBy}.
 
-% \lstinputlisting[linerange=44-48]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
+\lstinputlisting[linerange=44-48]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
+\bruno{write query in 1 line}
 
+\subsection{A Small Game Example}
+The last case study is a simple Maze game, which is used\bruno{where?}
+to evaluate code reuse ability related to inheritance and design
+patterns. In the game, there is a player with the goal of collecting
+as many coins as possible. She may enter a room with several doors to
+be chosen among. This is a good example because it involves code reuse
+(different kinds of doors inherit a common type, with different
+features and behaviour), multiple inheritance (a special kind of door
+may require features from two other door types) and it also shows how
+to model operations \texttt{symmetric sum}, \texttt{override} and
+\texttt{alias} as trait-oriented programming. The game has been
+implemented using plain Java 8 and default methods by Bono
+et. al~\cite{bono14}, and the code for that implementation is
+available online. We reimplemented the game using \mixin. Due to space
+constraints, we omit the code here. The following table summarizes
+the number of lines of code and classes/interfaces in each implementation:
 
+\vspace{5pt}
+\hspace{80pt}\begin{tabular}{ccc}
+\hline
+            & SLOC   & \# of classes/interfaces \\ \hline
+Bono et al. & 335    & 14                       \\
+Ours        & 199    & 11                       \\
+\rowcolor[HTML]{C0C0C0} 
+Reduced by  & 40.6\% & 21.4\%                   \\ \hline
+\end{tabular}
+\vspace{5pt}
+
+\noindent The \mixin annotation allowed us to reduce the interfaces/classes used
+in Bono et al.'s implementation by 21.4\% (from 14 to 11). The
+reductions was due to the replacement of instantiation classes with
+generated \texttt{of} methods. The number of source lines of code (SLOC)
+was reduced by 40\%\bruno{explain why? we generate code for getters/setters?}. 
+To ensure a fair comparison, we used the same coding style as Bono's.
