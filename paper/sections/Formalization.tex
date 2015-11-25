@@ -199,6 +199,7 @@ method name $\m$ as a key.  That is, we define $\methods(\m)=\method$
 iff there is a unique $\method\in\methods$ whose name is $\m$.  For
 convenience, we define $\methods(\m)=\none$ otherwise; moreover
 $\m\in\dom(\methods)\ \miff\ \methods(\m)=\method$.
+For simplicity, we do not model overloading, thus for an interface to be well formed its methods must be uniquelly indentfied by their name.
 
 \subsection{Typing}
 
@@ -210,8 +211,7 @@ $\Gamma \vdash \e\in\C<:\C'$ instead of $\Gamma \vdash \e\in\C$ and
 $\C<:\C'$.  
 
 We omit the definition of
-the usual traditional subtyping relation between interfaces, that is the transitive and reflexive closure of the declared \Q@extends@ relation, that can be read off the interface table and given by the
-\textbf{extends} clauses in the interfaces. %
+the usual traditional subtyping relation between interfaces, that is the transitive and reflexive closure of the declared \Q@extends@ relation. %
 \footnote{\marco{find a better place for} Notice how there are no classes, thus there is no
   subclassing.  We believe that this approach may scratch an old
   itching point in the long struggle of subtyping versus subclassing:
@@ -224,7 +224,7 @@ the usual traditional subtyping relation between interfaces, that is the transit
 The auxiliary notation $\Gamma^\mh$ trivially
 extracts the environment from a method header, by collecting the all types
 and names of the method parameters.  The
-notation $\m^\mh$ and $\C^\mh$ denotes, respectivelly, extracting the
+notation $\m^\mh$ and $\C^\mh$ denotes respectivelly, extracting the
 method name and the return type from a method header. $\mBody(\m,\C)$,
 defined in Section~\ref{},
 returns the full method declaration as seen by $\C$, that is the
@@ -328,7 +328,7 @@ IT(\C) = \ann\ \QM{interface}\ \C\ \QM{extends}\ \C_1\ldots\C_n \
 \label{ET}
 \end{figure}
 
-In Figure~\ref{ET} we show the typing rules.  We discuss first the
+In Figure~\ref{ET} we show the typing rules.  We discuss the
 most interesting rules, that is \rn{t-Obj} and \rn{t-Intf}. Rule
 \rn{t-Obj} is the most complex typing rule. Firstly, we need to
 ensure that all field initializations are type correct, by looking up the type of
@@ -355,7 +355,7 @@ method with the same name defined in the interface $\C$, and that such method is
 
 \noindent$\begin{array}{l}
 \InTextDef{18em}{
-\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR
+\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR\QM; \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR\QM;
 }{
 \T\subtype \T'
 }\\
@@ -434,7 +434,7 @@ We use internally a special modifier $\conflicted$ to denote the case of two met
 \mBody(\m,\C_0)
 }{
 \override(\methods(\m),
-\shadow(\m,\tops(\m,\Cs)))
+\shadow(\m,\tops(\m,\Cs\ )))
 }\\
 \InTextWith{\metaVar{IT}(\C_0) =
 \ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\cC}

@@ -32,7 +32,7 @@ That is, we can categorize all the \emph{not implemented} methods in a pattern t
 %To complete our formal definition we would need to add setters and \Q@with@.
 Moreover, we check that the method \Q@of@ is not already defined by the user.
 In our simplified formalization we consider this to be just an error.
-In our prototype we keep \Q@overloading@ into account, and so we check that an of method with the same signature of the one we would like to generate is not already present.\marco{Do we check it?}
+In our prototype we keep overloading into account, and so we check that an \Q@of@ method with the same signature of the one we would generate is not already present.\marco{Do we check it?}
 
 
 In the following we will write $\QM{with#}\m$ to append $\m$ to \QM{with}, following the camelCase rule, so the first letter of
@@ -41,7 +41,8 @@ For example \QM{with#foo}=\QM{withFoo}.
 Special names $\specialName(\m)$ are  \QM{with} and all the identifiers of form $\QM{with#}\m$.
 
 \subsection{$\ofMethod$}${}_{}$\\*
-We now formally define $\ofMethod$, the function that generates the method \QM{of}, that behaves like a factory. To avoid boring digressions about well known ways to find unique names, for the sake of this formalization we assume that no-args methods do not start with underscore, and we prefix method names with underscore to obtain valid  parameter names.\\*
+We now formally define $\ofMethod$, the function that generates the method \QM{of}, that behaves like a factory. To avoid boring digressions about well known ways to find unique names, for the sake of this formalization we assume that no-args methods do not start with underscore, and we prefix method names with underscore to obtain valid  parameter names.
+
 \noindent$\begin{array}{l}
 \InTextDef{5em}{\ofMethod(\C_0)}{
  \QM{static}\ \C_0\ \QM{of} \oR \C_1\ \QM_\m_1\QM,\ldots \C_n\ \QM_\m_n\cR\
@@ -79,7 +80,7 @@ For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
 \noindent$\begin{array}{l}
 \InTextDef{10em}{\withMethod(\C,\m,\C_0,\es)}{
 \C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\ \QM{\{}
-\QM{return} \C_0\QM{.of(}\es\QM{);\}}} \\
+\QM{return}\ \C_0\QM{.of(}\es\QM{);\}}} \\
 \InTextWith{\mBody(\QM{with#}\m,\C_0) \mbox{ is of form }\mh\QM;}\\
 \InTextDef{10em}{\withMethod(\C,\m,\C_0,\es)}{\emptyset\mbox{ otherwise}}\\
 \InTextDef{10em}{\setterMethod(\C,\m,\C_0)}{
@@ -129,7 +130,7 @@ To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
 \InTextDef{24ex}{\method\in\fieldsFunc(\C_0)}{
 \isField(\method)\mand\ 
 %}\\\InTextWith{
-\method\in \dom(\C_0)
+\method=\mBody(\_,\C_0)
 }\\
 
 \InTextDef{24ex}{\isField(\C\ \m\oR\cR\QM;)}{
