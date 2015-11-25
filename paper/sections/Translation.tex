@@ -25,7 +25,7 @@ However, first of all we check if the interface is valid for annotation:
 $\isField(\method)$,
 $\isWith(\method, \C_0)$
 or
-$\isSetter(\method,\C_0)$. \ 
+$\isSetter(\method,\C_0)$. \
 %$\isClone(\method, \C_0)$.
 That is, we can categorize all the \emph{not implemented} methods in a pattern that we know how to implement.
 
@@ -127,7 +127,7 @@ To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
 
 \noindent$\begin{array}{ll}
 \InTextDef{24ex}{\method\in\fieldsFunc(\C_0)}{
-\isField(\method)\mand\ 
+\isField(\method)\mand\
 %}\\\InTextWith{
 \method\in \dom(\C_0)
 }\\
@@ -189,13 +189,11 @@ This allows for convenient and chains of setters, as we will show later \marco{i
 \textbf{THEOREM. }
 For a given $\II_0\ldots\II_n$ interface table such that
 $\forall\II\in\II_0\ldots\II_n, \II$ OK,\\*
-if  
+if $\II_0$ has \mixin,
 $\valid(\C_0)$  and $\QM{of}\notin\dom(\C_0)$,
 then in the interface table
 $[\![\II_0]\!]\II_1\ldots\II_n$\\*
 $\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ either $\II$ OK or $\II$ is a subtype of $\II_0$.
-
-\haoyuan{In theorem: $\C_0$ is valid and $\QM{of}\notin\dom(\C_0)$. To prove the theorem we need an extra lemma: if the translation is well defined, then $[\![\II_0]\!]$ is well formed.}
 
 To understand this theorem statement, we need to understand three kind of guarantees that we can offer for safety:
 \begin{itemize}
@@ -218,7 +216,7 @@ interface A { int x(); A withX(int x); }
 @Mixin interface B extends A {}
 interface C extends B { A withX(int x); }
 \end{lstlisting}
- 
+
 By the translation rule, \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
 This would break \Q@C@.
 
@@ -230,14 +228,6 @@ This would break \Q@C@.
 %\haoyuan{Text needs improving.}
 
 To prove the theorem we introduce two lemmas below. The complete proof is available in Appendix \ref{subsec:proof1}, \ref{subsec:proof2} and \ref{subsec:proof3}.\\
-
-\noindent\textbf{LEMMA 1. }
-Assume that
-\begin{align*}
-\II_0\ &=\ \mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC\\
-[\![\II_0]\!]\ &=\ \emptyset\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \methods' \cC
-\end{align*}
-If $\II_0$ satisfies $\dom(\C_0)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)$, then $[\![\II_0]\!]$ satisfies $\dom([\![\II_0]\!])=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)\cup\dom(\methods')$.\\
 
 \marco{ you need to use the Lemma/theorem macros}
 \noindent\textbf{LEMMA 2. }

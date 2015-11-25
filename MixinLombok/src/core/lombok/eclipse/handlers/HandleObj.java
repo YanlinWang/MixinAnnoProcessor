@@ -45,7 +45,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		_ast = annotationNode.get();
 		_src = ast;
 		meAnno = annotationNode;
-		meType = new SingleTypeReference(meDecl.name, p);		
+		meType = new SingleTypeReference(meDecl.name, p);
 		if (checkValid()) genOfMethod();
 		if (errorMsg.length() > 0) meAnno.addError(errorMsg);
 	}
@@ -71,10 +71,11 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		}
 		fieldNames = fieldsMap.keySet().toArray(new String[fieldsMap.keySet().size()]);
 		Arrays.sort(fieldNames);
-		if (ofAlreadyExists()) {
-			throwError("In checkValid(): of method already defined");
-			return false;
-		}
+		// non-trivial.
+//		if (ofAlreadyExists()) {
+//			throwError("In checkValid(): of method already defined");
+//			return false;
+//		}
 		for (int i = 0; i < fieldNames.length; i++) {
 			String name = fieldNames[i];
 			TypeReference type = fieldsMap.get(name);
@@ -181,7 +182,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 					throwError("In collectAllMethods(): instanceof_2 fails");
 					return null;
 				}
-				ArrayList<Method> getMethods = collectAllMethods(getTypeDecl(((SingleTypeReference) decl.superInterfaces[i]).token), false);
+				ArrayList<Method> getMethods = collectAllMethods(getTypeDecl(((SingleTypeReference) decl.superInterfaces[i]).token), false); //todo
 				allMethods.addAll(getMethods);
 			}
 		}
