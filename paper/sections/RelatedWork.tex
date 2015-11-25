@@ -24,12 +24,14 @@ diamond (fork-join) problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, 
 %and the yo-yo problem~\cite{taenzer1989problems}.  
 To conciliate the need for expressive power and the need for simplicity, many
 models have been proposed in over the years, including C++ virtual
-inheritance, mixins~\cite{bracha90mixin} and traits~\cite{scharli03traits}.
+inheritance, mixins~\cite{bracha90mixin}, traits~\cite{scharli03traits}, and
+hybrid model such as CZ~\cite{malayeri2009cz}.
 They provide novel programming architecture models in the OO paradigm. In terms
 of restrictions set on these models, C++ virtual inheritance aims at a more
 general model, mixins added some restrictions on the model, and trait model is
 the most restricted one (excluding states, instantiation, etc).
 \bruno{How about Malayeri and Aldrich's paper? shouldn't that be discussed?}
+\yanlin{Newly added discussion on CZ. please double check.}
 
 \paragraph{C++ Approach.}
 C++ tries to provide a general solution to multiple inheritance. Virtual
@@ -70,6 +72,19 @@ interfaces is unordered and symmetric.
 \bruno{rrevise latter?}
 However, in pure Java, there is no mechanism for creating objects in
 interfaces. Also, our approach supports proper constructor mechanism.
+
+\paragraph{CZ.}
+Malayeri and Aldrich proposed a model CZ~\cite{malayeri2009cz} which aims to do
+multiple inheritance without diamond problem. They divide inheritance into two
+separate concepts: inheritance dependency (using \texttt{require}) and
+implementation inheritance (using \texttt{extends}). Using a combination of
+\texttt{requires} and \texttt{extends}, a program with diamond inheritance can be
+transformed to one without diamonds. Also in this approach, fields and multiple
+inheritance can coexist. However as shown in the example in the article, the
+untangling of inheritance also untangles class structure. In CZ, not only the
+number of classes (from 4 to 6 in the stream example), but also the class
+hirarchy complexity increases. Our approach does not complicate the structure,
+and (conceptual) fields coexist with multiple inheritance.
 
 \paragraph{Traits and Java's default methods}
 Simplifying the mixins approach, traits~\cite{scharli03traits} draw a
