@@ -9,7 +9,7 @@ existing one, showing that the amount of code is reduced significantly using \mi
 
 \subsection{A Trivial Solution to the Expression Problem with Object Interfaces}
 
-The \emph{Expression Problem} (EP)~\cite{wadler98expression-problem}
+The \emph{Expression Problem} (EP)~\cite{wadler98expression}
 is a well-known problem about modular extensibility issues in software
 evolution. Recently, a new solution~\cite{eptrivially} that uses only
 covariant type refinement that has been shown to work in Java. When
@@ -66,7 +66,7 @@ and \texttt{e2} are refined. If the types were not refined then the body of the 
 method in \texttt{AddP} would fail to type-check.
 
 \paragraph{Independent Extensibility}
-To show that our approach supports independent extensibility~\cite{odersky}, we first define a
+To show that our approach supports independent extensibility~\cite{zenger05independentlyextensible}, we first define a
 new operation \texttt{collectLit} (which collects all
 literal components in an expression) on expressions. For space reasons, 
 we omit the definitions of the methods: 
