@@ -371,7 +371,7 @@ interfaces provides support for four different types abstract state
 operations, which are summarized in Figure~\ref{fig:abstractstate}.
 The abstract state operations are determined by naming conventions and the
 types of the methods. Fluent setters are a variant of mutable setters,
-and are discussed in the case study in Section~\ref{}.
+and are discussed in the case study in Section~\ref{sec:dsls}.
 
 \begin{figure}
 \begin{tabular}{|l|l|l|}
@@ -427,11 +427,12 @@ another approach is possible.
 %Instead, with our language \emph{restriction} the problem can be easily challenged\footnote{Often in programming languages ``freedom is slavery''.}.
 
 \paragraph{Field type refinement with object interfaces}
-In our proposed solution,
+Object interfaces address the challange of type-refinement as follows:
 \begin{itemize}
-\item by covariant method overriding we refine the field type
-\item by \emph{overloading} we define a new setter with the more precise type
-\item by default method we provide an implementation for the setter called with the old signature.
+\item by covariant method overriding we refine the type of the location field to \texttt{Point3D};
+\item by \emph{overloading} we define a new setter for the location field with the more precise type;
+\item using a default method we provide an implementation for the setter called 
+with the old signature.
 \end{itemize}
 
 \lstinputlisting[linerange=73-81]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
@@ -444,22 +445,35 @@ In our proposed solution,
 %\emph{of}) also do type-refinements automatically.
 
 
+\noindent From the type perspective, the key is the covariant method
+overriding of \texttt{location()}. However from the semantic
+perspective the key is the implementation for the setter with the old
+signature.
 
-From the type perspective, the key is the covariant method overriding; however from the semantic perspective the key is the implementation for the setter with the old signature:
-by using the \Q@with@ method we may use the information for \Q@z@ already stored in the object to forge an appropriate \Q@Point3D@ to store.
-Note how all the informations about what fields sits in \Q@Point3D@ and what in \Q@Point2D@ is properly encapsulated in the \Q@with@ method, and is transparent for the implementer of \Q@Bird@.
-
-\bruno{See how to fit this in.}
-\subsubsection*{\Q@Point3D@ and properties updater}
-\Q@Bird@ needs a 3D location, thus first of all we define \Q@Point3D@ and
-as follows:
+\paragraph{\Q@Point3D@ and properties updater}
+To implement the old setter in a convenient way, \mixin supports one
+last type of operations: property updater \texttt{with}
+methods. Unlike the \texttt{withX} (where \texttt{X} stands for a
+field name) methods presented so far, property updaters take several
+fields at once, contained in an interface, and copy those fields into
+fields of another interface.
+The \Q@Point3D@ interface is defined as follows:
 \lstinputlisting[linerange=51-55]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
-\marco{Fix over: with(Point must be with(Point2D
-and it should be after withZ, and on more lines}
-Just to give you a feeling on how much boring code \mixin is generating,  we show the expanded code without then \mixin annotation\footnote{
-As you can see, the generated code is very repetitive, writing such code by hand can easily induce bugs, for example a distract programmer may
-swap the arguments of one of the many calls of \Q@Point3D.of@.
-}.\begin{lstlisting}
+\noindent By using the new \Q@with@ method we may use the information for
+\Q@z@ already stored in the object to forge an appropriate \Q@Point3D@
+to store.  Note how all the informations about what fields sits in
+\Q@Point3D@ and what in \Q@Point2D@ is properly encapsulated in the
+\Q@with@ method, and is transparent for the implementer of \Q@Bird@.
+
+\paragraph{Generated Boilerplate}
+Just to give a feeling on how much boring code \mixin is generating,
+we show the generated code for the \texttt{Point3D} interface 
+Figure~\ref{fig:boilerplate}. The generated code is very repetitive,
+writing such code by hand can easily induce bugs, for example a
+distracted programmer may swap the arguments of one of the many calls of
+\Q@Point3D.of@.
+\begin{figure}
+\begin{lstlisting}
 interface Point3D extends Point2D{
   Point3D withX(int val);    Point3D withY(int val);    Point3D withZ(int val);
   Point3D with(Point2D val);
@@ -475,9 +489,12 @@ interface Point3D extends Point2D{
         return Point3D.of(val.x(),val.y(),this.z());
         }      };    }  }
 \end{lstlisting}
+\caption{Generated boilerplate code.}
+\label{fig:boilerplate}
+\end{figure}
 Note how \Q@with-@ methods are automatically refined in their return type, so that code like 
 \Q@Point3D p=Point3D.of(1,2,3); p=p.withX(42);@ will be accepted and behave as expected. If the programmer wishes to suppress this behaviour and keep the signature as it was, it is sufficient to redefine the \Q@with-@ methods in the new class repeating the old signature.
-Again, the philosophy is that if the programmer provides something directly, \mixin do not touch it.
+Again, the philosophy is that if the programmer provides something directly, \mixin does not touch it.
 \Q@with-@ methods (functionally) update a field/property at a time.
 This can be inefficient, and sometime hard to maintain.
 Often we want to update many fields at the same time, for example using another object as source.
@@ -487,19 +504,16 @@ The idea is that we want as result something that is still like \Q@this@, but mo
 The cast in \Q@with(Point2D)@ is trivially safe since it is guarded by an \Q@instanceof@ test. The idea is that if the parameter is a subtype of the current exact type, then we can just return the parameter, as something that is just ``more'' than \Q@this@.
 
 \subsection{Advanced Multiple Inheritance with Object Interfaces}
-The \emph{``multiple inheritance''} case appears at interface
-\texttt{Pegasus}.
-Pegasus (one of the best known creatures
-in Greek mythology) can not only \emph{run} but also \emph{fly}! 
-It would be handy if they could obtain \texttt{fly} and \texttt{run} functionality from both \texttt{Horse} and \texttt{Bird}.
-
- Using interfaces and \mixin annotation,
-this can happen transparently.
+Finally, we can define Pegasus as simply as we did in the simplified (and stateless) 
+version in the right-side of Figure~\ref{fig:pegasus}:
 
 \lstinputlisting[linerange=85-86]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
 
-Note how  even the non trivial pattern for field type refinement is transparently composed, and our pegasus have a \Q@Point3D@ \Q@location@.
-Note that this works because \Q@Horse@ do not perform any field type refinement , otherwise we may have to choose/create a common subtype in order for pegasus to exists.
+\noindent Note how even the non trivial pattern for field type refinement is
+transparently composed, and \texttt{Pegasus} has a \Q@Point3D@
+\Q@location@. This works because \Q@Horse@ do not perform
+any field type refinement, otherwise we may have to choose/create a
+common subtype in order for \texttt{Pegasus} to exists.
 
 \begin{comment}
 \subsection{A Running Example: \texttt{Point}}
