@@ -187,6 +187,8 @@ This allows for convenient and chains of setters, as we will show later \marco{i
 
 
 \subsection{Results}
+Informally, in a type correct interface table, if we translate a specific interface, then
+the resulting table is type correct, or there is a subtype of the translated interface in the original table.
 \textbf{THEOREM. }
 For a given $\II_0\ldots\II_n$ interface table such that
 $\forall\II\in\II_0\ldots\II_n, \II$ OK,\\*
@@ -215,7 +217,7 @@ Indeed consider the following example
 
 \begin{lstlisting}
 interface A { int x(); A withX(int x); }
-@Mixin interface B extends A {}
+@Obj interface B extends A {}
 interface C extends B { A withX(int x); }
 \end{lstlisting}
 

@@ -77,7 +77,7 @@ should not silently satisfy a method in another one.
 
 During our experimentation, we found a bug in ECJ (eclipse version of javac): The case \textbf{B3},\textbf{A1}
 is accepted by ECJ4.5.1 and rejected by javac.
-By email communication with Brian Goetz (lead Java8 designer) we have confirmation that the expected behaviour is rejection, and that this is a bug in ECJ.
+By email communication with Brian Goetz (lead Java8 designer) we have confirmation that the expected behaviour is rejection, and that this is a bug in ECJ.\footnote{This bug is fixed in the developer version ECJ???, not yet released as stable.}
 %Table~\ref{table:javabug} shows the method overriding bug in Java. In the
 %example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
 %named as \texttt{m} which are either abstract or default methods. If we define a

@@ -166,7 +166,7 @@ first detects what are the fields, then generates an \Q@of@ method with
 one argument for each of them. That is, we can just write
 
 \begin{lstlisting}
-@Mixin interface Point2D{ int x(); int y();}
+@Obj interface Point2D{ int x(); int y();}
 \end{lstlisting}
 
 \noindent More precisely, a field or factory parameter is generated for every
@@ -188,7 +188,7 @@ when programming with immutable data-structures; it is so common that
 it is supported in our code generation as \Q@with@ methods,
 that is:
 \begin{lstlisting}
-@Mixin interface Point2D { 
+@Obj interface Point2D { 
   int x();    int y(); // getters
   Point2D withX(int val);    Point2D withY(int val); // with methods
 }
@@ -224,7 +224,7 @@ interface Point2D{ int x(); int y();
 Moreover, if the programmer wants a different implementation, they
 just provide it using a \Q@default@ method. For example:
 \begin{lstlisting}
-@Mixin interface Point2D{ 
+@Obj interface Point2D{ 
   int x(); int y();
   default Point2D withX(int val){ ... };    default Point2D withY(int val){ ... }}
 \end{lstlisting}
@@ -458,7 +458,7 @@ field name) methods presented so far, property updaters take several
 fields at once, contained in an interface, and copy those fields into
 fields of another interface.
 The \Q@Point3D@ interface is defined as follows:
-\lstinputlisting[linerange=51-55]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
+\lstinputlisting[linerange=51-56]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
 \noindent By using the new \Q@with@ method we may use the information for
 \Q@z@ already stored in the object to forge an appropriate \Q@Point3D@
 to store.  Note how all the informations about what fields sits in

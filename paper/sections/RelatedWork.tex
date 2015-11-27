@@ -352,9 +352,9 @@ safety.
 Here compile time code generation comes at the rescue: if for a certain feature
 (\mixin in our case) it is possible to use the original language syntax to
 \emph{express-describe} any specific instantiation of such feature (annotating a
-class and provide getters), then we can insert in the compilation process a tool
+class and providing getters), then we can insert in the compilation process a tool
 that examins and enrichs the code before compilation. No need to modify the
-original source; for example we can work on temporary files Java is a particular
+original source; for example we can work on temporary files. Java is a particular
 good candidate for this kind of manipulation since it already provide ways to
 define and integrate such tools in its own compilation process: in this way
 there is no need of temporary files, and there is a well defined way of putting
@@ -376,7 +376,7 @@ classes/interfaces.\bruno{explain why having multiple methods is significantly
   more challenging.} Our code generation generates several methods that may
 interacts with each other and methods defined by user. Thus implementing and
 formalizing multiple methods inside interfaces adds complexity greatly.
-
+\marco{I do not see this as a good explanation, I think we may just remove the `one method limitation discussion'. Is their work modelling interactions between abstract and default methods? like making a default method abstract again?}
 % As an evidence of the attention and care present in our formalization work,
 % while double-checking the behaviour of Java in side cases we have discovered a
 % likely bug in the current \texttt{javac}.\marco{refer to before when we explain

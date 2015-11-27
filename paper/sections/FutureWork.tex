@@ -13,17 +13,15 @@ does not directly maps to the fields, (as for secondary constructors in Scala)
 he can simply define its own \Q@of@ method and delegate on the generated one, as
 in
 \begin{lstlisting}
-@Mixin interface Point{
-  int x(); int y();
-  static Point of(int val){return Point.of(val,val);}  
-}
+@Obj interface Point{  int x(); int y();
+  static Point of(int val){return Point.of(val,val);}  }
 \end{lstlisting}
 However, the generated \Q@of@ method would also be present and public.  If a
 future version of Java was to support \emph{static private methods in
   interfaces} we could extend our code generation to handle also encapsulation.
 Currently, it is possible to use a public nested class with private static
 methods inside, but this is ugly and cumbersome. One possibility is that the
-annotation processor takes code with a \Q!@Private! annotation, and turns it into
+annotation processor takes methods with a \Q!@Private! annotation, and turns it into
 static private methods of a nested class. In this extension, also the \Q@of@
 method could be made private following the same pattern.
 
@@ -34,7 +32,7 @@ initialization code would not be reusable, and subinterfaces would have
 to repeat such initialization code.  If a field has no setters, a simple
 alternative is to just define the ``field'' as a default method as in
 \begin{lstlisting}
-@Mixin interface Box{ default int val(){return 0;} }
+@Obj interface Box{ default int val(){return 0;} }
 \end{lstlisting}
 If setters are required, a possible extension of our code expansion could
 recognize a field if the getter is provided and the setter is required, and
@@ -42,9 +40,8 @@ could generate the following code:
 \lstinputlisting[linerange=4-11]{../UseMixinLombok/src/test/TestStateInitialization.java}% APPLY:linerange=STATE_INIT
 
 We are unsure about the value of this workaround because of its trickiness. In
-order to define a state with initialization, users have to learn this pattern:
-defining a method which will be overridden later with behaviour change, but
-change only after the first setter is called. Moreover, this code would cache
+order to define a state with initialization, users have to defining a method trusting that it will be overridden later with a behavioural change, but
+such change is visible only after the first time the setter is called. Moreover, this code would cache
 the result instead of re-computing it every time. This can be very tricky in a
 non functional setting.
 %\bruno{Yanlin please polish text/break long sentences.}
@@ -79,11 +76,10 @@ generate one from the fields.\footnote{In particular, for clone we can
   fluent setters. Note how this would solve most of the Java ugliness
   related to \Q@clone@ methods.}
 However, if the user wishes to provide his own implementation, since the method is
-also implemented in \Q@Object@, a conflict arises. The user has to
-explicitly resolve the conflict inside \Q@of@, by implementing the method and
+also implemented in \Q@Object@, a conflict arises. The generated code can resolve the conflict inside \Q@of@, by implementing the method and
 delegating it to the user implementation, thus
 \begin{lstlisting}
-@Mixin interface Point{ int x(); int y();
+@Obj interface Point{ int x(); int y();
   default Point clone(){ return Point.of(0,0);}//user defined clone
 }
 \end{lstlisting} 

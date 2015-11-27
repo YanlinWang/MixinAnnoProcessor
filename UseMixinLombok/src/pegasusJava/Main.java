@@ -4,12 +4,12 @@ package pegasusJava;
 
 //BEGIN_PEGASUS_JAVA
 interface Animal {} // no points yet!
-interface Horse {
+interface Horse extends Animal{
 	default void run() {
 		System.out.println("I can run!");
 	};
 }
-interface Bird {
+interface Bird extends Animal{
 	default void fly() {
 		System.out.println("I can fly!");
 	}

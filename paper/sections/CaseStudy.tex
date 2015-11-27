@@ -11,15 +11,12 @@ existing one, showing that the amount of code is reduced significantly using \mi
 
 The \emph{Expression Problem} (EP)~\cite{wadler98expression}
 is a well-known problem about modular extensibility issues in software
-evolution. Recently, a new solution~\cite{eptrivially} that uses only
-covariant type refinement that has been shown to work in Java. When
-that solution is modelled with interfaces and default methods, it can
-even provide independent extensibility: that is, the ability to
-assemble a system, from multiple, independently developed extensions.
-Unfortunatelly, a plain Java solution has alot of code verbosity in
-Java due to code required for instantiation, which makes the solution 
-cumbersome to use. The \mixin annotation helps to remove such code, and 
-makes the solution quite easy to use.
+evolution. Recently, a new solution~\cite{eptrivially}, \marco{repharesed} using only
+covariant type refinement, has been shown.
+When such solution is modelled with interfaces and default methods, it can
+even provide independent extensibility: the ability to
+assemble a system from multiple, independently developed, extensions.
+Unfortunatelly, the required instantiation code makes a plain Java solution verbose and cumbersome to use. The \mixin annotation is enough to remove the boilerplate code, making the presented approach very appealing.
 % \bruno{We should try to do some space saving in here. You could, for example 
 % combine the code for the initial system with the code for a new operation in a figure/table 
 % with 2 colums. Then just refer to the Table/Figure in the text.}
@@ -31,6 +28,7 @@ operation:
 
 \begin{lstlisting}[multicols=2]
 interface Exp { int eval(); }
+
 @Obj interface Lit extends Exp {
 	int x();
 	default int eval() { return x(); }
@@ -55,20 +53,20 @@ method \texttt{x()} and expression fields (\texttt{e1} and \texttt{e2}) of an ad
 getter methods \texttt{e1()} and \texttt{e2()}.
 
 \paragraph{Adding a New Type of Expressions}
-It is easy to add new types of expressions to the code in the initial system in a
-modular way. For example, the following code shows how to add subtraction.
+In the object oriented paradigm, it is easy to add new types of expressions. For example, the following code shows how to add subtraction.
 
 \lstinputlisting[linerange=48-49]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
-
+\marco{text under need to be improved}
 \paragraph{Adding a New Operation} The difficulty of the EP in object-oriented 
-languages arizes from adding new operations. For example, adding a pretty printing 
+languages arises from adding new operations. For example, adding a pretty printing 
 operation, would typically involve changing all of the existing code. However, a solution 
 to the EP forbids this and it also forbids using casts. In other words, it should be possible 
 to add the pretty printing operation in a type-safe and modular way.  
 It turns out that, this can be done easily, using our object interfaces approach. 
 The following code shows how to add the new operation \texttt{print}.
 
+\marco{ use the twoc colums here too}
 \lstinputlisting[linerange=53-61]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
 %\bruno{Please add a Java comment to the code emphasizing that the types of the getters are refined!}
 %\bruno{please indent code properly (the getters are not aligned with default))}
