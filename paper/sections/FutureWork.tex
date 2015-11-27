@@ -1,8 +1,6 @@
 \section{Future work}\label{sec:futurework}
 
-\subsection{Qualifiers in Methods} %{Private state}
-\yanlin{briefly mentioned ``synchronized'' keyword, didn't put the workaround
-  here, it's in the code.}
+\subsection{Qualifiers in Methods} %{Private state
 The biggest limitation of our approach is the inability to model qualifiers
 for class methods (private, protected, synchronized, etc.). For example, the absence
 of the support for private/protected methods in Java8 interfaces forces all
@@ -40,25 +38,16 @@ alternative is to just define the ``field'' as a default method as in
 \end{lstlisting}
 If setters are required, a possible extension of our code expansion could
 recognize a field if the getter is provided and the setter is required, and
-could generate the following code: \yanlin{both of the two generated val()
-  method should be public to pass compilation. Did you omit the public keyword
-  on purpose to make the code clean? }
-\begin{lstlisting}
-interface Box{ 
-  default int val(){return 0;} //provided
-  void val(int _val);//provided
-  static Box of(){return new Box(){//generated
-    int val=Box.super.val();
-    int val(){return val;}
-    void val(int _val){val=_val;}
-    };}}
-\end{lstlisting}
-We are unsure of the value of this solution: is very tricky, the user define a
-method that (contrary to our usual expectation) is actually overridden in a way
-that the behaviour changes, but change only after the first setter is called,
-plus this code would cache the result instead of re-computing it every
-time. This can be very relevant and tricky in a non functional setting.
-\bruno{Yanlin please polish text/break long sentences.}
+could generate the following code:
+\lstinputlisting[linerange=4-11]{../UseMixinLombok/src/test/TestStateInitialization.java}% APPLY:linerange=STATE_INIT
+
+We are unsure about the value of this workaround because of its trickiness. In
+order to define a state with initialization, users have to learn this pattern:
+defining a method which will be overridden later with behaviour change, but
+change only after the first setter is called. Moreover, this code would cache
+the result instead of re-computing it every time. This can be very tricky in a
+non functional setting.
+%\bruno{Yanlin please polish text/break long sentences.}
 
 \begin{comment}
 \subsection{Class Invariants in ClassLess Java}
@@ -77,7 +66,7 @@ default methods with the special name \Q@checkInvariant()@ will be called inside
 If multiple interfaces are implemented, and more then one offers
 \Q@checkInvariant()@,  a composed implementation could be automatically generated, composing by \Q@&&@ the various competing implementations.
 \end{comment}
-\bruno{removed the invariants stuff; we need space, I think.}
+%\bruno{removed the invariants stuff; we need space, I think.}
 
 \subsection{Clone, toString, equals and hashCode}
 
@@ -103,8 +92,8 @@ Would expand into
 \begin{lstlisting}
 interface Point{ int x(); int y();
   default Point clone(){ return Point.of(0,0);}//user defined clone
-  public static Point of(int _x,int_y){
+  public static Point of(int _x, int _y){
     return new Point(){...
       public Point clone(){ return Point.super.clone();}
-      };  }  }
+    };}}
 \end{lstlisting} 
