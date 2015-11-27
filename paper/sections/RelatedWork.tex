@@ -109,8 +109,8 @@ mimicking the trait algebra through Java 8 interfaces.
 We briefly recall the main points of their encoding;
 however we propose a different representation of \textbf{exclusion}.
 The author of ~\cite{bono14} agree that our revised version is
-cleaner, typesafe and more direct.\bruno{do we want do say this?}\yanlin{need to
-  ask Marco.}
+cleaner, typesafe and more direct.
+%\bruno{do we want do say this?}\yanlin{need to ask Marco.}
 
 \newcommand\shortItem{\vspace{-1ex}}
 \begin{itemize}
@@ -158,7 +158,9 @@ that default methods and interfaces cannot model, such as method renaming
 \paragraph{Traits vs Object Interfaces}
 We consider object interfaces to be an alternative to traits or mixins.
 In the trait model two concepts (traits and classes) coexist and
-cooperate. Some authors~\bruno{who?}\yanlin{need to ask Marco} see this as good language design
+cooperate. Some authors~\cite{bettini2013pure}\yanlin{There are many trait related papers of ferruccio
+  damiani, please check whether citing this one is ok.} 
+see this as good language design
 fostering good software development by helping programmers to think
 about the structure of their programs.  However, other authors see the
 need of two concepts and the absence of state as drawbacks of this
@@ -281,23 +283,18 @@ new features: exact statements and nonheritable methods. Both are
 related to our work: 1) any method generated inside of the \Q@of@ method is indeed
 non-inheritable since there is no class name to extend from; 2)exact
 statements (a form of wild-card capture on the exact run-time type) could
-capture the ``exact type'' of an object even in a class-less environment.
-%Interestingly, our use of covariant type refinement is enough to emulate  
-
-
-
-
+capture the ``exact type'' of an object even in a class-less
+environment. 
+Admittedly, MyType greatly enhances the expressiveness and extensibility of
+object-oriented programming languages. We are using covariant-return types to
+simulate some uses of MyType. But our approach only works on method positive
+positions, whereas MyType is more general, as it works on any
+positions. Nevertheless our approach is still useful for modeling fluent
+interfaces and solving expression problems,etc.
 % The addition of MyType to a language will allow easy definition of
 %binary methods, methods with recursive types (i.e., the same type of the
-%receiver appears in the argument or return positions of methods), etc. MyType
-%greatly enhances the expressiveness and extensibility of object-oriented
-%programming languages. 
+%receiver appears in the argument or return positions of methods), etc. 
 
-%In our approach, we are using covariant-return types to simulate some uses of
-%MyType. But our approach only works on method positive positions, whereas MyType
-%is more general, as it works on any positions. Nevertheless our approach is
-%still useful for modeling fluent interfaces and solving expression
-%problems,etc. 
 
 \begin{comment}
 \subsection{Type-Directed Translations/Syntactic Sugar}
@@ -352,17 +349,16 @@ can not influence the type system, so many solutions valid in python or other
 languages are not be applicable, or may be applicable at the cost of losing
 safety.
 
-Here (compile/load time)\yanlin{only compile time should do?} code generation comes at the rescue: if for a certain
-feature (\mixin in our case) it is possible to use the original language syntax
-to \emph{express-describe} any specific instantiation of such feature
-(annotating a class and provide getters), then we can insert in the compilation
-process a tool that examins and enrichs the code before compilation. No need to
-modify the original source; for example we can work on temporary files
-\yanlin{Here what does temporary files mean? could explain more?}. Java is
-a particular good candidate for this kind of manipulation since it already
-provide ways to define and integrate such tools in its own compilation process:
-in this way there is no need of temporary files, and there is a well defined way
-of putting multiple extensions together.
+Here compile time code generation comes at the rescue: if for a certain feature
+(\mixin in our case) it is possible to use the original language syntax to
+\emph{express-describe} any specific instantiation of such feature (annotating a
+class and provide getters), then we can insert in the compilation process a tool
+that examins and enrichs the code before compilation. No need to modify the
+original source; for example we can work on temporary files Java is a particular
+good candidate for this kind of manipulation since it already provide ways to
+define and integrate such tools in its own compilation process: in this way
+there is no need of temporary files, and there is a well defined way of putting
+multiple extensions together.
 
 Other languages offer even stronger support to safe code manipulation:
 Template Haskell~\cite{sheard2002template}, F\# (type providers)~\footnote{http://research.microsoft.com/fsharp/} and MetaFjig (Active Libraries)~\cite{servetto2010metafjig}
@@ -371,13 +367,15 @@ In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In
 Since MetaFjig is not working on annotated classes, there is no direct equivalence on the overall theorem of safety we shown.
 
 \subsection{Formalization of Java8}
-We provide a simple formalization for a subset of Java
-including default/static interface methods and object initialization literals
-(often called anonymous local inner classes).  A similar formalization was
-drafted by Goetz and Field~\cite{goetz12fdefenders} to formalize defender
-(default) methods in Java. However this formalization is limited to model
-exactly one method inside classes/interfaces.\bruno{explain why having multiple 
-methods is significantly more challenging.}
+We provide a simple formalization for a subset of Java including default/static
+interface methods and object initialization literals (often called anonymous
+local inner classes).  A similar formalization was drafted by Goetz and
+Field~\cite{goetz12fdefenders} to formalize defender (default) methods in
+Java. However this formalization is limited to model exactly one method inside
+classes/interfaces.\bruno{explain why having multiple methods is significantly
+  more challenging.} Our code generation generates several methods that may
+interacts with each other and methods defined by user. Thus implementing and
+formalizing multiple methods inside interfaces adds complexity greatly.
 
 % As an evidence of the attention and care present in our formalization work,
 % while double-checking the behaviour of Java in side cases we have discovered a
