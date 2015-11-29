@@ -26,9 +26,9 @@ For the same reason we do not include \Q@void@ returning setters, since they are
 \InTextDef{18em}{[\![\weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
 }{
 \emptyset\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
-\methods\ \methods' \cC
+\methods\ \method' \cC
 }\\
-\InTextWith{\valid(\C_0),\QM{of}\notin\dom(\methods) \mbox{ and } \methods'=\ofMethod(\C_0)}
+\InTextWith{\valid(\C_0),\QM{of}\notin\dom(\methods) \mbox{ and } \method'=\ofMethod(\C_0)}
 \end{array}$
 
 \hl{To translate an interface annotated by \textbf{@ObjWeak}, we add the $\QM{of}$ method.}
@@ -102,7 +102,7 @@ To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
 %&\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
 \end{array}$
 
-\subsection{$\ofMethod$}
+\subsection{$\ofMethod$}\label{subsec:ofmethod}
 We now formally define $\ofMethod$, the function that generates the method \QM{of}, that behaves like a factory. To avoid boring digressions about well known ways to find unique names, for the sake of this formalization we assume that no-args methods do not start with underscore, and we prefix method names with underscore to obtain valid  parameter names.
 
 \noindent$\begin{array}{l}
