@@ -136,7 +136,7 @@ For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
    %\item \marco{should we just formalize setters?}
    \end{itemize}
 
-The auxiliary functions are defined below:\\*
+The auxiliary functions are defined below. Note that we do not need to check if some header is a subtype of what we would generate, this is ensured by $\valid(\C_0)$.
 
 \noindent$\begin{array}{l}
 \InTextDef{10em}{\withMethod(\C,\m,\C_0,\es)}{
@@ -156,8 +156,8 @@ The auxiliary functions are defined below:\\*
 %\mBody(\QM{clone},\C_0) \mbox{ is of form }\mh\QM;\\
 %&\cloneMethod(\C_0,\es)=\emptyset\mbox{ otherwise}\\
 \end{array}$
-   
-   
+
+
 \subsection{Other features}
 
 We have not formally modelled non fluent setters and the \Q@with@ method; informally
