@@ -2,7 +2,7 @@
 From Java8 interfaces can have three type of methods:
 abstract methods, default methods, static methods.
 \begin{itemize}
-\item Static methods are handled in a very clean way: they are visible only on the interface they are explicitly declared. This means that 
+\item Static methods are handled in a very clean way: they are visible only on the interface they are explicitly declared. This means that
 the following code is ill-typed.
 \begin{lstlisting}
 interface A0 { static int m(){return 1;} }
@@ -13,7 +13,7 @@ B0.m()//ill typed
 Note how this is different w.r.t. the way static methods are handled in classes.
 In this way static methods have simply no interaction with interface composition (\Q@extends@ or \Q@implements@).
 
-\item Abstract methods composition is accepted when there is one that is the most specific.  For example in 
+\item Abstract methods composition is accepted when there is one that is the most specific.  For example in
 method \texttt{Integer m()} is visible in \Q@C1@.
 
 \begin{lstlisting}
@@ -48,7 +48,7 @@ Consider the following correct declarations:
 \begin{lstlisting}
 interface A1{T m(); }
 interface A2 extends A1{default T m(){ ... } }
-interface A3 extends A2{T m(); } 
+interface A3 extends A2{T m(); }
 
 interface B1{default T m(){ ... } }
 interface B2 extends B1{T m(); }
@@ -103,8 +103,8 @@ By email communication with Brian Goetz (lead Java8 designer) we have confirmati
 \section{Formal Semantics}\label{sec:formal}
 
 This section presents a formalization of ClassLess Java: a minimal
-FeatherweightJava-like calculus which models the essence of Java 
-interfaces with default methods. 
+FeatherweightJava-like calculus which models the essence of Java
+interfaces with default methods.
 
 \begin{figure}[t]
 \begin{grammar}
@@ -145,7 +145,7 @@ interfaces with default methods.
 \production{
 \ann
 }{
-  \mixinAnn|\emptyset
+  \mixinAnn|\weakAnn|\emptyset
   }{annotations}\\
 \production{\Gamma}{
 \x_1{:}\C_1\ldots\x_n{:}\C_n
@@ -204,11 +204,11 @@ For simplicity, we do not model overloading, thus for an interface to be well fo
 \subsection{Typing}
 
 Typing statement $\Gamma \vdash \e\in\C$ reads ``in the environment
-$\Gamma$, expression $\e$ has type $\C$.''. 
+$\Gamma$, expression $\e$ has type $\C$.''.
 Before discussing the typing rules we discuss some of the used notation.
 As a shortcut, we write
 $\Gamma \vdash \e\in\C<:\C'$ instead of $\Gamma \vdash \e\in\C$ and
-$\C<:\C'$.  
+$\C<:\C'$.
 
 We omit the definition of
 the usual traditional subtyping relation between interfaces, that is the transitive and reflexive closure of the declared \Q@extends@ relation. %
@@ -229,7 +229,7 @@ method name and the return type from a method header. $\mBody(\m,\C)$,
 defined in Section~\ref{},
 returns the full method declaration as seen by $\C$, that is the
 method $\m$ can be declared in $\C$ or inherited from another
-interface. 
+interface.
 $\textsf{mtype}(\m,\C)$ and $\textsf{mtypeS}(\m,\C)$ return the type
 signature from a method (using $\mBody(\m,\C)$ internally).
 $\textsf{mtype}(\m,\C)$ is defined only for non static methods, while
@@ -280,7 +280,7 @@ $
 %%T-Obj
 \inferrule[(T-Obj)]{
 \forall i\in 1..k\ \ \Gamma(\x_i)\subtype\T_i\\\\
-\forall i\in 1..n\ \ 
+\forall i\in 1..n\ \
 %\Gamma_i
 \Gamma,\f_1{:}\T_1,\ldots,\f_k{:}\T_k,\,\QM{this}{:}\C,\Gamma^{\mh_i}
 \vdash\e_i\in \_\subtype\C^{\mh_i}\\\\
@@ -452,7 +452,7 @@ the non static ones that are not transitively reachable by following another, le
 \method\in\tops(\m,\Cs)}{
 }\\
 \InTextWith{
-  \mBody(\m,\C)=\method,\ \method\mbox{ not a static method, and }}\\ 
+  \mBody(\m,\C)=\method,\ \method\mbox{ not a static method, and }}\\
 \tab\tab  \C\in\Cs\ \mbox{ such that }
 \forall \C'\in\Cs\setminus\C \mbox{ not } \C' \subtype \C
 

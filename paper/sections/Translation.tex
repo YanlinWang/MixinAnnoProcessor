@@ -7,18 +7,31 @@ most of the generated methods; however in our formalism we do not consider
 casts or \Q@instanceof@, so we do not include the \Q@with@ method.
 For the same reason we do not include \Q@void@ returning setters, since they are just a minor variation over the more interesting fluent setters, and they would require special handling just for the conventional \Q@void@ type.
 
-\subsection{Translation Function}${}_{}$\\*
+\hl{Furthermore, we introduce \textbf{@ObjWeak}, which is only an annotation for illustrating the translation, hence is not implemented in Lombok. By this, the real translation is divided into two parts: \textbf{@Obj} automatically refines the return types only, and \textbf{@ObjWeak} generates the constructor method $\QM{of}$. In the source code, the only annotation \textbf{@Obj} combines both of the work and finishes the translation at a time.}
+
+\subsection{Translation Function}
 
 \noindent$\begin{array}{l}
 \InTextDef{18em}{[\![\mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
 }{
+\weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
+\methods\ \methods' \cC
+}\\
+\InTextWith{\methods'=\otherMethod(\C_0,\methods)}
+\end{array}$
+
+\hl{To translate an interface annotated by \mixin, we add some other methods for type refinement, then add a new annotation \textbf{@ObjWeak} to the interface.}
+
+\noindent$\begin{array}{l}
+\InTextDef{18em}{[\![\weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
+}{
 \emptyset\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
 \methods\ \methods' \cC
 }\\
-\InTextWith{\valid(\C_0),\QM{of}\notin\dom(\methods) \mbox{ and } \methods'=\ofMethod(\C_0) \cup \otherMethod(\C_0,\methods)}
+\InTextWith{\valid(\C_0),\QM{of}\notin\dom(\methods) \mbox{ and } \methods'=\ofMethod(\C_0)}
 \end{array}$
 
-To translate an annotated interface, we add the \Q@of@ method, and then we add some other methods.
+\hl{To translate an interface annotated by \textbf{@ObjWeak}, we add the $\QM{of}$ method.}
 However, first of all we check if the interface is valid for annotation:
 
 \noindent$\valid(\C_0)$  holds if $\forall \m\in\dom(\C_0),$ if $\mh\QM; = \mBody(\m, \C_0),$ one case is satisfied:
@@ -32,7 +45,7 @@ That is, we can categorize all the \emph{not implemented} methods in a pattern t
 %To complete our formal definition we would need to add setters and \Q@with@.
 Moreover, we check that the method \Q@of@ is not already defined by the user.
 In our simplified formalization we consider this to be just an error.
-In our prototype we keep overloading into account, and so we check that an \Q@of@ method with the same signature of the one we would generate is not already present.\marco{Do we check it?}
+In our prototype we keep overloading into account, and so we check that an \Q@of@ method with the same signature of the one we would generate is not already present.\marco{Do we check it?}\haoyuan{Not sure if it is $\QM{of}\notin\dom(\methods)$ or $\QM{of}\notin\dom(\C_0)$. It is an error if a static method overrides an instance method.}
 
 
 In the following we will write $\QM{with#}\m$ to append $\m$ to \QM{with}, following the camelCase rule, so the first letter of
@@ -40,7 +53,56 @@ $\m$ must be lower-case and is turned in upper-case upon merging.
 For example \QM{with#foo}=\QM{withFoo}.
 Special names $\specialName(\m)$ are  \QM{with} and all the identifiers of form $\QM{with#}\m$.
 
-\subsection{$\ofMethod$}${}_{}$\\*
+\subsection{$\otherMethod$}
+The definition of $\otherMethod(\C_0,\methods)$ is as follows:
+
+\haoyuan{I think $\QM{with#}\m\notin\dom(\methods)$ is not enough. The withM method with return type $I_0$ can also be defined already in a super interface. Like:
+\[\begin{array}{l}\QM{
+interface A}\ \oC\QM{int x(); B withX(int x);}\cC\\
+\mixinAnn\ \QM{interface B extends A}\ \oC\cC\end{array}\]}
+
+\noindent$\begin{array}{ll}
+\InTextDef{20em}{\C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\QM;\in
+\otherMethod(\C_0,\methods)}{
+ \isWith(\mBody(\QM{with#}\m, \C_0), \C_0)}\\
+\InTextWith{\C\ \m\QM{();}\in \fieldsFunc(\C_0)
+\mbox{ and } \QM{with#}\m\notin\dom(\methods)}\\
+\InTextDef{20em}{\C_0\ \QM_\m\oR \C\ \QM{_val}\cR\QM;\in
+\otherMethod(\C_0,\methods)}{\isSetter(\mBody(\QM_\m, \C_0), \C_0)}\\
+\InTextWith{
+\C\ \m\QM{();}\in \fieldsFunc(\C_0)
+\mbox{ and } \QM_\m\notin\dom(\methods)}\\
+\end{array}$
+
+The methods that we generate in the interface are \Q@with-@ and setters. %\Q@clone@.
+%A complete formalization would also generate the \Q@with@.
+We discover if there is the need of generating such methods by checking if the method is unimplemented in $\C_0$. This is needed only if we need to refine the return type.
+To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
+ is required by $\C_0$, but is not already present in the methods \hl{directly declared in} $\C_0$.
+
+\noindent$\begin{array}{ll}
+\InTextDef{24ex}{\method\in\fieldsFunc(\C_0)}{
+\isField(\method)\ \mand\
+%}\\\InTextWith{
+\method=\mBody(\_,\C_0)
+}\\
+
+\InTextDef{24ex}{\isField(\C\ \m\oR\cR\QM;)}{
+\mnot\ \specialName(\m)}\\
+\InTextDef{24ex}{\isWith(\C'\ \QM{with#}\m \oR \C\ \x\cR\QM;, \C_0)}{
+\C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;
+\ \mand\ \mnot\ \specialName(\m)}\\
+\InTextDef{24ex}{\isSetter(\C'\ \QM_\m \oR \C\ \x\cR\QM;, \C_0)}{
+\C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;
+\ \mand\ \mnot\ \specialName(\m)}\\
+
+%\isClone:&\isClone(\C\ \QM{clone}\oR\cR\QM;, \C_0)\tab \mif\ \C_0 <: \C \\
+%\isImplemented:&\isImplemented(\method) \tab\mbox{iff }\method\mbox{ not of form }\mh\QM;
+%\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
+%&\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
+\end{array}$
+
+\subsection{$\ofMethod$}
 We now formally define $\ofMethod$, the function that generates the method \QM{of}, that behaves like a factory. To avoid boring digressions about well known ways to find unique names, for the sake of this formalization we assume that no-args methods do not start with underscore, and we prefix method names with underscore to obtain valid  parameter names.
 
 \noindent$\begin{array}{l}
@@ -61,7 +123,7 @@ We now formally define $\ofMethod$, the function that generates the method \QM{o
 \mbox{and }\es_i=\m_1\QM,\ldots\QM, \m_{i-1}\QM,\QM{_val,}\m_{i+1}\QM,\ldots\QM, \m_n}
 \end{array}$
 
-The function $\fieldsFunc(\C_0)$ (formally defined later) denotes all the fields in the current interface.
+The function $\fieldsFunc(\C_0)$ (defined before) denotes all the fields in the current interface.
 For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
   \begin{itemize}
    \item $\m_i$ is the field name, and have type $\C_i$.
@@ -74,8 +136,7 @@ For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
    %\item \marco{should we just formalize setters?}
    \end{itemize}
 
-\subsection{Other auxiliary functions}${}_{}$\\*
-
+The auxiliary functions are defined below:\\*
 
 \noindent$\begin{array}{l}
 \InTextDef{10em}{\withMethod(\C,\m,\C_0,\es)}{
@@ -95,58 +156,9 @@ For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
 %\mBody(\QM{clone},\C_0) \mbox{ is of form }\mh\QM;\\
 %&\cloneMethod(\C_0,\es)=\emptyset\mbox{ otherwise}\\
 \end{array}$
-
-
-As you can see above, \Q@with-@ and setter methods are generated if needed.
-We can discover if there is the need of generating such methods by checking if the method is unimplemented in $\C_0$. Note that we do not need to check if its header is a subtype of what we would generate, this is ensured by $\valid(\C_0)$.
-
-
-
-\noindent$\begin{array}{ll}
-\InTextDef{20em}{\C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\QM;\in
-\otherMethod(\C_0,\methods)}{
- \isWith(\mBody(\QM{with#}\m, \C_0))}\\
-\InTextWith{\C\ \m\QM{();}\in \fieldsFunc(\C_0)
-\mbox{ and } \QM{with#}\m\notin\dom(\methods)}\\
-\InTextDef{20em}{\C_0\ \QM_\m\oR \C\ \QM{_val}\cR\QM;\in
-\otherMethod(\C_0,\methods)}{\isSetter(\mBody(\QM_\m, \C_0))}\\
-\InTextWith{
-\C\ \m\QM{();}\in \fieldsFunc(\C_0)
-\mbox{ and } \QM_\m\notin\dom(\methods)}\\
-%&\C_0\ \QM{clone}\oR\cR\QM;\in
-%\otherMethod(\C_0)
-%\\&  \mbox{ iff }
-%\isClone(\mBody(\QM{clone}, \C_0))
-%\mbox{ and } \QM{clone}\notin\dom(\methods)\\
-\end{array}$
-
-Other methods that we need to generate in the interface are \Q@with-@ and setters. %\Q@clone@.
-%A complete formalization would also generate the \Q@with@.
-This is needed only if we need to refine the return type.
-To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
- is required by $\C_0$, but is not already present in the methods directly declared in $\C_0$.
-
-\noindent$\begin{array}{ll}
-\InTextDef{24ex}{\method\in\fieldsFunc(\C_0)}{
-\isField(\method)\mand\
-%}\\\InTextWith{
-\method=\mBody(\_,\C_0)
-}\\
-
-\InTextDef{24ex}{\isField(\C\ \m\oR\cR\QM;)}{
-\mnot\ \specialName(\m)}\\
-\InTextDef{24ex}{\isWith(\C'\ \QM{with#}\m \oR \C\ \x\cR\QM;, \C_0)}{
-\C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;
- \mand\ \mnot\ \specialName(\m)}\\
-\InTextDef{24ex}{\isSetter(\C'\ \QM_\m \oR \C\ \x\cR\QM;, \C_0)}{
-\C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;
- \mand\ \mnot\ \specialName(\m)}\\
-
-%\isClone:&\isClone(\C\ \QM{clone}\oR\cR\QM;, \C_0)\tab \mif\ \C_0 <: \C \\
-%\isImplemented:&\isImplemented(\method) \tab\mbox{iff }\method\mbox{ not of form }\mh\QM;
-%\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
-%&\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
-\end{array}$
+   
+   
+\subsection{Other features}
 
 We have not formally modelled non fluent setters and the \Q@with@ method; informally
 \begin{itemize}
