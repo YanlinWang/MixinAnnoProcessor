@@ -22,13 +22,25 @@ Unfortunatelly, the required instantiation code makes a plain Java solution verb
 % with 2 colums. Then just refer to the Table/Figure in the text.}
 
 \paragraph{Initial System}
+\yanlin{code figure updated.}
 In the formulation of the EP there is an initial system that models
 arithmetic expressions with only literals and addition, and an initial 
-operation:
+operation \texttt{eval} for expression evaluation.
 
-\begin{lstlisting}[multicols=2]
+\noindent As shown in Figure~\ref{fig:ep}, \texttt{Exp} is the common
+super-interface with an evaluation operation \texttt{eval()}
+inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend interface
+\texttt{Exp} with default implementations for the \texttt{eval} operation. The
+number field \texttt{x} of a literal is represented as a getter method
+\texttt{x()} and expression fields (\texttt{e1} and \texttt{e2}) of an addition
+as getter methods \texttt{e1()} and \texttt{e2()}.
+
+\begin{figure}
+\begin{tabular}{l|l}
+\begin{minipage}{8cm}
+%\vspace{-90pt}
+\begin{lstlisting}[]
 interface Exp { int eval(); }
-
 @Obj interface Lit extends Exp {
 	int x();
 	default int eval() { return x(); }
@@ -40,17 +52,15 @@ interface Exp { int eval(); }
 	}
 }
 \end{lstlisting}
-
-% \begin{multicols}{2}
-% \lstinputlisting[linerange=34-44]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
-% \end{multicols}
-
-\noindent \texttt{Exp} is the common super-interface with an evaluation operation
-\texttt{eval()} inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend
-interface \texttt{Exp} with default implementations for the \texttt{eval}
-operation. The number field \texttt{x} of a literal is represented as a getter
-method \texttt{x()} and expression fields (\texttt{e1} and \texttt{e2}) of an addition as
-getter methods \texttt{e1()} and \texttt{e2()}.
+\end{minipage}
+&
+\begin{minipage}{8cm}
+\lstinputlisting[linerange=53-61]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\end{minipage}
+\end{tabular}
+\caption{The Expression Problem. Initial system on the left, and code for adding
+  print operation on the right. }\label{fig:ep}
+\end{figure}
 
 \paragraph{Adding a New Type of Expressions}
 In the object oriented paradigm, it is easy to add new types of expressions. For example, the following code shows how to add subtraction.
@@ -64,12 +74,7 @@ operation, would typically involve changing all of the existing code. However, a
 to the EP forbids this and it also forbids using casts. In other words, it should be possible 
 to add the pretty printing operation in a type-safe and modular way.  
 It turns out that, this can be done easily, using our object interfaces approach. 
-The following code shows how to add the new operation \texttt{print}.
-
-\marco{ use the twoc colums here too}
-\lstinputlisting[linerange=53-61]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
-%\bruno{Please add a Java comment to the code emphasizing that the types of the getters are refined!}
-%\bruno{please indent code properly (the getters are not aligned with default))}
+The code in Figure~\ref{fig:ep} shows how to add the new operation \texttt{print}.
 
 \noindent  The interface \texttt{ExpP} extending interface \texttt{Exp} is defined with the
 extra method \texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are
