@@ -30,8 +30,6 @@ They provide novel programming architecture models in the OO paradigm. In terms
 of restrictions set on these models, C++ virtual inheritance aims at a more
 general model, mixins added some restrictions on the model, and trait model is
 the most restricted one (excluding states, instantiation, etc).
-\bruno{How about Malayeri and Aldrich's paper? shouldn't that be discussed?}
-\yanlin{Newly added discussion on CZ. please double check.}
 
 \paragraph{C++ Approach.}
 C++ tries to provide a general solution to multiple inheritance. Virtual
@@ -40,12 +38,10 @@ the diamond problem by keeping only one copy of the base
 class)~\cite{ellis1990annotated}, however suffers from object initialization
 problem as pointed out by Malayeri et al.~\cite{malayeri2009cz}. It bypasses all
 constructor calls to virtual superclasses, which would potentially cause serious
-semantic errors. \bruno{What happens in our approach for the same
-  case?}\yanlin{explained below please double-check.} In our
-approach, \mixin annotation processor has the full control of object
-initialization mechanism, and this mechanism is clean and transparent to
-users. Moreover, if not satisfied with the default generated \texttt{of} method,
-customized factory methods are also allowed to be defined.
+semantic errors. In our approach, \mixin annotation processor has the full
+control of object initialization mechanism, and this mechanism is clean and
+transparent to users. Moreover, if not satisfied with the default generated
+\texttt{of} method, customized factory methods are also allowed to be defined.
 
 \paragraph{Mixins.}
 Mixins are a more restricted model than the C++ approach. Mixins allow to name
@@ -74,9 +70,8 @@ can be expressed in python as \\*
 linearisation: the semantics of Java \textbf{extends} clause in
 interfaces is unordered and symmetric.
 
-\bruno{rrevise latter?}
-However, in pure Java, there is no mechanism for creating objects in
-interfaces. Also, our approach supports proper constructor mechanism.
+% However, in pure Java, there is no mechanism for creating objects in
+% interfaces. Also, our approach supports proper constructor mechanism.
 
 \paragraph{CZ.}
 Malayeri and Aldrich proposed a model CZ~\cite{malayeri2009cz} which aims to do
@@ -156,32 +151,28 @@ that default methods and interfaces cannot model, such as method renaming
 (as in [Reppy2006]), which breaks structural subtyping.
 
 \paragraph{Traits vs Object Interfaces}
-We consider object interfaces to be an alternative to traits or mixins.
-In the trait model two concepts (traits and classes) coexist and
-cooperate. Some authors~\cite{bettini2013pure}\yanlin{There are many trait related papers of ferruccio
-  damiani, please check whether citing this one is ok.} 
-see this as good language design
-fostering good software development by helping programmers to think
-about the structure of their programs.  However, other authors see the
-need of two concepts and the absence of state as drawbacks of this
-model~\cite{malayeri2009cz}.  Object interfaces are units of reuse, and at
-the same time they provide factory methods for instantiation and
-support state.  Our approach promotes the use of interfaces instead of
-classes, in order to rely on the modular composition offered
-by interfaces. Since Java was designed for classes, a direct class-less
-programming style is verbose and feels unnatural. However, annotation
-driven code generation is enough to overcome this difficulty, and the
-resulting programming style encourages modularity, composability and
-reusability, by keeping a strong object oriented feel. In that sense,
-we promote object interfaces as being both units of reusable code and
-object factories. Our practical experience is that, in Java,
-separating the two notions leads to alot of boilerplate code, and is
-quite limiting when multiple inheritance with state is required. The
-use of abstract state operations avoids the key difficulties
-associated with multiple inheritance and state, while still being quite expressive. 
-Moreover the ability to support constructors 
-adds additional expressivity, which is not available in approaches such 
-as Scala's traits/mixins. 
+We consider object interfaces to be an alternative to traits or mixins.  In the
+trait model two concepts (traits and classes) coexist and cooperate. Some
+authors~\cite{bettini2013pure} see this as good language design fostering good
+software development by helping programmers to think about the structure of
+their programs.  However, other authors see the need of two concepts and the
+absence of state as drawbacks of this model~\cite{malayeri2009cz}.  Object
+interfaces are units of reuse, and at the same time they provide factory methods
+for instantiation and support state.  Our approach promotes the use of
+interfaces instead of classes, in order to rely on the modular composition
+offered by interfaces. Since Java was designed for classes, a direct class-less
+programming style is verbose and feels unnatural. However, annotation driven
+code generation is enough to overcome this difficulty, and the resulting
+programming style encourages modularity, composability and reusability, by
+keeping a strong object oriented feel. In that sense, we promote object
+interfaces as being both units of reusable code and object factories. Our
+practical experience is that, in Java, separating the two notions leads to alot
+of boilerplate code, and is quite limiting when multiple inheritance with state
+is required. The use of abstract state operations avoids the key difficulties
+associated with multiple inheritance and state, while still being quite
+expressive.  Moreover the ability to support constructors adds additional
+expressivity, which is not available in approaches such as Scala's
+traits/mixins.
 
 %Nevertheless, we
 %believe that in other languages the separation can be more practical

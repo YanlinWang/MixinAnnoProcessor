@@ -107,20 +107,19 @@ bug, ECJ behaves differently from both our formalization and Oracle's
 Java compiler.
 
 To evaluate the usefulness of object interfaces, we illustrate 3
-applications and case studies. The first application is a simple 
+applications (case studies). The first application is a simple 
 solution to the Expression Problem~\cite{wadler98expression}, supporting independent 
 extensibility~\cite{zenger05independentlyextensible}, and without boilerplate code. The second
-application is to show how embedded DSLs using fluent interfaces~\cite{fowler2005fluentinterface} 
-can be easily defined using object interfaces. Finally, the last
+application is shows how embedded DSLs using fluent interfaces~\cite{fowler2005fluentinterface} 
+can be easily defined using object interfaces. The last
 application is a larger case study for a simple Maze game implemented with 
 multiple inheritance. For the last application we show that there is a
 significant reduction in the numbers of lines of code when compared 
 to an existing implementation~\cite{bono14} using plain Java 8. 
-Noteworthy, is the fact that all applications are implemented 
+Noteworthy, all applications are implemented 
 without defining a single class!
 
 In summary, the contributions of this paper are:
-
 \begin{itemize}
 
 \item {\bf Object Interfaces:} A simple feature that allows various
