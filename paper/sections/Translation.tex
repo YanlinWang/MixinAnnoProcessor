@@ -11,6 +11,8 @@ For the same reason we do not include \Q@void@ returning setters, since they are
 
 \subsection{Translation Function}
 
+Two translation functions for the two parts are presented as follows:
+
 \noindent$\begin{array}{l}
 \InTextDef{18em}{[\![\mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
 }{
@@ -20,7 +22,7 @@ For the same reason we do not include \Q@void@ returning setters, since they are
 \InTextWith{\methods'=\otherMethod(\C_0,\methods)}
 \end{array}$
 
-\hl{To translate an interface annotated by \mixin, we add some other methods for type refinement, then add a new annotation \textbf{@ObjWeak} to the interface.}
+\noindent\hl{To translate an interface annotated by \mixin, we add some other methods for type refinement, then add a new annotation \textbf{@ObjWeak} to the interface.}
 
 \noindent$\begin{array}{l}
 \InTextDef{18em}{[\![\weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
@@ -31,7 +33,7 @@ For the same reason we do not include \Q@void@ returning setters, since they are
 \InTextWith{\valid(\C_0),\QM{of}\notin\dom(\methods) \mbox{ and } \method'=\ofMethod(\C_0)}
 \end{array}$
 
-\hl{To translate an interface annotated by \textbf{@ObjWeak}, we add the $\QM{of}$ method.}
+\noindent\hl{To translate an interface annotated by \textbf{@ObjWeak}, we add the $\QM{of}$ method.}
 However, first of all we check if the interface is valid for annotation:
 
 \noindent$\valid(\C_0)$  holds if $\forall \m\in\dom(\C_0),$ if $\mh\QM; = \mBody(\m, \C_0),$ one case is satisfied:

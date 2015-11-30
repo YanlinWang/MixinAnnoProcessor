@@ -1,4 +1,8 @@
+\newpage
+
 \section{Appendix}\label{sec:appendix}
+
+\subsection{THEOREM}\label{subsec:theorem}
 
 \textbf{THEOREM. }
 For a given $\II_0\ldots\II_n$ interface table such that
@@ -48,12 +52,12 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
 \item All field initializations are type correct. By the definition of $\ofMethod(\C_0)$ in Section~\ref{subsec:ofmethod}, the fields $m_1,\ldots,m_n$ are initialized by $\QM{of}$'s arguments, and types are compatible.
 \item All method bodies are well-typed.
     \begin{itemize}
-    \item Typing of the $i$-getter $m_i$. \[\Gamma, m_i:\C_i, \QM{this}:\C_0 \vdash m_i\in \C_i\]
+    \item Typing of the $i$-th getter $m_i$. \[\Gamma, m_i:\C_i, \QM{this}:\C_0 \vdash m_i\in \C_i\]
         We know that $\C_i=\C^{\mh_i}$ since the $i$-th getter has its return type the same as the corresponding field $m_i$.
     \item Typing of the \QM{with-} method of an arbitrary field $m_i$. By Section~\ref{subsec:ofmethod}, if the \QM{with-} method of $m_i$ is well-defined, it has the form \[\C_0\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{}\QM{return}\ \C_0\QM{.of(}\es_i\QM{);\}}\]
         $\es_i$ is obtained by replacing $m_i$ with $\QM{_val}$ in the list of fields, and since they have the same type $\C_i$, the arguments $\es_i$ are compatible with $\C_0.\QM{of}$ method. Hence \[\Gamma, \overline{m_i:\C_i}, \QM{this}:\C_0,\ \QM{_val} : \C_i \vdash \C_0\QM{.of}\oR\es_i\cR\in \C_0\]
         We know that $\C_0=\C^{\mh_i}$ by the return type of $\QM{with#}\m_i$ shown as above.
-    \item Typing of the $i$-setter \QM_$m_i$. If the \QM_$m_i$ method is well-defined, it has the form
+    \item Typing of the $i$-th setter \QM_$m_i$. If the \QM_$m_i$ method is well-defined, it has the form
         \[\C_0\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{} \m_i\QM{= _val;return this;\}}\]
         By \rn{t-Update}, the assignment ``$\m_i\QM{= _val;}$'' is correct since $\m_i$ and $\QM{_val}$ have the same type $I_i$, and the return type is decided by \QM{this}. \[\Gamma, \QM{this}:\C_0,\ \QM{_val} : \C_i \vdash\QM{this}\in \C_0\]
         We know that $\C_0=\C^{\mh_i}$ by the return type of $\QM_\m_i$ shown as above.\\
@@ -61,41 +65,43 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
         \haoyuan{Can we write $\QM{\{} \m_i\QM{= _val;return this;\}} \in \C_0$?}
     \end{itemize}
 \item All method headers are valid with respect to the domain of $\C_0$. Namely $$\sigvalid(\mh_1\ldots\mh_n,I)$$
-    \haoyuan{TODO}
+    \begin{itemize}
+    \item For the $i$-th getter $m_i$,
+        \begin{align*}
+        &\C_i\ \m_i\oR\cR\ \QM{\{...\}}\in\ofMethod(\C_0)\\
+        \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; \in \fieldsFunc(\C_0)\\
+        \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; = \mBody(m_i,\C_0)\\
+        \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; <: \mBody(m_i,\C_0)
+        \end{align*}
+    \item For the $\QM{with#}\m_i$ method,
+        \begin{align*}
+        &\C_0\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{...\}}\in\ofMethod(\C_0)\\
+        \mimply\hspace{.2in}& \mBody(\QM{with#}\m_i,\C_0) \mbox{ is of form }\mh\QM;\\
+        \mbox{with}\hspace{.2in}& \valid(\C_0)\\
+        \mimply\hspace{.2in}& \isWith(\mBody(\QM{with#}\m_i,\C_0),\C_0)\\
+        \mimply\hspace{.2in}& \C_0\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\QM; <: \mBody(\QM{with#}\m_i,\C_0)
+        \end{align*}
+    \item For the $i$-th setter $\QM_\m_i$,
+        \begin{align*}
+        &\C_0\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{...\}}\in\ofMethod(\C_0)\\
+        \mimply\hspace{.2in}& \mBody(\QM_\m_i,\C_0) \mbox{ is of form }\mh\QM;\\
+        \mbox{with}\hspace{.2in}& \valid(\C_0)\\
+        \mimply\hspace{.2in}& \isSetter(\mBody(\QM_\m_i,\C_0),\C_0)\\
+        \mimply\hspace{.2in}& \C_0\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\QM; <: \mBody(\QM_\m_i,\C_0)
+        \end{align*}
+    \end{itemize}
 \item All abstract methods in the domain of $\C_0$ have been implemented. Namely $$\alldefined(\mh_1\ldots\mh_n,I)$$
     Here we simply refer to $\valid(\C_0)$, since it guarantees each abstract method to satisfy $\isField$, $\isWith$ or $\isSetter$. But that object includes all implementations for those cases, hence it is of type $\C_0$ by \rn{t-Obj}.
 \end{itemize}
 
 \noindent\textbf{Part II.} Next we check that in $[\![\II_0]\!]$, $$\dom([\![\II_0]\!])=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)\cup\dom(\method')$$
 Since $\II_0$ OK, we have $\dom(\II_0)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)$, and hence it is equivalent to prove $$\dom([\![\II_0]\!])=\dom(\C_0)\cup\dom(\method')$$
-This is obvious since a pre-condition of the translation is $\QM{of}\notin\dom(\C_0)$, so $\method'$ doesn't overlap with $\dom(\C_0)$. The definition of $\dom$ is based on $\mBody$, and here the new domain $\dom([\![\II_0]\!])$ is only an extension to $\dom(\C_0)$ with the \QM{of} method, namely $\method'$, which finishes our proof.
+This is obvious since a pre-condition of the translation is $\QM{of}\notin\dom(\C_0)$, so $\method'$ doesn't overlap with $\dom(\C_0)$. The definition of $\dom$ is based on $\mBody$, and here the new domain $\dom([\![\II_0]\!])$ is only an extension to $\dom(\C_0)$ with the \QM{of} method, namely $\method'$. Also note that after translation, there are still no methods with conflicted names, since the \QM{of} method was previously not in the domain, hence $[\![\II_0]\!]$ is well-formed, which finishes our proof.
 \end{proof}
 
-\subsection{Notes}
-
-\begin{itemize}
-\item To prove that $\forall i$, $\mh_i\subtype\mBody(m^{\mh_i}, \C_0)$,
- \begin{itemize}
- \item For getters, \[\C_i\ m_i\oR\cR\QM; \in \fieldsFunc(\C_0) \Rightarrow \C_i\ m_i\oR\cR\QM; \in \dom(\C_0)\]
- \item For \QM{with-} methods,\marco{ use if-then or other english forms instead of the logic arrow}
-  \[\begin{array}{l}
-  \mBody(\QM{with#}\m_i,\C_0) \mbox{ is of form }\mh\QM; \\ \valid(\C_0)
-  \end{array}\Rightarrow \isWith\Rightarrow \C_0\subtype\mBody(m^{\mh_i}, \C_0)\]
- \item For setters,
-  \[\begin{array}{l}
-  \mBody(\m_i,\C_0) \mbox{ is of form }\mh\QM; \\ \valid(\C_0)
-  \end{array}\Rightarrow \isSetter\Rightarrow \C_0\subtype\mBody(m^{\mh_i}, \C_0)\]
- \end{itemize}
-\end{itemize}
-
-
 \subsection{Proof of THEOREM}\label{subsec:proof3}
-\textbf{THEOREM. }
-For a given $\II_0\ldots\II_n$ interface table such that
-$\forall\II\in\II_0\ldots\II_n, \II$ OK, then in the interface table
-$[\![\II_0]\!]\II_1\ldots\II_n$
-$\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ either $\II$ OK or $\II$ is a subtype of $\II_0$.
 \begin{proof}
-\textbf{LEMMA 2} already proves that $[\![\II_0]\!]$ is OK. On the other hand, if some $\II$ is not a subtype of $\II_0$,
-\marco{by the newLemma, we know that all its methods are still well typed, and } the generated code in translation has no way to affect the domain of $\II$,\marco{ so rule t-interf can still be applied,} which finishes our proof.\haoyuan{And the well-formedness.}
+\textbf{LEMMA 2} already proves that $[\![\II_0]\!]$ is OK. On the other hand, for any $\II\ne\II_0$, by \textbf{LEMMA 1}, we know that all its methods
+are still well-typed, and the generated code in translation of \textbf{@ObjWeak} is only a static method \QM{of}, which has no way to affect the domain
+of $\II$, so after translation rule \rn{t-Intf} can still be applied, which finishes our proof.
 \end{proof}
