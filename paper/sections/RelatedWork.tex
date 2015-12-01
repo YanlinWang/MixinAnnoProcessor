@@ -140,20 +140,19 @@ cleaner, typesafe and more direct.
 \shortItem
 \end{itemize}
 
-There are also proposals for extending Java (before Java8) with
-traits. For example, FeatherTrait Java (FTJ)~\cite{Liquori08ftj} by
-Liquori et al. extends the calculus of Featherweight Java
-(FJ)~\cite{Igarashi01FJ} with statically-typed traits, adding
-trait-based inheritance in Java.  Except for few, mostly syntactic
-details, their work can be emulated/rephrased with Java8 interfaces.
-There are also extensions to the original trait model, which have operations 
-that default methods and interfaces cannot model, such as method renaming
-(as in [Reppy2006]), which breaks structural subtyping.
+There are also proposals for extending Java (before Java8) with traits. For
+example, FeatherTrait Java (FTJ)~\cite{Liquori08ftj} by Liquori et al. extends
+the calculus of Featherweight Java (FJ)~\cite{Igarashi01FJ} with
+statically-typed traits, adding trait-based inheritance in Java.  Except for
+few, mostly syntactic details, their work can be emulated/rephrased with Java8
+interfaces.  There are also extensions to the original trait model, which have
+operations that default methods and interfaces cannot model, such as method
+renaming in \cite{reppy2006foundation}, which breaks structural subtyping.
 
 \paragraph{Traits vs Object Interfaces}
 We consider object interfaces to be an alternative to traits or mixins.  In the
 trait model two concepts (traits and classes) coexist and cooperate. Some
-authors~\cite{bettini2013pure} see this as good language design fostering good
+authors~\cite{BettiniDSS13} see this as good language design fostering good
 software development by helping programmers to think about the structure of
 their programs.  However, other authors see the need of two concepts and the
 absence of state as drawbacks of this model~\cite{malayeri2009cz}.  Object
