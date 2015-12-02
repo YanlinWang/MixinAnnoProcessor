@@ -5,7 +5,7 @@
 \subsection{LEMMA 1 and Proof}\label{subsec:lemma1}
 
 \textbf{LEMMA 1. }
-For any expression $e$ under an interface table $\II_0\ldots\II_n$ with $\Gamma\vdash e\in\C$, if $\II_0$ has \textbf{@ObjWeak} and $[\![\II_0]\!]$ is well-defined, then under the interface table $[\![\II_0]\!]\II_1\ldots\II_n$, $\Gamma\vdash e\in\_<:\C$.
+For any expression $e$ under an interface table $\II_0\ldots\II_n$ with $\Gamma\vdash e\in\C$, if $\II_0$ has \textbf{@ObjWeak} annotation and $[\![\II_0]\!] = \II'_0$, then under the interface table $\II'_0\II_1\ldots\II_n$, $\Gamma\vdash e\in\C$.
 \begin{proof}
 By induction on the typing rules: by the grammar shown in Figure~\ref{Grammar}, there are 6 cases for an arbitrary expression $e$:
 \begin{itemize}
@@ -19,7 +19,7 @@ By induction on the typing rules: by the grammar shown in Figure~\ref{Grammar}, 
 \subsection{LEMMA 2 and Proof}\label{subsec:lemma2}
 
 \textbf{LEMMA 2. }
-If $\II_0$ has \textbf{@ObjWeak} and $\C_0$ OK, then $[\![\II_0]\!]$ OK.
+If $\II_0$ has \textbf{@ObjWeak} annotation and $\C_0$ OK, then $[\![\II_0]\!]$ OK.
 \begin{proof}
 
 By the rule \rn{t-Intf} in Figure~\ref{ET}, we divide the proof into two parts.
