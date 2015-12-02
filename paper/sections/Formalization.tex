@@ -1,6 +1,6 @@
 \section{Interaction of Interface Methods with Interface Composition}
 Before formalizing Classless Java, it is helpful to informally discuss the behaviour
-of methods in Java 8 interfaces. 
+of methods in Java 8 interfaces.
 
 %We show several interesting cases
 %and summarize compilation result of method composition into 3 categories:
@@ -70,7 +70,7 @@ interface B2 extends B1{T m(); }
 interface B3 extends B2{default T m(){ ... } }
 \end{lstlisting}
 
-\noindent 
+\noindent
 What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
 \Q@B@${}_j$? Nine representative cases are shown next:\\*
 \noindent
@@ -202,7 +202,7 @@ method body of the form \Q@return@ $\x\QM=\e\QM;\e'$ to represent
 $\x\QM=\e\QM;\QM{return}\ \e'$ in Java.  Finally, there is an object
 initialization expression from an interface $\C$, where (for
 simplicity) all the fields are initialized with a variable present in
-scope. 
+scope.
 To  be fully compatible with Java, the concrete syntax for an interface
   declaration with empty supertype list  would also
   omit the \Q@extends@ keyword.
@@ -443,30 +443,45 @@ interface $\C$ owns. The method can either be defined originally in $\C$ or in i
 \mBody(\m,\C_0)
 }{
 \override(\methods(\m),
-\shadow(\tops(\m,\Cs\ )))
+\shadow(\tops(\m,\C_0)))
 }\\
 \InTextWith{\metaVar{IT}(\C_0) =
-\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\cC}
+\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC}
 \end{array}$
 
-\noindent The definition of $mBody$ delegates the work to three others auxiliary functions:
- $\tops(m,\Cs)$, $\shadow(\methods)$ and $\override(\method,\method')$.
+\noindent The definition of $\mBody$ delegates the work to three others auxiliary functions:
+ $\tops(m,\C_0)$, $\shadow(\methods)$ and $\override(\method,\method')$.
 
 \paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
-the non static ones that are not transitively reachable by following another, less specific, superinterface chain. Formally:
+the non-static ones that are not transitively reachable by following another, less specific, superinterface chain.
+\hl{Another two functions $\super(\C_0)$ and $\get(\m,\C_0)$ are used for the definition. $\super(\C_0)$ collects the
+super interfaces of $\C_0$ recursively, and $\get(\m,\C_0)$ returns the non-static method declared in $\C_0$ with name $\m$, or $\emptyset$ otherwise.
+Finally, $\tops(\m,\C_0)$ returns the topmost methods $m$ from the super interfaces.}
+Formally:
 
 \noindent$\begin{array}{l}
-\InTextDef{22ex}{
-\method\in\tops(\m,\Cs)}{
+\InTextDef{13ex}{
+\tops(\m,\C_0)}{
 }{
-\mBody(\m,\C)=\method
+\{\ \get(\m, \C)\ |\ \C\in\super(\C_0), \get(\m, \C) \ne\emptyset,\mbox{ and }
 }\\
-\InTextWith{
- \method\mbox{ not a static method, and }
- \C\in\Cs\ \mbox{ such that }
-\forall \C'\in\Cs\setminus\C \mbox{ not } \C' \subtype \C}
-
+\hspace{2.1in}\forall\C'\in\super(\C_0)\mbox{ and }\get(\m,\C')\ne\emptyset: \C'<:\C\Rightarrow\C'=\C\ \}\\
+\InTextDef{13ex}{
+\super(\C_0)}{
+}{
+\{\ \C'\ |\ \C'\in\Cs,\mbox{ or }\exists\C\in\Cs,\C'\in\super(\C)\ \}
+}\\
+\InTextWith{\metaVar{IT}(\C_0) =
+\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC}\\
+\InTextDef{13ex}{
+\get(\m,\C_0)}{
+}{
+\method
+}\\
+\InTextWith{\metaVar{IT}(\C_0) =
+\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC, \method\in\methods\mbox{ not static},\m=\m^\method}
 \end{array}$
+
 
 \paragraph{\shadow{}} chooses the most specific version of a method,
 that is the unique version available, or a conflicted version from a
@@ -498,7 +513,8 @@ and the whole \mBody{} not defined for that specific $\m$. Rule
 \paragraph{override} models how the implementation in an interface can
 override implementation in the superinterface, even in case of a
 conflict.  Note how we use the special value $\none$, and how (forth
-case) overriding can solve a conflict.
+case) overriding can solve a conflict. \hl{The notation in the last case below
+means $\method'$ is not static, and is supertype of $\method$.}
 
 \noindent$\begin{array}{l}
 \InTextDef{20ex}{\override(\none,\none)}{\none}\\

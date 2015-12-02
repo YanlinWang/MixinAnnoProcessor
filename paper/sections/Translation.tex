@@ -8,7 +8,7 @@ casts or \Q@instanceof@, so we do not include the \Q@with@ method.
 For the same reason we do not include \Q@void@ returning setters, since they are just a minor variation over the more interesting fluent setters, and they would require special handling just for the conventional \Q@void@ type.
 
 We chose to modularly divide our translation in two parts, so that we can discuss about formal properties of those parts later. To this aim we introduce the annotation \Q:@ObjWeak:. Its role is only in the translation process, hence is not part of the classless java language.
-\Q:@ObjWeak: generates the constructor method $\QM{of}$, while 
+\Q:@ObjWeak: generates the constructor method $\QM{of}$, while
 \mixin automatically refines the return types and calls \Q:@ObjWeak:.
 
 
@@ -51,22 +51,15 @@ Special names $\specialName(\m)$ are  \QM{with} and all the identifiers of form 
 \subsection{$\otherMethod$}
 The definition of $\otherMethod(\C_0,\methods)$ is as follows:
 
-\haoyuan{I think $\QM{with#}\m\notin\dom(\methods)$ is not enough. The withM method with return type $I_0$ can also be defined already in a super interface. Like:
-\[\begin{array}{l}\QM{
-interface A}\ \oC\QM{int x(); B withX(int x);}\cC\\
-\mixinAnn\ \QM{interface B extends A}\ \oC\cC\end{array}\]}
-\marco{It is ok, in that case we just regenerate it identical}
-
 \noindent$\begin{array}{ll}
-\InTextDef{20em}{\C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\QM;\in
+\InTextDef{16em}{\C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\QM;\in
 \otherMethod(\C_0,\methods)}{
- \isWith(\mBody(\QM{with#}\m, \C_0), \C_0),}\\
-\tab\tab{\C\ \m\QM{();}\in \fieldsFunc(\C_0)
+ \isWith(\mBody(\QM{with#}\m, \C_0), \C_0)}\\
+\hspace{2.65in}{
 \mbox{ and } \QM{with#}\m\notin\dom(\methods)}\\
-\InTextDef{20em}{\C_0\ \QM_\m\oR \C\ \QM{_val}\cR\QM;\in
+\InTextDef{16em}{\C_0\ \QM_\m\oR \C\ \QM{_val}\cR\QM;\in
 \otherMethod(\C_0,\methods)}{\isSetter(\mBody(\QM_\m, \C_0), \C_0),}\\
-\tab\tab{
-\C\ \m\QM{();}\in \fieldsFunc(\C_0)
+\hspace{2.65in}{
 \mbox{ and } \QM_\m\notin\dom(\methods)}\\
 \end{array}$
 
@@ -74,7 +67,7 @@ The methods that we generate in the interface are \Q@with-@ and setters. %\Q@clo
 %A complete formalization would also generate the \Q@with@.
 We discover if there is the need of generating such methods by checking if the method is unimplemented in $\C_0$. This is needed only if we need to refine the return type.
 To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
- is required by $\C_0$, but is not already present in the methods \hl{directly declared in} $\C_0$.
+ is required by $\C_0$, but is not already present in the methods directly declared in $\C_0$, \hl{since overloading is not modelled}.
 
 \noindent$\begin{array}{ll}
 \InTextDef{24ex}{\method\in\fieldsFunc(\C_0)}{
@@ -192,7 +185,7 @@ $\e_i=\m_i$.
 
 \subsection{Guaratees}
 Now we try to understand what is the meaning of saying that our approach is correct, and more in genera, what it means to say that a Language tuning is correct.
-We identify three types of guarancees: 
+We identify three types of guarancees:
 \begin{itemize}
 \item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not wrote.
 In our case it means that either \mixin{} produces in controlled way an understandable error, or the class can be successfully annotate and the generated code is well typed.
