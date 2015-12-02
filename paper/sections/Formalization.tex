@@ -1,4 +1,10 @@
 \section{Interaction of Interface Methods with Interface Composition}
+Before formalizing our annotation, we summarize methods interaction/shadowing 
+mechanism in Java 8 interfaces and especially. We show several interesting cases
+and summarize compilation result of method composition into 3 categories:
+conflict error, accepted (both abstract) and conservative error. Meanwhile we
+also show different composition handling mechanism among traits, javac and ECJ.
+
 From Java 8 interfaces can have three type of methods: abstract, default, and
 static methods.
 \begin{itemize}
@@ -90,8 +96,9 @@ During our experimentation, we found a bug in ECJ (Eclipse compiler for Java):
 the case \textbf{M} extending \textbf{B3} and \textbf{A1} is accepted by
 ECJ4.5.1 and rejected by javac.  By email communication with Brian Goetz
 (leading Java 8 designer) we have confirmed that the expected behaviour is
-rejection, hence this is a bug in ECJ.\footnote{This bug is fixed in the ECJ
-  developer brunch , but not released as a stable version yet.}
+rejection, hence this is a bug in ECJ.\footnote{This bug was also reported by
+  others and is fixed in the ECJ developer brunch, but not released as a stable
+  version yet.}
 %Table~\ref{table:javabug} shows the method overriding bug in Java. In the
 %example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
 %named as \texttt{m} which are either abstract or default methods. If we define a
