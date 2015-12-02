@@ -24,10 +24,11 @@ $\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ $\II$ OK.\\
 \textbf{LEMMA 1. }
 For any expression $e$ under an interface table $\II_0\ldots\II_n$ with $\Gamma\vdash e\in\C$, if $\II_0$ has \textbf{@ObjWeak} and $[\![\II_0]\!]$ is well-defined, then under the interface table $[\![\II_0]\!]\II_1\ldots\II_n$, $\Gamma\vdash e\in\_<:\C$.
 \begin{proof}
-The proof is based on induction. By the grammar shown in Figure~\ref{Grammar}, there are three cases for an arbitrary expression $e$:
+By induction on the typing rules: by the grammar shown in Figure~\ref{Grammar}, there are 6 cases for an arbitrary expression $e$:
 \begin{itemize}
-\item A variable or a field update. The type preservation for $e$ is ensured by induction.
-\item A method call (normal, static or super). Such a method won't be ``removed'' by the translation and is still there, and the types remain unchanged. The only work \textbf{@ObjWeak} does is adding a static method $\QM{of}$ to the interface, however, a pre-condition of the translation is $\QM{of}\notin\dom(\C_0)$, so adding $\QM{of}$ method has no way to affect any method call.
+\item Variables are typed in the same exact way.
+\item Field update. The type preservation is ensured by induction.
+\item A method call (normal, static or super). The corresponding method declaration won't be ``removed'' by the translation, also the types remain unchanged. The only work \textbf{@ObjWeak} does is adding a static method $\QM{of}$ to the interface, however, a pre-condition of the translation is $\QM{of}\notin\dom(\C_0)$, so adding $\QM{of}$ method has no way to affect any formerly well typed method call.
 \item An object creation. Adding the $\QM{of}$ method doesn't introduce unimplemented methods to an interface, moreover, the static method is not inheritable, hence after translation such an object creation still type checks and has the right type by induction.
 \end{itemize}
 \end{proof}
@@ -35,7 +36,7 @@ The proof is based on induction. By the grammar shown in Figure~\ref{Grammar}, t
 \subsection{LEMMA 2 and Proof}\label{subsec:lemma2}
 
 \textbf{LEMMA 2. }
-If $\II_0$ has \textbf{@ObjWeak} and is OK, then $[\![\II_0]\!]$ OK.
+If $\II_0$ has \textbf{@ObjWeak} and $\C_0$ OK, then $[\![\II_0]\!]$ OK.
 \begin{proof}
 
 By the rule \rn{t-Intf} in Figure~\ref{ET}, we divide the proof into two parts.
@@ -55,7 +56,7 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
     \item Typing of the $i$-th getter $m_i$. \[\Gamma, m_i:\C_i, \QM{this}:\C_0 \vdash m_i\in \C_i\]
         We know that $\C_i=\C^{\mh_i}$ since the $i$-th getter has its return type the same as the corresponding field $m_i$.
     \item Typing of the \QM{with-} method of an arbitrary field $m_i$. By Section~\ref{subsec:ofmethod}, if the \QM{with-} method of $m_i$ is well-defined, it has the form \[\C_0\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{}\QM{return}\ \C_0\QM{.of(}\es_i\QM{);\}}\]
-        $\es_i$ is obtained by replacing $m_i$ with $\QM{_val}$ in the list of fields, and since they have the same type $\C_i$, the arguments $\es_i$ are compatible with $\C_0.\QM{of}$ method. Hence \[\Gamma, \overline{m_i:\C_i}, \QM{this}:\C_0,\ \QM{_val} : \C_i \vdash \C_0\QM{.of}\oR\es_i\cR\in \C_0\]
+        $\es_i$ is obtained by replacing $m_i$ with $\QM{_val}$ in the list of fields, and since they have the same type $\C_i$, the arguments $\es_i$ are compatible with $\C_0.\QM{of}$ method. Hence \[\Gamma, m_1:\C_1\ldots m_n:\C_n, \QM{this}:\C_0,\ \QM{_val} : \C_i \vdash \C_0\QM{.of}\oR\es_i\cR\in \C_0\]
         We know that $\C_0=\C^{\mh_i}$ by the return type of $\QM{with#}\m_i$ shown as above.
     \item Typing of the $i$-th setter \QM_$m_i$. If the \QM_$m_i$ method is well-defined, it has the form
         \[\C_0\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{} \m_i\QM{= _val;return this;\}}\]
@@ -63,6 +64,7 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
         We know that $\C_0=\C^{\mh_i}$ by the return type of $\QM_\m_i$ shown as above.\\
         \haoyuan{Can we write $\Gamma, \QM{this}:\C_0,\ \QM{_val} : \C_i, \C^{\mh_i} = \C_0 \vdash\QM{this}\in \C_0 = \C^{\mh_i}$?}\\
         \haoyuan{Can we write $\QM{\{} \m_i\QM{= _val;return this;\}} \in \C_0$?}
+      \marco{Not without defining what that would mean. Do we need to? it seams good as it is now...}
     \end{itemize}
 \item All method headers are valid with respect to the domain of $\C_0$. Namely $$\sigvalid(\mh_1\ldots\mh_n,I)$$
     \begin{itemize}
@@ -72,7 +74,7 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
         \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; \in \fieldsFunc(\C_0)\\
         \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; = \mBody(m_i,\C_0)\\
         \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; <: \mBody(m_i,\C_0)
-        \end{align*}
+        \end{align*}\marco{I do not understand this point, I think ofMethod is not what you want to write, but I can not understand what you want do do...}
     \item For the $\QM{with#}\m_i$ method,
         \begin{align*}
         &\C_0\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{...\}}\in\ofMethod(\C_0)\\
@@ -91,7 +93,7 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
         \end{align*}
     \end{itemize}
 \item All abstract methods in the domain of $\C_0$ have been implemented. Namely $$\alldefined(\mh_1\ldots\mh_n,I)$$
-    Here we simply refer to $\valid(\C_0)$, since it guarantees each abstract method to satisfy $\isField$, $\isWith$ or $\isSetter$. But that object includes all implementations for those cases, hence it is of type $\C_0$ by \rn{t-Obj}.
+    Here we simply refer to $\valid(\C_0)$, since it guarantees each abstract method to satisfy $\isField$, $\isWith$ or $\isSetter$. But that object includes all implementations for those cases\marco{you need to expand here, proof that we have all the implementations for all cases by using the definition of ofMethod}, hence it is of type $\C_0$ by \rn{t-Obj}.
 \end{itemize}
 
 \noindent\textbf{Part II.} Next we check that in $[\![\II_0]\!]$, $$\dom([\![\II_0]\!])=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)\cup\dom(\method')$$
@@ -99,7 +101,9 @@ Since $\II_0$ OK, we have $\dom(\II_0)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\do
 This is obvious since a pre-condition of the translation is $\QM{of}\notin\dom(\C_0)$, so $\method'$ doesn't overlap with $\dom(\C_0)$. The definition of $\dom$ is based on $\mBody$, and here the new domain $\dom([\![\II_0]\!])$ is only an extension to $\dom(\C_0)$ with the \QM{of} method, namely $\method'$. Also note that after translation, there are still no methods with conflicted names, since the \QM{of} method was previously not in the domain, hence $[\![\II_0]\!]$ is well-formed, which finishes our proof.
 \end{proof}
 
-\subsection{Proof of THEOREM}\label{subsec:proof3}
+\subsection{Proof of THEOREM}
+\marco{the therem statement must be here}
+\label{subsec:proof3}
 \begin{proof}
 \textbf{LEMMA 2} already proves that $[\![\II_0]\!]$ is OK. On the other hand, for any $\II\ne\II_0$, by \textbf{LEMMA 1}, we know that all its methods
 are still well-typed, and the generated code in translation of \textbf{@ObjWeak} is only a static method \QM{of}, which has no way to affect the domain

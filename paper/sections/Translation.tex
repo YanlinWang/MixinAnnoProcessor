@@ -7,34 +7,28 @@ most of the generated methods; however in our formalism we do not consider
 casts or \Q@instanceof@, so we do not include the \Q@with@ method.
 For the same reason we do not include \Q@void@ returning setters, since they are just a minor variation over the more interesting fluent setters, and they would require special handling just for the conventional \Q@void@ type.
 
-\hl{Furthermore, we introduce \textbf{@ObjWeak}, which is only an annotation for illustrating the translation, hence is not implemented in Lombok. By this, the real translation is divided into two parts: \textbf{@Obj} automatically refines the return types only, and \textbf{@ObjWeak} generates the constructor method $\QM{of}$. In the source code, the only annotation \textbf{@Obj} combines both of the work and finishes the translation at a time.}
+We chose to modularly divide our translation in two parts, so that we can discuss about formal properties of those parts later. To this aim we introduce the annotation \Q:@ObjWeak:. Its role is only in the translation process, hence is not part of the classless java language.
+\Q:@ObjWeak: generates the constructor method $\QM{of}$, while 
+\mixin automatically refines the return types and calls \Q:@ObjWeak:.
 
-\subsection{Translation Function}
-
-Two translation functions for the two parts are presented as follows:
 
 \noindent$\begin{array}{l}
 \InTextDef{16em}{[\![\mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
 }{
-\weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
+[\![\weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
 \methods\ \methods' \cC
-}\\
-\InTextWith{\methods'=\otherMethod(\C_0,\methods)}
-\end{array}$
+]\!]}\\
+\InTextWith{\methods'=\otherMethod(\C_0,\methods)}\\
 
-\noindent\hl{To translate an interface annotated by \mixin, we add some other methods for type refinement, then add a new annotation \textbf{@ObjWeak} to the interface.}
-
-\noindent$\begin{array}{l}
 \InTextDef{18em}{[\![\weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
 }{
-\emptyset\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
-\methods\ \method' \cC
+\QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
+\methods\ \ofMethod(\C_0) \cC
 }\\
-\InTextWith{\valid(\C_0),\QM{of}\notin\dom(\methods) \mbox{ and } \method'=\ofMethod(\C_0)}
+\InTextWith{\valid(\C_0),\QM{of}\notin\dom(\C_0) }
 \end{array}$
 
-\noindent\hl{To translate an interface annotated by \textbf{@ObjWeak}, we add the $\QM{of}$ method.}
-However, first of all we check if the interface is valid for annotation:
+As you see, we explicitly check if the interface is valid for annotation:
 
 \noindent$\valid(\C_0)$  holds if $\forall \m\in\dom(\C_0),$ if $\mh\QM; = \mBody(\m, \C_0),$ one case is satisfied:
 $\isField(\method)$,
@@ -42,12 +36,11 @@ $\isWith(\method, \C_0)$
 or
 $\isSetter(\method,\C_0)$. \
 %$\isClone(\method, \C_0)$.
-That is, we can categorize all the \emph{not implemented} methods in a pattern that we know how to implement.
 
-%To complete our formal definition we would need to add setters and \Q@with@.
+That is, we can categorize all the \emph{not implemented} methods in a pattern that we know how to implement.
 Moreover, we check that the method \Q@of@ is not already defined by the user.
 In our simplified formalization we consider this to be just an error.
-In our prototype we keep overloading into account, and so we check that an \Q@of@ method with the same signature of the one we would generate is not already present.\marco{Do we check it?}\haoyuan{Not sure if it is $\QM{of}\notin\dom(\methods)$ or $\QM{of}\notin\dom(\C_0)$. It is an error if a static method overrides an instance method.}
+In our prototype we keep overloading into account, and so we check that an \Q@of@ method with the same signature of the one we would generate is not already present.
 
 
 In the following we will write $\QM{with#}\m$ to append $\m$ to \QM{with}, following the camelCase rule, so the first letter of
@@ -62,6 +55,7 @@ The definition of $\otherMethod(\C_0,\methods)$ is as follows:
 \[\begin{array}{l}\QM{
 interface A}\ \oC\QM{int x(); B withX(int x);}\cC\\
 \mixinAnn\ \QM{interface B extends A}\ \oC\cC\end{array}\]}
+\marco{It is ok, in that case we just regenerate it identical}
 
 \noindent$\begin{array}{ll}
 \InTextDef{20em}{\C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\QM;\in
@@ -194,12 +188,35 @@ $\e_i=\m_i$.
  % \end{itemize}
 \end{itemize}
 
-\marco{ insert somewhere description of  fluent setter~\cite{the-lombock-thread-something-about-fluent-stuff}.
-This allows for convenient and chains of setters, as we will show later \marco{insert forward reference when available}}.
 
 
+\subsection{Guaratees}
+Now we try to understand what is the meaning of saying that our approach is correct, and more in genera, what it means to say that a Language tuning is correct.
+We identify three types of guarancees: 
+\begin{itemize}
+\item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not wrote.
+In our case it means that either \mixin{} produces in controlled way an understandable error, or the class can be successfully annotate and the generated code is well typed.
+We guarantee \textit{Self coherence}.
 
+\item \textit{Client coherence}: all the client code (as for example method calls) that is well typed without the generation/instrumentation process is well typed also after the generation.
+That is, the annotation do not remove any functionality, is just
+adding more behaviour.
+We guarantee \textit{Client coherence}.
 
+\item \textit{Heir coherence}: Interfaces (and in general classes) inheriting from instrumented code are well typed if they was well typed without the instrumentation.
+This would require to not add any (default or abstract) method to the annotated interfaces, including type refinement.
+\mixin  do not guarantee \textit{Heir coherence}.
+Indeed consider the following example
+
+\begin{lstlisting}
+interface A { int x(); A withX(int x); }
+@Obj interface B extends A {}
+interface C extends B { A withX(int x); }
+\end{lstlisting}
+
+By the translation rule, \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
+This would break \Q@C@.
+\end{itemize}
 \subsection{Results}
 Informally, in a type correct interface table, if we translate a specific interface, then
 the resulting table is type correct, or there is a subtype of the translated interface in the original table.
@@ -213,32 +230,7 @@ then in the interface table
 $[\![\II_0]\!]\II_1\ldots\II_n$\\*
 $\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ $\II$ OK.
 
-To understand this theorem statement, we need to understand three kind of guarantees that we can offer for safety:
-\begin{itemize}
-\item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not wrote.
-In our case it means that either \mixin{} produces in controlled way an understandable error, or the class can be successfully annotate and the generated code is well typed.
-We guarantee \textit{Self coherence}.
 
-\item \textit{Client coherence}: all the client code (as for example method calls) that is well typed without the generation/instrumentation process is well typed also after the generation.
-That is, the annotation do not remove any functionality, is just
-adding more behaviour.
-We guarantee \textit{Client coherence}.
-
-\item \textit{Heir coherence}: Interfaces (and in general classes) inheriting from instrumented code are well typed if they was well typed without the instrumentation.
-This would require to not add any (default or abstract) method to the annotated interfaces, including type refinement.
-We do not guarantee \textit{Heir coherence}.
-Indeed consider the following example
-
-\begin{lstlisting}
-interface A { int x(); A withX(int x); }
-@Obj interface B extends A {}
-interface C extends B { A withX(int x); }
-\end{lstlisting}
-
-By the translation rule, \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
-This would break \Q@C@.
-
-\end{itemize}
 %The first two levels of safety are essential to our lightweight framework, nevertheless, the third one is not needed. In Java it implies not touching the annotated interface, and surely an alternative approach is to create a new interface and generate what we need. But since we are using Lombok for the translation, the transformation is applied to the annotated interface itself. But heir coherence is indeed an issue. See below how this is affected by our approach:
 
 %Now we go back and read the statement of our theorem again. It illustrates that a program with the translation of \mixin applied still type checks if it did, except for the subtypes of the annotated interface (type safety of them is not guaranteed).
