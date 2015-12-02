@@ -355,7 +355,7 @@ states are available to users. Object interfaces provide support for four
 different types of abstract state operations, which are summarized in
 Figure~\ref{fig:abstractstate}.  The abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of
-mutable setters, and are discussed in detail in Section~\ref{sec:dsls}.
+(void) setters, and are discussed in detail in Section~\ref{sec:dsls}.
 
 \begin{figure}
 \begin{tabular}{|l|l|l|}
@@ -364,7 +364,7 @@ mutable setters, and are discussed in detail in Section~\ref{sec:dsls}.
 \textbf{``fields''/getters}        &   \Q@int x();@                  & Retrieves value from field \texttt{x}.          \\ \hline
 {\bf withers}        &   \Q@Point2D withX(int val);@                & Clones
 object; updates field \texttt{x} to \texttt{val}.             \\ \hline
-\textbf{mutable setters}        & \Q@void x(int val);@ & Sets the field
+\textbf{setters}        & \Q@void x(int val);@ & Sets the field
 \texttt{x} to a  new value \texttt{val}.        \\ \hline
 \textbf{fluent setters}        & \Q@Point2D x(int val);@ &Sets the field
 \texttt{x} to \texttt{val} and returns \texttt{\this}.           \\ \hline
