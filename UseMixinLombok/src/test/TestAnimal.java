@@ -50,7 +50,8 @@ interface Point2D {
 //BEGIN_POINT3D
 @Obj
 interface Point3D extends Point2D {
-	int z(); Point3D with(Point2D val);
+	int z(); 
+	Point3D with(Point2D val);
 	Point3D withZ(int z);
 }
 //END_POINT3D

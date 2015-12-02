@@ -1,17 +1,17 @@
 package pegasusLombok;
 
-import lombok.Mixin;
+import lombok.Obj;
 
 
 interface Animal {}
-@Mixin interface Horse {
+@Obj interface Horse {
 	default void run() {System.out.println("I can run!");};
 }
 //BEGIN_PEGASUS_LOMBOK
-@Mixin interface Bird {
+@Obj interface Bird {
 	default void fly() {System.out.println("I can fly!");}
 }
-@Mixin interface Pegasus extends Horse, Bird {}
+@Obj interface Pegasus extends Horse, Bird {}
 //END_PEGASUS_LOMBOK
 
 public interface Main {
