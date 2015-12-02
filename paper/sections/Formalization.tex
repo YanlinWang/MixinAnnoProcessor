@@ -1,16 +1,18 @@
 \section{Interaction of Interface Methods with Interface Composition}
-Before formalizing our annotation, we summarize methods interaction/shadowing 
-mechanism in Java 8 interfaces and especially. We show several interesting cases
-and summarize compilation result of method composition into 3 categories:
-conflict error, accepted (both abstract) and conservative error. Meanwhile we
-also show different composition handling mechanism among traits, javac and ECJ.
+Before formalizing Classless Java, it is helpful to informally discuss the behaviour
+of methods in Java 8 interfaces. 
 
-From Java 8 interfaces can have three type of methods: abstract, default, and
+%We show several interesting cases
+%and summarize compilation result of method composition into 3 categories:
+%conflict error, accepted (both abstract) and conservative error. Meanwhile we
+%also show different composition handling mechanism among traits, javac and ECJ.
+
+\subsection{Methods in Java 8 Interfaces}
+In Java 8 interfaces there are three types of methods: abstract, default, and
 static methods.
-\begin{itemize}
 
-\item Static methods are handled in a very clean way: they are visible only in
-  the interface they are explicitly defined. This means the following code
+\paragraph{Static methods} are handled in a very clean way: they are visible only in
+  the interface in which they are explicitly defined. This means the following code
   is ill-typed.
 \begin{lstlisting}
 interface A0 { static int m(){return 1;} }
@@ -21,7 +23,7 @@ This is different from the way static methods are handled in classes. Here
 static methods have simply no interaction with interface
 composition (\Q@extends@ or \Q@implements@).
 
-\item Abstract methods composition is accepted when exist a most specific one.
+\paragraph{Abstract method} composition is accepted when there exist a most specific one.
   For example, here method \texttt{Integer m()} from \texttt{B1} is visible in \Q@C1@.
 \begin{lstlisting}
 interface A1 { Object m(); }
@@ -29,8 +31,8 @@ interface B1 { Integer m();}
 interface C1 extends A1,B1 {} //accepted
 \end{lstlisting}
 
-\item Default methods conflict with any other default or abstract method. For
-  example the following code is rejected due to methods conflict.
+\paragraph{Default methods} conflict with any other default or abstract method. For
+  example the following code is rejected due to method conflicts.
 \begin{lstlisting}
 interface A2 { default int m() {return 1;}}
 interface B2 { int m(); }
@@ -42,9 +44,9 @@ Note how this is different from what happens in most trait models, where \Q@D2@
 would be accepted, and the implementation in \Q@A2@ would be part of the
 behaviour of \Q@D2@.
 
-\item A method in the current interface wins over any method in its
-super-interfaces, provided that the method%  conforms to the subtype of all methods
-% in its super-interfaces, i.e., the method
+\paragraph{Resolving conflicts:}
+A method in the current interface wins over any method in its
+super-interfaces, provided that the method
 is the most specific one. This method also overrides conflict due to
 inheritance. For example, the following code is accepted, but would be rejected
 (see before) if the method \Q@m@ was not redefined in \texttt{D3} and
@@ -54,10 +56,10 @@ interface D3 extends A2,B2 { int m(); } //accepted
 interface E3 extends A2,C2 { default int m(){return 42;} } //accepted
 \end{lstlisting}
 
-\end{itemize}
-
-While trying to formally encode the Java specification we have done some tests to clarify corner case behaviour.
-Consider the following correct declarations:
+\subsection{Classifying Outcomes of Interface Composition}
+When interfaces are composed and methods with the same name (and
+signature) exist, there are 3 possible outcomes.
+We illustrate the possible outcomes using the following (correct) declarations:
 \begin{lstlisting}
 interface A1{T m(); }
 interface A2 extends A1{default T m(){ ... } }
@@ -68,8 +70,9 @@ interface B2 extends B1{T m(); }
 interface B3 extends B2{default T m(){ ... } }
 \end{lstlisting}
 
+\noindent 
 What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
-\Q@B@${}_i$? The 9 cases are shown here:\\*
+\Q@B@${}_j$? Nine representative cases are shown next:\\*
 \noindent
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -79,26 +82,23 @@ What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
 \textbf{B3}        & \textbf{conservative error} &conflict  error       & conservative error      \\ \hline
 \end{tabular}
 \\*
-We try to classify the results out of the table:
+We try to classify the results in the table:
 \begin{itemize}
-\item \textbf{conflict error} happens when the methods from \Q@A@${}_i$ and
-  \Q@B@${}_i$ are both implemented, which is also an error in most trait models.
-\item \textbf{both abstract, accepted} happens when the methods from \Q@A@${}_i$
-  and \Q@B@${}_i$ are both abstract, which is also considered correct in all
+\item \textbf{conflict error} happens when the methods from are both implemented, which is also an error in most trait models.
+\item \textbf{both abstract, accepted} happens when the methods from are both abstract, which is also considered correct in all
   trait models.
-\item \textbf{conservative error} happens when only one method from \Q@A@${}_i$
-  or \Q@B@${}_i$ is implemented, which is different from what we would expect in
+\item \textbf{conservative error} happens when only one method from is implemented, which is different from what we would expect in
   a trait model, but is coherent with the conservative idea that a method
   defined in an interface should not silently satisfy a method in another one.
 \end{itemize}
 
-During our experimentation, we found a bug in ECJ (Eclipse compiler for Java):
+\paragraph{A bug:} During our experimentation, we found a bug in ECJ (Eclipse compiler for Java):
 the case \textbf{M} extending \textbf{B3} and \textbf{A1} is accepted by
 ECJ4.5.1 and rejected by javac.  By email communication with Brian Goetz
 (leading Java 8 designer) we have confirmed that the expected behaviour is
-rejection, hence this is a bug in ECJ.\footnote{This bug was also reported by
-  others and is fixed in the ECJ developer brunch, but not released as a stable
-  version yet.}
+rejection, hence this is a bug in ECJ. This bug was also reported by
+  others and is fixed in the ECJ developer branch, but not released as a stable
+  version yet.
 %Table~\ref{table:javabug} shows the method overriding bug in Java. In the
 %example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
 %named as \texttt{m} which are either abstract or default methods. If we define a
