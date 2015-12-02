@@ -34,14 +34,11 @@ public class TestExpression {
 interface Exp { int eval(); }
 @Obj interface Lit extends Exp {
 	int x();
-	default int eval() { return x(); }
-}
+	default int eval() { return x(); }}
 @Obj interface Add extends Exp {
     Exp e1(); Exp e2();
     default int eval() {
-		return e1().eval() + e2().eval();
-	}
-}
+        return e1().eval() + e2().eval();}}
 //END_EXPRESSION_INIT
 
 //BEGIN_EXPRESSION_SUB
@@ -52,13 +49,11 @@ interface Exp { int eval(); }
 //BEGIN_EXPRESSION_PRINT
 interface ExpP extends Exp { String print(); }
 @Obj interface LitP extends Lit, ExpP {
-    default String print() {return "" + x();}
-}
+    default String print() {return "" + x();}}
 @Obj interface AddP extends Add, ExpP {
     ExpP e1(); ExpP e2();//return type refined!
     default String print() {
-		return "(" + e1().print() + " + " + e2().print() + ")";
-	}}
+        return "("+e1().print()+" + "+e2().print()+")";}}
 //END_EXPRESSION_PRINT
 
 //BEGIN_EXPRESSION_COLLECTLIT

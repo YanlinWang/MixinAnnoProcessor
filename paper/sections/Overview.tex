@@ -495,16 +495,16 @@ subtype of the current exact type, then we can just return the parameter, as
 something that is just ``more'' than \Q@this@.
 
 \subsection{Advanced Multiple Inheritance with Object Interfaces}
-Finally, we can define Pegasus as simply as we did in the simplified (and stateless) 
-version in the right-side of Figure~\ref{fig:pegasus}:
+Finally, we can define \texttt{Pegasus} as simple as we did in the simplified
+(and stateless) version on the right-side of Figure~\ref{fig:pegasus}:
 
 \lstinputlisting[linerange=74-74]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
 
 \noindent Note how even the non trivial pattern for field type refinement is
 transparently composed, and \texttt{Pegasus} has a \Q@Point3D@
-\Q@location@. This works because \Q@Horse@ do not perform
-any field type refinement, otherwise we may have to choose/create a
-common subtype in order for \texttt{Pegasus} to exists.
+\Q@location@.%  This works because \Q@Horse@ do not perform
+% any field type refinement, otherwise we may have to choose/create a
+% common subtype in order for \texttt{Pegasus} to exists.
 
 \begin{comment}
 \subsection{A Running Example: \texttt{Point}}
