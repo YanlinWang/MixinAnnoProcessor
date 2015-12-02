@@ -353,7 +353,7 @@ needs to be extended appropriately: we add all fields and their types;
 add $\this:I$; and add the arguments (and types) of the respective
 method.
 Now we need to check if the object is a valid extension for that specific interface.
-This can be logically diveded in two steps:
+This can be logically divided into two steps.
 First  we check that all method headers are valid
 with respect to the corresponding method already present in $\C$;
 
@@ -364,7 +364,7 @@ with respect to the corresponding method already present in $\C$;
 }
 \end{array}$
 
-Here we require that for all newly declared methods, there is a
+\noindent Here we require that for all newly declared methods, there is a
 method with the same name defined in the interface $\C$, and that such method is a subtype of the newly introduced one. We define subtyping between methods in a general form that will be useful also later.
 
 \noindent$\begin{array}{l}
@@ -384,12 +384,10 @@ method with the same name defined in the interface $\C$, and that such method is
 }\\
 \end{array}$
 
-Two method headers are subtypes if all the parameter types are the same and the return types are subtypes.
-That is, we allows return type specialization as introduced in Java5.
+\noindent Two method headers are subtypes if all the parameter types are the same and the return types are subtypes.
+That is, we allows return type specialization as introduced in Java 5.
 Default methods are subtypes if their method headers are subtypes.
-
-
-Finally, all abstract methods in the interface (that is methods that need
+Secondly, all abstract methods in the interface (that is methods that need
 to be explicitly overridden) have been
 implemented. That is, we define a method with the same name.
 
@@ -398,9 +396,7 @@ implemented. That is, we define a method with the same name.
 \forall\m\mbox{ such that } \mBody(\m,\C)=\mh\QM; \exists i\in 1..n\ \m^{\mh_i}=\m}
 \end{array}$
 
-
-
-The rule \rn{(t-intf)} checks that an interface $\C$ is correctly
+The rule \rn{t-intf} checks that an interface $\C$ is correctly
 typed.  First we check that the body of all the default and static
 methods are well typed.  Then we check that $\dom(\C)$ is the same of
 $\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)$.  This is not a
@@ -440,26 +436,24 @@ conflicting.
 
 
 Defining \mBody{} is not trivial, and requires quite a lot of attention to the specific model of Java Interfaces, and on how it differs w.r.t. Java Class model.
-$\mBody(\m,\C)$ denotes the actual method $\m$ (body included) that interface $\C$ owns. It can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
-
-We use internally a special modifier $\conflicted$ to denote the case of two methods with conflicting implementation.\\*
+$\mBody(\m,\C)$ denotes the actual method $\m$ (body included) that
+interface $\C$ owns. The method can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
 \noindent$\begin{array}{l}
 \InTextDef{15ex}{
 \mBody(\m,\C_0)
 }{
 \override(\methods(\m),
-\shadow(\m,\tops(\m,\Cs\ )))
+\shadow(\tops(\m,\Cs\ )))
 }\\
 \InTextWith{\metaVar{IT}(\C_0) =
 \ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\cC}
 \end{array}$
 
-As you can see, we are delegating the work to three others auxiliary functions:\\*
- $\tops(\Cs), \shadow(\m,\Cs)$ and $\override(\method,\method')$
-${}_{}$\\*
+\noindent The definition of $mBody$ delegates the work to three others auxiliary functions:
+ $\tops(m,\Cs)$, $\shadow(\methods)$ and $\override(\method,\method')$.
 
-\tops{} recovers from the interface table only the ``needed'' methods, that is,
-the non static ones that are not transitively reachable by following another, less specific, superinterface chain. Formally:\\*
+\paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
+the non static ones that are not transitively reachable by following another, less specific, superinterface chain. Formally:
 
 \noindent$\begin{array}{l}
 \InTextDef{22ex}{
@@ -474,8 +468,10 @@ the non static ones that are not transitively reachable by following another, le
 
 \end{array}$
 
-\shadow{} choose the most specific version of a method, that is the unique version available, or a conflicted version from a set of possibilities.
-We do not model overloading, so it is an error if multiple versions are available with different parameter types. Formally:\\*
+\paragraph{\shadow{}} chooses the most specific version of a method,
+that is the unique version available, or a conflicted version from a
+set of possibilities. Internally a special modifier $\conflicted$ is used to denote the case of two methods with conflicting implementation.
+We do not model overloading, so it is an error if multiple versions are available with different parameter types. Formally:
 \noindent
 $\begin{array}{l}
 \InTextDef{15ex}{
@@ -487,18 +483,22 @@ $\begin{array}{l}
 \Aux{mostSpecific}(\methods)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}}\\
 \end{array}$
 
-Where $\Aux{mostSpecific}$ return the most specific method , that is a method whose type is the subtype of all the others.
-Since method subtyping is a partial ordering, this may be not defined, this in turn makes \shadow{}, and the whole \mBody{} not defined for that specific $\m$. Rule  \rn{t-intf}  relies on this behaviour.
+\noindent The definition $\Aux{mostSpecific}$ returns the most
+specific method, that is a method whose type is the subtype of all the
+others.  Since method subtyping is a partial ordering,
+$\Aux{mostSpecific}$ may not be defined, this in turn makes \shadow{},
+and the whole \mBody{} not defined for that specific $\m$. Rule
+\rn{t-intf} relies on this behaviour.
 
 \noindent$\begin{array}{l}
 \InTextDef{18ex}{\Aux{mostSpecific}(\methods)}{\method}\\
 \InTextWith{\method \in \methods\ \mand\ \forall \method' \in \methods :  \method \subtype \method'}
-
 \end{array}$
 
-${}_{}$\\*
-The override function models how the implementation in an interface can override implementation in the superinterface; even in case of a conflict.
-Note how we use the special value $\none$, and how (forth case) overriding can solve a conflict.
+\paragraph{override} models how the implementation in an interface can
+override implementation in the superinterface, even in case of a
+conflict.  Note how we use the special value $\none$, and how (forth
+case) overriding can solve a conflict.
 
 \noindent$\begin{array}{l}
 \InTextDef{20ex}{\override(\none,\none)}{\none}\\
