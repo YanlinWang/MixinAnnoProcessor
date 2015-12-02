@@ -184,8 +184,8 @@ $\e_i=\m_i$.
 
 
 \subsection{Guaratees}
-Now we try to understand what is the meaning of saying that our approach is correct, and more in genera, what it means to say that a Language tuning is correct.
-We identify three types of guarancees:
+Now we try to understand what is the meaning of saying that our approach is correct, and more in general, what it means to say that a language tuning is correct.\haoyuan{Actually only self coherence is supported?}
+We identify three types of guarantees:
 \begin{itemize}
 \item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not wrote.
 In our case it means that either \mixin{} produces in controlled way an understandable error, or the class can be successfully annotate and the generated code is well typed.
@@ -194,12 +194,12 @@ We guarantee \textit{Self coherence}.
 \item \textit{Client coherence}: all the client code (as for example method calls) that is well typed without the generation/instrumentation process is well typed also after the generation.
 That is, the annotation do not remove any functionality, is just
 adding more behaviour.
-We guarantee \textit{Client coherence}.
+\mixin  does not guarantee \textit{Client coherence}.
 
 \item \textit{Heir coherence}: Interfaces (and in general classes) inheriting from instrumented code are well typed if they was well typed without the instrumentation.
 This would require to not add any (default or abstract) method to the annotated interfaces, including type refinement.
-\mixin  do not guarantee \textit{Heir coherence}.
-Indeed consider the following example
+\mixin  does not guarantee \textit{Heir coherence}.
+Indeed consider the following example:
 
 \begin{lstlisting}
 interface A { int x(); A withX(int x); }
@@ -207,18 +207,25 @@ interface A { int x(); A withX(int x); }
 interface C extends B { A withX(int x); }
 \end{lstlisting}
 
-By the translation rule, \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
-This would break \Q@C@.
+\noindent By the translation rule, \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
+This would break \Q@C@. And it's similar why client coherence is not supported as well. In the client code, an expression
+that uses ``\Q@new B(){...}@'' to create an object of \Q@B@ gives an implementation of \Q@A withX(int x);@, but after the return
+type is refined to \Q@B@, there is a type error.
 \end{itemize}
+
+\noindent Consequently, type refinement is a common case in client code, and hence is included by \mixin as a feature for convenient use, whereas it simultaneously brings some risk in throwing type errors, though they are likely to be fixed easily by users. On the other hand, a property of \mixin is informally concluded as: for a client program that typechecks before a translation is applied, if the annotated type has no subtypes, and no objects of that type are created, then type safety is guaranteed after the successful translation. Conversely, the second step of \mixin, namely what \Q:@ObjWeak: does in the formalization, is guaranteed to be type-safe for the three kinds of coherence. The formal theorem and proof is presented afterwards.
+
 \subsection{Results}
-Informally, in a type correct interface table, if we translate a specific interface, then
-the resulting table is type correct, or there is a subtype of the translated interface in the original table.
-\textbf{THEOREM. }
+
+\haoyuan{We use \textbf{@ObjWeak} or \Q:@ObjWeak:?}
+
+The theorem is presented below. Lemmas and the complete proof are available in Appendix~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
+
+\noindent\textbf{THEOREM. }
 For a given $\II_0\ldots\II_n$ interface table such that
 $\forall\II\in\II_0\ldots\II_n, \II$ OK,\\*
-if $\II_0$ has \mixin,
+if $\II_0$ has \textbf{@ObjWeak},
 $\valid(\C_0)$  and $\QM{of}\notin\dom(\C_0)$,
-there is no $\C<:\C_0$, there is no \Q@new @$\C_0$\Q@(){..}@,
 then in the interface table
 $[\![\II_0]\!]\II_1\ldots\II_n$\\*
 $\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ $\II$ OK.
@@ -229,13 +236,6 @@ $\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ $\II$ OK.
 %Now we go back and read the statement of our theorem again. It illustrates that a program with the translation of \mixin applied still type checks if it did, except for the subtypes of the annotated interface (type safety of them is not guaranteed).
 
 %\haoyuan{Text needs improving.}
-
-To prove the theorem we introduce two lemmas below. The complete proof is available in Appendix \ref{subsec:proof1}, \ref{subsec:proof2} and \ref{subsec:proof3}.\\
-
-\marco{ you need to use the Lemma/theorem macros}
-\noindent\textbf{LEMMA 2. }
-If $\II_0$ OK, then $[\![\II_0]\!]$ OK.
-This is what we defined as self coherence before.
 
 
 

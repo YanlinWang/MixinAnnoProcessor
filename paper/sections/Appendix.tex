@@ -2,23 +2,6 @@
 
 \section{Appendix}\label{sec:appendix}
 
-\subsection{THEOREM}\label{subsec:theorem}
-
-\textbf{THEOREM. }
-For a given $\II_0\ldots\II_n$ interface table such that
-$\forall\II\in\II_0\ldots\II_n, \II$ OK,\\*
-if $\II_0$ has \textbf{@ObjWeak},
-$\valid(\C_0)$  and $\QM{of}\notin\dom(\C_0)$,
-then in the interface table
-$[\![\II_0]\!]\II_1\ldots\II_n$\\*
-$\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ $\II$ OK.\\
-
-\noindent For convenience, assume that
-\begin{align*}
-\II_0\ &=\ \weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC\\
-[\![\II_0]\!]\ &=\ \emptyset\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \method' \cC
-\end{align*}
-
 \subsection{LEMMA 1 and Proof}\label{subsec:lemma1}
 
 \textbf{LEMMA 1. }
@@ -67,17 +50,19 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
       \marco{Not without defining what that would mean. Do we need to? it seams good as it is now...}
     \end{itemize}
 \item All method headers are valid with respect to the domain of $\C_0$. Namely $$\sigvalid(\mh_1\ldots\mh_n,I)$$
+    For convenience, we use ``$\method$ in $\ofMethod(\C_0)$'' to denote that $\method$ is one of the implemented methods in the return expression of $\ofMethod(\C_0)$, namely \Q@new@ $\C_0$\Q@(){...}@.
     \begin{itemize}
     \item For the $i$-th getter $m_i$,
         \begin{align*}
-        &\C_i\ \m_i\oR\cR\ \QM{\{...\}}\in\ofMethod(\C_0)\\
+        &\C_i\ \m_i\oR\cR\ \QM{\{...\}}\mbox{ in }\ofMethod(\C_0)\\
         \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; \in \fieldsFunc(\C_0)\\
         \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; = \mBody(m_i,\C_0)\\
         \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; <: \mBody(m_i,\C_0)
         \end{align*}\marco{I do not understand this point, I think ofMethod is not what you want to write, but I can not understand what you want do do...}
+        \haoyuan{Right, sorry for that, I mean if a getter is created by ofMethod, then it is a field of I0, and finally for this part our aim is to prove sigvalid, and the definition of sigvalid asks you to prove $\mh\QM;<:\mBody(...)$, see the last line.}
     \item For the $\QM{with#}\m_i$ method,
         \begin{align*}
-        &\C_0\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{...\}}\in\ofMethod(\C_0)\\
+        &\C_0\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{...\}}\mbox{ in }\ofMethod(\C_0)\\
         \mimply\hspace{.2in}& \mBody(\QM{with#}\m_i,\C_0) \mbox{ is of form }\mh\QM;\\
         \mbox{with}\hspace{.2in}& \valid(\C_0)\\
         \mimply\hspace{.2in}& \isWith(\mBody(\QM{with#}\m_i,\C_0),\C_0)\\
@@ -85,7 +70,7 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
         \end{align*}
     \item For the $i$-th setter $\QM_\m_i$,
         \begin{align*}
-        &\C_0\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{...\}}\in\ofMethod(\C_0)\\
+        &\C_0\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{...\}}\mbox{ in }\ofMethod(\C_0)\\
         \mimply\hspace{.2in}& \mBody(\QM_\m_i,\C_0) \mbox{ is of form }\mh\QM;\\
         \mbox{with}\hspace{.2in}& \valid(\C_0)\\
         \mimply\hspace{.2in}& \isSetter(\mBody(\QM_\m_i,\C_0),\C_0)\\
@@ -93,7 +78,7 @@ To prove it is of type $\C_0$, we use the typing rule \rn{t-Obj}.
         \end{align*}
     \end{itemize}
 \item All abstract methods in the domain of $\C_0$ have been implemented. Namely $$\alldefined(\mh_1\ldots\mh_n,I)$$
-    Here we simply refer to $\valid(\C_0)$, since it guarantees each abstract method to satisfy $\isField$, $\isWith$ or $\isSetter$. But that object includes all implementations for those cases\marco{you need to expand here, proof that we have all the implementations for all cases by using the definition of ofMethod}, hence it is of type $\C_0$ by \rn{t-Obj}.
+    Here we simply refer to $\valid(\C_0)$, since it guarantees each abstract method to satisfy $\isField$, $\isWith$ or $\isSetter$. But that object includes all implementations for those cases. A getter $m_i$ is generated if it satisfies $\isField$; a \Q@with-@ method is generated for the case $\isWith$, by the definition of $\withMethod$; a setter for $\isSetter$, similarly, by the definition of $\setterMethod$. Hence it is of type $\C_0$ by \rn{t-Obj}.
 \end{itemize}
 
 \noindent\textbf{Part II.} Next we check that in $[\![\II_0]\!]$, $$\dom([\![\II_0]\!])=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)\cup\dom(\method')$$
@@ -101,9 +86,15 @@ Since $\II_0$ OK, we have $\dom(\II_0)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\do
 This is obvious since a pre-condition of the translation is $\QM{of}\notin\dom(\C_0)$, so $\method'$ doesn't overlap with $\dom(\C_0)$. The definition of $\dom$ is based on $\mBody$, and here the new domain $\dom([\![\II_0]\!])$ is only an extension to $\dom(\C_0)$ with the \QM{of} method, namely $\method'$. Also note that after translation, there are still no methods with conflicted names, since the \QM{of} method was previously not in the domain, hence $[\![\II_0]\!]$ is well-formed, which finishes our proof.
 \end{proof}
 
-\subsection{Proof of THEOREM}
-\marco{the therem statement must be here}
-\label{subsec:proof3}
+\subsection{THEOREM and Proof}\label{subsec:theorem}
+\textbf{THEOREM. }
+For a given $\II_0\ldots\II_n$ interface table such that
+$\forall\II\in\II_0\ldots\II_n, \II$ OK,\\*
+if $\II_0$ has \textbf{@ObjWeak},
+$\valid(\C_0)$  and $\QM{of}\notin\dom(\C_0)$,
+then in the interface table
+$[\![\II_0]\!]\II_1\ldots\II_n$\\*
+$\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ $\II$ OK.
 \begin{proof}
 \textbf{LEMMA 2} already proves that $[\![\II_0]\!]$ is OK. On the other hand, for any $\II\ne\II_0$, by \textbf{LEMMA 1}, we know that all its methods
 are still well-typed, and the generated code in translation of \textbf{@ObjWeak} is only a static method \QM{of}, which has no way to affect the domain
