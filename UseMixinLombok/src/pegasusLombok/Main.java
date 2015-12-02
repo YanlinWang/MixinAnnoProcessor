@@ -7,7 +7,7 @@ interface Animal {}
 
 //BEGIN_PEGASUS_LOMBOK
 @Obj interface Horse extends Animal{
-	default void run() {System.out.println("I can run!");};
+	default void run() {System.out.println("I can run!");}
 }
 @Obj interface Bird extends Animal{
 	default void fly() {System.out.println("I can fly!");}

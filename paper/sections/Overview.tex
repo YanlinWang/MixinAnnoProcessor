@@ -11,25 +11,32 @@
 \end{tabular}
 \caption{The animal system. Complete animal system on the left, and code for simplified animal system on the right. }\label{fig:pegasus}
 \end{figure}
+\bruno{Yanlin: figure needs to rename point to location}
 
-To propose a standard example, we show \Q@Animal@s with a two dimensional \Q@Point2D@ representing their \Q@location@.
+This section illustrates how the \mixin annotation enables expressive
+idioms using multiple inheritance. 
+To propose a standard example for multiple inheritance, we show \Q@Animal@s with a two dimensional \Q@Point2D@ representing their \Q@location@.
 Some kinds of animals are \Q@Horse@s and \Q@Bird@s.
 Birds can \Q@fly@, thus their location need to be a three dimensional \Q@Point3D@.
-Finally, we model \Q@Pegasus@ as a kind of \Q@Animal@ with the skills of both \Q@Horse@s and \Q@Bird@s.\footnote{
+Finally, we model \Q@Pegasus@ (one of the best known creatures in Greek
+mythology) as a kind of \Q@Animal@ with the skills
+of both \Q@Horse@s and \Q@Bird@s. A simple class diagram illustrating
+the basic system in given in the left side of Figure~\ref{fig:pegasus}.\footnote{
 Some research argues in favour of using subtyping for modelling taxonomies, other research argue against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
 
-\subsection{Simple Multiple Inheritance with Default Methods}
+\subsection{Simple Multiple Inheritance with Default
+  Methods}\label{sec:simple}
 
-Suppose that we want to model an animal system as shown in
-the left side of Figure~\ref{fig:pegasus}. \texttt{Horse} and \texttt{Bird} are subtypes
+Before we model the final animal system, we first start with a
+simplified version without locations. This version serves the purpose of illustrating how 
+Java 8 default methods can already model simple forms of multiple inheritance.
+\texttt{Horse} and \texttt{Bird} are subtypes
 of \texttt{Animal}, with methods \texttt{run()} and \texttt{fly()},
-respectively. Pegasus (one of the best known creatures in Greek
-mythology) can not only \emph{run} but also \emph{fly}! This is the
+respectively. Pegasus can not only \emph{run} but also \emph{fly}! This is the
 place where \emph{``multiple inheritance''} is needed, because
 \texttt{Pegasus} needs to obtain \texttt{fly} and \texttt{run}
 functionality from both \texttt{Horse} and \texttt{Bird}.
-Ignoring points, for the moment, a 
-first attempt to model the animal system in Java 8 is given on the right-side 
+A first attempt to model the animal system in Java 8 is given on the right-side 
 of Figure~\ref{fig:pegasus}.
 Note that the implementations of the methods \texttt{run}
 and \texttt{fly} are defined inside interfaces, using default
@@ -37,26 +44,24 @@ methods. Moreover, because interfaces support multiple interface
 inheritance, the interface for \texttt{Pegasus} can inherit behaviour
 from both \texttt{Horse} and \texttt{Bird}. Although Java interfaces
 do not allow instance fields, no form of state is needed so far to
-model the animal system.  Therefore this example provides a simple
-illustratation how a basic form of multiple inheritance, similar to
-what can be done with traits, can be accomplished in Java 8.
+model the animal system. 
 
 \paragraph{Instantiation}
 To use \texttt{Horse}, \texttt{Bird} and \texttt{Pegasus}, some
 objects must be created first. A first problem with using
 interfaces to model the animal system is simply that interfaces 
-cannot be directly instantiated. Classes are needed for instantiation, such as:
+cannot be directly instantiated. Classes, such as:
 
 \lstinputlisting[linerange=21-23]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_INST
 
-\noindent to create animal objects. Now a \texttt{Pegasus} animal can be created
+\noindent are needed for instantiation. Now a \texttt{Pegasus} animal can be created
 using the class constructor:
 
 \begin{lstlisting}
 Pegasus p = new PegasusImpl();
 \end{lstlisting}
 
-\noindent There is a lot of annoyance here. Firstly, the sole
+\noindent There is a some annoyances here. Firstly, the sole
 purpose of classes is to provide a way to instantiate
 objects. Although (in this case) it takes only one line code to
 provide each of those classes, this code is essentially boilerplate
@@ -82,12 +87,11 @@ complex and verbose (even with anonymous classes).
 
 To model the animal system with object interfaces all that a user
 needs to do is to add a \mixin annotation to the \texttt{Horse}, 
-\texttt{Bird}, and \texttt{Pegasus} interfaces.  For example, 
-for \texttt{Bird} and \texttt{Pegasus} the code would be as follows: 
+\texttt{Bird}, and \texttt{Pegasus} interfaces: 
 
 \lstinputlisting[linerange=9-15]{../UseMixinLombok/src/pegasusLombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
 
-The effect of the annotations is that a static \emph{factory} method called
+\noindent The effect of the annotations is that a static \emph{factory} method called
 \texttt{of} is automatically added to the interfaces. With the
 \texttt{of} method a Pegasus object is instantiated as follows:
 
@@ -107,17 +111,17 @@ interface Pegasus extends Horse, Bird { // generated code not visible to users
 
 \noindent Note that the generated code is transparent to a user, which
 only sees the original code with the \mixin annotation. Compared to the pure
-Java solution in Section~\ref{}, the solution using object interfaces
+Java solution in Section~\ref{sec:simple}, the solution using object interfaces
 has the advantage of providing a direct mechanism for object
 instantiation, which avoids adding boilerplate classes to the
 namespace. 
 
 \subsection{Object Interfaces with State}
 
-The animal system modelled so far, is a simplified version of the
+The animal system modelled so far is a simplified version of the
 system presented in the left-side of Figure~\ref{fig:pegasus}, and still does not appear to 
 justify the \mixin annotation. Lets now move on to modelling 
-the complete animal system. In order to do this, animals will include 
+the complete animal system. In order to do this animals will include 
 a notion of points, representing their location in space. As we shall
 see, modelling stateful components using plain Java 8 quickly becomes 
 cumbersome. The \mixin annotation comes to rescue here and 
@@ -127,21 +131,21 @@ allows avoiding significant amounts of boilerplate code.
 Two dimensional points should keep track of their coordinates.  The usual
 approach to model points in Java would be to use a class with fields for the
 coordinates. However here we will illustrate how points are modelled with
-interfaces. Since Java disallows fields inside interfaces, states are modeled
+interfaces. Since Java disallows fields inside interfaces, state is modeled
 using abstract (getter) methods:
 
 \begin{lstlisting}
 interface Point2D{ int x(); int y();}
 \end{lstlisting}
 
-\noindent Unfortunatelly, creating a new point object is quite cumbersome, even
+\noindent Unfortunatelly, creating a new point object is cumbersome, even
 with anonymous classes:
 
 \begin{lstlisting}
 Point2D p = new Point2D(){ public int x(){return 4;} public int y(){return 2;}}
 \end{lstlisting}
 
-\noindent However it is not required to use this cumbersome syntax for every
+\noindent However this cumbersome syntax is not required for every
 object allocation. As programmers do, for ease or reuse, the boring
 repetitive code can be encapsulated in a method. A generalization of the
 \texttt{of} static factory method is appropriate in this case:
@@ -153,10 +157,10 @@ interface Point2D{ int x(); int y();
 
 \vspace{-5pt}
 \paragraph{\Q@Point2D@ with Object Interfaces}
-This obvious constructor code can be automatically generated by our \mixin
+This obvious ``constructor'' code can be automatically generated by our \mixin
 annotation.  By annotating the interface \Q@Point2D@, a variation of the shown
 static method \texttt{of} will be generated, mimicking the functionality of a
-simple-minded constructor: by looking at the abstract methods it first detects
+simple-minded constructor. \mixin first looks at the abstract methods and detects
 what are the fields, then generates an \Q@of@ method with one parameter for each
 of them. That is, we can just write
 
@@ -174,10 +178,11 @@ Point2D p = Point2D.of(42,myPoint.y());
 and taking all the other informations (only \Q@y@ in this case) from
 another point.
 
-\paragraph{\texttt{with} methods in Object Interfaces}
+\paragraph{\texttt{wither} methods in Object Interfaces}
 The pattern of creating a new object by reusing most information from an old
-object is very common when programming with immutable data-structures. It is
-supported in our code generation as \Q@with@ methods, for example:
+object is very common when programming with immutable
+data-structures. As such, it is
+supported in our code generation as \Q@with@ methods. For example:
 \begin{lstlisting}
 @Obj interface Point2D { 
   int x();    int y(); // getters
@@ -210,8 +215,8 @@ interface Point2D{ int x(); int y();
   Point2D withX(int val);    Point2D withY(int val);}
 \end{lstlisting}
 \end{comment}
-Moreover, if the programmer wants a different implementation, they may 
-just provide new \texttt{with} methods using \Q@default@:
+Moreover, if the programmer wants a different implementation, he may 
+provide an alternative implementation using \Q@default@ methods:
 \begin{lstlisting}
 @Obj interface Point2D{ 
   int x(); int y();
@@ -336,8 +341,8 @@ mutable state.
 \noindent Here we declare abstract getter and setter for the mutable ``field''
 \Q@location@.  Without the \mixin annotation, there is no convenient way to
 instantiate \texttt{Animal}.  For \texttt{Horse}, the \mixin annotation is used
-and an implementation of \texttt{run()} method is defined using \Q@default@,
-which further illustrates the convenience of \emph{with} methods:
+and an implementation of \texttt{run()} is defined using a \Q@default@
+method. The implementation of \texttt{run()} further illustrates the convenience of \emph{with} methods:
 
 \lstinputlisting[linerange=61-62]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
 
@@ -349,9 +354,9 @@ which further illustrates the convenience of \emph{with} methods:
 \texttt{location} methods (all generated automatically) provide a
 basic interface for dealing with animals.
 
-\paragraph{Summary} Dealing with states (mutable or not) in object interfaces
+\paragraph{Summary} Dealing with state (mutable or not) in object interfaces
 relies on a notion of abstract state, where only methods that interact with
-states are available to users. Object interfaces provide support for four
+state are available to users. Object interfaces provide support for four
 different types of abstract state operations, which are summarized in
 Figure~\ref{fig:abstractstate}.  The abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of
@@ -385,7 +390,7 @@ object; updates field \texttt{x} to \texttt{val}.             \\ \hline
 \subsection{Object Interfaces and Subtyping}
 \Q@Bird@s are \Q@Animal@s, but while \Q@Animal@s only need 2D
 locations, \Q@Bird@s need 3D locations. Therefore when the \texttt{Bird}
-interface extends the animal interface, the notion of points needs to
+interface extends the \Q@Animal@ interface, the notion of points needs to
 be refined. Such kind of refinement usually poses a challenge
 in typical class-based approaches. Fortunatelly, with object interfaces,
 we are able to provide a simple and effective solution. 
@@ -402,7 +407,7 @@ unsatisfactory options in front of us:
   Also it requires adapting the old code to accommodate for new evolutions.
 
 \item Define a \Q@Point2D@ field in \Q@Animal@ and define an extra \Q@int z@
-  field in \Q@Bird@.  This solution is very ad-hoc, requires to basically
+  field in \Q@Bird@.  This solution is very ad-hoc, requiring to basically
   duplicate the difference between \Q@Point2D@ and \Q@Point3D@ inside \Q@Bird@.
   %Again, there are many reasons this would be bad, 
   The most dramatic criticism is that it would not scale to a scenario when
@@ -426,8 +431,10 @@ Object interfaces address the challenge of type-refinement as follows:
   \texttt{location()} is refined to \texttt{Point3D};
 \item by \emph{overloading} a new setter for location is defined with a more
   precise type;
-\item we provide a \Q@default@ setter with the old signature.
+\item a \Q@default@ setter implementation with the old signature is provided.
 \end{itemize}
+
+Thus, with object interfaces, the code for the \Q@Bird@ interface is:
 
 \lstinputlisting[linerange=66-70]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
 
@@ -442,27 +449,30 @@ Object interfaces address the challenge of type-refinement as follows:
 \noindent From the type perspective, the key is the covariant method
 overriding of \texttt{location()}. However from the semantic
 perspective the key is the implementation for the setter with the old
-signature.
+signature (\Q@location(Point2D)@). The key to the setter
+implementation is a new type of \@with@ method, called a property updater.
 
-\paragraph{\Q@Point3D@ and properties updater}
+\paragraph{\Q@Point3D@ and properties updaters}
 The \Q@Point3D@ interface is defined as follows:
 
 \lstinputlisting[linerange=51-54]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
 
-\noindent By using the new \Q@with@ method we may use the information for
-\Q@z@ already stored in the object to forge an appropriate \Q@Point3D@
-to store.  Note how all the informations about what fields sits in
-\Q@Point3D@ and what in \Q@Point2D@ is properly encapsulated in the
-\Q@with@ method, and is transparent for the implementer of \Q@Bird@.
-
-\Q@with-@ methods (functionally) update a field at a time.  This can be
-inefficient, and sometime hard to maintain.  Often we want to update multiple
+\noindent Note that this interface includes a different type of
+\Q@with@ method, which takes a \Q@Point2D@ as an argument.
+The old wither methods (such as \Q@withX@) functionally update a field at a time.  This can be
+inefficient, and sometimes hard to maintain.  Often we want to update multiple
 fields simultaneously, for example using another object as source.  Following
 this idea, the method \Q@with(Point2D)@ is an example of a (functional)
 properties updater: it takes a certain type of object and returns a copy of the
 current object with all fields that match the fields of parameter type
-updated. The idea is that we want the result to be still like \Q@this@, but
-modified as similar as possible to the parameter.
+updated. The idea is that we want the result to still be like \Q@this@, but
+modified to be as similar as possible to the parameter.
+
+With the new \Q@with@ method we may use the information for
+\Q@z@ already stored in the object to forge an appropriate \Q@Point3D@
+to store. Note how all the information about what fields sit in
+\Q@Point3D@ and in \Q@Point2D@ is properly encapsulated in the
+\Q@with@ method, and is transparent to the implementer of \Q@Bird@.
 
 % To implement the old setter in a convenient way, \mixin supports one
 % last type of operations: property updater \texttt{with}
@@ -482,11 +492,16 @@ modified as similar as possible to the parameter.
 \paragraph{Generated boilerplate}
 Just to give a feeling on how much boring code \mixin is generating, we show the
 generated code for the \texttt{Point3D} in Figure~\ref{fig:boilerplate}. The
-generated code is very mechanical, writing such code by hand is error-prune. For
+generated code is very mechanical, writing such code by hand is error-prone. For
 example a distracted programmer may swap the arguments of calls to
 \Q@Point3D.of@.  Note how \Q@with-@ methods are automatically refined in their
-return type, so that code like \Q@Point3D p=Point3D.of(1,2,3); p=p.withX(42);@
-will be accepted and behave as expected. If the programmer wishes to suppress
+return type, so that code like: 
+
+\begin{lstlisting}
+Point3D p=Point3D.of(1,2,3); p=p.withX(42);
+\end{lstlisting}
+
+\noindent will be accepted and behave as expected. If the programmer wishes to suppress
 this behaviour and keep the signature as it was, it is sufficient to redefine
 the \Q@with-@ methods in the new interface repeating the old signature.  Again,
 the philosophy is that if the programmer provides something directly, \mixin
