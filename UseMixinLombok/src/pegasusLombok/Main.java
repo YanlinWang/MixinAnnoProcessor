@@ -4,11 +4,12 @@ import lombok.Obj;
 
 
 interface Animal {}
-@Obj interface Horse {
+
+//BEGIN_PEGASUS_LOMBOK
+@Obj interface Horse extends Animal{
 	default void run() {System.out.println("I can run!");};
 }
-//BEGIN_PEGASUS_LOMBOK
-@Obj interface Bird {
+@Obj interface Bird extends Animal{
 	default void fly() {System.out.println("I can fly!");}
 }
 @Obj interface Pegasus extends Horse, Bird {}

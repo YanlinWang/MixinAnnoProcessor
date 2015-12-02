@@ -9,27 +9,34 @@ existing one, showing that the amount of code is reduced significantly using \mi
 
 \subsection{A Trivial Solution to the Expression Problem with Object Interfaces}
 
-The \emph{Expression Problem} (EP)~\cite{wadler98expression}
-is a well-known problem about modular extensibility issues in software
-evolution. Recently, a new solution~\cite{eptrivially} that uses only
-covariant type refinement that has been shown to work in Java. When
-that solution is modelled with interfaces and default methods, it can
-even provide independent extensibility: that is, the ability to
-assemble a system, from multiple, independently developed extensions.
-Unfortunatelly, a plain Java solution has alot of code verbosity in
-Java due to code required for instantiation, which makes the solution 
-cumbersome to use. The \mixin annotation helps to remove such code, and 
-makes the solution quite easy to use.
-% \bruno{We should try to do some space saving in here. You could, for example 
-% combine the code for the initial system with the code for a new operation in a figure/table 
-% with 2 colums. Then just refer to the Table/Figure in the text.}
+The \emph{Expression Problem} (EP)~\cite{wadler98expression} is a well-known
+problem about modular extensibility issues in software evolution. Recently, a
+new solution~\cite{eptrivially}, using only covariant type refinement, has been
+shown.  When such solution is modelled with interfaces and default methods, it
+can even provide independent extensibility: the ability to assemble a system
+from multiple, independently developed, extensions.  Unfortunatelly, the
+required instantiation code makes a plain Java solution verbose and cumbersome
+to use. The \mixin annotation is enough to remove the boilerplate code, making
+the presented approach very appealing.
 
 \paragraph{Initial System}
 In the formulation of the EP there is an initial system that models
 arithmetic expressions with only literals and addition, and an initial 
-operation:
+operation \texttt{eval} for expression evaluation.
 
-\begin{lstlisting}[multicols=2]
+\noindent As shown in Figure~\ref{fig:ep}, \texttt{Exp} is the common
+super-interface with an evaluation operation \texttt{eval()}
+inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend interface
+\texttt{Exp} with default implementations for the \texttt{eval} operation. The
+number field \texttt{x} of a literal is represented as a getter method
+\texttt{x()} and expression fields (\texttt{e1} and \texttt{e2}) of an addition
+as getter methods \texttt{e1()} and \texttt{e2()}.
+
+\begin{figure}
+\begin{tabular}{l|l}
+\begin{minipage}{8cm}
+%\vspace{-90pt}
+\begin{lstlisting}[]
 interface Exp { int eval(); }
 @Obj interface Lit extends Exp {
 	int x();
@@ -42,36 +49,29 @@ interface Exp { int eval(); }
 	}
 }
 \end{lstlisting}
-
-% \begin{multicols}{2}
-% \lstinputlisting[linerange=34-44]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
-% \end{multicols}
-
-\noindent \texttt{Exp} is the common super-interface with an evaluation operation
-\texttt{eval()} inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend
-interface \texttt{Exp} with default implementations for the \texttt{eval}
-operation. The number field \texttt{x} of a literal is represented as a getter
-method \texttt{x()} and expression fields (\texttt{e1} and \texttt{e2}) of an addition as
-getter methods \texttt{e1()} and \texttt{e2()}.
+\end{minipage}
+&
+\begin{minipage}{8cm}
+\lstinputlisting[linerange=53-61]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\end{minipage}
+\end{tabular}
+\caption{The Expression Problem. Initial system on the left, and code for adding
+  print operation on the right. }\label{fig:ep}
+\end{figure}
 
 \paragraph{Adding a New Type of Expressions}
-It is easy to add new types of expressions to the code in the initial system in a
-modular way. For example, the following code shows how to add subtraction.
+In the object oriented paradigm, it is easy to add new types of expressions. For example, the following code shows how to add subtraction.
 
 \lstinputlisting[linerange=48-49]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
-
+\marco{text under need to be improved}
 \paragraph{Adding a New Operation} The difficulty of the EP in object-oriented 
-languages arizes from adding new operations. For example, adding a pretty printing 
+languages arises from adding new operations. For example, adding a pretty printing 
 operation, would typically involve changing all of the existing code. However, a solution 
 to the EP forbids this and it also forbids using casts. In other words, it should be possible 
 to add the pretty printing operation in a type-safe and modular way.  
 It turns out that, this can be done easily, using our object interfaces approach. 
-The following code shows how to add the new operation \texttt{print}.
-
-\lstinputlisting[linerange=53-61]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
-%\bruno{Please add a Java comment to the code emphasizing that the types of the getters are refined!}
-%\bruno{please indent code properly (the getters are not aligned with default))}
+The code in Figure~\ref{fig:ep} shows how to add the new operation \texttt{print}.
 
 \noindent  The interface \texttt{ExpP} extending interface \texttt{Exp} is defined with the
 extra method \texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are
@@ -117,7 +117,7 @@ ExpPC e8 = AddPC.of(LitPC.of(3), LitPC.of(4));
 \noindent In contrast, in a pure Java solution, the tedious instantiation code would need 
 to be defined manually. 
 
-\subsection{Embedded DSLs with Fluent Interfaces}
+\subsection{Embedded DSLs with Fluent Interfaces}\label{sec:dsls}
 Since the style of fluent interfaces was invented in Smalltalk as method
 cascading, more and more languages came to support fluent interfaces, including
 JavaScript, Java, C++, D, Ruby, Scala, etc. For most languages, to create fluent
@@ -142,14 +142,14 @@ creating fluent interfaces with \mixin, there are two main advantages:
 \noindent We use embedded DSLs of two simple SQL query languages to illustrate.
 The first query language \texttt{Database}  models
 \texttt{select}, \texttt{from} and \texttt{where} clauses:
-\lstinputlisting[linerange=6-11]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE
+\lstinputlisting[linerange=6-10]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE
 % \bruno{Wouldn't it be better to have a static method create() that calls of("","","")) and initializes all the fields? It seems awkward 
 % to have to use the of explicitly to initialized all fields.}
 
 \noindent The main benefit that fluent methods give
 us is the convinience of method chaining:
 
-\lstinputlisting[linerange=33-33]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY1
+\lstinputlisting[linerange=31-31]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY1
 
 \noindent Note how all the logic for the fluent setters is automatically provided by the \mixin annotation. 
 
@@ -158,12 +158,12 @@ us is the convinience of method chaining:
 specify. With \mixin programmers just need to extend the interface \texttt{Database} with new
 feature, and the return type of fluent setters in
 \texttt{Database} is automatically refined to \texttt{ExtendedDatabase}:
-\lstinputlisting[linerange=15-18]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
+\lstinputlisting[linerange=14-16]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
 This way, when a \texttt{ExtendedDatabase} query created, 
 all the fluent setters return the correct type, and not the old \texttt{Database} type, which would prevent calling 
 \texttt{orderBy}.
 
-\lstinputlisting[linerange=39-39]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
+\lstinputlisting[linerange=37-37]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
 
 \subsection{A Maze Game}
 The last case study is a simplified variant of Maze game, which is often
