@@ -469,13 +469,15 @@ ${}_{}$\\*
 the non static ones that are not transitively reachable by following another, less specific, superinterface chain. Formally:\\*
 
 \noindent$\begin{array}{l}
-\InTextAssert{35ex}{
+\InTextDef{22ex}{
 \method\in\tops(\m,\Cs)}{
+}{
+\mBody(\m,\C)=\method
 }\\
 \InTextWith{
-  \mBody(\m,\C)=\method,\ \method\mbox{ not a static method, and }}\\
-\tab\tab  \C\in\Cs\ \mbox{ such that }
-\forall \C'\in\Cs\setminus\C \mbox{ not } \C' \subtype \C
+ \method\mbox{ not a static method, and }
+ \C\in\Cs\ \mbox{ such that }
+\forall \C'\in\Cs\setminus\C \mbox{ not } \C' \subtype \C}
 
 \end{array}$
 
