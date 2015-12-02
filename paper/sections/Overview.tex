@@ -85,7 +85,7 @@ needs to do is to add a \mixin annotation to the \texttt{Horse},
 \texttt{Bird}, and \texttt{Pegasus} interfaces.  For example, 
 for \texttt{Bird} and \texttt{Pegasus} the code would be as follows: 
 
-\lstinputlisting[linerange=11-14]{../UseMixinLombok/src/pegasusLombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
+\lstinputlisting[linerange=9-15]{../UseMixinLombok/src/pegasusLombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
 
 The effect of the annotations is that a static \emph{factory} method called
 \texttt{of} is automatically added to the interfaces. With the
@@ -471,7 +471,7 @@ modified as similar as possible to the parameter.
 % fields at once, contained in an interface, and copy those fields into
 % fields of another interface.
 
-\paragraph{Generated boilerplate}
+
 
 \begin{figure}
 \lstinputlisting[linerange=79-91]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=GENERATED_POINT3D
@@ -479,6 +479,7 @@ modified as similar as possible to the parameter.
 \label{fig:boilerplate}
 \end{figure}
 
+\paragraph{Generated boilerplate}
 Just to give a feeling on how much boring code \mixin is generating, we show the
 generated code for the \texttt{Point3D} in Figure~\ref{fig:boilerplate}. The
 generated code is very mechanical, writing such code by hand is error-prune. For

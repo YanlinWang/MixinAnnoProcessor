@@ -72,6 +72,8 @@ breakatwhitespace=false,        % sets if automatic breaks should only happen at
 title=\lstname,                 % show the filename of files included with \lstinputlisting; also try caption instead of title
 escapeinside={(*}{*)},          % if you want to add a comment within your code
 keywordstyle=\ttfamily\bfseries,
+aboveskip=3pt,
+belowskip=-1pt
 % commentstyle=\color{Gray},
 % stringstyle=\color{Green}
 }
@@ -108,6 +110,7 @@ keywordstyle=\ttfamily\bfseries,
 
 \newcommand\mixin{\textbf{@Obj}\xspace}
 \renewcommand{\paragraph}[1]{\vspace{5pt}\noindent{\bf #1}}
+\newenvironment{listing}{\vspace{-3pt}\begin{lstlisting}}{\end{lstlisting}\vspace{-3pt}}
 \usepackage{xspace}
 
 % Author macros::begin %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
