@@ -43,26 +43,26 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 \end{figure}
 
 \paragraph{Adding a New Type of Expressions}
-In the object oriented paradigm, it is easy to add new types of expressions. For example, the following code shows how to add subtraction.
+In the OO paradigm, it is easy to add new types of expressions. For example, the
+following code shows how to add subtraction.
 
 \lstinputlisting[linerange=45-46]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
-\marco{text under need to be improved}
-\paragraph{Adding a New Operation} The difficulty of the EP in object-oriented 
+%\marco{text under need to be improved}
+\paragraph{Adding a New Operation} The difficulty of the EP in OO  
 languages arises from adding new operations. For example, adding a pretty printing 
-operation, would typically involve changing all of the existing code. However, a solution 
-to the EP forbids this and it also forbids using casts. In other words, it should be possible 
-to add the pretty printing operation in a type-safe and modular way.  
-It turns out that, this can be done easily, using our object interfaces approach. 
-The code in Figure~\ref{fig:ep} shows how to add the new operation \texttt{print}.
-
-\noindent  The interface \texttt{ExpP} extending interface \texttt{Exp} is defined with the
-extra method \texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are
-defined with default implementations of \texttt{print()}, extending
-base interfaces \texttt{Lit} and \texttt{Add}, respectively. Importantly, note
-that in \texttt{AddP}, the types of the ``\emph{fields}'' (i.e. the getter methods) \texttt{e1} 
-and \texttt{e2} are refined. If the types were not refined then the body of the \texttt{print}
-method in \texttt{AddP} would fail to type-check.
+operation would typically change all existing code. However, a solution 
+%to the EP forbids this and it also forbids using casts. In other words, it should be possible 
+should add the pretty printing operation in a type-safe and modular way.  It
+turns out to be easily achieved with the assitance of \mixin.  The code in
+Figure~\ref{fig:ep} (rhs) shows how to add the new operation \texttt{print}.
+Interface \texttt{ExpP} extends \texttt{Exp} with the extra method
+\texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are defined with
+default implementations of \texttt{print()}, extending base interfaces
+\texttt{Lit} and \texttt{Add}, respectively. Importantly, note that in
+\texttt{AddP}, the types of ``\emph{fields}'' (i.e. the getter methods)
+\texttt{e1} and \texttt{e2} are refined. If the types were not refined then
+\texttt{print()} method in \texttt{AddP} would fail to type-check.
 
 \paragraph{Independent Extensibility}
 To show that our approach supports independent extensibility~\cite{zenger05independentlyextensible}, we first define a

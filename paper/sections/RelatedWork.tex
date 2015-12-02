@@ -17,42 +17,41 @@ In this section we discuss related work and comparison to Classless Java.
 %it is used in multiple classes).
 
 \subsection{Multiple Inheritance in Object Oriented Languages}
-Many authors have argued in favour or against multiple inheritance.  Multiple inheritance provides
-expressive power, but it is difficult to model and implement, and can create
-programs that are hard to reason about. These difficulties include the famous
-diamond (fork-join) problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.
-%and the yo-yo problem~\cite{taenzer1989problems}.  
-To conciliate the need for expressive power and the need for simplicity, many
-models have been proposed in over the years, including C++ virtual
-inheritance, mixins~\cite{bracha90mixin}, traits~\cite{scharli03traits}, and
-hybrid model such as CZ~\cite{malayeri2009cz}.
-They provide novel programming architecture models in the OO paradigm. In terms
-of restrictions set on these models, C++ virtual inheritance aims at a more
-general model, mixins added some restrictions on the model, and trait model is
-the most restricted one (excluding states, instantiation, etc).
+Many authors have argued in favour or against multiple inheritance.  Multiple
+inheritance is very expressive, but difficult to model and implement, and can
+cause difficulty (including the famous diamond (fork-join)
+problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning
+programs. To conciliate the need for expressive power and simplicity, many
+models have been proposed, including C++ virtual inheritance,
+mixins~\cite{bracha90mixin}, traits~\cite{scharli03traits}, and hybrid model
+such as CZ~\cite{malayeri2009cz}.  They provide novel programming architecture
+models in the OO paradigm. In terms of restrictions set on these models, C++
+virtual inheritance aims at a relative general model; mixin model add some
+restrictions on the model; and trait model is the most restricted one (excluding
+states, instantiation, etc).
 
 \paragraph{C++ Approach.}
-C++ tries to provide a general solution to multiple inheritance. Virtual
-inheritance in C++ provides another solution to multiple inheritance (especially
-the diamond problem by keeping only one copy of the base
-class)~\cite{ellis1990annotated}, however suffers from object initialization
-problem as pointed out by Malayeri et al.~\cite{malayeri2009cz}. It bypasses all
-constructor calls to virtual superclasses, which would potentially cause serious
-semantic errors. In our approach, \mixin annotation processor has the full
-control of object initialization mechanism, and this mechanism is clean and
-transparent to users. Moreover, if not satisfied with the default generated
-\texttt{of} method, customized factory methods are also allowed to be defined.
+C++ tries to provide a general solution to multiple inheritance by virtual
+inheritance that deals with diamond problem by keeping only one copy of the base
+class~\cite{ellis1990annotated}, however suffers from object initialization
+problem as shown in~\cite{malayeri2009cz}. It bypasses all constructor calls to
+virtual superclasses, which would potentially cause serious semantic errors. In
+our approach, \mixin annotation processor has the full control over object
+initialization, whose mechanism is transparent to users. Moreover, customized
+factory methods are also allowed, if users are not satisfied with the default
+generated \texttt{of} method.
 
 \paragraph{Mixins.}
-Mixins are a more restricted model than the C++ approach. Mixins allow to name
+Mixins are a more restricted model than C++ approach. Mixins allow to name
 components that can be applied to various classes as reusable functionality
-units. However, they suffer from linearisation: the order of mixin application
-is relevant in often subtle and undesired ways. This hinders their usability
-and the ability of resolving conflicts: the linearisation (total ordering) of
-mixin inheritance cannot provide a satisfactory resolution in all cases and
-restricts the flexibility of mixin composition. To fight those limitations, an
+units. However, % they suffer from linearisation: the order of mixin application
+% is relevant in often subtle and undesired ways. This hinders their usability
+% and the ability of resolving conflicts:
+the linearisation (total ordering) of
+mixin inheritance cannot provide a satisfactory resolution in some cases and
+restricts the flexibility of mixin composition. To fight this limitation, an
 algebra of mixin operators is introduced~\cite{ancona2002calculus}, but this
-raised the complexity of the approach, especially when constructors and fields
+raises the complexity, especially when constructors and fields
 are considered~\cite{marco09FJigsaw}. Scala traits are in fact more like linearised mixins.
 Scala avoids the object initialization
 problem by disallowing constructor parameters, causing no ambiguity in cases
@@ -76,36 +75,30 @@ interfaces is unordered and symmetric.
 \paragraph{CZ.}
 Malayeri and Aldrich proposed a model CZ~\cite{malayeri2009cz} which aims to do
 multiple inheritance without diamond problem. They divide inheritance into two
-separate concepts: inheritance dependency (using \texttt{require}) and
-implementation inheritance (using \texttt{extends}). Using a combination of
-\texttt{requires} and \texttt{extends}, a program with diamond inheritance can be
-transformed to one without diamonds. Also in this approach, fields and multiple
-inheritance can coexist. However as shown in the example in the article, the
-untangling of inheritance also untangles class structure. In CZ, not only the
-number of classes (from 4 to 6 in the stream example), but also the class
-hirarchy complexity increases. Our approach does not complicate the structure,
-and (conceptual) fields coexist with multiple inheritance.
+separate concepts: inheritance dependency and implementation inheritance. Using
+a combination of \texttt{requires} and \texttt{extends}, a program with diamond
+inheritance can be transformed to one without diamonds. Moreover, fields and
+multiple inheritance can coexist. However as shown in the example in the
+article, the untangling of inheritance also untangles class structure. In CZ,
+not only the number of classes (from 4 to 6 in the stream example), but also the
+class hirarchy complexity increases. \mixin does not complicate the
+structure, and fields can also coexist with multiple inheritance.
 
 \paragraph{Traits and Java's default methods}
-Simplifying the mixins approach, traits~\cite{scharli03traits} draw a
-strong line between units of reuse (traits) and object factories
-(classes). In this model, traits as units of reusable code, contain
-only methods as reusable entities. Thus, no state and state
-initialization are considered. Classes act as object factories,
-requiring functionalities from multiple traits. Java 8 interfaces with
-default methods are closely related to traits: concrete method
-implementation are allowed (via the \textbf{default} keyword) inside
-interfaces. The introduction of default methods opens the gate for
-various flavours of multiple inheritance in Java, using interfaces.
-Traits offer a trait algebra with operations like sum, alias and exclusion, provided
-for explicit conflict resolution.  
-Former work by Bono et al.~\cite{bono14}. provides details on
-mimicking the trait algebra through Java 8 interfaces. 
-We briefly recall the main points of their encoding;
-however we propose a different representation of \textbf{exclusion}.
-The author of ~\cite{bono14} agree that our revised version is
-cleaner, typesafe and more direct.
-%\bruno{do we want do say this?}\yanlin{need to ask Marco.}
+Simplifying the mixins approach, traits~\cite{scharli03traits} draw a strong
+line between units of reuse and object factories. Traits, as units of reusable
+code, contain only methods as reusable functionality. ignoring states and state
+initialization. Classes, as object factories, require functionalities from
+(multiple) traits. Java 8 interfaces with default methods are closely related to
+traits: concrete method implementation are allowed (via the \textbf{default}
+keyword) inside interfaces. The introduction of default methods opens the gate
+for various flavours of multiple inheritance in Java. Traits offer an algebra
+with operations like sum, alias and exclusion, providing explicit conflict
+resolution. Former work~\cite{bono14} provides details on mimicking the trait
+algebra through Java 8 interfaces.  We briefly recall the main points of their
+encoding; however we propose a different representation of \textbf{exclusion}.
+The author of ~\cite{bono14} agrees that our revised version is cleaner,
+typesafe and more direct.
 
 \newcommand\shortItem{\vspace{-1ex}}
 \begin{itemize}
@@ -137,13 +130,13 @@ cleaner, typesafe and more direct.
 \end{itemize}
 
 There are also proposals for extending Java (before Java8) with traits. For
-example, FeatherTrait Java (FTJ)~\cite{Liquori08ftj} by Liquori et al. extends
-the calculus of Featherweight Java (FJ)~\cite{Igarashi01FJ} with
-statically-typed traits, adding trait-based inheritance in Java.  Except for
-few, mostly syntactic details, their work can be emulated/rephrased with Java8
-interfaces.  There are also extensions to the original trait model, which have
-operations that default methods and interfaces cannot model, such as method
-renaming in \cite{reppy2006foundation}, which breaks structural subtyping.
+example, FeatherTrait Java (FTJ)~\cite{Liquori08ftj} extends
+FJ~\cite{Igarashi01FJ} with statically-typed traits, adding trait-based
+inheritance in Java.  Except for few, mostly syntactic details, their work can
+be emulated with Java8 interfaces. There are also extensions to the original
+trait model, which have operations that default methods and interfaces cannot
+model, such as method renaming in \cite{reppy2006foundation}, which breaks
+structural subtyping.
 
 \paragraph{Traits vs Object Interfaces}
 We consider object interfaces to be an alternative to traits or mixins.  In the
@@ -155,19 +148,18 @@ absence of state as drawbacks of this model~\cite{malayeri2009cz}.  Object
 interfaces are units of reuse, and at the same time they provide factory methods
 for instantiation and support state.  Our approach promotes the use of
 interfaces instead of classes, in order to rely on the modular composition
-offered by interfaces. Since Java was designed for classes, a direct class-less
-programming style is verbose and feels unnatural. However, annotation driven
-code generation is enough to overcome this difficulty, and the resulting
-programming style encourages modularity, composability and reusability, by
-keeping a strong object oriented feel. In that sense, we promote object
-interfaces as being both units of reusable code and object factories. Our
-practical experience is that, in Java, separating the two notions leads to alot
-of boilerplate code, and is quite limiting when multiple inheritance with state
-is required. The use of abstract state operations avoids the key difficulties
-associated with multiple inheritance and state, while still being quite
-expressive.  Moreover the ability to support constructors adds additional
-expressivity, which is not available in approaches such as Scala's
-traits/mixins.
+offered by interfaces. Since Java was designed for classes, a direct classless
+programming style is verbose and unnatural. However, annotation driven code
+generation is enough to overcome this difficulty, and the resulting programming
+style encourages modularity, composability and reusability, by keeping a strong
+OO feel. In that sense, we promote object interfaces as being both units of
+reusable code and object factories. Our practical experience is that, in Java,
+separating the two notions leads to a lot of boilerplate code, and is quite
+limiting when multiple inheritance with states is required.  Abstract state
+operations avoid the key difficulties associated with multiple inheritance and
+states, while still being quite expressive.  Moreover the ability to support
+constructors adds additional expressivity, which is not available in approaches
+such as Scala's traits/mixins.
 
 %Nevertheless, we
 %believe that in other languages the separation can be more practical
@@ -307,21 +299,23 @@ merely do automatic code generation.
 \end{comment}
 
 \subsection{Meta-programming Competes with Language Extensions}
-\bruno{Mention/Compare with Language Virtualization work in Scala. They also re-interpret 
-syntax.}
 The most obvious solution to adding features to a language is language
-extension. It is often implemented as syntactic extensions that can be
-desugared to the base language. For example, the Scala compiler was extended to
-directly supports XML syntax. However, this approach does not support combining
-multiple extensions into one. We are de facto creating a fork in the language,
-and rarely the new fork gain enough traction to become the main language
-release.  On this topic we mention SugarJ~\cite{erdweg11sugarj} - a Java-based
-extensible language allowing programmers to extend it with custom features by
-definitions in meta-DSLs (SDF, Stratego, etc).\bruno{so, what's the point that 
-we want to make with SugarJ?}\yanlin{we were talking about lightweight language
-sugar, so SugarJ is a comparison to ours. Where using SugarJ requires learning
-various DSLs like SDF, stratego, etc, in comparison, our approach is just using
-Java. }
+extension. It is often implemented as syntactic extensions that can be desugared
+to the base language. For example, the Scala compiler was extended to directly
+supports XML syntax. However, this approach does not support combining multiple
+extensions into one. Scala-Virtualized is an extension to Scala which allows to
+blend shallow and deep embedding of DSLs. It redefines Scala structures to
+method calls, which can be overridden by DSL implementors. Therefore
+Scala-Virtualized also reinterprets syntax. These extensions are admittedly
+useful, however they are essentially creating a fork of the language, and rarely
+the new fork gains enough traction to become the main language release. % On this
+% topic we mention
+SugarJ~\cite{erdweg11sugarj} is a Java-based extensible language allowing
+programmers to extend it with custom features by definitions in meta-DSLs (SDF,
+Stratego, etc). Using SugarJ requires learning various DSLs while our approach
+is just using Java. However its intention is different from ours: one of the
+purpose of SugarJ is to allow easy defition of sugars while our approach aims to
+implement the desired program transformation without just in Java.
 
 On the other side, when the base language has a flexible enough syntax and
 a fast and powerful enough reflection mechanism, we may just need to play with
