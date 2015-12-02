@@ -1,6 +1,6 @@
 \section{Implementation}
 
-Our implementation is based on an extension to Lombok. The Lombok
+Our implementation is based on an extension of Lombok. The Lombok
 project~\cite{lombok} is a Java tool that aims at removing (or
 reducing) Java boilerplate code via
 annotations. There are a number of annotations provided by the
@@ -9,8 +9,8 @@ original Lombok, including \textbf{@Getter}, \textbf{@Setter},
 methods, respectively.  Furthermore, Lombok provides a number of
 interfaces for users to create custom transformations, as extensions
 to the original framework.
-A transformation is based on a handler, which acts on the AST from
-parsing the annotated node and returns a modified AST for analysis and
+A transformation is based on a handler, which acts on the AST for the 
+annotated node and returns a modified AST for analysis and
 generation afterwards. Such a handler can either be a Javac handler or
 an Eclipse handler.
 
