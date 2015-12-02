@@ -11,10 +11,10 @@ existing one, showing that the amount of code is reduced significantly using \mi
 
 The \emph{Expression Problem} (EP)~\cite{wadler98expression} is a well-known
 problem about modular extensibility issues in software evolution. Recently, a
-new solution~\cite{eptrivially}, using only covariant type refinement, has been
-shown.  When such solution is modelled with interfaces and default methods, it
+new solution~\cite{eptrivially} using only covariant type refinement is
+proposed. When this solution is modeled with interfaces and default methods, it
 can even provide independent extensibility: the ability to assemble a system
-from multiple, independently developed, extensions.  Unfortunatelly, the
+from multiple, independently developed extensions. Unfortunatelly, the
 required instantiation code makes a plain Java solution verbose and cumbersome
 to use. The \mixin annotation is enough to remove the boilerplate code, making
 the presented approach very appealing.
@@ -34,26 +34,9 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 
 \begin{figure}
 \begin{tabular}{l|l}
-\begin{minipage}{8cm}
-%\vspace{-90pt}
-\begin{lstlisting}[]
-interface Exp { int eval(); }
-@Obj interface Lit extends Exp {
-	int x();
-	default int eval() { return x(); }
-}
-@Obj interface Add extends Exp {
-	Exp e1(); Exp e2();
-	default int eval() {
-		return e1().eval() + e2().eval();
-	}
-}
-\end{lstlisting}
-\end{minipage}
+\lstinputlisting[linerange=34-41]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
 &
-\begin{minipage}{8cm}
-\lstinputlisting[linerange=53-61]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
-\end{minipage}
+\lstinputlisting[linerange=50-56]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
 \end{tabular}
 \caption{The Expression Problem. Initial system on the left, and code for adding
   print operation on the right. }\label{fig:ep}
@@ -62,7 +45,7 @@ interface Exp { int eval(); }
 \paragraph{Adding a New Type of Expressions}
 In the object oriented paradigm, it is easy to add new types of expressions. For example, the following code shows how to add subtraction.
 
-\lstinputlisting[linerange=48-49]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
+\lstinputlisting[linerange=45-46]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
 \marco{text under need to be improved}
 \paragraph{Adding a New Operation} The difficulty of the EP in object-oriented 
@@ -99,7 +82,7 @@ interface ExpC extends Exp { List<Integer> collectLit(); }
 \noindent Now we combine the two extensions (\texttt{print} and
 \texttt{collectLit}) together:
 
-\lstinputlisting[linerange=85-87]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
+\lstinputlisting[linerange=80-82]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
 
 
 \noindent \texttt{ExpPC} is the new expression interface supporting

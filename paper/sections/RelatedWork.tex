@@ -307,11 +307,10 @@ merely do automatic code generation.
 \end{comment}
 
 \subsection{Meta-programming Competes with Language Extensions}
-\bruno{needs to be polished better, I think}
 \bruno{Mention/Compare with Language Virtualization work in Scala. They also re-interpret 
 syntax.}
 The most obvious solution to adding features to a language is language
-extension.  It is often implemented as syntactic extensions that can be
+extension. It is often implemented as syntactic extensions that can be
 desugared to the base language. For example, the Scala compiler was extended to
 directly supports XML syntax. However, this approach does not support combining
 multiple extensions into one. We are de facto creating a fork in the language,

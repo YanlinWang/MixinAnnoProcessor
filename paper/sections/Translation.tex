@@ -14,7 +14,7 @@ For the same reason we do not include \Q@void@ returning setters, since they are
 Two translation functions for the two parts are presented as follows:
 
 \noindent$\begin{array}{l}
-\InTextDef{18em}{[\![\mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
+\InTextDef{16em}{[\![\mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
 }{
 \weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
 \methods\ \methods' \cC
@@ -66,12 +66,12 @@ interface A}\ \oC\QM{int x(); B withX(int x);}\cC\\
 \noindent$\begin{array}{ll}
 \InTextDef{20em}{\C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\QM;\in
 \otherMethod(\C_0,\methods)}{
- \isWith(\mBody(\QM{with#}\m, \C_0), \C_0)}\\
-\InTextWith{\C\ \m\QM{();}\in \fieldsFunc(\C_0)
+ \isWith(\mBody(\QM{with#}\m, \C_0), \C_0),}\\
+\tab\tab{\C\ \m\QM{();}\in \fieldsFunc(\C_0)
 \mbox{ and } \QM{with#}\m\notin\dom(\methods)}\\
 \InTextDef{20em}{\C_0\ \QM_\m\oR \C\ \QM{_val}\cR\QM;\in
-\otherMethod(\C_0,\methods)}{\isSetter(\mBody(\QM_\m, \C_0), \C_0)}\\
-\InTextWith{
+\otherMethod(\C_0,\methods)}{\isSetter(\mBody(\QM_\m, \C_0), \C_0),}\\
+\tab\tab{
 \C\ \m\QM{();}\in \fieldsFunc(\C_0)
 \mbox{ and } \QM_\m\notin\dom(\methods)}\\
 \end{array}$
