@@ -65,9 +65,9 @@ The definition of $\otherMethod(\C_0,\methods)$ is as follows:
 
 The methods that we generate in the interface are \Q@with-@ and setters. %\Q@clone@.
 %A complete formalization would also generate the \Q@with@.
-We discover if there is the need of generating such methods by checking if the method is unimplemented in $\C_0$. This is needed only if we need to refine the return type.
+We discover if there is the need of generating such methods by checking if the method is unimplemented in $\C_0$. This is needed only in order to refine the return type.
 To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
- is required by $\C_0$, but is not already present in the methods directly declared in $\C_0$, \hl{since overloading is not modelled}.
+ is required by $\C_0$, but is not already present in the methods directly declared in $\C_0$. \marco{no, overloading is not the issue here\hl{since overloading is not modelled}}.
 
 \noindent$\begin{array}{ll}
 \InTextDef{24ex}{\method\in\fieldsFunc(\C_0)}{
@@ -194,7 +194,7 @@ We guarantee \textit{Self coherence}.
 \item \textit{Client coherence}: all the client code (as for example method calls) that is well typed without the generation/instrumentation process is well typed also after the generation.
 That is, the annotation do not remove any functionality, is just
 adding more behaviour.
-\mixin  does not guarantee \textit{Client coherence}.
+We guarantee \textit{Client coherence}.
 
 \item \textit{Heir coherence}: Interfaces (and in general classes) inheriting from instrumented code are well typed if they was well typed without the instrumentation.
 This would require to not add any (default or abstract) method to the annotated interfaces, including type refinement.
@@ -207,50 +207,39 @@ interface A { int x(); A withX(int x); }
 interface C extends B { A withX(int x); }
 \end{lstlisting}
 
-\noindent By the translation rule, \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
-This would break \Q@C@. And it's similar why client coherence is not supported as well. In the client code, an expression
-that uses ``\Q@new B(){...}@'' to create an object of \Q@B@ gives an implementation of \Q@A withX(int x);@, but after the return
-type is refined to \Q@B@, there is a type error.
+\noindent This code is correct before the translation, but \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
+This would break \Q@C@. 
+Similarly, an expression of the form \Q@new B(){.. A withX(int x){..}}@ would compile before translation, but would be ill typed after the translation.
 \end{itemize}
 
-\noindent Consequently, type refinement is a common case in client code, and hence is included by \mixin as a feature for convenient use, whereas it simultaneously brings some risk in throwing type errors, though they are likely to be fixed easily by users. On the other hand, a property of \mixin is informally concluded as: for a client program that typechecks before a translation is applied, if the annotated type has no subtypes, and no objects of that type are created, then type safety is guaranteed after the successful translation. Conversely, the second step of \mixin, namely what \Q:@ObjWeak: does in the formalization, is guaranteed to be type-safe for the three kinds of coherence. The formal theorem and proof is presented afterwards.
+\noindent Our automatic type refinement 
+is a usefull and convenient feature, but is not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantic  to be well typed.
 
 \subsection{Results}
+To formally characterize the behaviour of our annotation, and the two level of guarancees that we offer, we provide some notations and two theorems:
+\begin{itemize}
+\item We say that an interface table 
+IT is OK if under such interface table, all interfaces are OK.
+\item Since interface tables are just represented as sequences of interfaces we can write IT = $\II$ IT' to talk about a specific interface in a table.
+\item We denote with $\C^{\II}$ the name of an interface.
+\item An interface table contains a hair of $\C$ if there is any interface that extends it, or any \Q@new@ that instantiate it.
+\end{itemize}
 
-\haoyuan{We use \textbf{@ObjWeak} or \Q:@ObjWeak:?}
+  
+\noindent\textbf{THEOREM }\Q!@ObjWeak!\\*
+If a given interface table $\II$ IT is OK\\*
+ where $\II$ has \Q!@ObjWeak!, 
+$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$,\\*
+then the interface table $[\![\II]\!]$ IT is OK.
 
-The theorem is presented below. Lemmas and the complete proof are available in Appendix~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
-
-\noindent\textbf{THEOREM. }
-For a given $\II_0\ldots\II_n$ interface table such that
-$\forall\II\in\II_0\ldots\II_n, \II$ OK,\\*
-if $\II_0$ has \textbf{@ObjWeak},
-$\valid(\C_0)$  and $\QM{of}\notin\dom(\C_0)$,
-then in the interface table
-$[\![\II_0]\!]\II_1\ldots\II_n$\\*
-$\forall\II\in[\![\II_0]\!]\II_1\ldots\II_n$ $\II$ OK.
-
-
-%The first two levels of safety are essential to our lightweight framework, nevertheless, the third one is not needed. In Java it implies not touching the annotated interface, and surely an alternative approach is to create a new interface and generate what we need. But since we are using Lombok for the translation, the transformation is applied to the annotated interface itself. But heir coherence is indeed an issue. See below how this is affected by our approach:
-
-%Now we go back and read the statement of our theorem again. It illustrates that a program with the translation of \mixin applied still type checks if it did, except for the subtypes of the annotated interface (type safety of them is not guaranteed).
-
-%\haoyuan{Text needs improving.}
-
-
-
+\noindent\textbf{THEOREM }\Q!@Obj!\\*
+If a given interface table $\II$ IT is OK\\*
+ where $\II$ has \Q!@Obj!, 
+$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,\\*
+then the interface table $[\![\II]\!]$ IT is OK.
 
 
-%\subsubsection{Derived notations}
-% Below shows how the functions $mtype$ and $mmodifier$ are derived from $mbody$.
-%\[ \textsf{mbody}(m,C) = \textit{modifier } E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \] \[ \Rightarrow \textsf{mtype}(m,C) = \overline{D} \to E,\ \textsf{mmodifier}(m,C) = \textit{modifier}\]
-
-%\marco{we also need to define a function that gives all the methods of an interface, something line}
-%\[
-%\Aux{methodsOf}_\C=\{\m|\mBody(\m,\C)=\method\}
-%\]
-
-
+Informally, this means that for a client program that typechecks before a translation is applied, if the annotated type has no subtypes, and no objects of that type are created, then type safety is guaranteed after the successful translation. Conversely, the second step of \mixin, namely what \Q:@ObjWeak: does in the formalization, is guaranteed to be type-safe for the three kinds of coherence. The formal theorems proofs are available in Appendix~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
 
 
 
