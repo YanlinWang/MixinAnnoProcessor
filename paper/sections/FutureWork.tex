@@ -67,28 +67,26 @@ If multiple interfaces are implemented, and more then one offers
 \subsection{Clone, toString, equals and hashCode}
 
 Methods originally defined in Java class \Q@Object@, as \Q@clone@ and
-\Q@toString@, can be supported by our approach, but they need special
-care. If an interface annotated with \mixin asks an implementation for
-\Q@clone@, \Q@toString@, \Q@equals@ or \Q@hashCode@ we can easily
-generate one from the fields.\footnote{In particular, for clone we can
-  do automatic return type refinement as we do for \Q@with-@ and
-  fluent setters. Note how this would solve most of the Java ugliness
-  related to \Q@clone@ methods.}
-However, if the user wishes to provide his own implementation, since the method is
-also implemented in \Q@Object@, a conflict arises. The generated code can resolve the conflict inside \Q@of@, by implementing the method and
-delegating it to the user implementation, thus
-\begin{lstlisting}
-@Obj interface Point{ int x(); int y();
-  default Point clone(){ return Point.of(0,0);}//user defined clone
-}
-\end{lstlisting} 
-Would expand into 
+\Q@toString@, can be supported by our approach with special care. If an
+interface annotated with \mixin asks an implementation for \Q@clone@,
+\Q@toString@, \Q@equals@ or \Q@hashCode@ we can easily generate one from the
+fields.\footnote{In particular, for clone we can do automatic return type
+  refinement as we do for \Q@with-@ and fluent setters. Note how this would
+  solve most of the Java ugliness related to \Q@clone@ methods.}  However, if
+the user wishes to provide his own implementation, since the method is also
+implemented in \Q@Object@, a conflict arises. The generated code can resolve the
+conflict inside \Q@of@, by implementing the method and delegating it to the user
+implementation, thus
 
 \begin{lstlisting}
-interface Point{ int x(); int y();
-  default Point clone(){ return Point.of(0,0);}//user defined clone
+@Obj interface Point{ int x(); int y();
+  default Point clone(){ return Point.of(0,0);}}//user defined clone
+\end{lstlisting} 
+would expand into 
+
+\begin{lstlisting}
+interface Point{ ...
   public static Point of(int _x, int _y){
     return new Point(){...
-      public Point clone(){ return Point.super.clone();}
-    };}}
+      public Point clone(){ return Point.super.clone();}};}}
 \end{lstlisting} 
