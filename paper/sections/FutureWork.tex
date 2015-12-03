@@ -3,15 +3,14 @@
 \subsection{Qualifiers in Methods} %{Private state
 The biggest limitation of our approach is the inability to model qualifiers
 for class methods (private, protected, synchronized, etc.). For example, the absence
-of the support for private/protected methods in Java8 interfaces forces all
+of the support for private/protected methods in Java 8 interfaces forces all
 members of interfaces to be public, including static methods. Since we use
-abstract methods to encode the state, our state is always all public. Still, because 
+abstract methods to encode state, our state is always all public. Still, because 
 the state can only be accessed by methods, it 
 is impossible for the user to know if a certain method maps directly to a field
 or if it has a default implementation.  If the user wants a constructor that
 does not directly maps to the fields, (as for secondary constructors in Scala)
-he can simply define its own \Q@of@ method and delegate on the generated one, as
-in
+he can simply define its own \Q@of@ method and delegate on the generated one:
 \begin{lstlisting}
 @Obj interface Point{  int x(); int y();
   static Point of(int val){return Point.of(val,val);}  }

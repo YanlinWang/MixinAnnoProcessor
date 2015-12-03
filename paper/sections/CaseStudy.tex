@@ -35,12 +35,12 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 \begin{tabular}{l|l}
 \lstinputlisting[linerange=34-41]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
 &
-\lstinputlisting[linerange=50-56]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\lstinputlisting[linerange=50-57]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
 \end{tabular}
-\caption{The Expression Problem. Initial system on the left, and code for adding
-  print operation on the right. }\label{fig:ep}
-\end{figure}\bruno{Yanlin: code is overflowing the margins. Note that
-  there are 2 spare lines that can be used on the right!}
+\caption{The Expression Problem (left: initial system, right: code for adding
+  print operation).}\label{fig:ep}
+\end{figure}% \bruno{Yanlin: code is overflowing the margins. Note that
+  % there are 2 spare lines that can be used on the right!}
 
 \paragraph{Adding a New Type of Expressions}
 In the OO paradigm, it is easy to add new types of expressions. For example, the
@@ -79,7 +79,7 @@ interface ExpC extends Exp { List<Integer> collectLit(); }
 \noindent Now we combine the two extensions (\texttt{print} and
 \texttt{collectLit}) together:
 
-\lstinputlisting[linerange=80-82]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
+\lstinputlisting[linerange=81-83]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
 
 
 \noindent \texttt{ExpPC} is the new expression interface supporting
