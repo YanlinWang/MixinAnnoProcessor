@@ -5,36 +5,36 @@ import java.util.List;
 import lombok.Obj;
 
 public class TestExpression {
-	public static String runTest() {
-		String res = "";
-		Lit e1 = Lit.of(3);
-		res += e1.eval() + "\n"; // 3
-		Lit e2 = Lit.of(4);
-		Add e3 = Add.of(e1, e2);
-		res += e3.eval() + "\n"; // 7
-		Sub e4 = Sub.of(e1, e2);
-		res += e4.eval() + "\n"; // -1
-		LitP e5 = LitP.of(3);
-		LitP e6 = LitP.of(4);
-		AddP e7 = AddP.of(e5, e6);
-		res += e5.print() + " = " + e5.eval() + "\n"; // 3 = 3
-		res += e7.print() + " = " + e7.eval() + "\n"; // (3 + 4) = 7
-		return res;
-	}
-	public static void main(String[] args) {
-	    System.out.println(runTest());
-	    
-	    //independent extensibility
-	    ExpPC e8 = AddPC.of(LitPC.of(3), LitPC.of(4));
-	    System.out.println(e8.print() + " = " + e8.eval() + " Literals: " + e8.collectLit().toString());
-	}
+    public static String runTest() {
+        String res = "";
+        Lit e1 = Lit.of(3);
+        res += e1.eval() + "\n"; // 3
+        Lit e2 = Lit.of(4);
+        Add e3 = Add.of(e1, e2);
+        res += e3.eval() + "\n"; // 7
+        Sub e4 = Sub.of(e1, e2);
+        res += e4.eval() + "\n"; // -1
+        LitP e5 = LitP.of(3);
+        LitP e6 = LitP.of(4);
+        AddP e7 = AddP.of(e5, e6);
+        res += e5.print() + " = " + e5.eval() + "\n"; // 3 = 3
+        res += e7.print() + " = " + e7.eval() + "\n"; // (3 + 4) = 7
+        return res;
+    }
+    public static void main(String[] args) {
+        System.out.println(runTest());
+
+        //independent extensibility
+        ExpPC e8 = AddPC.of(LitPC.of(3), LitPC.of(4));
+        System.out.println(e8.print() + " = " + e8.eval() + " Literals: " + e8.collectLit().toString());
+    }
 }
 
 //BEGIN_EXPRESSION_INIT
 interface Exp { int eval(); }
 @Obj interface Lit extends Exp {
-	int x();
-	default int eval() { return x(); }}
+    int x();
+    default int eval() { return x(); }}
 @Obj interface Add extends Exp {
     Exp e1(); Exp e2();
     default int eval() {
@@ -43,17 +43,18 @@ interface Exp { int eval(); }
 
 //BEGIN_EXPRESSION_SUB
 @Obj interface Sub extends Exp {Exp e1(); Exp e2();
-	default int eval() {return e1().eval() - e2().eval();}}
+    default int eval() {return e1().eval() - e2().eval();}}
 //END_EXPRESSION_SUB
 
 //BEGIN_EXPRESSION_PRINT
-interface ExpP extends Exp { String print(); }
+interface ExpP extends Exp {String print();}
 @Obj interface LitP extends Lit, ExpP {
     default String print() {return "" + x();}}
 @Obj interface AddP extends Add, ExpP {
     ExpP e1(); ExpP e2();//return type refined!
     default String print() {
-        return "("+e1().print()+" + "+e2().print()+")";}}
+        return "(" + e1().print() + " + " 
+                + e2().print() + ")";}}
 //END_EXPRESSION_PRINT
 
 //BEGIN_EXPRESSION_COLLECTLIT

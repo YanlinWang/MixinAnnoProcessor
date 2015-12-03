@@ -1,6 +1,7 @@
 package test;
 
 import lombok.Obj;
+import static java.lang.System.out;
 
 public class TestAnimal {
 	
@@ -64,8 +65,7 @@ interface Animal {Point2D location(); void location(Point2D val);}
 
 //BEGIN_BIRD
 @Obj interface Bird extends Animal {
-	Point3D location();	
-	void location(Point3D val);
+	Point3D location();	void location(Point3D val);
 	default void location(Point2D val) { location(location().with(val));}
 	default void fly() {location(location().withX(location().x() + 40));}}
 //END_BIRD
