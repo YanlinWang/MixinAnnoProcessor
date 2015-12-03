@@ -24,6 +24,13 @@ annotation processor takes methods with a \Q!@Private! annotation, and turns it 
 static private methods of a nested class. In this extension, also the \Q@of@
 method could be made private following the same pattern.
 
+\yanlin{future work on state initialization removed for now. Because I think the
+  other two future works are fine. But this one is still not clear and
+  controversial. The proposed workaround forces users to make decision: if he
+  wants state with initialization then he also has to define the setter. Or
+  else, it is ambiguous: could be interpreted as a state initializer or just
+  a normal default method.}
+\begin{comment}
 \subsection{State initialization}
 As discussed before, the user can trivially define its own \Q@of@ method, and
 initialize a portion of the state with default values.  However, the
@@ -44,6 +51,7 @@ such change is visible only after the first time the setter is called. Moreover,
 the result instead of re-computing it every time. This can be very tricky in a
 non functional setting.
 %\bruno{Yanlin please polish text/break long sentences.}
+\end{comment}
 
 \begin{comment}
 \subsection{Class Invariants in ClassLess Java}
