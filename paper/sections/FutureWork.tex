@@ -93,7 +93,7 @@ implementation, thus
 would expand into 
 
 \begin{lstlisting}
-interface Point{ ...
+interface Point{ ...//as before
   public static Point of(int _x, int _y){
     return new Point(){...
       public Point clone(){ return Point.super.clone();}};}}
