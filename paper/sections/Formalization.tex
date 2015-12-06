@@ -130,7 +130,7 @@ rejection, hence this is a bug in ECJ. This bug was also reported by
 
 \section{Formal Semantics}\label{sec:formal}
 
-This section presents a formalization of ClassLess Java: a minimal
+This section presents a formalization of Classless Java: a minimal
 FeatherweightJava-like calculus which models the essence of Java
 interfaces with default methods. This formalization is used in
 Section~\ref{sec:translation} to define the semantics of object interfaces.
@@ -181,13 +181,13 @@ Section~\ref{sec:translation} to define the semantics of object interfaces.
 \x_1{:}\C_1\ldots\x_n{:}\C_n
 }{environment}
 \end{grammar}
-\caption{Grammar of ClassLess Java}
+\caption{Grammar of Classless Java}
 \label{Grammar}
 \end{figure}
 
 \subsection{Syntax}
 
-Figure~\ref{Grammar} shows the syntax of ClassLess Java.
+Figure~\ref{Grammar} shows the syntax of Classless Java.
 The syntax formalizes a minimal
 subset of Java 8, focusing on interfaces, default methods and object
 creation literals.  There is no syntax for classes.
@@ -392,9 +392,9 @@ method with the same name defined in the interface $\C$, and that such method is
 \end{array}$
 
 \noindent Two method headers are subtypes if all the parameter types are the same and the return types are subtypes.
-That is, we allows return type specialization as introduced in Java 5.
+That is, we allow return type specialization as introduced in Java 5.
 Default methods are subtypes if their method headers are subtypes.
-Secondly, all abstract methods in the interface (that is methods that need
+Secondly, we check that all abstract methods in the interface (that is methods that need
 to be explicitly overridden) have been
 implemented. That is, we define a method with the same name.
 
@@ -532,11 +532,11 @@ and the whole \mBody{} not defined for that specific $\m$. Rule
 \InTextWith{\method \in \methods\ \mand\ \forall \method' \in \methods :  \method \subtype \method'}
 \end{array}$
 
-\paragraph{override} models how the implementation in an interface can
-override implementation in the superinterface, even in case of a
+\paragraph{override} models how a method in an interface can
+override an implementation in the superinterface, even in case of a
 conflict.  Note how we use the special value $\none$, and how (forth
-case) overriding can solve a conflict. \hl{The notation in the last case below
-means $\method'$ is not static, and is supertype of $\method$.}
+case) overriding can solve a conflict. The notation in the last case below
+means $\method'$ is not static, and is supertype of $\method$.
 
 \noindent$\begin{array}{l}
 \InTextDef{20ex}{\override(\none,\none)}{\none}\\
