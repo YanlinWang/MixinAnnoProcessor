@@ -57,9 +57,12 @@ interface E3 extends A2,C2 { default int m(){return 42;} } //accepted
 \end{lstlisting}
 
 \subsection{Classifying Outcomes of Interface Composition}
-When interfaces are composed and methods with the same name (and
-signature) exist, there are 3 possible outcomes.
-We illustrate the possible outcomes using the following (correct) declarations:
+%When interfaces are composed and methods with the same name (and
+%signature) exist, there are 3 possible outcomes.
+%
+We now try to classify possible outcomes for composition of methods with the same name (and
+signature).
+We will use the following (correct) declarations:
 \begin{lstlisting}
 interface A1{T m(); }
 interface A2 extends A1{default T m(){ ... } }
@@ -72,7 +75,8 @@ interface B3 extends B2{default T m(){ ... } }
 
 \noindent
 What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
-\Q@B@${}_j$? Nine representative cases are shown next:\\*
+\Q@B@${}_j$?\\*
+% Nine representative cases are shown next:\\*
 \noindent
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -82,7 +86,7 @@ What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
 \textbf{B3}        & \textbf{conservative error} &conflict  error       & conservative error      \\ \hline
 \end{tabular}
 \\*
-We try to classify the results in the table:
+%We try to classify the results in the table:
 \begin{itemize}
 \item \textbf{conflict error} happens when the methods from both are implemented, which is also an error in most trait models.
 \item \textbf{both abstract, accepted} happens when the methods from both are abstract, which is also considered correct in all
