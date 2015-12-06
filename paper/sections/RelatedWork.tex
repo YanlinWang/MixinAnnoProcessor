@@ -315,7 +315,7 @@ programmers to extend it with custom features by definitions in meta-DSLs (SDF,
 Stratego, etc). Using SugarJ requires learning various DSLs while our approach
 is just using Java. However its intention is different from ours: one of the
 purpose of SugarJ is to allow easy defition of sugars while our approach aims to
-implement the desired program transformation without just in Java.
+implement the desired program transformation in pure Java.
 
 On the other side, when the base language has a flexible enough syntax and
 a fast and powerful enough reflection mechanism, we may just need to play with
@@ -324,7 +324,7 @@ feature we need can be expressed as a simple library in our language. For
 example, consider SQLAlchemy in python.
 
 Java-like languages tend to sit in the middle of two extremes: libraries
-can not influence the type system, so many solutions valid in python or other
+can not influence the type system, so many solutions valid in python or other dynamic
 languages are not be applicable, or may be applicable at the cost of losing
 safety.
 
@@ -342,7 +342,8 @@ multiple extensions together.
 Other languages offer even stronger support to safe code manipulation:
 Template Haskell~\cite{sheard2002template}, F\# (type providers)~\footnote{http://research.microsoft.com/fsharp/} and MetaFjig (Active Libraries)~\cite{servetto2010metafjig}
 all allow to execute code at compile time and to generate code/classes that are transparently integrated in the program that is being generated/processed/compiled.
-In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or non nonsensical) would never generate ill-typed code. This is roughly equivalent to what we state and manually proof in Lemma 2 for our particular transformation.
+In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or non nonsensical) would never generate ill-typed code. This is roughly equivalent to 
+\textit{Self coherence}, that we manually proof in the Appendix.
 Since MetaFjig is not working on annotated classes, there is no direct equivalence on the overall theorem of safety we shown.
 
 \subsection{Formalization of Java8}
