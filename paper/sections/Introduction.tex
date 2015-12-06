@@ -58,7 +58,7 @@ goals of Java 8 development team.
 This paper takes a different approach. Rather than trying to get
 around the difficulties by changing the language in fundamental ways,
 we show that, with a simple language feature, default methods and
-interface inheritance are in fact be very expressive. Our proposed
+interface inheritance are in fact very expressive. Our proposed
 language feature enables powerful object-oriented idioms, using
 multiple inheritance. We call the language feature \emph{object
   interfaces}, because such interfaces can be instantiated directly,
@@ -99,7 +99,7 @@ is given as a syntax-directed translation from CJ to itself. In the
 resulting CJ code all object interfaces are translated into regular CJ
 (and Java) interfaces with default methods. The translation is proved
 to be type-preserving, ensuring that the translation does not
-introduce type-errors. 
+introduce type-errors in client code. 
 %CJ's usefulness goes beyond serving as a
 %calculus to formalize object interfaces. During the development
 %process of CJ, we encountered a bug in the implementation of default
@@ -111,7 +111,7 @@ To evaluate the usefulness of object interfaces, we illustrate 3
 applications. The first application is a simple 
 solution to the Expression Problem~\cite{wadler98expression}, supporting independent 
 extensibility~\cite{zenger05independentlyextensible}, and without boilerplate code. The second
-application is shows how embedded DSLs using fluent interfaces~\cite{fowler2005fluentinterface} 
+application shows how embedded DSLs using fluent interfaces~\cite{fowler2005fluentinterface} 
 can be easily defined using object interfaces. The last
 application is a larger case study for a simple Maze game implemented with 
 multiple inheritance. For the last application we show that there is a
@@ -130,7 +130,7 @@ In summary, the contributions of this paper are:
 \item {\bf ClassLess Java (CJ):} A simple formal calculus that models 
 the essential features of Java 8 interfaces with default methods, and 
 can be used to formally define the translation of object interfaces. 
-We prove that several properties hold for the translation, including a type-preservation.
+We prove several properties of the translation.
 
 \item {\bf Implementation and Case Studies:} We have a prototype
   implementation of object interfaces, using Java
@@ -140,6 +140,6 @@ We prove that several properties hold for the translation, including a type-pres
 \item{\bf Language Tuning} We identify the concept of language tuning 
 and we describe object interfaces as an example. We also discuss 
 how other existing approaches, such as the annotations in project 
-Lombok~\cite{lombok}, which can be viewed as language tuning.
+Lombok~\cite{lombok},  can be viewed as language tuning.
 
 \end{itemize}
