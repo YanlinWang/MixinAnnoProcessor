@@ -20,7 +20,7 @@ In this section we discuss related work and comparison to Classless Java.
 Many authors have argued in favour or against multiple inheritance.  Multiple
 inheritance is very expressive, but difficult to model and implement, and can
 cause difficulty (including the famous diamond (fork-join)
-problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning
+problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning about 
 programs. To conciliate the need for expressive power and simplicity, many
 models have been proposed, including C++ virtual inheritance,
 mixins~\cite{bracha90mixin}, traits~\cite{scharli03traits}, and hybrid model
@@ -87,13 +87,13 @@ structure, and fields can also coexist with multiple inheritance.
 \paragraph{Traits and Java's default methods}
 Simplifying the mixins approach, traits~\cite{scharli03traits} draw a strong
 line between units of reuse and object factories. Traits, as units of reusable
-code, contain only methods as reusable functionality. ignoring states and state
+code, contain only methods as reusable functionality, ignoring states and state
 initialization. Classes, as object factories, require functionalities from
-(multiple) traits. Java 8 interfaces with default methods are closely related to
+(multiple) traits. Java 8 interfaces are closely related to
 traits: concrete method implementation are allowed (via the \textbf{default}
 keyword) inside interfaces. The introduction of default methods opens the gate
 for various flavours of multiple inheritance in Java. Traits offer an algebra
-with operations like sum, alias and exclusion, providing explicit conflict
+of composition operations like sum, alias and exclusion, providing explicit conflict
 resolution. Former work~\cite{bono14} provides details on mimicking the trait
 algebra through Java 8 interfaces.  We briefly recall the main points of their
 encoding; however we propose a different representation of \textbf{exclusion}.
