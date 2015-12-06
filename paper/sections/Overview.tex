@@ -12,7 +12,7 @@
 \caption{The animal system (left: complete structure, right: code for simplified animal system).}\label{fig:pegasus}
 \end{figure}
 
-This section illustrates how the \mixin annotation enables expressive
+This section illustrates how the \mixinAnn{} annotation enables expressive
 idioms using multiple inheritance. 
 To propose a standard example for multiple inheritance, we show \Q@Animal@s with a two dimensional \Q@Point2D@ representing their \Q@location@.
 Some kinds of animals are \Q@Horse@s and \Q@Bird@s.
@@ -26,7 +26,7 @@ Some research argues in favour of using subtyping for modelling taxonomies, othe
 \subsection{Simple Multiple Inheritance with Default
   Methods}\label{sec:simple}
 
-Before we model the final animal system, we first start with a
+Before modelling the complete animal system, we  start with a
 simplified version without locations. This version serves the purpose of illustrating how 
 Java 8 default methods can already model simple forms of multiple inheritance.
 \texttt{Horse} and \texttt{Bird} are subtypes
@@ -85,7 +85,7 @@ complex and verbose (even with anonymous classes).
 \subsection{Object Interfaces and Instantiation} 
 
 To model the animal system with object interfaces all that a user
-needs to do is to add a \mixin annotation to the \texttt{Horse}, 
+needs to do is to add a \mixinAnn{} annotation to the \texttt{Horse}, 
 \texttt{Bird}, and \texttt{Pegasus} interfaces: 
 
 \lstinputlisting[linerange=9-11]{../UseMixinLombok/src/pegasusLombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
@@ -101,7 +101,7 @@ Pegasus p = Pegasus.of();
 \noindent The \texttt{of} method provides an alternative to a
 constructor, which is missing from interfaces. The following code,
 shows the code correponding to the \texttt{Pegasus} interface
-after the \mixin annotation is processed:
+after the \mixinAnn{} annotation is processed:
 
 \begin{lstlisting}
 interface Pegasus extends Horse, Bird { // generated code not visible to users
@@ -119,11 +119,10 @@ namespace.
 
 The animal system modelled so far is a simplified version of the
 system presented in the left-side of Figure~\ref{fig:pegasus}, and still does not appear to 
-justify the \mixin annotation. Lets now move on to modelling 
-the complete animal system. In order to do this animals will include 
-a notion of points, representing their location in space. As we shall
+justify the \mixinAnn{} annotation. Lets now move on to modelling 
+the complete animal system, where \Q@Animal@s will include a \Q@location@, representing their position in space. As we shall
 see, modelling stateful components using plain Java 8 quickly becomes 
-cumbersome. The \mixin annotation comes to rescue here and 
+cumbersome. The \mixinAnn{} annotation comes to rescue here and 
 allows avoiding significant amounts of boilerplate code.
 
 \paragraph{\Q@Point2D@: simple immutable data with fields}
@@ -185,7 +184,7 @@ supported in our code generation as \Q@with@ methods. For example:
 \begin{lstlisting}
 @Obj interface Point2D { 
   int x();    int y(); // getters
-  Point2D withX(int val);    Point2D withY(int val); // with methods }
+  Point2D withX(int val);    Point2D withY(int val); /* with methods*/ }
 \end{lstlisting}
 
 \noindent Using \texttt{with} methods, the point \texttt{p} can be created instead using:
@@ -222,7 +221,8 @@ provide an alternative implementation using \Q@default@ methods:
   default Point2D withX(int val){ ... };    default Point2D withY(int val){ ... }}
 \end{lstlisting}
 
-\begin{comment}
+%\begin{comment}
+\marco{I re-enabled this code, I think is needed for understandability}
 is expanded into
 \begin{lstlisting}
 interface Point2D{ int x(); int y();
@@ -233,9 +233,9 @@ interface Point2D{ int x(); int y();
   default Point2D withX(int val){ ... }    default Point2D withY(int val){ ... }}
 \end{lstlisting}
 
-That is, we can provide implementation for methods in an interface, 
-and our annotation generate code only if the method \emph{needs} implementation. In this way is trivial for the programmer to personalize the behaviour if they have any special need.
-\end{comment}
+\noindent We can provide implementation for methods; 
+we generate code only for methods needing implementation. Thus, programmers can easily tailor the behaviour on their special needs.
+%\end{comment}
 
 %Firstly, to model \texttt{Point2D} that has x-coordinate and y-coordinate by an
 %interface, we immediately run into the problem of expressing the fields
@@ -419,9 +419,9 @@ unsatisfactory options in front of us:
   wrong way leading to bugs.
 \end{itemize}
 
-Many readers would now think that a language extension is needed. Instead, with object interfaces, 
-another approach is possible.
-%Instead, with our language \emph{restriction} the problem can be easily challenged\footnote{Often in programming languages ``freedom is slavery''.}.
+We are tempted to assume that a language extension is needed. 
+%Instead, with object interfaces, another approach is possible
+Instead, with our language \emph{restriction}, another approach is possible;often in programming languages ``freedom is slavery''.
 
 \paragraph{Field type refinement with object interfaces}
 Object interfaces address the challenge of type-refinement as follows:
@@ -446,25 +446,25 @@ Thus, with object interfaces, the code for the \Q@Bird@ interface is:
 
 
 \noindent From the type perspective, the key is the covariant method
-overriding of \texttt{location()}. However from the semantic
+overriding of \texttt{location()}. However, from the semantic
 perspective the key is the implementation for the setter with the old
 signature (\Q@location(Point2D)@). The key to the setter
-implementation is a new type of \@with@ method, called a property updater.
+implementation is a new type of \Q@with@ method, called a property updater.
 
 \paragraph{\Q@Point3D@ and properties updaters}
 The \Q@Point3D@ interface is defined as follows:
 
 \lstinputlisting[linerange=52-55]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
 
-\noindent Note that this interface includes a different type of
-\Q@with@ method, which takes a \Q@Point2D@ as an argument.
-The old wither methods (such as \Q@withX@) functionally update a field at a time.  This can be
+\noindent \Q@Point3D@ includes a
+\Q@with@ method, taking a \Q@Point2D@ as an argument.
+Other wither methods (such as \Q@withX@) functionally update a field at a time.  This can be
 inefficient, and sometimes hard to maintain.  Often we want to update multiple
 fields simultaneously, for example using another object as source.  Following
 this idea, the method \Q@with(Point2D)@ is an example of a (functional)
 properties updater: it takes a certain type of object and returns a copy of the
 current object with all fields that match the fields of parameter type
-updated. The idea is that we want the result to still be like \Q@this@, but
+updated. The idea is that the result should be like \Q@this@, but
 modified to be as similar as possible to the parameter.
 
 With the new \Q@with@ method we may use the information for
@@ -510,16 +510,16 @@ subtype of the current exact type, then we can just return the parameter, as
 something that is just ``more'' than \Q@this@.
 
 \subsection{Advanced Multiple Inheritance with Object Interfaces}
-Finally, we can define \texttt{Pegasus} as simple as we did in the simplified
-(and stateless) version on the right-side of Figure~\ref{fig:pegasus}:
-
-\lstinputlisting[linerange=74-74]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
-
-\noindent Note how even the non trivial pattern for field type refinement is
+Finally, defining \texttt{Pegasus} is as simple as we did in the simplified
+(and stateless) version on the right-side of Figure~\ref{fig:pegasus}.
+ Note how even the non trivial pattern for field type refinement is
 transparently composed, and \texttt{Pegasus} has a \Q@Point3D@
 \Q@location@.%  This works because \Q@Horse@ do not perform
 % any field type refinement, otherwise we may have to choose/create a
 % common subtype in order for \texttt{Pegasus} to exists.
+
+\lstinputlisting[linerange=74-74]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
+
 
 \begin{comment}
 \subsection{A Running Example: \texttt{Point}}

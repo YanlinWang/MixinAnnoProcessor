@@ -34,7 +34,7 @@
 % "define" code highlights for Java and Scala
 \lstdefinelanguage{JavaScala}{
   morekeywords={public,int,interface,implements,default,
-    abstract,case,catch,class,def,static,%
+    abstract,case,void,catch,class,def,static,%
     do,else,extends,false,final,finally,%
     for,if,implicit,import,match,mixin,%
     new,null,object,override,package,%
@@ -108,7 +108,7 @@ belowskip=-1pt
 \newcommand\nat[0]{\mathbb{N}}
 \newcommand\unit[0]{\mathbbm{1}}
 
-\newcommand\mixin{\textbf{@Obj}\xspace}
+\newcommand\mixin{\mixinAnn\xspace}
 \renewcommand{\paragraph}[1]{\vspace{5pt}\noindent{\bf #1}}
 \newenvironment{listing}{\vspace{-3pt}\begin{lstlisting}}{\end{lstlisting}\vspace{-3pt}}
 \usepackage{xspace}
