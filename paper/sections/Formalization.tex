@@ -196,9 +196,8 @@ consist of conventional constructs such as variables ($\x$), method
 calls ($\e\QM.\m\QM(\es)$) and static method calls
 ($\C\QM.\m\QM(\es)$). For simplicity the degenerate case of calling a
 static method over the $\this$ receiver is not considered.  A more
-interesting type of expressions are super calls
-($\C\QM{.super.}\m\QM(\es)$), whose semantic is to call the (non
-static) method $\m$ over the $\this$ receiver, but statically
+interesting type of expressions is super calls
+($\C\QM{.super.}\m\QM(\es)$), whose semantic is to call the (non-static) method $\m$ over the $\this$ receiver, but statically
 dispatching to the version of the method as visible in the interface
 $\C$. A simple form of field updates ($\x\QM=\e\QM;\e'$) is also
 modelled. In the syntax of field updates $\x$ is expected to be a
@@ -229,7 +228,7 @@ method name $\m$ as a key.  That is, we define $\methods(\m)=\method$
 iff there is a unique $\method\in\methods$ whose name is $\m$.  For
 convenience, we define $\methods(\m)=\none$ otherwise; moreover
 $\m\in\dom(\methods)\ \miff\ \methods(\m)=\method$.
-For simplicity, we do not model overloading, thus for an interface to be well formed its methods must be uniquelly indentified by their name.
+For simplicity, we do not model overloading, thus for an interface to be well formed its methods must be uniquely identified by their name.
 
 \subsection{Typing}
 
@@ -355,7 +354,7 @@ most interesting rules, that is \rn{t-Obj} and \rn{t-Intf}. Rule
 ensure that all field initializations are type correct, by looking up the type of
 each variable assigned to a field in the typing environment and verifying that such type is a
 subtype of the field type. Secondly, we check that all method bodies are
-well-typed. To do this the enviroment used to check the method body
+well-typed. To do this the environment used to check the method body
 needs to be extended appropriately: we add all fields and their types;
 add $\this:I$; and add the arguments (and types) of the respective
 method.

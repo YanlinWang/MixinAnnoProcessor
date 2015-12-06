@@ -92,7 +92,10 @@ To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
 \end{array}$
 
 \subsection{$\ofMethod$}\label{subsec:ofmethod}
-We now formally define $\ofMethod$, the function that generates the method \QM{of}, that behaves like a factory. To avoid boring digressions about well known ways to find unique names, for the sake of this formalization we assume that no-args methods do not start with underscore, and we prefix method names with underscore to obtain valid  parameter names.
+We now formally define $\ofMethod$, the function that generates the method
+\QM{of}, that behaves like a factory. To avoid boring digressions about
+well-known ways to find unique names, for the sake of this formalization we
+assume that no-args methods start with an underscore, and we prefix method names with underscore to obtain valid  parameter names.
 
 \noindent$\begin{array}{l}
 \InTextDef{5em}{\ofMethod(\C_0)}{
@@ -118,7 +121,7 @@ For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
    \item $\m_i$ is the field name, and have type $\C_i$.
    \item $\m_i$\QM{()} is the getter, that just return the current field value.
    \item if a method \Q@with#@$\m_i$ is required, then it is implemented by calling the \Q@of@ method using
-    the current value for all the fields except for $\m_i$. Such new value is provided as parameter. This correspond to the expressions $\es_i$.
+    the current value for all the fields except for $\m_i$. Such new value is provided as parameter. This corresponds to the expressions $\es_i$.
 \item \QM_$\m_i$\QM($\C_i\ $\QM{ _val)} is the setter. In our prototype we use name $\m_i$, here we use the underscore to avoid modelling overloading.
 %   \item similarly, for the \Q@clone@ method, \Q@of@ is called using the current value for all the fields.
    %\item To complete our generation, we need to generate setters, fluent setters and the with method.
@@ -186,16 +189,16 @@ $\e_i=\m_i$.
 \subsection{Guaratees}
 To understand to what extents our approach is correct (and more in general, what it means to say that a language tuning is correct) we identify three types of guarantees:
 \begin{itemize}
-\item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not wrote.
-In our case it means that either \mixin{} produces (in a controlled way) an understandable error, or the class can be successfully annotated and the generated code is well typed.
+\item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not written.
+In our case it means that either \mixin{} produces (in a controlled way) an understandable error, or the class can be successfully annotated and the generated code is well-typed.
 We guarantee \textit{Self coherence}.
 
-\item \textit{Client coherence}: all the client code (as for example method calls) that is well typed without the generation/instrumentation process is well typed also after the generation.
-That is, the annotation do not remove any functionality, is just
+\item \textit{Client coherence}: all the client code (as for example method calls) that is well-typed without the generation/instrumentation process is well-typed also after the generation.
+That is, the annotation does not remove any functionality, is just
 adding more behaviour.
 We guarantee \textit{Client coherence}.
 
-\item \textit{Heir coherence}: Interfaces (and in general classes) inheriting from instrumented code are well typed if they was well typed without the instrumentation.
+\item \textit{Heir coherence}: Interfaces (and in general classes) inheriting from instrumented code are well-typed if they were well-typed without the instrumentation.
 This would require to not add any (default or abstract) method to the annotated interfaces, including type refinement.
 \mixin  does not guarantee \textit{Heir coherence}.
 Indeed consider the following:
@@ -208,20 +211,20 @@ interface C extends B { A withX(int x); }
 
 \noindent This code is correct before the translation, but \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
 This would break \Q@C@. \\*
-Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@'' would compile before translation, but would be ill typed after the translation.
+Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@'' would compile before translation, but would be ill-typed after the translation.
 \end{itemize}
 
 \noindent This means that our automatic type refinement 
 is a usefull and convenient feature, but is not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantic  and provide the right type while refining methods.
 
 \subsection{Results}
-To formally characterize the behaviour of our annotation, and the two level of guarancees that we offer, we provide some notations and two theorems:
+To formally characterize the behaviour of our annotation, and the two level of guarantees that we offer, we provide some notations and two theorems:
 \begin{itemize}
 \item We denote with $\C^{\II}$ the name of an interface.
 \item An interface table 
 IT is OK if under such interface table, all interfaces are OK.
 \item Since interface tables are just represented as sequences of interfaces we write IT = $\II$ IT' to select a specific interface in a table.
-\item IT contains a heir of $\C$ if there is an interface that extends it, or a \Q@new@ that instantiate it.
+\item IT contains an heir of $\C$ if there is an interface that extends it, or a \Q@new@ that instantiate it.
 \end{itemize}
 
   
