@@ -444,43 +444,58 @@ interface $\C$ owns. The method can either be defined originally in $\C$ or in i
 \mBody(\m,\C_0)
 }{
 \override(\methods(\m),
-\shadow(\tops(\m,\C_0)))
+\shadow(\tops(\m,\Cs)))
 }\\
 \InTextWith{\metaVar{IT}(\C_0) =
-\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC}
+\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_n\ \oC\methods\ \cC \mbox{ and }
+ \C\in\Cs \mbox{ if } \C_i\subtype\C, i\in 1..n
+
+}
 \end{array}$
 
-\noindent The definition of $\mBody$ delegates the work to three others auxiliary functions:
+\noindent The definition of $\mBody$ reconstruct the full set of supertypes $\Cs$ and then delegates the work to three others auxiliary functions:
  $\tops(m,\C_0)$, $\shadow(\methods)$ and $\override(\method,\method')$.
 
 \paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
-the non-static ones that are not transitively reachable by following another, less specific, superinterface chain.
-\hl{Another two functions $\super(\C_0)$ and $\get(\m,\C_0)$ are used for the definition. $\super(\C_0)$ collects the
-super interfaces of $\C_0$ recursively, and $\get(\m,\C_0)$ returns the non-static method declared in $\C_0$ with name $\m$, or $\emptyset$ otherwise.
-Finally, $\tops(\m,\C_0)$ returns the topmost methods $m$ from the super interfaces.}
+the non-static ones that are not reachable by another, less specific, superinterface.
+Since the second parameter of \tops{} is a set, we can choose an arbitrary element to be $\C_0$.
+%\hl{Another two functions $\super(\C_0)$ and $\get(\m,\C_0)$ are used for the definition. $\super(\C_0)$ collects the
+%super interfaces of $\C_0$ recursively, and $\get(\m,\C_0)$ returns the non-static method declared in $\C_0$ with name $\m$, or $\emptyset$ otherwise.
+%Finally, $\tops(\m,\C_0)$ returns the topmost methods $m$ from the super interfaces.}
 Formally:
 
 \noindent$\begin{array}{l}
-\InTextDef{13ex}{
-\tops(\m,\C_0)}{
-}{
-\{\ \get(\m, \C)\ |\ \C\in\super(\C_0), \get(\m, \C) \ne\emptyset,\mbox{ and }
-}\\
-\hspace{2.1in}\forall\C'\in\super(\C_0)\mbox{ and }\get(\m,\C')\ne\emptyset: \C'<:\C\Rightarrow\C'=\C\ \}\\
-\InTextDef{13ex}{
-\super(\C_0)}{
-}{
-\{\ \C'\ |\ \C'\in\Cs,\mbox{ or }\exists\C\in\Cs,\C'\in\super(\C)\ \}
-}\\
-\InTextWith{\metaVar{IT}(\C_0) =
-\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC}\\
-\InTextDef{13ex}{
-\get(\m,\C_0)}{
-}{
-\method
-}\\
-\InTextWith{\metaVar{IT}(\C_0) =
-\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC, \method\in\methods\mbox{ not static},\m=\m^\method}
+\InTextDef{27ex}{
+\method\in\tops(\m,\C_0\dots\C_n)}{
+ }{
+\metaVar{IT}(\C_0)(\m)=\method,  \method\mbox{ default or abstract method}
+ }\\
+\InTextWith{
+\not\exists i\in1..n \mbox{ such that } 
+\metaVar{IT}(\C_i)(\m)\mbox{ is a default or abstract method, and }
+\C_i \subtype \C_0}
+
+%\\
+%\InTextDef{13ex}{
+%\tops(\m,\C_0)}{
+%}{
+%\{\ \get(\m, \C)\ |\ \C\in\super(\C_0), \get(\m, \C) \ne\emptyset,\mbox{ and }
+%}\\
+%\hspace{2.1in}\forall\C'\in\super(\C_0)\mbox{ and }\get(\m,\C')\ne\emptyset: \C'<:\C\Rightarrow\C'=\C\ \}\\
+%\InTextDef{13ex}{
+%\super(\C_0)}{
+%}{
+%\{\ \C'\ |\ \C'\in\Cs,\mbox{ or }\exists\C\in\Cs,\C'\in\super(\C)\ \}
+%}\\
+%\InTextWith{\metaVar{IT}(\C_0) =
+%\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC}\\
+%\InTextDef{13ex}{
+%\get(\m,\C_0)}{
+%}{
+%\method
+%}\\
+%\InTextWith{\metaVar{IT}(\C_0) =
+%\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC, \method\in\methods\mbox{ not static},\m=\m^\method}
 \end{array}$
 
 
