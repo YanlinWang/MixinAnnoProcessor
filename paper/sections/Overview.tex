@@ -19,10 +19,10 @@
 
 This section illustrates how object interfaces, expressed using the \mixinAnn{} annotation, enables powerful
 idioms using multiple inheritance in Java. 
-To propose a standard example for multiple inheritance, we show \Q@Animal@s with a two dimensional \Q@Point2D@ representing their \Q@location@.
+To propose a standard example for multiple inheritance, we show \Q@Animal@s with a two-dimensional \Q@Point2D@ representing their \Q@location@.
 Some kinds of animals are \Q@Horse@s and \Q@Bird@s.
-Birds can \Q@fly@, thus their location need to be a three dimensional \Q@Point3D@.
-Finally, we model \Q@Pegasus@ (one of the best known creatures in Greek
+Birds can \Q@fly@, thus their locations need to be three-dimensional \Q@Point3D@s.
+Finally, we model \Q@Pegasus@ (one of the best-known creatures in Greek
 mythology) as a kind of \Q@Animal@ with the skills
 of both \Q@Horse@s and \Q@Bird@s. A simple class diagram illustrating
 the basic system in given in the left side of Figure~\ref{fig:pegasus}.\footnote{
@@ -72,7 +72,7 @@ provide each of those classes, this code is essentially boilerplate
 code, which does not add behaviour to the system. Secondly, 
 the namespace gets filled with three additional types. For example, 
 both \texttt{Horse} and \texttt{HorseImpl} are needed: \texttt{Horse}
-is needed because it needs to be an inferface so that \texttt{Pegasus}
+is needed because it needs to be an interface so that \texttt{Pegasus}
 can use multiple inheritance; and \texttt{HorseImpl} is needed to
 provide object instantiation. 
 Note that, for this very simple animal system, plain Java 8 anonymous
@@ -105,7 +105,7 @@ Pegasus p = Pegasus.of();
 
 \noindent The \texttt{of} method provides an alternative to a
 constructor, which is missing from interfaces. The following code,
-shows the code correponding to the \texttt{Pegasus} interface
+shows the code corresponding to the \texttt{Pegasus} interface
 after the \mixinAnn{} annotation is processed:
 
 \begin{lstlisting}
@@ -123,9 +123,10 @@ namespace.
 \subsection{Object Interfaces with State}
 
 The animal system modelled so far is a simplified version of the
-system presented in the left-side of Figure~\ref{fig:pegasus}, and still does not appear to 
-justify the \mixinAnn{} annotation. Lets now move on to modelling 
-the complete animal system, where \Q@Animal@s will include a \Q@location@, representing their position in space. As we shall
+system presented in the left-side of Figure~\ref{fig:pegasus}, which still does not appear to 
+justify the \mixinAnn{} annotation.  Now moving on to modelling 
+the complete animal system where \Q@Animal@s will include a \Q@location@
+representing their position in space, we shall
 see, modelling stateful components using plain Java 8 quickly becomes 
 cumbersome. The \mixinAnn{} annotation comes to rescue here and 
 allows avoiding significant amounts of boilerplate code.
@@ -178,7 +179,7 @@ names). An example of using \Q@Point2D@ is:
 Point2D p = Point2D.of(42,myPoint.y());
 \end{lstlisting}
 \noindent where we return a new point, using \Q@42@ as x-coordinate,
-and taking all the other informations (only \Q@y@ in this case) from
+and taking all the other information (only \Q@y@ in this case) from
 another point.
 
 \paragraph{\texttt{wither} methods in Object Interfaces}
@@ -199,12 +200,12 @@ Point2D p = myPoint.withX(42);
 \end{lstlisting}
 
 \noindent If there is a large number of fields, \texttt{with} methods
-will save programmers from writing large amount of tedious code that
+will save programmers from writing large amounts of tedious code that
 simply copies field values. 
 \begin{comment}
 is expanded by our annotation into\footnote{
 Note how we actually generate a real field \Q@int x=_x;@.
-This provide a more uniform translation that can work also for mutable datastructures, where setters are required.
+This provides a more uniform translation that can work also for mutable data structures, where setters are required.
 }
 
 \begin{lstlisting}
@@ -397,7 +398,7 @@ object; updates field \texttt{x} to \texttt{val}.             \\ \hline
 locations, \Q@Bird@s need 3D locations. Therefore when the \texttt{Bird}
 interface extends the \Q@Animal@ interface, the notion of points needs to
 be refined. Such kind of refinement usually poses a challenge
-in typical class-based approaches. Fortunatelly, with object interfaces,
+in typical class-based approaches. Fortunately, with object interfaces,
 we are able to provide a simple and effective solution. 
 
 \paragraph{Unsatisfactory class-based solutions to field type refinement}
@@ -425,7 +426,7 @@ unsatisfactory options in front of us:
   wrong way leading to bugs.
 \end{itemize}
 
-We may tempted to assume that a language extension is needed. 
+We may be tempted to assume that a language extension is needed. 
 %Instead, with object interfaces, another approach is possible
 Instead, the \emph{restriction} of (object) interfaces to have no
 fields, enlighten us that another approach is possible; often in programming languages ``freedom is slavery''.
@@ -519,7 +520,7 @@ something that is just ``more'' than \Q@this@.
 \subsection{Advanced Multiple Inheritance with Object Interfaces}
 Finally, defining \texttt{Pegasus} is as simple as we did in the simplified
 (and stateless) version on the right-side of Figure~\ref{fig:pegasus}.
- Note how even the non trivial pattern for field type refinement is
+ Note how even the non-trivial pattern for field type refinement is
 transparently composed, and \texttt{Pegasus} has a \Q@Point3D@
 \Q@location@.%  This works because \Q@Horse@ do not perform
 % any field type refinement, otherwise we may have to choose/create a
