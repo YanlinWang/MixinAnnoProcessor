@@ -13,10 +13,12 @@
 \end{figure}
 \bruno{Yanlin: We need space, but we cannot make the figure {\bf unreadable}; the
   diagram fonts are too small now. Please increase the size of the
-  picture a bit. You can also use more space in the Java code.}
+  picture a bit. You can also use more space in the Java code. Since
+  you are on it please fix Point2D: there's no reason for the space
+  between x and y.}
 
-This section illustrates how the \mixinAnn{} annotation enables expressive
-idioms using multiple inheritance. 
+This section illustrates how object interfaces, expressed using the \mixinAnn{} annotation, enables powerful
+idioms using multiple inheritance in Java. 
 To propose a standard example for multiple inheritance, we show \Q@Animal@s with a two dimensional \Q@Point2D@ representing their \Q@location@.
 Some kinds of animals are \Q@Horse@s and \Q@Bird@s.
 Birds can \Q@fly@, thus their location need to be a three dimensional \Q@Point3D@.
@@ -24,7 +26,7 @@ Finally, we model \Q@Pegasus@ (one of the best known creatures in Greek
 mythology) as a kind of \Q@Animal@ with the skills
 of both \Q@Horse@s and \Q@Bird@s. A simple class diagram illustrating
 the basic system in given in the left side of Figure~\ref{fig:pegasus}.\footnote{
-Some research argues in favour of using subtyping for modelling taxonomies, other research argue against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
+Some research argues in favour of using subtyping for modelling taxonomies, other research argues against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
 
 \subsection{Simple Multiple Inheritance with Default
   Methods}\label{sec:simple}
@@ -63,7 +65,7 @@ using the class constructor:
 Pegasus p = new PegasusImpl();
 \end{lstlisting}
 
-\noindent There is a some annoyances here. Firstly, the sole
+\noindent There are some annoyances here. Firstly, the sole
 purpose of classes is to provide a way to instantiate
 objects. Although (in this case) it takes only one line code to
 provide each of those classes, this code is essentially boilerplate
@@ -217,7 +219,7 @@ interface Point2D{ int x(); int y();
 \end{lstlisting}
 \end{comment}
 Moreover, if the programmer wants a different implementation, he may 
-provide an alternative implementation using \Q@default@ methods:
+provide an alternative implementation using \Q@default@ methods. For example:
 \begin{lstlisting}
 @Obj interface Point2D{ 
   int x(); int y();
@@ -225,8 +227,8 @@ provide an alternative implementation using \Q@default@ methods:
 \end{lstlisting}
 
 %\begin{comment}
-\marco{I re-enabled this code, I think is needed for understandability}
-is expanded into
+%\marco{I re-enabled this code, I think is needed for understandability}
+\noindent is expanded into
 \begin{lstlisting}
 interface Point2D{ int x(); int y();
   static Point2D of(int _x, int _y){return new Point2D(){
@@ -236,8 +238,9 @@ interface Point2D{ int x(); int y();
   default Point2D withX(int val){ ... }    default Point2D withY(int val){ ... }}
 \end{lstlisting}
 
-\noindent We can provide implementation for methods; 
-we generate code only for methods needing implementation. Thus, programmers can easily tailor the behaviour on their special needs.
+\noindent If an implementation is provided for methods,
+only code for methods needing implementation is generated. Thus,
+programmers can easily tailor the behaviour for their special needs.
 %\end{comment}
 
 %Firstly, to model \texttt{Point2D} that has x-coordinate and y-coordinate by an
@@ -362,7 +365,7 @@ state are available to users. Object interfaces provide support for four
 different types of abstract state operations, which are summarized in
 Figure~\ref{fig:abstractstate}.  The abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of
-(void) setters, and are discussed in detail in Section~\ref{sec:dsls}.
+conventional setters, and are discussed in detail in Section~\ref{sec:dsls}.
 
 \begin{figure}
 \begin{tabular}{|l|l|l|}
@@ -422,9 +425,10 @@ unsatisfactory options in front of us:
   wrong way leading to bugs.
 \end{itemize}
 
-We are tempted to assume that a language extension is needed. 
+We may tempted to assume that a language extension is needed. 
 %Instead, with object interfaces, another approach is possible
-Instead, with our language \emph{restriction}, another approach is possible;often in programming languages ``freedom is slavery''.
+Instead, the \emph{restriction} of (object) interfaces to have no
+fields, enlighten us that another approach is possible; often in programming languages ``freedom is slavery''.
 
 \paragraph{Field type refinement with object interfaces}
 Object interfaces address the challenge of type-refinement as follows:
@@ -466,8 +470,8 @@ inefficient, and sometimes hard to maintain.  Often we want to update multiple
 fields simultaneously, for example using another object as source.  Following
 this idea, the method \Q@with(Point2D)@ is an example of a (functional)
 properties updater: it takes a certain type of object and returns a copy of the
-current object with all fields that match the fields of parameter type
-updated. The idea is that the result should be like \Q@this@, but
+current object with all fields that match the fields of updated
+parameter type. The idea is that the result should be like \Q@this@, but
 modified to be as similar as possible to the parameter.
 
 With the new \Q@with@ method we may use the information for
@@ -494,7 +498,7 @@ to store. Note how all the information about what fields sit in
 \paragraph{Generated boilerplate}
 Just to give a feeling on how much boring code \mixin is generating, we show the
 generated code for the \texttt{Point3D} in Figure~\ref{fig:boilerplate}. The
-generated code is very mechanical, writing such code by hand is error-prone. For
+generated code is mechanical. Writing such code by hand is error-prone. For
 example a distracted programmer may swap the arguments of calls to
 \Q@Point3D.of@.  Note how \Q@with-@ methods are automatically refined in their
 return type, so that code like: 
