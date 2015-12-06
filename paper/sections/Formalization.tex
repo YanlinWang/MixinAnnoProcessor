@@ -465,7 +465,7 @@ interface $\C$ owns. The method can either be defined originally in $\C$ or in i
 \paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
 the non-static ones that are not reachable by another, less specific, superinterface.
 Since the second parameter of \tops{} is a set, we can choose an arbitrary element to be $\C_0$.
-In the definition we denote by $\Aux{definedMethod}(\m,\C)=\method$ the non-static method called $\m$ defined directly in $\C$.
+In the definition we denote by $\Aux{originalMethod}(\m,\C)=\method$ the non-static method called $\m$ defined directly in $\C$.
 %\hl{Another two functions $\super(\C_0)$ and $\get(\m,\C_0)$ are used for the definition. $\super(\C_0)$ collects the
 %super interfaces of $\C_0$ recursively, and $\get(\m,\C_0)$ returns the non-static method declared in $\C_0$ with name $\m$, or $\emptyset$ otherwise.
 %Finally, $\tops(\m,\C_0)$ returns the topmost methods $m$ from the super interfaces.}
@@ -473,19 +473,19 @@ Formally:
 
 \noindent$\begin{array}{l}
 \InTextDef{20ex}{
-\Aux{definedMethod}(\m,\C_0)}{
+\Aux{originalMethod}(\m,\C_0)}{
 \method
 }\\
 \InTextWith{\metaVar{IT}(\C_0) =
 \ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC, \method\in\methods\mbox{ not static},\m=\m^\method}
  \\
 
-\InTextDef{43ex}{
-\Aux{definedMethod}(\m,\C_0)\in\tops(\m,\C_0\dots\C_n)}{
+\InTextDef{44ex}{
+\Aux{originalMethod}(\m,\C_0)\in\tops(\m,\C_0\dots\C_n)}{
  }{}\\
 \tab\tab
 \not\exists i\in1..n \mbox{ such that } 
-\Aux{definedMethod}(\m,\C_i) \mbox{ is defined and }
+\Aux{originalMethod}(\m,\C_i) \mbox{ is defined and }
 \C_i \subtype \C_0
 
 %\\
