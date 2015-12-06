@@ -26,7 +26,7 @@ models have been proposed, including C++ virtual inheritance,
 mixins~\cite{bracha90mixin}, traits~\cite{scharli03traits}, and hybrid model
 such as CZ~\cite{malayeri2009cz}.  They provide novel programming architecture
 models in the OO paradigm. In terms of restrictions set on these models, C++
-virtual inheritance aims at a relative general model; mixin model add some
+virtual inheritance aims at a relative general model; mixin model adds some
 restrictions on the model; and trait model is the most restricted one (excluding
 states, instantiation, etc).
 
@@ -65,7 +65,7 @@ can be expressed in python as \\*
 \Q@ class Aux: ...new methods...@\\*
 \Q@ class A(B,C,Aux): pass@ 
 \end{comment}
-\noindent Java interfaces and default methods does not use
+\noindent Java interfaces and default methods do not use
 linearisation: the semantics of Java \textbf{extends} clause in
 interfaces is unordered and symmetric.
 
@@ -81,7 +81,7 @@ inheritance can be transformed to one without diamonds. Moreover, fields and
 multiple inheritance can coexist. However as shown in the example in the
 article, the untangling of inheritance also untangles class structure. In CZ,
 not only the number of classes (from 4 to 6 in the stream example), but also the
-class hirarchy complexity increases. \mixin does not complicate the
+class hierarchy complexity increases. \mixin does not complicate the
 structure, and fields can also coexist with multiple inheritance.
 
 \paragraph{Traits and Java's default methods}
@@ -149,7 +149,7 @@ interfaces are units of reuse, and at the same time they provide factory methods
 for instantiation and support state.  Our approach promotes the use of
 interfaces instead of classes, in order to rely on the modular composition
 offered by interfaces. Since Java was designed for classes, a direct classless
-programming style is verbose and unnatural. However, annotation driven code
+programming style is verbose and unnatural. However, annotation-driven code
 generation is enough to overcome this difficulty, and the resulting programming
 style encourages modularity, composability and reusability, by keeping a strong
 OO feel. In that sense, we promote object interfaces as being both units of
@@ -178,8 +178,8 @@ That is, in our approach there are only interfaces, our model requires a single 
 
 \item We provide \texttt{with-} methods as auxiliary constructors. A \texttt{with-} method is generated for each field, just like record update, returning the new object with that field updated
 %. A \texttt{clone} method is generated for the interface, returning a copy of the current object.
-Furthermore, we do automatic return type refinement for these kind of methods. This feature is comparatively useful in big examples, making operations and behaviours more flexible.%, which we will demonstrate later.
-\item We provide two options for generating setters. There are two kind of setters which are commonly used, namely \textit{void setters} and \textit{fluent setters}. The only difference is that a fluent setter returns the object itself after setting, thus supporting a pipeline of such operations. The generation depends on which type of setter is declared in the interface by users.
+Furthermore, we do automatic return type refinement for this kind of methods. This feature is comparatively useful in big examples, making operations and behaviours more flexible.%, which we will demonstrate later.
+\item We provide two options for generating setters. There are two kinds of setters which are commonly used, namely \textit{void setters} and \textit{fluent setters}. The only difference is that a fluent setter returns the object itself after setting, thus supporting a pipeline of such operations. The generation depends on which type of setter is declared in the interface by users.
 \end{itemize}
 \end{comment}
 
@@ -246,7 +246,7 @@ Furthermore, we do automatic return type refinement for these kind of methods. T
 %\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namelly it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolish most advantages of interfaces.}
 
 In certain situations, object interfaces allow automatic refinement for \emph{return
-types}. This is part of a bigger topic in class based languages: expressing and
+types}. This is part of a bigger topic in class-based languages: expressing and
 preserving type recursion and (nominal/structural) subtyping at the same time.
 
 One famous attempt in this direction is provided by
@@ -314,7 +314,7 @@ SugarJ~\cite{erdweg11sugarj} is a Java-based extensible language allowing
 programmers to extend it with custom features by definitions in meta-DSLs (SDF,
 Stratego, etc). Using SugarJ requires learning various DSLs while our approach
 is just using Java. However its intention is different from ours: one of the
-purpose of SugarJ is to allow easy defition of sugars while our approach aims to
+purposes of SugarJ is to allow easy defition of sugars while our approach aims to
 implement the desired program transformation in pure Java.
 
 On the other side, when the base language has a flexible enough syntax and
@@ -325,26 +325,27 @@ example, consider SQLAlchemy in python.
 
 Java-like languages tend to sit in the middle of two extremes: libraries
 can not influence the type system, so many solutions valid in python or other dynamic
-languages are not be applicable, or may be applicable at the cost of losing
+languages are not applicable, or have the cost of losing
 safety.
 
 Here compile time code generation comes at the rescue: if for a certain feature
 (\mixin in our case) it is possible to use the original language syntax to
 \emph{express-describe} any specific instantiation of such feature (annotating a
 class and providing getters), then we can insert in the compilation process a tool
-that examins and enrichs the code before compilation. No need to modify the
+that examines and enriches the code before compilation. No need to modify the
 original source; for example we can work on temporary files. Java is a particular
 good candidate for this kind of manipulation since it already provide ways to
 define and integrate such tools in its own compilation process: in this way
-there is no need of temporary files, and there is a well defined way of putting
+there is no need of temporary files, and there is a well-defined way of putting
 multiple extensions together.
 
 Other languages offer even stronger support to safe code manipulation:
 Template Haskell~\cite{sheard2002template}, F\# (type providers)~\footnote{http://research.microsoft.com/fsharp/} and MetaFjig (Active Libraries)~\cite{servetto2010metafjig}
 all allow to execute code at compile time and to generate code/classes that are transparently integrated in the program that is being generated/processed/compiled.
-In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or non nonsensical) would never generate ill-typed code. This is roughly equivalent to 
+In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or unreasonable) would never generate ill-typed code. This is roughly equivalent to 
 \textit{Self coherence}, that we manually proof in the Appendix.
-Since MetaFjig is not working on annotated classes, there is no direct equivalence on the overall theorem of safety we shown.
+Since MetaFjig is not working on annotated classes, there is no direct
+equivalence on the overall theorem of the shown safety.
 
 \subsection{Formalization of Java8}
 We provide a simple formalization for a subset of Java including default/static

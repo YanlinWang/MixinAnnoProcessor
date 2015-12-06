@@ -2,7 +2,7 @@
 In this section we conduct three case studies which reveal various
 advantages of using the \mixin annotation. The first case study provides a
 simple way to solve the Expression Problem, while supporting multiple,
-independent extensions in Java.  The second case study show how to model an
+independent extensions in Java.  The second case study shows how to model an
 embedded DSL for SQL languages with fluent interfaces. Finally, the third 
 case study models a simple game, and compares our implementation with an 
 existing one, showing that the amount of code is reduced significantly using \mixin.
@@ -14,7 +14,7 @@ problem about modular extensibility issues in software evolution. Recently, a
 new solution~\cite{eptrivially} using only covariant type refinement was
 proposed. When this solution is modeled with interfaces and default methods, it
 can even provide independent extensibility~\cite{zenger05independentlyextensible}: the ability to assemble a system
-from multiple, independently developed extensions. Unfortunatelly, the
+from multiple, independently developed extensions. Unfortunately, the
 required instantiation code makes a plain Java solution verbose and cumbersome
 to use. The \mixin annotation is enough to remove the boilerplate code, making
 the presented approach very appealing.
@@ -54,7 +54,7 @@ languages arises from adding new operations. For example, adding a pretty printi
 operation would typically change all existing code. However, a solution 
 %to the EP forbids this and it also forbids using casts. In other words, it should be possible 
 should add the pretty printing operation in a type-safe and modular way.  It
-turns out to be easily achieved with the assitance of \mixin.  The code in
+turns out to be easily achieved with the assistance of \mixin.  The code in
 Figure~\ref{fig:ep} (rhs) shows how to add the new operation \texttt{print}.
 Interface \texttt{ExpP} extends \texttt{Exp} with the extra method
 \texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are defined with
