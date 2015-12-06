@@ -450,7 +450,7 @@ interface $\C$ owns. The method can either be defined originally in $\C$ or in i
 \mBody(\m,\C_0)
 }{
 \override(\methods(\m),
-\shadow(\tops(\m,\Cs)))
+\tops(\m,\Cs))
 }\\
 \InTextWith{\metaVar{IT}(\C_0) =
 \ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_n\ \oC\methods\ \cC \mbox{ and }
@@ -459,8 +459,9 @@ interface $\C$ owns. The method can either be defined originally in $\C$ or in i
 }
 \end{array}$
 
-\noindent The definition of $\mBody$ reconstruct the full set of supertypes $\Cs$ and then delegates the work to three others auxiliary functions:
- $\tops(m,\C_0)$, $\shadow(\methods)$ and $\override(\method,\method')$.
+\noindent The definition of $\mBody$ reconstruct the full set of supertypes $\Cs$ and then delegates the work to two others auxiliary functions:
+ $\tops(m,\C_0)$%, $\shadow(\methods)$
+ and $\override(\method,\method')$.
 
 \paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
 the non-static ones that are not reachable by another, less specific, superinterface.
@@ -512,48 +513,54 @@ Formally:
 \end{array}$
 
 
-\paragraph{\shadow{}} chooses the most specific version of a method,
-that is the unique version available, or a conflicted version from a
-set of possibilities. Internally a special modifier $\conflicted$ is used to denote the case of two methods with conflicting implementation.
-We do not model overloading, so it is an error if multiple versions are available with different parameter types. Formally:
-\noindent
-$\begin{array}{l}
-\InTextDef{15ex}{
-\shadow()}{\none}\\
-\InTextDef{15ex}{\shadow(\method)}{\method}\\
-\InTextDef{15ex}{\shadow(\overline{\mh\QM;})}{\Aux{mostSpecific}(\overline{\mh\QM;})}\\
-\InTextDef{15ex}{\shadow(\methods)}{\conflicted\mh\QM;}\\
-\InTextWith{\methods\mbox{ not of the form }\overline{\mh\QM;}\mbox{ and }
-\Aux{mostSpecific}(\methods)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}}\\
+%\paragraph{\shadow{}} chooses the most specific version of a method,
+%that is the unique version available, or a conflicted version from a
+%set of possibilities. In this case all the conflicting defintions are returned.
+%We do not model overloading, so it is an error if multiple versions are available with different parameter types. Formally:
+%
+%\noindent
+%$\begin{array}{l}
+%\InTextDef{15ex}{
+%\shadow()}{\none}\\
+%\InTextDef{15ex}{\shadow(\method)}{\method}\\
+%\InTextDef{15ex}{\shadow(\overline{\mh\QM;})}{\Aux{mostSpecific}(\overline{\mh\QM;})}\\
+%\InTextDef{15ex}{\shadow(\methods)}{\methods}\\
+%\InTextWith{\mbox{ the former case not applicable} }
+%%\methods\mbox{ not of the form }\overline{\mh\QM;}
+%%\mbox{ and }
+%%\Aux{mostSpecific}(\methods)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}}\\
+%\end{array}$
+%
+\paragraph{override} models how a method in an interface can
+override an implementation in the superinterface, even in case of a
+conflict.  Note how we use the special value $\none$, and how (forth
+case) overriding can solve a conflict.
+% The notation in the last case below
+%means $\method'$ is not static, and is supertype of $\method$.
+
+\noindent$\begin{array}{l}
+\InTextDef{20ex}{\override(\none,\emptyset)}{\none}\\
+\InTextDef{20ex}{\override(\method,\emptyset)}{\method}\\
+\InTextDef{20ex}{\override(\none,\method)}{\method}\\
+\InTextDef{20ex}{\override(\none,\overline{\mh\QM;})}{\Aux{mostSpecific}(\overline{\mh\QM;})}\\
+\InTextDef{20ex}{\override(\method,\methods)}{\method}\\
+\InTextWith{
+\forall \method' \in \methods \ \ 
+%\method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
+\method\subtype\method'
+}
 \end{array}$
 
 \noindent The definition $\Aux{mostSpecific}$ returns the most
 specific method, that is a method whose type is the subtype of all the
 others.  Since method subtyping is a partial ordering,
-$\Aux{mostSpecific}$ may not be defined, this in turn makes \shadow{},
-and the whole \mBody{} not defined for that specific $\m$. Rule
-\rn{t-intf} relies on this behaviour.
+$\Aux{mostSpecific}$ may not be defined, this in turn forces us to rely on the last clause of $\override$; otherwise
+the whole \mBody{} would be not defined for that specific $\m$.
+Rule \rn{t-intf} relies on this behaviour.
 
 \noindent$\begin{array}{l}
 \InTextDef{18ex}{\Aux{mostSpecific}(\methods)}{\method}\\
 \InTextWith{\method \in \methods\ \mand\ \forall \method' \in \methods :  \method \subtype \method'}
-\end{array}$
-
-\paragraph{override} models how a method in an interface can
-override an implementation in the superinterface, even in case of a
-conflict.  Note how we use the special value $\none$, and how (forth
-case) overriding can solve a conflict. The notation in the last case below
-means $\method'$ is not static, and is supertype of $\method$.
-
-\noindent$\begin{array}{l}
-\InTextDef{20ex}{\override(\none,\none)}{\none}\\
-\InTextDef{20ex}{\override(\method,\none)}{\method}\\
-
-\InTextDef{20ex}{\override(\none,\method)}{\method}\\
-\InTextWith{\method\mbox{ not of the form } \conflicted\ \mh\QM;}\\
-\InTextDef{20ex}{\override(\method,\method')}{\method}\\
-\InTextWith{\method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
-\method\subtype\method'}
 \end{array}$
 
 
