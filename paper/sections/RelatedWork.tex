@@ -28,7 +28,7 @@ such as CZ~\cite{malayeri2009cz}.  They provide novel programming architecture
 models in the OO paradigm. In terms of restrictions set on these models, C++
 virtual inheritance aims at a relative general model; the mixin model adds some
 restrictions; and the trait model is the most restricted one (excluding
-states, instantiation, etc).
+state, instantiation, etc).
 
 \paragraph{C++ Approach.}
 C++ tries to provide a general solution to multiple inheritance by
@@ -89,7 +89,7 @@ can also coexist with multiple inheritance.
 \paragraph{Traits and Java's default methods}
 Simplifying the mixins approach, traits~\cite{scharli03traits} draw a strong
 line between units of reuse and object factories. Traits, as units of reusable
-code, contain only methods as reusable functionality, ignoring states and state
+code, contain only methods as reusable functionality, ignoring state and state
 initialization. Classes, as object factories, require functionalities from
 (multiple) traits. Java 8 interfaces are closely related to
 traits: concrete method implementations are allowed (via the \textbf{default}
@@ -371,20 +371,13 @@ equivalence on the overall theorem of the shown safety.\bruno{Don't understand
 the end of the sentence!}
 
 \subsection{Formalization of Java8}
-We provide a simple formalization for a subset of Java including default/static
-interface methods and object initialization literals (often called anonymous
-local inner classes).  A similar formalization was drafted by Goetz and
-Field~\cite{goetz12fdefenders} to formalize defender (default) methods in
-Java.
-In their formalization, classes and interfaces can have only one method \Q@m()@ without arguments, so as to simplify method overloading and renaming.
-Our work expands and generalizes the situation to support multiple methods with some arguments inside interfaces, in which case the methods that \mixin generates are better modelled. Meanwhile, features like multiple inheritance of interfaces and reabstraction of default methods are also preserved in our formalization. Furthermore, one advantage of the \Q@of@ method provided by \mixin is that it's generated as a static method, considered as a clean way without affecting its heirs. It is indeed supported since static methods are included in our formalization.
-\bruno{explain why having multiple methods is significantly
-  more challenging.}
-%Our code generation generates several methods that may
-%interacts with each other and methods defined by user. Thus implementing and
-%formalizing multiple methods inside interfaces adds complexity greatly.
-\marco{I do not see this as a good explanation, I think we may just remove the `one method limitation discussion'. Is their work modelling interactions between abstract and default methods? like making a default method abstract again?}
-% As an evidence of the attention and care present in our formalization work,
-% while double-checking the behaviour of Java in side cases we have discovered a
-% likely bug in the current \texttt{javac}.\marco{refer to before when we explain
-%   the issue.}
+We provide a simple formalization for a subset of Java including
+default/static interface methods and object initialization literals
+(often called anonymous local inner classes).  A similar formalization
+was drafted by Goetz and Field~\cite{goetz12fdefenders} to formalize
+defender (default) methods in Java. In their formalization, classes
+and interfaces can have only one method \Q@m()@ without arguments, so
+as to simplify method overloading and renaming. Classless Java is more
+general, as it supports multiple methods with arguments, it supports
+static methods, and features such as multiple inheritance of
+interfaces and reabstraction of default methods are also preserved.
