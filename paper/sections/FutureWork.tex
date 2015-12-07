@@ -1,5 +1,59 @@
 \section{Future work}\label{sec:futurework}
 
+
+\subsection{Encapsulation}
+The biggest limitation of our approach is the inability to model visibility restrictions. For example, the absence
+of support for private/protected methods in Java 8 interfaces forces all
+members of interfaces to be public, including static methods. Since we use
+abstract methods to encode state, our state is always all public. Still, because 
+the state can only be accessed by methods, it 
+is impossible for the user to know if a certain method maps directly to a field
+or if it has a default implementation.  If the user wants a constructor that
+does not directly maps to the fields, (as for secondary constructors in Scala)
+he can simply define its own \Q@of@ method and delegate on the generated one:
+\begin{lstlisting}
+@Obj interface Point{  int x(); int y();
+  static Point of(int val){return Point.of(val,val);}  }
+\end{lstlisting}
+However, the generated \Q@of@ method would also be present and public.  If a
+future version of Java was to support \emph{static private methods in
+  interfaces} we could extend our code generation to handle also encapsulation.
+  
+However, interfaces as a whole can have public or 
+package private (java default) visiblity.
+
+We can add a second annotation 
+\Q!@Exposed!
+that leverage on this edge:
+An
+interface without exposed works as usual, but if any method of a public \mixin interface is annoted with \Q!@Exposed!, we can apply a translation where a new  (package private) interface type is introduced, and the orginal interface become just a facade.
+For example:
+\begin{lstlisting}
+@Obj public interface Person{
+  void name(String val);
+  @Exposed default void rename(String newName){ if(/*valid name*/){ this.name(val);}}
+  @Exposed String name();
+  @Exposed static Person from(String val){ if(/*valid name*/){return Person.of(val);}
+    throw /*invalid name*/}  }
+\end{lstlisting}
+becomes
+\begin{lstlisting}
+public interface Person{
+  void rename(String newName)
+  String name();
+  static Person from(String val){ return Person$.from(val);} }
+  
+@Obj interface Person$ extends Person{//will be further expanded by @Obj
+  void name(String val);
+  default void rename(String newName){ if(/*valid name*/){ this.name(val);}}
+  String name();
+  static Person from(String val){ if(/*valid name*/){return Person$.of(val);}
+    throw /*invalid name*/}  }
+\end{lstlisting}
+
+ This is not a perfect solution, since \Q@Person$@ can still be seen inside the \Q@Person@ package and heirs of \Q@Person$@, however it is surprising we achive such of a good result without any language support for privatness in interfaces.
+
+\begin{comment}
 \subsection{Qualifiers in Methods} %{Private state
 The biggest limitation of our approach is the inability to model qualifiers
 for class methods (private, protected, synchronized, etc.). For example, the absence
@@ -23,7 +77,8 @@ methods inside, but this is ugly and cumbersome. One possibility is that the
 annotation processor takes methods with a \Q!@Private! annotation, and turns it into
 static private methods of a nested class. In this extension, also the \Q@of@
 method could be made private following the same pattern.
-
+\end{comment}
+\marco{old version still commented if we decided to swap back}
 % \yanlin{future work on state initialization removed for now. Because I think the
 %   other two future works are fine. But this one is still not clear and
 %   controversial. The proposed workaround forces users to make decision: if he
