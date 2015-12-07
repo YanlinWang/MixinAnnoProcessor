@@ -1,9 +1,10 @@
 @Misc{goetz12fdefenders,
     author = {Goetz, Brian and Field, Robert},
     title  = {Featherweight Defenders: A formal model for virtual extension methods in Java},
-    year   = {2012}
+    year   = {2012},
+    note = "\url{http://cr.openjdk.java.net/~briangoetz/lambda/featherweight-defenders.pdf}"
 }
- %howpublished = "\url{http://cr.openjdk.java.net/\∼briangoetz/lambda/featherweightdefenders.pdf}"
+
 @inproceedings{bono14,
  author = {Bono, Viviana and Mensa, Enrico and Naddeo, Marco},
  title = {Trait-oriented Programming in Java 8},
@@ -17,7 +18,7 @@
  journal = {ACM Trans. Program. Lang. Syst.},
  volume = {30},
  number = {2},
- month = mar,
+ pages={11},
  year = {2008}
 }
 
@@ -28,17 +29,21 @@
   publisher={Addison-Wesley}
 }
 
-@book{malayeri2009cz,
-  title={CZ: multiple inheritance without diamonds},
-  author={Malayeri, Donna and Aldrich, Jonathan},
-  year={2009},
-  publisher={ACM}
-}
+@inproceedings{malayeri2009cz,
+ author = {Malayeri, Donna and Aldrich, Jonathan},
+ title = {CZ: Multiple Inheritance Without Diamonds},
+ booktitle = {OOPSLA '09},
+ year = {2009}
+} 
 
 @article{bruce1994paradigmatic,
   title={A paradigmatic object-oriented programming language: Design, static typing and semantics},
   author={Bruce, Kim B},
   journal={Journal of Functional Programming},
+  volume={4},
+  number={02},
+  pages={127--206},
+  %publisher={Cambridge Univ Press},
   year={1994}
 }
 
@@ -60,9 +65,9 @@
 @inproceedings{taenzer1989problems,
   title={Problems in Object-Oriented Software Reuse.},
   author={Taenzer, David H and Ganti, Murthy and Podar, Sunil},
-  booktitle={ECOOP},
-  volume={89},
-  pages={25--38},
+  booktitle={ECOOP'89},
+  %volume={89},
+  %pages={25--38},
   year={1989}
 }
 
@@ -77,6 +82,10 @@
  author = {Igarashi, Atsushi and Pierce, Benjamin C. and Wadler, Philip},
  title = {Featherweight Java: A Minimal Core Calculus for Java and GJ},
  journal = {ACM Trans. Program. Lang. Syst.},
+ volume={23},
+  number={3},
+  pages={396--450},
+  %publisher={ACM},
  year = {2001}
 } 
 
@@ -91,14 +100,14 @@ year = {2008}
 @inproceedings{kamina07lightweight,
  author = {Kamina, Tetsuo and Tamai, Tetsuo},
  title = {Lightweight Scalable Components},
- booktitle = {GPCE '07},
+ booktitle = {GPCE'07},
  year = {2007}
 } 
 
 @inproceedings{kamina08lightweight,
  author = {Kamina, Tetsuo and Tamai, Tetsuo},
  title = {Lightweight Dependent Classes},
- booktitle = {GPCE '08},
+ booktitle = {GPCE'08},
  year = {2008}
 } 
 
@@ -106,12 +115,12 @@ year = {2008}
 @inproceedings{ernst06virtual,
  author = {Ernst, Erik and Ostermann, Klaus and Cook, William R.},
  title = {A Virtual Class Calculus},
- booktitle = {POPL '06},
+ booktitle = {POPL'06},
  year = {2006}
 } 
 
 @Misc{wadler98expression,
-    author = "Philip Wadler",
+    author = {Philip Wadler},
     title  = "The {E}xpression {P}roblem",
     month  = nov,
     year   = 1998,
@@ -123,7 +132,7 @@ year = {2008}
     author = "Brian Goetz",
     title  = "Allow default methods to override Object's methods",
     year   = 2013,
-    %note = "\url{http://mail.openjdk.java.net/pipermail/lambda-dev/2013-March/008435.html}",
+    note = "\url{http://mail.openjdk.java.net/pipermail/lambda-dev/2013-March/008435.html}",
     howpublished = "Discussion on the lambda-dev mailing list"
 }
 
@@ -132,78 +141,12 @@ year = {2008}
     title = {Project Lombok},
     note = "\url{http://projectlombok.org}"
 }
-    
-@InCollection{reynolds75user-defined,
-Author="J. C. Reynolds",
-Title="User-defined Types and Procedural Data Structures as Complementary
-                  Approaches to Type Abstraction",
-Booktitle="New Directions in Algorithmic Languages",
-Year=1975
-}
-
-@inproceedings{Cook90ooadt,
- author = {Cook, William R.},
- title = {Object-Oriented Programming Versus Abstract Data Types},
- booktitle = {Proceedings of the REX School/Workshop on Foundations of Object-Oriented Languages},
- year = {1991}
-} 
-
-@article{kim03challenging,
-title = "Some Challenging Typing Issues in Object-Oriented Languages: Extended Abstract",
-journal = "Electronic Notes in Theoretical Computer Science",
-year = "2003",
-author = "Kim Bruce"
-}
-
-@inproceedings{krishnamurthi98synthesizing,
- author = {Krishnamurthi, Shriram and Felleisen, Matthias and Friedman, Daniel P.},
- title = {Synthesizing Object-Oriented and Functional Design to Promote Re-Use},
- booktitle = {ECOOP'98},
- year = {1998}
-} 
 
 @inproceedings{oliveira12extensibility, 
  author = {Oliveira, Bruno C. d. S. and Cook, William R.},
  title = {Extensibility for the Masses: Practical Extensibility with Object Algebras},
  booktitle = {ECOOP'12},
  year = {2012}
-} 
-
-
-@inproceedings{palsberg98essence,
- author = {Palsberg, Jens and Jay, C. Barry},
- title = {The Essence of the Visitor Pattern},
- booktitle = {COMPSAC'98},
- year = {1998}
-} 
-
-@INPROCEEDINGS{hinze04generics,
-AUTHOR = "Ralf Hinze",
-TITLE = "Generics for the masses.",
-booktitle = "ICFP'04",
-YEAR = {2004}  
-}
-
-@inproceedings{oliveira05typecase,
- author = {Oliveira, Bruno C. d. S. and Gibbons, Jeremy},
- title = {TypeCase: a design pattern for type-indexed functions},
- booktitle = {Haskell '05},
- year = {2005}
-} 
-
-@ARTICLE{bohm85automatic,
-AUTHOR = "Corrado Böhm and Alessandro Berarducci",
-TITLE = "Automatic Synthesis of Typed Lambda-Programs on Term Algebras.",
-JOURNAL = "Theor. Comput. Sci.",
-PAGES = {135-154},
-YEAR = {1985}  
-}
-
-@article{parigot92recursive,
- author = {Parigot, Michel},
- title = {Recursive programming with proofs},
- journal = {Theor. Comput. Sci.},
- year = {1992}
 } 
 
 @inproceedings{oliveira06extensible,
@@ -459,7 +402,7 @@ YEAR = {2008}
  year = {2004}
 } 
 
-@book{gamma94design,
+@book{gof,
 author = {Gamma, E. and Helm, R. and Johnson, R. and Vlissides, J.},
 title = {Design Patterns : Elements of Reusable Object-Oriented Software},
 year = {1994},
@@ -530,13 +473,6 @@ series = {Addisson-Wesley professional computing series}
  year = {1998}
 }  
 
-@Misc{fowler2005fluentinterface,
-  title={FluentInterface at \url{http://martinfowler.com/bliki/FluentInterface.html}},
-  author={Fowler, Martin},
-  month = dec,
-  year={2005}
-}
-
 @article{Saito2013933,
 title = "Matching MyType to subtyping ",
 journal = "Science of Computer Programming ",
@@ -544,10 +480,24 @@ year = "2013",
 author = "Chieri Saito and Atsushi Igarashi"
 }
 
+@article{Saito2013933,
+ author = {Saito, Chieri and Igarashi, Atsushi},
+ title = {Matching MyType to Subtyping},
+ journal = {Sci. Comput. Program.},
+ volume = {78},
+ number = {7},
+ year = {2013},
+ pages = {933--952}
+} 
+
+
 @article{ancona2002calculus,
   title={A Calculus of Module Systems},
   author={Ancona, Davide and Zucca, Elena},
   journal={Journal of Functional Programming},
+  volume={12},
+  number={02},
+  pages={91--132},
   year={2002}
 }
 
@@ -556,14 +506,6 @@ author = "Chieri Saito and Atsushi Igarashi"
   author = {Zucca, Elena and Servetto, Marco and Lagorio, Giovanni},
   booktitle = {ECOOP'09},
   year = {2009}
-}
-
-@inproceedings{eptrivially,
-  title={The Expression Problem, Trivially!},
-  author={Wang, Yanlin and Oliveira, Bruno C. d. S.},
-  year = {2015},
-  booktitle={HKU CS Tech Report},
-  note = "\url{http://www.cs.hku.hk/research/techreps/document/TR-2015-08.pdf}"
 }
 
 @inproceedings{sheard2002template,
@@ -576,14 +518,10 @@ author = "Chieri Saito and Atsushi Igarashi"
 @inproceedings{servetto2010metafjig,
   title={MetaFJig: a meta-circular composition language for Java-like classes},
   author={Servetto, Marco and Zucca, Elena},
-  booktitle={ACM Sigplan Notices},
+  booktitle={OOPSLA'10},
   year={2010}
 }
 
-@article{vicentedesign,
-  title={Design Patterns in OCaml},
-  author={Vicente, Antonio and Wagner, Earl}
-}
 @inproceedings{bettini2013pure,
   title={Pure trait-based programming on the Java platform},
   author={Bettini, Lorenzo and Damiani, Ferruccio},
@@ -591,17 +529,40 @@ author = "Chieri Saito and Atsushi Igarashi"
   year={2013}
 }
 @article{BettiniDSS13,
-author = {Lorenzo Bettini and
-Ferruccio Damiani and
-Ina Schaefer and
-Fabio Strocco},
-title = {TraitRecordJ: {A} programming language with traits and records},
-journal = {Sci. Comput. Program.},
-year = {2013}
+  author={Bettini, Lorenzo and Damiani, Ferruccio and Schaefer, Ina and Strocco, Fabio},
+  title = {TraitRecordJ: {A} programming language with traits and records},
+  journal = {Sci. Comput. Program.},
+  volume={78},
+  number={5},
+  pages={521--541},
+  %publisher={Elsevier},
+  year={2013}
 }
 @inproceedings{reppy2006foundation,
   title={A foundation for trait-based metaprogramming},
   author={Reppy, John and Turon, Aaron},
   booktitle={International workshop on foundations and developments of object-oriented languages},
   year={2006}
+}
+
+@Misc{cofoja,
+    author = {Nhat Minh Le},
+    title = {Contracts for Java: A Practical Framework for Contract Programming},
+    note = "\url{https://cofoja.googlecode.com/files/cofoja-20110112.pdf}"
+}
+
+@Misc{fowler2005fluentinterface,
+  title={FluentInterface},
+  author={Fowler, Martin},
+  month = dec,
+  year={2005},
+  note = "\url{http://martinfowler.com/bliki/FluentInterface.html}"
+}
+
+@TechReport{eptrivially,
+  title={The Expression Problem, Trivially!},
+  author={Wang, Yanlin and Oliveira, Bruno C. d. S.},
+  year = {2015},
+  booktitle={HKU CS Tech Report TR-2015-08},
+  note = "\url{http://www.cs.hku.hk/research/techreps/document/TR-2015-08.pdf}"
 }

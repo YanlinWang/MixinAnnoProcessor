@@ -34,7 +34,8 @@ Database query1 = Database.of().select("a, b").from("Table").where("c > 10");
     }
     static ExtendedDatabase runTest2() {
 //BEGIN_FLUENT_QUERY2
-ExtendedDatabase query2 = ExtendedDatabase.of().select("a, b").from("Table").where("c > 10").orderBy("b");
+ExtendedDatabase query2 = ExtendedDatabase.of().select("a, b").from("Table")
+                                               .where("c > 10").orderBy("b");
 //END_FLUENT_QUERY2
         return query2;
     }
