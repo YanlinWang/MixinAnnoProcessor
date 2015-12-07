@@ -503,14 +503,14 @@ return type, so that code like:
 Point3D p=Point3D.of(1,2,3); p=p.withX(42);
 \end{lstlisting}
 
-\noindent will be accepted and behave as expected. If the programmer wishes to suppress
-this behaviour and keep the signature as it was, it is sufficient to redefine
-the \Q@with-@ methods in the new interface repeating the old signature.  Again,
-the philosophy is that if the programmer provides something directly, \mixin
-does not touch it.  The cast in \Q@with(Point2D)@ is trivially safe since it is
-guarded by an \Q@instanceof@ test. The idea is that if the parameter is a
-subtype of the current exact type, then we can just return the parameter, as
-something that is just ``more'' than \Q@this@.
+\noindent will be accepted. If the programmer wishes to suppress this behaviour
+and keep the signature as it was, it is sufficient to redefine the \Q@with-@
+methods in the new interface repeating the old signature.  Again, the philosophy
+is that if the programmer provides something directly, \mixin does not touch it.
+The cast in \Q@with(Point2D)@ is trivially safe because of the \Q@instanceof@
+test. The idea is that if the parameter is a subtype of the current exact type,
+then we can just return the parameter, as something that is just ``more'' than
+\Q@this@.
 
 \subsection{Advanced Multiple Inheritance with Object Interfaces}
 Finally, defining \texttt{Pegasus} is as simple as we did in the simplified

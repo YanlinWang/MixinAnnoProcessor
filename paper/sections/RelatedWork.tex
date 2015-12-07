@@ -57,8 +57,8 @@ are considered~\cite{marco09FJigsaw}. Scala traits are in fact more like lineari
 Scala avoids the object initialization
 problem by disallowing constructor parameters, causing no ambiguity in cases
 such as diamond problem. However this approach has limited expressiveness, and
-suffers from all the problems of linearised mixin composition. Other languages, such as
-Python, also use linearized mixins.
+suffers from all the problems of linearised mixin composition. % Other languages, such as
+% Python, also use linearized mixins.
 \begin{comment}
 Python also offers multiple inheritance via linearised mixins. Indeed in python any class is implicitly a mixin, and mixin composition informally expressed as\\*
 \Q@ class A use B,C {...new methods...}@\\*
@@ -136,9 +136,9 @@ example, FeatherTrait Java (FTJ)~\cite{Liquori08ftj} extends
 FJ~\cite{Igarashi01FJ} with statically-typed traits, adding trait-based
 inheritance in Java.  Except for few, mostly syntactic details, their work can
 be emulated with Java 8 interfaces. There are also extensions to the original
-trait model, which have operations that default methods and interfaces cannot
-model, such as method renaming~\cite{reppy2006foundation}, which breaks
-structural subtyping.
+trait model, with operations (e.g. renaming~\cite{reppy2006foundation}, which breaks
+structural subtyping) that default methods and interfaces cannot
+model.
 
 \paragraph{Traits vs Object Interfaces}
 We consider object interfaces to be an alternative to traits or mixins.  In the
@@ -361,7 +361,10 @@ multiple extensions together.
 
 Other languages offer even stronger support for safe code manipulation:
 Template Haskell~\cite{sheard2002template}, F\# (type providers)~\footnote{http://research.microsoft.com/fsharp/} and MetaFjig (Active Libraries)~\cite{servetto2010metafjig}
-all allow to execute code at compile time. They generate code/classes that is transparently integrated in the program that is being generated/processed/compiled. In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or unreasonable) never generates ill-typed code. This is roughly equivalent to
+all allow to execute code at compile time. They generate code that is
+transparently integrated in the program that is being
+generated/processed/compiled. In particular, MetaFjig offers a property called
+\emph{meta-level-soundness}, ensuring by construction that library code (even if wrong or unreasonable) never generates ill-typed code. This is roughly equivalent to
 \textit{Self coherence}, that we have to manually prove.
 Since MetaFjig is not working on annotated classes, there is no direct
 equivalence on the overall theorem of the shown safety.\bruno{Don't understand

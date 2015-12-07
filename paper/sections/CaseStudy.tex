@@ -24,7 +24,7 @@ In the formulation of the EP there is an initial system that models
 arithmetic expressions with only literals and addition, and an initial 
 operation \texttt{eval} for expression evaluation.
 As shown in Figure~\ref{fig:ep}, \texttt{Exp} is the common
-super-interface with an evaluation operation \texttt{eval()}
+super-interface with operation \texttt{eval()}
 inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend interface
 \texttt{Exp} with default implementations for the \texttt{eval} operation. The
 number field \texttt{x} of a literal is represented as a getter method
@@ -53,7 +53,7 @@ following code shows how to add subtraction.
 languages arises from adding new operations. For example, adding a pretty printing 
 operation would typically change all existing code. However, a solution 
 %to the EP forbids this and it also forbids using casts. In other words, it should be possible 
-should add the pretty printing operation in a type-safe and modular way. This
+should add operations in a type-safe and modular way. This
 turns out to be easily achieved with the assistance of \mixin.  The code in
 Figure~\ref{fig:ep} (on the right) shows how to add the new operation \texttt{print}.
 Interface \texttt{ExpP} extends \texttt{Exp} with the extra method
