@@ -43,16 +43,31 @@ return types and calls \Q:@ObjWeak:.
 \noindent Note that it is necessary to explicitly check if the interface is valid 
 for annotation:
 
-\noindent$\valid(\C_0)$  holds if $\forall \m\in\dom(\C_0),$ if $\mh\QM; = \mBody(\m, \C_0),$ one case is satisfied:
-$\isField(\method)$,
-$\isWith(\method, \C_0)$
-or
-$\isSetter(\method,\C_0)$. \
-%$\isClone(\method, \C_0)$.
-\bruno{Isn't this a definition; Shouldn't it have the bullet points before as 
-all other definitions?}
 
-\noindent That is, we can categorize all the \emph{not implemented} methods in a pattern that we know how to implement.\bruno{I don't understand what the previous sentence means!}
+
+\noindent$\begin{array}{ll}
+\InTextDef{7ex}{\valid(\C_0)}{\forall \m\in\dom(\C_0),\mbox{ if }\mh\QM; = \mBody(\m, \C_0),\mbox{ one case is satisfied:}}\\
+\tab\tab
+\isField(\method), \isWith(\method, \C_0) \mbox{ or }
+\isSetter(\method,\C_0)\\
+\InTextDef{24ex}{\isField(\C\ \m\oR\cR\QM;)}{
+\mnot\ \specialName(\m)}\\
+\InTextDef{24ex}{\isWith(\C'\ \QM{with#}\m \oR \C\ \x\cR\QM;, \C_0)}{
+\C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;
+\ \mand\ \mnot\ \specialName(\m)}\\
+\InTextDef{24ex}{\isSetter(\C'\ \QM_\m \oR \C\ \x\cR\QM;, \C_0)}{
+\C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;
+\ \mand\ \mnot\ \specialName(\m)}\\
+
+%\isClone:&\isClone(\C\ \QM{clone}\oR\cR\QM;, \C_0)\tab \mif\ \C_0 <: \C \\
+%\isImplemented:&\isImplemented(\method) \tab\mbox{iff }\method\mbox{ not of form }\mh\QM;
+%\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
+%&\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
+\end{array}$
+
+\noindent That is, we can categorize all the \emph{not implemented} methods in a pattern that we know how to implement: it is eiter a field getter, a with method or a setter method.
+
+\bruno{I don't understand what the previous sentence means!}
 Moreover, we check that the method \Q@of@ is not already defined by the user.
 In the formalization an existing definition of the \Q@of@ method is an error. However,
 in the prototype (which also needs to account for overloading), the check is more complex
@@ -89,20 +104,6 @@ To discover whether the methods need to be generated,
 we check if such \Q@with-@ or setter methods %\Q@clone@
 are required by $\C_0$, but are not already present in the methods directly declared in $\C_0$. 
 
-\noindent$\begin{array}{ll}
-\InTextDef{24ex}{\isWith(\C'\ \QM{with#}\m \oR \C\ \x\cR\QM;, \C_0)}{
-\C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;
-\ \mand\ \mnot\ \specialName(\m)}\\
-\InTextDef{24ex}{\isSetter(\C'\ \QM_\m \oR \C\ \x\cR\QM;, \C_0)}{
-\C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;
-\ \mand\ \mnot\ \specialName(\m)}\\
-
-%\isClone:&\isClone(\C\ \QM{clone}\oR\cR\QM;, \C_0)\tab \mif\ \C_0 <: \C \\
-%\isImplemented:&\isImplemented(\method) \tab\mbox{iff }\method\mbox{ not of form }\mh\QM;
-%\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
-%&\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
-\end{array}$
-\bruno{no explanation of the above auxiliary definitions?}
 
 \paragraph{The $\ofMethod$ method:}\label{subsec:ofmethod}
 The $\ofMethod$ function generates the method
@@ -135,10 +136,7 @@ assume that no-args methods start with an underscore, and we prefix method names
 \isField(\method)\ \mand\
 %}\\\InTextWith{
 \method=\mBody(\_,\C_0)
-}\\
-
-\InTextDef{24ex}{\isField(\C\ \m\oR\cR\QM;)}{
-\mnot\ \specialName(\m)}\\
+}
 \end{array}$
 
 \noindent For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
