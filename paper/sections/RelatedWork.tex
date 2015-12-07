@@ -366,9 +366,7 @@ transparently integrated in the program that is being
 generated/processed/compiled. In particular, MetaFjig offers a property called
 \emph{meta-level-soundness}, ensuring by construction that library code (even if wrong or unreasonable) never generates ill-typed code. This is roughly equivalent to
 \textit{Self coherence}, that we have to manually prove.
-Since MetaFjig is not working on annotated classes, there is no direct
-equivalence on the overall theorem of the shown safety.\bruno{Don't understand
-the end of the sentence!}
+Since MetaFjig is not working on annotated classes, there is not a ``semantic with/without annotations''. Our \mixin tuning theorem does not make sense in such context.
 
 \subsection{Formalization of Java 8}
 We provide a simple formalization for a subset of Java including
@@ -380,4 +378,4 @@ and interfaces can have only one method \Q@m()@ without arguments, so
 as to simplify method overloading and renaming. Classless Java is more
 general, as it supports multiple methods with arguments, it supports
 static methods, and features such as multiple inheritance of
-interfaces and reabstraction of default methods are also preserved.
+interfaces and reabstraction of default methods are also modelled.
