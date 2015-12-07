@@ -459,8 +459,7 @@ interface $\C$ owns. The method can either be defined originally in $\C$ or in i
 \end{array}$
 
 \noindent The definition of $\mBody$ reconstruct the full set of supertypes $\Cs$ and then delegates the work to two other auxiliary functions:
- $\tops(m,\C_0)$%, $\shadow(\methods)$
- and $\override(\method,\method')$.
+ $\tops(m,\Cs)$ and $\override(\method,\methods)$.
 
 \paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
 the non-static ones that are not reachable by another, less specific, superinterface.
@@ -484,7 +483,7 @@ Formally:
 \Aux{originalMethod}(\m,\C_0)\in\tops(\m,\C_0\dots\C_n)}{
  }{}\\
 \tab\tab
-\not\exists i\in1..n \mbox{ such that } 
+\not\exists i\in1..n \mbox{ such that }
 \Aux{originalMethod}(\m,\C_i) \mbox{ is defined and }
 \C_i \subtype \C_0
 
@@ -544,7 +543,7 @@ case) overriding can solve a conflict.
 \InTextDef{20ex}{\override(\none,\overline{\mh\QM;})}{\Aux{mostSpecific}(\overline{\mh\QM;})}\\
 \InTextDef{20ex}{\override(\method,\methods)}{\method}\\
 \InTextWith{
-\forall \method' \in \methods \ \ 
+\forall \method' \in \methods \ \
 %\method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
 \method\subtype\method'
 }

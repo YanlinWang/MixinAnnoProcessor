@@ -1,7 +1,7 @@
 \section{What  \mixin Generates}\label{sec:translation}
 
-This section shows what the \mixin annotation generates, and presents a 
-formal definition for most of the generated methods. Since 
+This section shows what the \mixin annotation generates, and presents a
+formal definition for most of the generated methods. Since
 Classless Java does not consider
 % setters, so we do not formally define the generation of the setters.
 %We do not include
@@ -10,7 +10,7 @@ formal translation. For the same reason \Q@void@ returning setters are
 not included, since they are just a minor variation over the more
 interesting fluent setters, and they would require special handling
 just for the conventional \Q@void@ type.
-\bruno{Haoyuan: ObjWeak is a poor name. I suggest ObjOf. 
+\bruno{Haoyuan: ObjWeak is a poor name. I suggest ObjOf.
 Please revise (and also revise the proof).}
 
 \subsection{Translation}
@@ -18,10 +18,10 @@ Please revise (and also revise the proof).}
 For the purposes of the formalization, the translation is divided in
 two parts.  The two parts are important so that we can discuss the
 formal properties later. To this aim we introduce the annotation
-\Q:@ObjWeak:. Its role is only in the translation process, hence is
-not part of the Classless Java language.  \Q:@ObjWeak: generates the
+$\weakAnn$. Its role is only in the translation process, hence is
+not part of the Classless Java language.  $\weakAnn$ generates the
 constructor method $\QM{of}$, while \mixin automatically refines the
-return types and calls \Q:@ObjWeak:.
+return types and calls $\weakAnn$.
 
 
 \noindent$\begin{array}{l}
@@ -32,7 +32,7 @@ return types and calls \Q:@ObjWeak:.
 ]\!]}\\
 \InTextWith{\methods'=\otherMethod(\C_0,\methods)}\\
 
-\InTextDef{18em}{[\![\weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
+\InTextDef{16em}{[\![\weakAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
 }{
 \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC
 \methods\ \ofMethod(\C_0) \cC
@@ -40,7 +40,7 @@ return types and calls \Q:@ObjWeak:.
 \InTextWith{\valid(\C_0),\QM{of}\notin\dom(\C_0) }
 \end{array}$
 
-\noindent Note that it is necessary to explicitly check if the interface is valid 
+\noindent Note that it is necessary to explicitly check if the interface is valid
 for annotation:
 
 
@@ -71,7 +71,7 @@ for annotation:
 Moreover, we check that the method \Q@of@ is not already defined by the user.
 In the formalization an existing definition of the \Q@of@ method is an error. However,
 in the prototype (which also needs to account for overloading), the check is more complex
-as it additionally checks that an \Q@of@ method with the same signature of the one being 
+as it additionally checks that an \Q@of@ method with the same signature of the one being
 generated is not already present.
 
 
@@ -100,9 +100,9 @@ The definition of $\otherMethod(\C_0,\methods)$ is as follows:
 %A complete formalization would also generate the \Q@with@.
 The methods are generated when they are unimplemented in $\C_0$, because
 the return types need to be refined.
-To discover whether the methods need to be generated, 
+To discover whether the methods need to be generated,
 we check if such \Q@with-@ or setter methods %\Q@clone@
-are required by $\C_0$, but are not already present in the methods directly declared in $\C_0$. 
+are required by $\C_0$, but are not already present in the methods directly declared in $\C_0$.
 
 
 \paragraph{The $\ofMethod$ method:}\label{subsec:ofmethod}
@@ -175,7 +175,7 @@ The auxiliary functions are defined below. Note that we do not need to check if 
 
 \subsection{Other features}
 
-We do not formally model non fluent setters and the \Q@with@ method. 
+We do not formally model non fluent setters and the \Q@with@ method.
 An informal explanation of how those methods are generated is given next:
 \begin{itemize}
 \item For methods inside the interface with the form \Q@void @$\m$\QM($\C\ \x$\QM{);}:
@@ -239,37 +239,37 @@ This would break \Q@C@. \\*
 Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@'' would compile before translation, but would be ill-typed after the translation.
 \end{itemize}
 
-\noindent This means that our automatic type refinement 
+\noindent This means that our automatic type refinement
 is a useful and convenient feature, but is not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantic  and provide the right type while refining methods.
 
 \subsection{Results}
 To formally characterize the behaviour of our annotation, and the two level of guarantees that we offer, we provide some notations and two theorems:
 \begin{itemize}
 \item We denote with $\C^{\II}$ the name of an interface.
-\item An interface table 
+\item An interface table
 IT is OK if under such interface table, all interfaces are OK.
 \item Since interface tables are just represented as sequences of interfaces we write IT = $\II$ IT' to select a specific interface in a table.
 \item IT contains an heir of $\C$ if there is an interface that extends it, or a \Q@new@ that instantiate it.
 \end{itemize}
 
-  
-\noindent\textbf{THEOREM }\Q!@ObjWeak!\\*
-If a given interface table $\II$ IT is OK 
- where $\II$ has \Q!@ObjWeak!, 
+
+\noindent\textbf{THEOREM }$\weakAnn$\\*
+If a given interface table $\II$ IT is OK
+ where $\II$ has $\weakAnn$,
 $\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$,\\*
 then the interface table $[\![\II]\!]$ IT is OK.
 
-\noindent\textbf{THEOREM }\Q!@Obj! 
-If a given interface table $\II$ IT is OK 
- where $\II$ has \Q!@Obj!, 
+\noindent\textbf{THEOREM }\Q!@Obj!
+If a given interface table $\II$ IT is OK
+ where $\II$ has \Q!@Obj!,
 $\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,\\*
 then the interface table $[\![\II]\!]$ IT is OK.
 \bruno{The formatting of the theorems seems rather odd; why are the lines breaking?
-Also naming the theorems after the annotations seems strange! Giving a proper name 
+Also naming the theorems after the annotations seems strange! Giving a proper name
 to the theorems seems a much better idea.}
 
 
-Informally, this means that for a client program that typechecks before a translation is applied, if the annotated type has no subtypes, and no objects of that type are created, then type safety is guaranteed after the successful translation. Conversely, the second step of \mixin, namely what \Q:@ObjWeak: does in the formalization, is guaranteed to be type-safe for the three kinds of coherence. The formal theorems proofs are available in Appendix.%~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
+Informally, this means that for a client program that typechecks before a translation is applied, if the annotated type has no subtypes, and no objects of that type are created, then type safety is guaranteed after the successful translation. Conversely, the second step of \mixin, namely what $\weakAnn$ does in the formalization, is guaranteed to be type-safe for the three kinds of coherence. The formal theorems proofs are available in Appendix.%~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
 \bruno{For both theorems?}
 
 
