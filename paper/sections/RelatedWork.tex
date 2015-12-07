@@ -3,7 +3,7 @@ In this section we discuss related work and comparison to Classless Java.
 
 %\yanlin{need to discuss: whether the comments for FTJ is fair.}
 
-%No, was not fair, I know that work, it does modular type checking, and 
+%No, was not fair, I know that work, it does modular type checking, and
 %more work after that they extend with more safe/modular typing things.
 %also, Java8 IS a language extension on Java
 %However, language extensions (including FTJ)
@@ -20,7 +20,7 @@ In this section we discuss related work and comparison to Classless Java.
 Many authors have argued in favour or against multiple inheritance.  Multiple
 inheritance is very expressive, but difficult to model and implement, and can
 cause difficulty (including the famous diamond (fork-join)
-problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning about 
+problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning about
 programs. To conciliate the need for expressive power and simplicity, many
 models have been proposed, including C++ virtual inheritance,
 mixins~\cite{bracha90mixin}, traits~\cite{scharli03traits}, and hybrid models
@@ -57,14 +57,14 @@ are considered~\cite{marco09FJigsaw}. Scala traits are in fact more like lineari
 Scala avoids the object initialization
 problem by disallowing constructor parameters, causing no ambiguity in cases
 such as diamond problem. However this approach has limited expressiveness, and
-suffers from all the problems of linearised mixin composition. Other languages, such as 
+suffers from all the problems of linearised mixin composition. Other languages, such as
 Python, also use linearized mixins.
 \begin{comment}
 Python also offers multiple inheritance via linearised mixins. Indeed in python any class is implicitly a mixin, and mixin composition informally expressed as\\*
 \Q@ class A use B,C {...new methods...}@\\*
 can be expressed in python as \\*
 \Q@ class Aux: ...new methods...@\\*
-\Q@ class A(B,C,Aux): pass@ 
+\Q@ class A(B,C,Aux): pass@
 \end{comment}
 \noindent Java interfaces and default methods do not use
 linearisation: the semantics of Java \textbf{extends} clause in
@@ -99,7 +99,7 @@ of composition operations like sum, alias and exclusion, providing explicit conf
 resolution. Former work~\cite{bono14} provides details on mimicking the trait
 algebra through Java 8 interfaces.  We briefly recall the main points of their
 encoding; however we propose a different representation of \textbf{exclusion}.
-The first author of~\cite{bono14} agreed (via personal communication) that 
+The first author of~\cite{bono14} agreed (via personal communication) that
 our revised version for exclusion is cleaner, typesafe and more direct.
 
 \newcommand\shortItem{\vspace{-1ex}}
@@ -111,7 +111,7 @@ our revised version for exclusion is cleaner, typesafe and more direct.
 \shortItem
 \item \textbf{Overriding} a conflict is obtained by specifying which super interface take precedence.
     \begin{lstlisting}
-    interface A { default int m() {return 1;} } 
+    interface A { default int m() {return 1;} }
     interface B { default int m() {return 2;} }
     interface C extends A, B { default int m() {return B.super.m();} }
     \end{lstlisting}
@@ -264,17 +264,17 @@ related to our work: 1) any method generated inside of the \Q@of@ method is inde
 non-inheritable since there is no class name to extend from; 2) exact
 statements (a form of wild-card capture on the exact run-time type) could
 capture the ``exact type'' of an object even in a class-less
-environment. 
+environment.
 Admittedly, MyType greatly enhances the expressiveness and extensibility of
 object-oriented programming languages. Object interfaces use covariant-return types to
 simulate some uses of MyType. But our approach only works for refining
 return types, whereas MyType is more general, as it also works for
-parameter types. Nevertheless, as illustrated with our examples and 
-case studies, object interfaces are still very useful in many 
+parameter types. Nevertheless, as illustrated with our examples and
+case studies, object interfaces are still very useful in many
 practical applications.
 % The addition of MyType to a language will allow easy definition of
 %binary methods, methods with recursive types (i.e., the same type of the
-%receiver appears in the argument or return positions of methods), etc. 
+%receiver appears in the argument or return positions of methods), etc.
 
 
 \begin{comment}
@@ -289,21 +289,21 @@ multiple extensions into one.
 
 SugarJ~\cite{erdweg11sugarj} is a Java-based extensible programming language
 that allows programmers to extend the base language with custom language
-features by definitions in meta-DSLs (SDF, Stratego, etc). 
+features by definitions in meta-DSLs (SDF, Stratego, etc).
 \yanlin{Is new syntax really a ``drawback''? I think for some system, like
   SugarJ, one of purpose IS to introduce these new syntax.}  Drawbacks: new
 syntax. To create the extension, programmers have to work with multiple
 languages (SDF, stratego, etc) while our approach works totally in Java
 environment.
 
-We can model certain types of language extensions with annotations 
-only, but those extensions do not introduce new syntax: they 
-merely do automatic code generation. 
+We can model certain types of language extensions with annotations
+only, but those extensions do not introduce new syntax: they
+merely do automatic code generation.
 \end{comment}
 
 \subsection{Meta-Programming Competes with Language Extensions}
 The most obvious solution to adding features to a language is via syntactic
-extensions. Syntactic extensions are often implemented as 
+extensions. Syntactic extensions are often implemented as
 desugarings to the base language. For example,
 the Scala compiler was extended to directly support XML syntax.
 However, when syntactic extensions are independently created it is hard
@@ -311,25 +311,25 @@ to combine multiple extensions into one.
 SugarJ~\cite{erdweg11sugarj} is a Java-based extensible language that
 aims at making the creation and composition of syntactic sugar
 extensions easy, by allowing programmers to extend Java with custom
-features (typically for DSLs). However SugarJ's goals are different 
-from language tuning: SugarJ aims at creating and composing new syntax; 
-whereas language tuning merely reinterprets existing syntax. It is 
-clear that reinterpreting existing syntax only can be limiting 
-for some applications. However, when language tuning is possible 
-it has the advantage that existing tools for the language work 
+features (typically for DSLs). However SugarJ's goals are different
+from language tuning: SugarJ aims at creating and composing new syntax;
+whereas language tuning merely reinterprets existing syntax. It is
+clear that reinterpreting existing syntax only can be limiting
+for some applications. However, when language tuning is possible
+it has the advantage that existing tools for the language work
 out-of-the-box (since the syntax is still the same); and composition
 of independently developed tunings is straightforward.
 
-Scala-Virtualized~\cite{Rompf2012scalavirtualized} is an extension to Scala, 
-which allows blending shallow and deep embedding of DSLs. It redefines 
-some of Scala's language constructs to method calls, 
-which can be overridden by DSL implementors. Thus Scala Virtualized  
-can also reinterpret syntax, and be seen as a form of language tuning. 
-However, although many Scala's language constructs are supported, 
+Scala-Virtualized~\cite{Rompf2012scalavirtualized} is an extension to Scala,
+which allows blending shallow and deep embedding of DSLs. It redefines
+some of Scala's language constructs to method calls,
+which can be overridden by DSL implementors. Thus Scala Virtualized
+can also reinterpret syntax, and be seen as a form of language tuning.
+However, although many Scala's language constructs are supported,
 not all language constructs can be virtualized.
 
-%These extensions are admittedly useful, however they are essentially 
-%creating a fork of the language, and rarely the new fork gains enough 
+%These extensions are admittedly useful, however they are essentially
+%creating a fork of the language, and rarely the new fork gains enough
 %traction to become the main language release. % On this
 % topic we mention
 
@@ -351,7 +351,7 @@ In Java-like languages compile time code generation comes at the rescue: if, for
 \emph{express/describe} any specific instantiation of such feature (annotating a
 class and providing getters), then we can insert in the compilation process a tool
 that examines and enriches the code before compilation. No need to modify the
-original source (for example we can work on temporary files). 
+original source (for example we can work on temporary files).
 Java is a particular
 good candidate for this kind of manipulation since it already provide ways to
 define and integrate such tools in its own compilation process via annotation
@@ -361,10 +361,10 @@ multiple extensions together.
 
 Other languages offer even stronger support for safe code manipulation:
 Template Haskell~\cite{sheard2002template}, F\# (type providers)~\footnote{http://research.microsoft.com/fsharp/} and MetaFjig (Active Libraries)~\cite{servetto2010metafjig}
-all allow to execute code at compile time. They generate code/classes that is transparently integrated in the program that is being generated/processed/compiled. In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or unreasonable) never generates ill-typed code. This is roughly equivalent to 
+all allow to execute code at compile time. They generate code/classes that is transparently integrated in the program that is being generated/processed/compiled. In particular, MetaFjig offers a property called \emph{meta-level-soundness}. In short this property ensures by construction that library code (even if wrong or unreasonable) never generates ill-typed code. This is roughly equivalent to
 \textit{Self coherence}, that we have to manually prove.
 Since MetaFjig is not working on annotated classes, there is no direct
-equivalence on the overall theorem of the shown safety.\bruno{Don't understand 
+equivalence on the overall theorem of the shown safety.\bruno{Don't understand
 the end of the sentence!}
 
 \subsection{Formalization of Java8}
@@ -372,11 +372,14 @@ We provide a simple formalization for a subset of Java including default/static
 interface methods and object initialization literals (often called anonymous
 local inner classes).  A similar formalization was drafted by Goetz and
 Field~\cite{goetz12fdefenders} to formalize defender (default) methods in
-Java. However this formalization is limited to model exactly one method inside
-classes/interfaces.\bruno{explain why having multiple methods is significantly
-  more challenging.} Our code generation generates several methods that may
-interacts with each other and methods defined by user. Thus implementing and
-formalizing multiple methods inside interfaces adds complexity greatly.
+Java.
+In their formalization, classes and interfaces can have only one method \Q@m()@ without arguments, so as to simplify method overloading and renaming.
+Our work expands and generalizes the situation to support multiple methods with some arguments inside interfaces, in which case the methods that \mixin generates are better modelled. Meanwhile, features like multiple inheritance of interfaces and reabstraction of default methods are also preserved in our formalization. Furthermore, one advantage of the \Q@of@ method provided by \mixin is that it's generated as a static method, considered as a clean way without affecting its heirs. It is indeed supported since static methods are included in our formalization.
+\bruno{explain why having multiple methods is significantly
+  more challenging.}
+%Our code generation generates several methods that may
+%interacts with each other and methods defined by user. Thus implementing and
+%formalizing multiple methods inside interfaces adds complexity greatly.
 \marco{I do not see this as a good explanation, I think we may just remove the `one method limitation discussion'. Is their work modelling interactions between abstract and default methods? like making a default method abstract again?}
 % As an evidence of the attention and care present in our formalization work,
 % while double-checking the behaviour of Java in side cases we have discovered a
