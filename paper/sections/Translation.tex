@@ -1,15 +1,27 @@
 \section{What  \mixin Generates}\label{sec:translation}
 
-We now show what the \mixin annotation generates. We present a formal definition for
-most of the generated methods; however in our formalism we do not consider
+This section shows what the \mixin annotation generates, and presents a 
+formal definition for most of the generated methods. Since 
+Classless Java does not consider
 % setters, so we do not formally define the generation of the setters.
 %We do not include
-casts or \Q@instanceof@, so we do not include the \Q@with@ method.
-For the same reason we do not include \Q@void@ returning setters, since they are just a minor variation over the more interesting fluent setters, and they would require special handling just for the conventional \Q@void@ type.
+casts or \Q@instanceof@, the \Q@with@ method is not included in the
+formal translation. For the same reason \Q@void@ returning setters are
+not included, since they are just a minor variation over the more
+interesting fluent setters, and they would require special handling
+just for the conventional \Q@void@ type.
+\bruno{Haoyuan: ObjWeak is a poor name. I suggest ObjOf. 
+Please revise (and also revise the proof).}
 
-We chose to modularly divide our translation in two parts, so that we can discuss about formal properties of those parts later. To this aim we introduce the annotation \Q:@ObjWeak:. Its role is only in the translation process, hence is not part of the classless java language.
-\Q:@ObjWeak: generates the constructor method $\QM{of}$, while
-\mixin automatically refines the return types and calls \Q:@ObjWeak:.
+\subsection{Translation}
+
+For the purposes of the formalization, the translation is divided in
+two parts.  The two parts are important so that we can discuss the
+formal properties later. To this aim we introduce the annotation
+\Q:@ObjWeak:. Its role is only in the translation process, hence is
+not part of the Classless Java language.  \Q:@ObjWeak: generates the
+constructor method $\QM{of}$, while \mixin automatically refines the
+return types and calls \Q:@ObjWeak:.
 
 
 \noindent$\begin{array}{l}
@@ -28,7 +40,8 @@ We chose to modularly divide our translation in two parts, so that we can discus
 \InTextWith{\valid(\C_0),\QM{of}\notin\dom(\C_0) }
 \end{array}$
 
-As you see, we explicitly check if the interface is valid for annotation:
+\noindent Note that it is necessary to explicitly check if the interface is valid 
+for annotation:
 
 \noindent$\valid(\C_0)$  holds if $\forall \m\in\dom(\C_0),$ if $\mh\QM; = \mBody(\m, \C_0),$ one case is satisfied:
 $\isField(\method)$,
@@ -36,19 +49,24 @@ $\isWith(\method, \C_0)$
 or
 $\isSetter(\method,\C_0)$. \
 %$\isClone(\method, \C_0)$.
+\bruno{Isn't this a definition; Shouldn't it have the bullet points before as 
+all other definitions?}
 
-That is, we can categorize all the \emph{not implemented} methods in a pattern that we know how to implement.
+\noindent That is, we can categorize all the \emph{not implemented} methods in a pattern that we know how to implement.\bruno{I don't understand what the previous sentence means!}
 Moreover, we check that the method \Q@of@ is not already defined by the user.
-In our simplified formalization we consider this to be just an error.
-In our prototype we keep overloading into account, and so we check that an \Q@of@ method with the same signature of the one we would generate is not already present.
+In the formalization an existing definition of the \Q@of@ method is an error. However,
+in the prototype (which also needs to account for overloading), the check is more complex
+as it additionally checks that an \Q@of@ method with the same signature of the one being 
+generated is not already present.
 
 
-In the following we will write $\QM{with#}\m$ to append $\m$ to \QM{with}, following the camelCase rule, so the first letter of
-$\m$ must be lower-case and is turned in upper-case upon merging.
-For example \QM{with#foo}=\QM{withFoo}.
-Special names $\specialName(\m)$ are  \QM{with} and all the identifiers of form $\QM{with#}\m$.
+In the following we will write $\QM{with#}\m$ to append $\m$ to
+\QM{with}, following the camelCase rule. That is, the first letter of $\m$
+must be lower-case and is turned in upper-case upon merging.  For
+example \QM{with#foo}=\QM{withFoo}.  Special names $\specialName(\m)$
+are \QM{with} and all the identifiers of form $\QM{with#}\m$.
 
-\subsection{$\otherMethod$}
+\paragraph{The $\otherMethod$ method:}
 The definition of $\otherMethod(\C_0,\methods)$ is as follows:
 
 \noindent$\begin{array}{ll}
@@ -63,21 +81,15 @@ The definition of $\otherMethod(\C_0,\methods)$ is as follows:
 \mbox{ and } \QM_\m\notin\dom(\methods)}\\
 \end{array}$
 
-The methods that we generate in the interface are \Q@with-@ and setters. %\Q@clone@.
+\noindent The methods generated in the interface are \Q@with-@ and setters. %\Q@clone@.
 %A complete formalization would also generate the \Q@with@.
-We discover if there is the need of generating such methods by checking if the method is unimplemented in $\C_0$. This is needed only in order to refine the return type.
-To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
- is required by $\C_0$, but is not already present in the methods directly declared in $\C_0$. \marco{no, overloading is not the issue here\hl{since overloading is not modelled}}.
+The methods are generated when they are unimplemented in $\C_0$, because
+the return types need to be refined.
+To discover whether the methods need to be generated, 
+we check if such \Q@with-@ or setter methods %\Q@clone@
+are required by $\C_0$, but are not already present in the methods directly declared in $\C_0$. 
 
 \noindent$\begin{array}{ll}
-\InTextDef{24ex}{\method\in\fieldsFunc(\C_0)}{
-\isField(\method)\ \mand\
-%}\\\InTextWith{
-\method=\mBody(\_,\C_0)
-}\\
-
-\InTextDef{24ex}{\isField(\C\ \m\oR\cR\QM;)}{
-\mnot\ \specialName(\m)}\\
 \InTextDef{24ex}{\isWith(\C'\ \QM{with#}\m \oR \C\ \x\cR\QM;, \C_0)}{
 \C_0 <: \C', \mBody(\m, \C_0) = \C\ \m\oR\cR\QM;
 \ \mand\ \mnot\ \specialName(\m)}\\
@@ -90,10 +102,11 @@ To discover if this is the case, we check if such \Q@with-@ or setter %\Q@clone@
 %\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
 %&\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
 \end{array}$
+\bruno{no explanation of the above auxiliary definitions?}
 
-\subsection{$\ofMethod$}\label{subsec:ofmethod}
-We now formally define $\ofMethod$, the function that generates the method
-\QM{of}, that behaves like a factory. To avoid boring digressions about
+\paragraph{The $\ofMethod$ method:}\label{subsec:ofmethod}
+The $\ofMethod$ function generates the method
+\QM{of}, which behaves like a factory. To avoid boring digressions about
 well-known ways to find unique names, for the sake of this formalization we
 assume that no-args methods start with an underscore, and we prefix method names with underscore to obtain valid  parameter names.
 
@@ -115,11 +128,23 @@ assume that no-args methods start with an underscore, and we prefix method names
 \mbox{and }\es_i=\m_1\QM,\ldots\QM, \m_{i-1}\QM,\QM{_val,}\m_{i+1}\QM,\ldots\QM, \m_n}
 \end{array}$
 
-The function $\fieldsFunc(\C_0)$ (defined before) denotes all the fields in the current interface.
-For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
+\noindent Note that, the function $\fieldsFunc(\C_0)$ denotes all the fields in the current interface:
+
+\noindent$\begin{array}{ll}
+\InTextDef{24ex}{\method\in\fieldsFunc(\C_0)}{
+\isField(\method)\ \mand\
+%}\\\InTextWith{
+\method=\mBody(\_,\C_0)
+}\\
+
+\InTextDef{24ex}{\isField(\C\ \m\oR\cR\QM;)}{
+\mnot\ \specialName(\m)}\\
+\end{array}$
+
+\noindent For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
   \begin{itemize}
-   \item $\m_i$ is the field name, and have type $\C_i$.
-   \item $\m_i$\QM{()} is the getter, that just return the current field value.
+   \item $\m_i$ is the field name, and has type $\C_i$.
+   \item $\m_i$\QM{()} is the getter, and just returns the current field value.
    \item if a method \Q@with#@$\m_i$ is required, then it is implemented by calling the \Q@of@ method using
     the current value for all the fields except for $\m_i$. Such new value is provided as parameter. This corresponds to the expressions $\es_i$.
 \item \QM_$\m_i$\QM($\C_i\ $\QM{ _val)} is the setter. In our prototype we use name $\m_i$, here we use the underscore to avoid modelling overloading.
@@ -152,19 +177,20 @@ The auxiliary functions are defined below. Note that we do not need to check if 
 
 \subsection{Other features}
 
-We have not formally modelled non fluent setters and the \Q@with@ method; informally
+We do not formally model non fluent setters and the \Q@with@ method. 
+An informal explanation of how those methods are generated is given next:
 \begin{itemize}
 \item For methods inside the interface with the form \Q@void @$\m$\QM($\C\ \x$\QM{);}:
   \begin{itemize}
-    \item Check if exist method $\C\ \m$\Q@();@. If not, generate error (that is, is not $\valid(\C_0)$).
+    \item Check if method $\C\ \m$\Q@();@ exists. If not, generate error (that is, is not $\valid(\C_0)$).
     \item Generate implemented setter method inside \Q@of@:\\*
-           \Q@public void @$\m$\Q@(@$\C$\Q@ _val) { @$\m$\Q@=_val;}@
+           \Q@public void @$\m$\Q@(@$\C$\Q@ _val) { @$\m$\Q@=_val;}@\\*
     Note how there is no need to refine the return type for non fluent setters, thus we do not need to generate the method header in the interface body itself.
     \end{itemize}
 \item For methods with the form $\C'\ $\QM{with(}$\C\ \x$\QM{);}:
   \begin{itemize}
    \item $\C$ must be an interface type (no classes or primitive types).
-    \item As for before, check that $\C'$ is a supertype of the current interface type $\C_0$.
+    \item As before, check that $\C'$ is a supertype of the current interface type $\C_0$.
     \item Generate implemented \Q@with@ method inside \Q@of@:\\*
            \Q@public @$\C_0\ $\Q@with(@$\C$\Q@ _val) { @\\*
            \Q@  if(_val instanceof @$\C_0$\Q@){return (@$\C_0$\Q@)_val;}@\\*
@@ -185,9 +211,14 @@ $\e_i=\m_i$.
 \end{itemize}
 
 
+<<<<<<< HEAD
 
 \subsection{Guarantees}
 To understand to what extents our approach is correct (and more in general, what it means to say that a language tuning is correct) we identify three types of guarantees:
+=======
+\subsection{Guarantees}
+To understand to what extent our approach is correct (and more generally, what it means to say that a language tuning is correct) we identify three types of guarantees:
+>>>>>>> d3d0da5d92ef01ed748cae1cc985fe416072498a
 \begin{itemize}
 \item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not written.
 In our case it means that either \mixin{} produces (in a controlled way) an understandable error, or the class can be successfully annotated and the generated code is well-typed.
@@ -215,7 +246,7 @@ Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@'' woul
 \end{itemize}
 
 \noindent This means that our automatic type refinement 
-is a usefull and convenient feature, but is not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantic  and provide the right type while refining methods.
+is a useful and convenient feature, but is not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantic  and provide the right type while refining methods.
 
 \subsection{Results}
 To formally characterize the behaviour of our annotation, and the two level of guarantees that we offer, we provide some notations and two theorems:
@@ -239,10 +270,13 @@ If a given interface table $\II$ IT is OK\\*
  where $\II$ has \Q!@Obj!, 
 $\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,\\*
 then the interface table $[\![\II]\!]$ IT is OK.
+\bruno{The formatting of the theorems seems rather odd; why are the lines breaking?
+Also naming the theorems after the annotations seems strange! Giving a proper name 
+to the theorems seems a much better idea.}
 
 
 Informally, this means that for a client program that typechecks before a translation is applied, if the annotated type has no subtypes, and no objects of that type are created, then type safety is guaranteed after the successful translation. Conversely, the second step of \mixin, namely what \Q:@ObjWeak: does in the formalization, is guaranteed to be type-safe for the three kinds of coherence. The formal theorems proofs are available in Appendix.%~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
-
+\bruno{For both theorems?}
 
 
 \begin{comment}
