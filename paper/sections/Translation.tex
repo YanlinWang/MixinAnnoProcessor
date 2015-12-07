@@ -267,9 +267,12 @@ then the interface table $[\![\II]\!]$ IT is OK.
 Informally, the theorems mean that for a client program that
 typechecks before a translation is applied, if the annotated type has
 no subtypes, and no objects of that type are created, then type safety
-is guaranteed after the successful translation. Conversely, the second
+is guaranteed after the successful translation. 
+ 
+The second
 step of \mixin, namely what $\weakAnn$ does in the formalization, is
-guaranteed to be type-safe for the three kinds of coherence.  \mixin
+guaranteed to be type-safe for the three kinds of coherence by the $\weakAnn$  tuning theorem.  
+\mixin
 tuning is more interesting: Since \mixin does not guarantee heir
 coherence, we exclude explicitly the presence of heirs. In this way
 \mixin tuning guarantees only self and client coherence. The formal
