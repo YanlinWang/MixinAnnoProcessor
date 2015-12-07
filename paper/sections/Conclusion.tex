@@ -7,7 +7,7 @@ inside interfaces. This had an important positive consequence that
 was probably overlooked: the concept of class
 (in Java) is now (almost) redundant and unneeded.  We define a subset of Java,
 called Classless Java, where programs and (reusable) libraries can be
-easily defined and used.  To avoid for some syntactic boilerplate
+easily defined and used.  To avoid syntactic boilerplate
 caused by Java not being originally designed to work without classes,
 we introduce a new annotation, \mixin, which provides default implementations
 for various methods (e.g. getters, setters, with-methods) and a
@@ -19,13 +19,13 @@ Interestingly, without classes there is also no subclassing. This scratches an o
   itching point in the long struggle of subtyping versus subclassing:
   According to some authors, from a software engineering perspective,
   interfaces are just a kind of classes. Others consider more
-  opportune to consider interfaces are pure types. We do not know how to conciliate
-  those two viewpoints and ClassLess Java design.
-  We do not have classes purely in the Java sense.
-  
- Our language restriction encourage to code in a more flexible way by forcing to either keep a higher
- abstraction level (interfaces are a more abstract concept than classes), or to rely on
- concrete object initialization (the \Q@new I(){...}@ construct).
+  opportune to consider interfaces as pure types. We do not know how to conciliate
+  those two viewpoints and Classless Java design.
+  Classless Java does not have classes purely in the Java sense.  
+ Classless Java encourages coding in a more flexible way by either
+ keeping a higher abstraction level (interfaces are a more abstract
+ concept than classes), or relying on concrete object initialization
+ (the \Q@new I(){...}@ construct).
  
  More importantly, we identify the concept of \emph{language tuning}.
  We identify libraries that are already performing language tuning (Lombok and Cofoja), and 

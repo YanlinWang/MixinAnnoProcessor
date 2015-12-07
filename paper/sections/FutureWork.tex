@@ -3,7 +3,7 @@
 \subsection{Qualifiers in Methods} %{Private state
 The biggest limitation of our approach is the inability to model qualifiers
 for class methods (private, protected, synchronized, etc.). For example, the absence
-of the support for private/protected methods in Java 8 interfaces forces all
+of support for private/protected methods in Java 8 interfaces forces all
 members of interfaces to be public, including static methods. Since we use
 abstract methods to encode state, our state is always all public. Still, because 
 the state can only be accessed by methods, it 
