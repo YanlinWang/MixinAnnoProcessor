@@ -10,8 +10,7 @@ formal translation. For the same reason \Q@void@ returning setters are
 not included, since they are just a minor variation over the more
 interesting fluent setters, and they would require special handling
 just for the conventional \Q@void@ type.
-\bruno{Haoyuan: ObjWeak is a poor name. I suggest ObjOf.
-Please revise (and also revise the proof).}
+
 
 \subsection{Translation}
 
@@ -67,11 +66,10 @@ for annotation:
 
 \noindent That is, we can categorize all the \emph{not implemented} methods in a pattern that we know how to implement: it is eiter a field getter, a with method or a setter method.
 
-\bruno{I don't understand what the previous sentence means!}
 Moreover, we check that the method \Q@of@ is not already defined by the user.
 In the formalization an existing definition of the \Q@of@ method is an error. However,
 in the prototype (which also needs to account for overloading), the check is more complex
-as it additionally checks that an \Q@of@ method with the same signature of the one being
+as it just checks that an \Q@of@ method with the same signature of the one being
 generated is not already present.
 
 
@@ -253,20 +251,17 @@ IT is OK if under such interface table, all interfaces are OK.
 \end{itemize}
 
 
-\noindent\textbf{THEOREM }$\weakAnn$\\*
+\noindent\textbf{THEOREM }$\weakAnn$ tuning\\*
 If a given interface table $\II$ IT is OK
  where $\II$ has $\weakAnn$,
-$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$,\\*
+$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$,
 then the interface table $[\![\II]\!]$ IT is OK.
 
-\noindent\textbf{THEOREM }\Q!@Obj!
+\noindent\textbf{THEOREM }\mixin tuning\\*
 If a given interface table $\II$ IT is OK
  where $\II$ has \Q!@Obj!,
-$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,\\*
+$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,
 then the interface table $[\![\II]\!]$ IT is OK.
-\bruno{The formatting of the theorems seems rather odd; why are the lines breaking?
-Also naming the theorems after the annotations seems strange! Giving a proper name
-to the theorems seems a much better idea.}
 
 
 Informally, this means that for a client program that typechecks before a translation is applied, if the annotated type has no subtypes, and no objects of that type are created, then type safety is guaranteed after the successful translation. Conversely, the second step of \mixin, namely what $\weakAnn$ does in the formalization, is guaranteed to be type-safe for the three kinds of coherence. The formal theorems proofs are available in Appendix.%~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
