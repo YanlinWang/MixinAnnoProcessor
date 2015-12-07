@@ -53,16 +53,16 @@ following code shows how to add subtraction.
 languages arises from adding new operations. For example, adding a pretty printing 
 operation would typically change all existing code. However, a solution 
 %to the EP forbids this and it also forbids using casts. In other words, it should be possible 
-should add the pretty printing operation in a type-safe and modular way.  It
+should add the pretty printing operation in a type-safe and modular way. This
 turns out to be easily achieved with the assistance of \mixin.  The code in
-Figure~\ref{fig:ep} (rhs) shows how to add the new operation \texttt{print}.
+Figure~\ref{fig:ep} (on the right) shows how to add the new operation \texttt{print}.
 Interface \texttt{ExpP} extends \texttt{Exp} with the extra method
 \texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are defined with
 default implementations of \texttt{print()}, extending base interfaces
 \texttt{Lit} and \texttt{Add}, respectively. Importantly, note that in
 \texttt{AddP}, the types of ``\emph{fields}'' (i.e. the getter methods)
 \texttt{e1} and \texttt{e2} are refined. If the types were not refined then
-\texttt{print()} method in \texttt{AddP} would fail to type-check.
+the \texttt{print()} method in \texttt{AddP} would fail to type-check.
 
 \paragraph{Independent Extensibility}
 To show that our approach supports independent extensibility, we first define a
@@ -100,7 +100,7 @@ to be defined manually.
 \subsection{Embedded DSLs with Fluent Interfaces}\label{sec:dsls}
 Since the style of fluent interfaces was invented in Smalltalk as method
 cascading, more and more languages came to support fluent interfaces, including
-JavaScript, Java, C++, D, Ruby, Scala, etc. For most languages, to create fluent
+JavaScript, Java, C++, D, Ruby, Scala, etc. In most languages, to create fluent
 interfaces, programmers have to either handwrite everything or create a wrapper
 around the original non-fluent interfaces using \textbf{this}. In Java, there
 are several libraries (including jOOQ, op4j, fluflu, JaQue, etc) providing useful
@@ -114,7 +114,7 @@ creating fluent interfaces with \mixin, there are two main advantages:
 \begin{enumerate}
 \item Instead of forcing programmers to hand write code using \textbf{return
     this}, our approach with \mixin annotation removes this verbosity and
-  automatically generate fluent setters.
+  automatically generates fluent setters.
 \item The approach supports extensibility: the return types of fluent setters are
   automatically refined.
 \end{enumerate} 
@@ -136,7 +136,7 @@ us is the convinience of method chaining:
 \paragraph{Extending the Query Language} The previous query language can be extended with a new feature
 \texttt{orderBy} which orders the result records by a field that users
 specify. With \mixin programmers just need to extend the interface \texttt{Database} with new
-feature, and the return type of fluent setters in
+features, and the return type of fluent setters in
 \texttt{Database} is automatically refined to \texttt{ExtendedDatabase}:
 \lstinputlisting[linerange=14-16]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
 This way, when a \texttt{ExtendedDatabase} query created, 
@@ -157,7 +157,7 @@ be chosen among. This is a good example because it involves code reuse
 features and behaviour), multiple inheritance (a special kind of door
 may require features from two other door types) and it also shows how
 to model operations \texttt{symmetric sum}, \texttt{override} and
-\texttt{alias} as trait-oriented programming. The game has been
+\texttt{alias} from trait-oriented programming. The game has been
 implemented using plain Java 8 and default methods by Bono
 et. al~\cite{bono14}, and the code for that implementation is
 available online. We reimplemented the game using \mixin. Due to space
