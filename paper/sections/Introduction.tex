@@ -40,7 +40,7 @@ code for initialization.
   requires tedious boilerplate classes that latter implement those
   methods.
 
-\item {\em Useful, general purpose methods, require special care in
+\item {\em Useful, general purpose methods require special care in
   the presence of subtyping.} Methods such as
   \emph{fluent} setters~\cite{fowler2005fluentinterface}, not only require access to the
   internal state of an object, but they also require their return types to be
@@ -87,7 +87,7 @@ extension, but because it does not modify the language syntax
 pre-existing tools can work transparently on the tuned language.  To
 exploit the full-benefits of language tuning, our prototype
 implementation of object interfaces uses Java annotations and AST
-rewriting, allowing existing Java tools (such as IDE's) to work
+rewriting, allowing existing Java tools (such as IDEs) to work
 out-of-the-box with our implementation. As a result we could
 experiment object interfaces with several interesting Java programs,
 and conduct various case studies.
@@ -127,7 +127,7 @@ In summary, the contributions of this paper are:
   powerful multiple-inheritance programming idioms to be expressed
   conveniently in Java.
 
-\item {\bf ClassLess Java (CJ):} A simple formal calculus that models 
+\item {\bf Classless Java (CJ):} A simple formal calculus that models 
 the essential features of Java 8 interfaces with default methods, and 
 can be used to formally define the translation of object interfaces. 
 We prove several properties of the translation\footnote{Proofs and prototype implementation are available in
@@ -139,7 +139,7 @@ We prove several properties of the translation\footnote{Proofs and prototype imp
   illustrated through various examples and case studies.
 
 \item{\bf Language Tuning:} We identify the concept of language tuning 
-and we describe object interfaces as an example. We also discuss 
+and describe object interfaces as an example. We also discuss 
 how other existing approaches, such as the annotations in project 
 Lombok~\cite{lombok},  can be viewed as language tuning.
 
