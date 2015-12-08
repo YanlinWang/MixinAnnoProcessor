@@ -567,7 +567,7 @@ Rule \rn{t-intf} relies on this behaviour.
 \end{array}$
 
 \paragraph{Example}
-To illustrate the mechanism of $\mBody$ in a clearer and more intuitive way, we present an example here.
+To illustrate the mechanism of $\mBody$ in a more intuitive way, we present an example here.
 \begin{lstlisting}
 interface A { Object m(); }
 interface B extends A { default Object m() {return new Object(){};} }
@@ -577,8 +577,8 @@ interface D extends B, C { String m(); }
 We start to compute $\mBody(\QM{m},\QM{D})$ inside out, and step by step:
 \begin{itemize}
 \item First the full set of supertypes of $\QM{D}$ is obtained recursively and results in $\{\QM{A,B,C}\}$.
-\item To compute $\tops(\QM{m},\{\QM{A,B,C}\})$, $\QM{C}$ can be omitted, since $\QM{m}$ is not declared directly in $\QM{C}$, hence $\Aux{originalMethod}(\QM{m},\QM{C})$ is undefined. And $\QM{B}$ is a subtype of $\QM{A}$ (thus $\QM{B.m}$ hides $\QM{A.m}$), so $\tops(\QM{m},\{\QM{A,B,C}\})$ equals $\QM{B.m}$.
-\item Now the final step is to compute $\override(\QM{D.m},\QM{B.m})$, and this concludes by the fifth case of $\override$ that $\QM{D.m}$ hides $\QM{B.m}$ successfully ($\QM{String}$ is a subtype of $\QM{Object}$) and becomes the most specific method. So finally we get $\mBody(\QM{m},\QM{D}) = \QM{D.m}$.
+\item To compute $\tops(\QM{m},\{\QM{A,B,C}\})$, $\QM{C}$ will be omitted, since $\QM{m}$ is not declared directly in $\QM{C}$, hence $\Aux{originalMethod}(\QM{m},\QM{C})$ is undefined. And $\QM{B}$ is a subtype of $\QM{A}$ (thus $\QM{B.m}$ hides $\QM{A.m}$), so $\tops(\QM{m},\{\QM{A,B,C}\})$ equals $\QM{B.m}$.
+\item The final step is to compute $\override(\QM{D.m},\QM{B.m})$, and this matches the fifth case of $\override$ that $\QM{D.m}$ hides $\QM{B.m}$ successfully ($\QM{String}$ is a subtype of $\QM{Object}$) and becomes the most specific method. So finally we get $\mBody(\QM{m},\QM{D}) = \QM{D.m}$.
 \end{itemize}
 %The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
 %exmples to motivate our design
