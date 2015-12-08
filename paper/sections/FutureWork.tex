@@ -1,5 +1,5 @@
 \section{Future work}\label{sec:futurework}
-
+In this section we discuss potential future work (not a full list).
 \begin{comment}
 \subsection{Encapsulation}
 The biggest limitation of our approach is the inability to model visibility restrictions. For example, the absence
@@ -57,7 +57,8 @@ however it is surprising we achieve such of a good result without any language
 support for privacy in interfaces.
 \end{comment}
 
-\subsection{Qualifiers in Methods} %{Private state
+%\subsection{Qualifiers in Methods} %{Private state
+\paragraph{Qualifiers in Methods} %{Private state
 The biggest limitation of our approach is the inability to model qualifiers
 for class methods (private, protected, synchronized, etc.). For example, the absence
 of support for private/protected methods in Java 8 interfaces forces all
@@ -81,7 +82,6 @@ annotation processor takes methods with a \Q!@Private! annotation, and turns it 
 static private methods of a nested class. In this extension, also the \Q@of@
 method could be made private following the same pattern.
 
-\marco{old version still commented if we decided to swap back}
 % \yanlin{future work on state initialization removed for now. Because I think the
 %   other two future works are fine. But this one is still not clear and
 %   controversial. The proposed workaround forces users to make decision: if he
@@ -130,8 +130,8 @@ If multiple interfaces are implemented, and more then one offers
 \end{comment}
 %\bruno{removed the invariants stuff; we need space, I think.}
 
-\subsection{Clone, toString, equals and hashCode}
-
+%\subsection{Clone, toString, equals and hashCode}
+\paragraph{Clone, toString, equals and hashCode}
 Methods originally defined in Java class \Q@Object@, as \Q@clone@ and
 \Q@toString@, can be supported by our approach with special care. If an
 interface annotated with \mixin asks an implementation for \Q@clone@,

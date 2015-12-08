@@ -16,7 +16,7 @@ In this section we discuss related work and comparison to Classless Java.
 %typechecking efficiency (one trait will be potentially checked multiple times if
 %it is used in multiple classes).
 
-\subsection{Multiple Inheritance in Object Oriented Languages}
+\paragraph{Multiple Inheritance in Object Oriented Languages}
 Many authors have argued in favour or against multiple inheritance.  Multiple
 inheritance is very expressive, but difficult to model and implement, and can
 cause difficulty (including the famous diamond (fork-join)
@@ -30,7 +30,7 @@ virtual inheritance aims at a relative general model; the mixin model adds some
 restrictions; and the trait model is the most restricted one (excluding
 state, instantiation, etc).
 
-\paragraph{C++ Approach.}
+%\paragraph{C++ Approach.}
 C++ tries to provide a general solution to multiple inheritance by
 virtual inheritance, dealing with the diamond problem by keeping only
 one copy of the base class~\cite{ellis1990annotated}. However C++
@@ -42,7 +42,7 @@ and the mechanism is transparent to users. Moreover, customized factory
 methods are also allowed: if users are not satisfied with the default
 generated \texttt{of} method, they can implement their own.
 
-\paragraph{Mixins.}
+%\paragraph{Mixins.}
 Mixins are a more restricted model than the C++ approach. Mixins allow to name
 components that can be applied to various classes as reusable functionality
 units. However, % they suffer from linearisation: the order of mixin application
@@ -73,7 +73,7 @@ interfaces is unordered and symmetric.
 % However, in pure Java, there is no mechanism for creating objects in
 % interfaces. Also, our approach supports proper constructor mechanism.
 
-\paragraph{CZ.}
+%\paragraph{CZ.}
 Malayeri and Aldrich proposed a model CZ~\cite{malayeri2009cz} which
 aims to do multiple inheritance without the diamond problem. They
 divide inheritance into two separate concepts: inheritance dependency
@@ -86,7 +86,7 @@ number of classes, but also the class hierarchy complexity
 increases. \mixin does not complicate the class structure, and state
 can also coexist with multiple inheritance.
 
-\paragraph{Traits and Java's default methods}
+%\paragraph{Traits and Java's default methods}
 Simplifying the mixins approach, traits~\cite{scharli03traits} draw a strong
 line between units of reuse and object factories. Traits, as units of reusable
 code, contain only methods as reusable functionality, ignoring state and state
@@ -139,7 +139,7 @@ trait model, with operations (e.g. renaming~\cite{reppy2006foundation}, which br
 structural subtyping) that default methods and interfaces cannot
 model.
 
-\paragraph{Traits vs Object Interfaces}
+\emph{Traits vs Object Interfaces.}
 We consider object interfaces to be an alternative to traits or mixins.  In the
 trait model two concepts (traits and classes) coexist and cooperate. Some
 authors~\cite{BettiniDSS13} see this as good language design fostering good
@@ -243,9 +243,8 @@ Furthermore, we do automatic return type refinement for this kind of methods. Th
 
 % \input{sections/Compare.tex}
 
-\subsection{ThisType and MyType}
+\paragraph{ThisType and MyType}
 %\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namely it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolishes most advantages of interfaces.}
-
 In certain situations, object interfaces allow automatic refinement for \emph{return
 types}. This is part of a bigger topic in class-based languages: expressing and
 preserving type recursion and (nominal/structural) subtyping at the same time.
@@ -300,7 +299,7 @@ only, but those extensions do not introduce new syntax: they
 merely do automatic code generation.
 \end{comment}
 
-\subsection{Meta-Programming Competes with Language Extensions}
+\paragraph{Meta-Programming Competes with Language Extensions}
 The most obvious solution to adding features to a language is via syntactic
 extensions. Syntactic extensions are often implemented as
 desugarings to the base language. For example,
@@ -367,7 +366,7 @@ generated/processed/compiled. In particular, MetaFjig offers a property called
 \textit{Self coherence}, that we have to manually prove.
 Since MetaFjig is not working on annotated classes, there is not a ``semantic with/without annotations''. Our \mixin tuning theorem does not make sense in such context.
 
-\subsection{Formalization of Java 8}
+\paragraph{Formalization of Java 8}
 We provide a simple formalization for a subset of Java including
 default/static interface methods and object initialization literals
 (often called anonymous local inner classes).  A similar formalization
