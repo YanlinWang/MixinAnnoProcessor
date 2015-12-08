@@ -250,27 +250,28 @@ IT is OK if under such interface table, all interfaces are OK.
 \end{itemize}
 
 
-\noindent\textbf{THEOREM }$\weakAnn$ tuning\\*
+\begin{thm}[@ObjOf tuning]
 If a given interface table $\II$ IT is OK
  where $\II$ has $\weakAnn$,
 $\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$,
 then the interface table $[\![\II]\!]$ IT is OK.
+\end{thm}
 
-\noindent\textbf{THEOREM }\mixin tuning\\*
+\begin{thm}[@Obj tuning]
 If a given interface table $\II$ IT is OK
- where $\II$ has \Q!@Obj!,
+ where $\II$ has $\mixinAnn$,
 $\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,
 then the interface table $[\![\II]\!]$ IT is OK.
-
+\end{thm}
 
 Informally, the theorems mean that for a client program that
 typechecks before a translation is applied, if the annotated type has
 no subtypes, and no objects of that type are created, then type safety
-is guaranteed after the successful translation. 
- 
+is guaranteed after the successful translation.
+
 The second
 step of \mixin, namely what $\weakAnn$ does in the formalization, is
-guaranteed to be type-safe for the three kinds of coherence by the $\weakAnn$  tuning theorem.  
+guaranteed to be type-safe for the three kinds of coherence by the $\weakAnn$  tuning theorem.
 \mixin
 tuning is more interesting: Since \mixin does not guarantee heir
 coherence, we exclude explicitly the presence of heirs. In this way
