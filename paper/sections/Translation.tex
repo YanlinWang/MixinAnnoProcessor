@@ -216,17 +216,19 @@ ${}_{}$\Q@  return @$\C_0$\Q@.of(@$\e_1\ldots\e_n$\Q@);}@\\*
 \subsection{Guarantees}
 To understand to what extent our approach is correct (and more in general, what it means to say that a language tuning is correct) we identify three types of guarantees:
 \begin{itemize}
-\item \textit{Self coherence}: the generated code itself is well-typed; type errors are not present in code the user have not written.
-In our case it means that either \mixin{} produces (in a controlled way) an understandable error, or the class can be successfully annotated and the generated code is well-typed.
+\item \textit{Self coherence}: the generated code itself is well-typed; that is,
+  type errors are not present in code the user has not written.
+In our case it means that either \mixin{} produces (in a controlled way) an
+understandable error, or the interface can be successfully annotated and the generated code is well-typed.
 We guarantee \textit{Self coherence}.
 
-\item \textit{Client coherence}: all the client code (as for example method calls) that is well-typed without the generation/instrumentation process is well-typed also after the generation.
-That is, the annotation does not remove any functionality, is just
-adding more behaviour.
+\item \textit{Client coherence}: all the client code (for example method calls)
+  that is well-typed before code generation is also well-typed after the generation.
+The annotation just adds more behaviour without removing any functionality.
 We guarantee \textit{Client coherence}.
 
-\item \textit{Heir coherence}: Interfaces (and in general classes) inheriting from instrumented code are well-typed if they were well-typed without the instrumentation.
-This would require to not add any (default or abstract) method to the annotated interfaces, including type refinement.
+\item \textit{Heir coherence}: interfaces (and in general classes) inheriting the instrumented code are well-typed if they were well-typed without the instrumentation.
+This would forbid adding any (default or abstract) method to the annotated interfaces, including type refinement.
 \mixin  does not guarantee \textit{Heir coherence}.
 Indeed consider the following:
 
@@ -238,11 +240,12 @@ interface C extends B { A withX(int x); }
 
 \noindent This code is correct before the translation, but \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
 This would break \Q@C@. \\*
-Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@'' would compile before translation, but would be ill-typed after the translation.
+Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@''
+would be correct before translation, but would be ill-typed after the translation.
 \end{itemize}
 
 \noindent This means that our automatic type refinement
-is a useful and convenient feature, but is not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantic  and provide the right type while refining methods.
+is a useful and convenient feature, but not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantics and provide the right type while refining methods.
 
 \subsection{Results}
 To formally characterize the behaviour of our annotation, and the two level of guarantees that we offer, we provide some notations and two theorems:
