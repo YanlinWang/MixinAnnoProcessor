@@ -175,7 +175,7 @@ Section~\ref{sec:translation} to define the semantics of object interfaces.
 \production{
 \ann
 }{
-  \mixinAnn|\weakAnn|\emptyset
+  \mixinAnn|\emptyset
   }{annotations}\\
 \production{\Gamma}{
 \x_1{:}\C_1\ldots\x_n{:}\C_n
@@ -535,8 +535,8 @@ Formally:
 %\end{array}$
 %
 \paragraph{override} models how a method in an interface can
-override an implementation in the superinterface, even in case of a
-conflict. Note how the special value $\none$ is used, and how (the 4th
+override implementations in its superinterfaces, even in the case of 
+conflicts. Note how the special value $\none$ is used, and how (the 4th
 case) overriding can solve a conflict.
 % The notation in the last case below
 %means $\method'$ is not static, and is supertype of $\method$.
