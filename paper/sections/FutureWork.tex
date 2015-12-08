@@ -20,12 +20,12 @@ future version of Java was to support \emph{static private methods in
   interfaces} we could extend our code generation to handle also encapsulation.
   
 However, interfaces as a whole can have public or 
-package private (java default) visiblity.
+package private (java default) visibility.
 
 We can add a second annotation \Q!@Exposed!  that leverages on this edge: An
 interface without exposed works as usual, but if any method of a public \mixin
-interface is annoted with \Q!@Exposed!, we can apply a translation where a new
-(package private) interface type is introduced, and the orginal interface become
+interface is annotated with \Q!@Exposed!, we can apply a translation where a new
+(package private) interface type is introduced, and the original interface become
 just a facade.  For example:
 \begin{lstlisting}
 @Obj public interface Person{
@@ -50,7 +50,11 @@ public interface Person{
     throw /*invalid name*/}  }
 \end{lstlisting}
 
- This is not a perfect solution, since \Q@Person$@ can still be seen inside the \Q@Person@ package and heirs of \Q@Person$@, however it is surprising we achive such of a good result without any language support for privatness in interfaces.
+This is not a perfect solution, since
+\Q@Person$@ can still be seen inside the \Q@Person@ package and heirs of
+\Q@Person$@,
+however it is surprising we achieve such of a good result without any language
+support for privacy in interfaces.
 \end{comment}
 
 \subsection{Qualifiers in Methods} %{Private state

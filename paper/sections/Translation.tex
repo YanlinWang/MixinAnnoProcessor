@@ -173,7 +173,7 @@ The auxiliary functions are defined below. Note that we do not need to check if 
 
 \subsection{Other features}
 
-We do not formally model non fluent setters and the \Q@with@ method.
+We do not formally model non-fluent setters and the \Q@with@ method.
 An informal explanation of how those methods are generated is given next:
 \begin{itemize}
 \item For methods inside the interface with the form \Q@void @$\m$\QM($\C\ \x$\QM{);}:
@@ -181,7 +181,7 @@ An informal explanation of how those methods are generated is given next:
     \item Check if method $\C\ \m$\Q@();@ exists. If not, generate error (that is, is not $\valid(\C_0)$).
     \item Generate implemented setter method inside \Q@of@:\\*
            \Q@public void @$\m$\Q@(@$\C$\Q@ _val) { @$\m$\Q@=_val;}@\\*
-    Note how there is no need to refine the return type for non fluent setters, thus we do not need to generate the method header in the interface body itself.
+    Note how there is no need to refine the return type for non-fluent setters, thus we do not need to generate the method header in the interface body itself.
     \end{itemize}
 \item For methods with the form $\C'\ $\QM{with(}$\C\ \x$\QM{);}:
   \begin{itemize}
