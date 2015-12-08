@@ -197,7 +197,7 @@ calls ($\e\QM.\m\QM(\es)$) and static method calls
 ($\C\QM.\m\QM(\es)$). For simplicity the degenerate case of calling a
 static method over the $\this$ receiver is not considered.  A more
 interesting type of expressions is super calls
-($\C\QM{.super.}\m\QM(\es)$), whose semantic is to call the (non-static) method $\m$ over the $\this$ receiver, but statically
+($\C\QM{.super.}\m\QM(\es)$), whose semantics is to call the (non-static) method $\m$ over the $\this$ receiver, but statically
 dispatching to the version of the method as visible in the interface
 $\C$. A simple form of field updates ($\x\QM=\e\QM;\e'$) is also
 modelled. In the syntax of field updates $\x$ is expected to be a
@@ -222,13 +222,13 @@ from interface names $\C$ to interface declarations $\II$.
 
 The environment $\Gamma$ is a mapping from variables to types.  As
 usual, we allow a functional notation for $\Gamma$ to do variable
-lookup.  Moreover, to help us defining auxiliary functions, a functional
+lookup.  Moreover, to help us define auxiliary functions, a functional
 notation is also allowed for a set of methods $\methods$, using the
 method name $\m$ as a key.  That is, we define $\methods(\m)=\method$
 iff there is a unique $\method\in\methods$ whose name is $\m$.  For
 convenience, we define $\methods(\m)=\none$ otherwise; moreover
 $\m\in\dom(\methods)\ \miff\ \methods(\m)=\method$.
-For simplicity, we do not model overloading, thus for an interface to be well formed its methods must be uniquely identified by their name.
+For simplicity, we do not model overloading, thus for an interface to be well formed its methods must be uniquely identified by their names.
 
 \subsection{Typing}
 
