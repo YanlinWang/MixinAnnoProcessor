@@ -48,10 +48,7 @@ To prove it is of type $\C^\II$, we use the typing rule \rn{t-Obj}.
     \item Typing of the $i$-th setter \QM_$m_i$. If the \QM_$m_i$ method is well-defined, it has the form
         \[\C^\II\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{} \m_i\QM{= _val;return this;\}}\]
         By \rn{t-Update}, the assignment ``$\m_i\QM{= _val;}$'' is correct since $\m_i$ and $\QM{_val}$ have the same type $I_i$, and the return type is decided by \QM{this}. \[\Gamma, \QM{this}:\C^\II,\ \QM{_val} : \C_i \vdash\QM{this}\in \C^\II\]
-        We know that $\C^\II=\C^{\mh_i}$ by the return type of $\QM_\m_i$ shown as above.\\
-        \haoyuan{Can we write $\Gamma, \QM{this}:\C^\II,\ \QM{_val} : \C_i, \C^{\mh_i} = \C^\II \vdash\QM{this}\in \C^\II = \C^{\mh_i}$?}\\
-        \haoyuan{Can we write $\QM{\{} \m_i\QM{= _val;return this;\}} \in \C^\II$?}
-      \marco{Not without defining what that would mean. Do we need to? it seams good as it is now...}
+        We know that $\C^\II=\C^{\mh_i}$ by the return type of $\QM_\m_i$ shown as above.
     \end{itemize}
 \item All method headers are valid with respect to the domain of $\C^\II$. Namely $$\sigvalid(\mh_1\ldots\mh_n,I)$$
     For convenience, we use ``$\method$ in $\ofMethod(\C^\II)$'' to denote that $\method$ is one of the implemented methods in the return expression of $\ofMethod(\C^\II)$, namely \Q@new@ $\C^\II$\Q@(){...}@.
@@ -94,24 +91,24 @@ This is obvious since a pre-condition of the translation is $\QM{of}\notin\dom(\
 If $\II$ has \mixin annotation $\C^{\II}$ OK in $\II$ IT
 and there is no heir of $\C^\II$, then $[\![\II]\!]$ OK in $[\![\II]\!]$ IT.
 \begin{proof}
-\noindent\textbf{Part I.} Similarly to what already argued for Lemma2,
-since $\II$ OK, and by \textbf{LEMMA 1b}, all the existing default and static methods are well typed in $[\![\II]\!]$,IT.
-The translation function delegate its work to $\weakAnn$ in such way that we can refer to
-Lemma2  to complete this part. Note that all the methods that are added (directly) by \mixin are abstract, and thus there is no body to typecheck.
+\noindent\textbf{Part I.} Similarly to what already argued for \textbf{Lemma 2},
+since $\II$ OK, and by \textbf{LEMMA 1b}, all the existing default and static methods are well typed in $[\![\II]\!]$ IT.
+The translation function delegates its work to $\weakAnn$ in such way that we can refer to
+\textbf{Lemma 2} to complete this part. Note that all the methods added (directly) by \mixin are abstract, and thus there is no body to typecheck.
 
 
 \noindent\textbf{Part II.}
-Similar to what already argued for Lemma2, but we need to notice that the the newly added methods are valid refinements for already present methods in $\dom(\C^\II)$ before the translation.
+Similar to what we already argued for \textbf{Lemma 2}, but we need to notice that the newly added methods are valid refinements for already present methods in $\dom(\C^\II)$ before the translation.
 Thus by last clause of the definition of $\override(\_)$, $\mBody(\_)$ is defined on the same method names.
 \end{proof}
 
 
 \subsection{THEOREM and Proof}\label{subsec:theorem}
 
-\noindent\textbf{THEOREM }$\weakAnn$\\*
-If a given interface table $\II$ IT is OK\\*
+\noindent\textbf{THEOREM }$\weakAnn$ tuning\\*
+If a given interface table $\II$ IT is OK
  where $\II$ has $\weakAnn$,
-$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$,\\*
+$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$,
 then the interface table $[\![\II]\!]$ IT is OK.
 
 \begin{proof}
@@ -120,14 +117,14 @@ are still well-typed, and the generated code in translation of $\weakAnn$ is onl
 of $\II'$, so after translation rule \rn{t-Intf} can still be applied, which finishes our proof.
 \end{proof}
 
-\noindent\textbf{THEOREM }\Q!@Obj!\\*
-If a given interface table $\II$ IT is OK\\*
+\noindent\textbf{THEOREM }\mixin tuning\\*
+If a given interface table $\II$ IT is OK
  where $\II$ has \Q!@Obj!,
-$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,\\*
+$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,
 then the interface table $[\![\II]\!]$ IT is OK.
 
 
 \begin{proof}
-Similar to what already argued for \textbf{THEOREM }$\weakAnn$
-we can apply \textbf{LEMMA 2b} and \textbf{LEMMA 1b}. Then we finish by \textbf{THEOREM }$\weakAnn$.
+Similar to what already argued for \textbf{THEOREM }$\weakAnn$ tuning
+we can apply \textbf{LEMMA 2b} and \textbf{LEMMA 1b}. Then we finish by \textbf{THEOREM }$\weakAnn$ tuning.
 \end{proof}
