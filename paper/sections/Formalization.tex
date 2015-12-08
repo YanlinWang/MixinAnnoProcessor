@@ -409,7 +409,7 @@ The rule \rn{t-intf} checks that an interface $\C$ is correctly
 typed.  First we check that the body of all default and static
 methods are well typed.  Then we check that $\dom(\C)$ is the same as
 $\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)$.  This is not a
-trivial check, since $\dom(\C)$ is defined using $\mBody$, which would be 
+trivial check, since $\dom(\C)$ is defined using $\mBody$, which would be
 undefined in many cases: notably if a method $\method\in\methods$ is
 not compatible with some method in $\dom(\C_1)\ldots\dom(\C_n)$ or if
 there are methods in any $\dom(\C_i)$ and $\dom(\C_j)$ ($i,j\in 1..n$) conflict.
@@ -535,7 +535,7 @@ Formally:
 %\end{array}$
 %
 \paragraph{override} models how a method in an interface can
-override implementations in its superinterfaces, even in the case of 
+override implementations in its superinterfaces, even in the case of
 conflicts. Note how the special value $\none$ is used, and how (the 4th
 case) overriding can solve a conflict.
 % The notation in the last case below
@@ -548,7 +548,7 @@ case) overriding can solve a conflict.
 \InTextDef{20ex}{\override(\none,\overline{\mh\QM;})}{\Aux{mostSpecific}(\overline{\mh\QM;})}\\
 \InTextDef{20ex}{\override(\method,\methods)}{\method}\\
 \InTextWith{
-\forall \method' \in \methods : 
+\forall \method' \in \methods :
 %\method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
 \method\subtype\method'
 }
@@ -567,7 +567,20 @@ Rule \rn{t-intf} relies on this behaviour.
 \InTextWith{\method \in \methods\ \mand\ \forall \method' \in \methods :  \method \subtype \method'}
 \end{array}$
 
-
+\paragraph{Example}
+To illustrate the mechanism of $\mBody$ in a clearer and more intuitive way, we present an example here.
+\begin{lstlisting}
+interface A { Object m(); }
+interface B extends A { default Object m() {return new Object(){};} }
+interface C extends A {}
+interface D extends B, C { String m(); }
+\end{lstlisting}
+We start to compute $\mBody(\QM{m},\QM{D})$ inside out, and step by step:
+\begin{itemize}
+\item First the full set of supertypes of $\QM{D}$ is obtained recursively and results in $\{\QM{A,B,C}\}$.
+\item To compute $\tops(\QM{m},\{\QM{A,B,C}\})$, $\QM{C}$ can be omitted, since $\QM{m}$ is not declared directly in $\QM{C}$, hence $\Aux{originalMethod}(\QM{m},\QM{C})$ is undefined. And $\QM{B}$ is a subtype of $\QM{A}$ (thus $\QM{B.m}$ hides $\QM{A.m}$), so $\tops(\QM{m},\{\QM{A,B,C}\})$ equals $\QM{B.m}$.
+\item Now the final step is to compute $\override(\QM{D.m},\QM{B.m})$, and this concludes by the fifth case of $\override$ that $\QM{D.m}$ hides $\QM{B.m}$ successfully ($\QM{String}$ is a subtype of $\QM{Object}$) and becomes the most specific method. So finally we get $\mBody(\QM{m},\QM{D}) = \QM{D.m}$.
+\end{itemize}
 %The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
 %exmples to motivate our design
 %interface A{static String m(){return "A";}}

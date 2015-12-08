@@ -20,8 +20,7 @@ Birds can \Q@fly@, thus their locations need to be three-dimensional \Q@Point3D@
 Finally, we model \Q@Pegasus@ (one of the best-known creatures in Greek
 mythology) as a kind of \Q@Animal@ with the skills
 of both \Q@Horse@s and \Q@Bird@s. A simple class diagram illustrating
-the basic system is given in the left side of Figure~\ref{fig:pegasus}.\footnote{
-Some research argues in favour of using subtyping for modelling taxonomies, other research argues against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
+the basic system is given in the left side of Figure~\ref{fig:pegasus}.\footnote{Some research argues in favour of using subtyping for modelling taxonomies, other research argues against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
 
 \subsection{Simple Multiple Inheritance with Default
   Methods}\label{sec:simple}
@@ -234,9 +233,8 @@ interface Point2D{ int x(); int y();
   default Point2D withX(int val){ ... }    default Point2D withY(int val){ ... }}
 \end{lstlisting}
 
-\noindent If an implementation is provided for methods,
-only code for methods needing implementation is generated. Thus,
-programmers can easily tailor the behaviour for their special needs.
+\noindent Only code for methods needing implementation is generated. Thus,
+programmers can easily customize the behaviour for their special needs.
 %\end{comment}
 
 %Firstly, to model \texttt{Point2D} that has x-coordinate and y-coordinate by an
@@ -464,9 +462,9 @@ inefficient, and sometimes hard to maintain.  Often we want to update multiple
 fields simultaneously, for example using another object as source.  Following
 this idea, the method \Q@with(Point2D)@ is an example of a (functional)
 properties updater: it takes a certain type of object and returns a copy of the
-current object with all fields that match the fields of updated
-parameter type. The idea is that the result should be like \Q@this@, but
-modified to be as similar as possible to the parameter.
+current object where all the fields that match fields in the parameter
+object are updated to the corresponding value in the parameter. The idea is that
+the result should be like \Q@this@, but modified to be as similar as possible to the parameter.
 
 With the new \Q@with@ method we may use the information for
 \Q@z@ already stored in the object to forge an appropriate \Q@Point3D@

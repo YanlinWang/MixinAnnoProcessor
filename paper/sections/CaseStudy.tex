@@ -139,7 +139,7 @@ specify. With \mixin programmers just need to extend the interface \texttt{Datab
 features, and the return type of fluent setters in
 \texttt{Database} is automatically refined to \texttt{ExtendedDatabase}:
 \lstinputlisting[linerange=14-16]{../UseMixinLombok/src/jooq/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
-This way, when a \texttt{ExtendedDatabase} query created, 
+In this way, when a query created using \texttt{ExtendedDatabase}, 
 all the fluent setters return the correct type, and not the old \texttt{Database} type, which would prevent calling 
 \texttt{orderBy}.
 
