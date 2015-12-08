@@ -253,7 +253,7 @@ interface.
 $\textsf{mtype}(\m,\C)$ and $\textsf{mtypeS}(\m,\C)$ return the type
 signature from a method (using $\mBody(\m,\C)$ internally).
 $\textsf{mtype}(\m,\C)$ is defined only for non static methods, while
-$\textsf{mtypeS}(\m,\C)$ only on static ones. We use $\dom(\C)$ to
+$\textsf{mtypeS}(\m,\C)$ only for static ones. We use $\dom(\C)$ to
 denote the set of methods that are defined for type $\C$, that is:
 $\m\in\dom(\C)\ \miff \ \mBody(\m,\C)=\method$.
 
@@ -370,8 +370,10 @@ with respect to the corresponding method already present in $\C$;
 }
 \end{array}$
 
-\noindent Here we require that for all newly declared methods, there is a
-method with the same name defined in the interface $\C$, and that such method is a subtype of the newly introduced one. We define subtyping between methods in a general form that will be useful also later.
+\noindent Here we require that for all newly declared methods, there is a method
+with the same name defined in the interface $\C$, and that such method is a
+supertype of the newly introduced one. We define subtyping between methods in a
+general form that will be useful also later.
 
 \noindent$\begin{array}{l}
 \InTextDef{18em}{
