@@ -1,6 +1,6 @@
 \section{What  \mixin Generates}\label{sec:translation}
 
-This section shows what the \mixin annotation generates, and presents a
+This section shows what the \mixin annotation generates and presents a
 formal definition for most of the generated methods. Since
 Classless Java does not consider
 % setters, so we do not formally define the generation of the setters.
@@ -14,9 +14,8 @@ just for the conventional \Q@void@ type.
 
 \subsection{Translation}
 
-For the purposes of the formalization, the translation is divided in
-two parts.  The two parts are important so that we can discuss the
-formal properties later. To this aim we introduce the annotation
+For the purposes of the formalization, the translation is divided into
+two parts for more convenient discussion on formal properties later. To this aim we introduce the annotation
 $\weakAnn$. Its role is only in the translation process, hence is
 not part of the Classless Java language.  $\weakAnn$ generates the
 constructor method $\QM{of}$, while \mixin automatically refines the
@@ -45,7 +44,8 @@ for annotation:
 
 
 \noindent$\begin{array}{ll}
-\InTextDef{7ex}{\valid(\C_0)}{\forall \m\in\dom(\C_0),\mbox{ if }\mh\QM; = \mBody(\m, \C_0),\mbox{ one case is satisfied:}}\\
+\InTextDef{7ex}{\valid(\C_0)}{\forall \m\in\dom(\C_0),\mbox{ if }\mh\QM; =
+            \mBody(\m, \C_0),\mbox{ one of the following cases is satisfied:}}\\
 \tab\tab
 \isField(\method), \isWith(\method, \C_0) \mbox{ or }
 \isSetter(\method,\C_0)\\
@@ -64,7 +64,9 @@ for annotation:
 %&\isImplemented(\QM{static}\ \mh\mbox{\Q@\{return \_;\}@}) = \QM{true} \\
 \end{array}$
 
-\noindent That is, we can categorize all the \emph{not implemented} methods in a pattern that we know how to implement: it is either a field getter, a with method or a setter method.
+\noindent That is, we can categorize all abstract methods in a pattern that we
+know how to implement: it is either a field getter, a with method or a setter.
+\yanlin{\emph{not implemented} -> abstract}
 
 Moreover, we check that the method \Q@of@ is not already defined by the user.
 In the formalization an existing definition of the \Q@of@ method is an error. However,
@@ -72,15 +74,14 @@ in the prototype (which also needs to account for overloading), the check is mor
 as it just checks that an \Q@of@ method with the same signature of the one being
 generated is not already present.
 
-
-In the following we will write $\QM{with#}\m$ to append $\m$ to
-\QM{with}, following the camelCase rule. That is, the first letter of $\m$
-must be lower-case and is turned in upper-case upon merging.  For
+In the following sections  we will write $\QM{with#}\m$ to append $\m$ to
+\QM{with}, following the camelCase rule. The first letter of $\m$
+must be lower-case and is changed to upper-case upon appending. For
 example \QM{with#foo}=\QM{withFoo}.  Special names $\specialName(\m)$
-are \QM{with} and all the identifiers of form $\QM{with#}\m$.
+are \QM{with} and all identifiers of the form $\QM{with#}\m$.
 
 \paragraph{The $\otherMethod$ method:}
-The definition of $\otherMethod(\C_0,\methods)$ is as follows:
+$\otherMethod(\C_0,\methods)$ is defined as follows:
 
 \noindent$\begin{array}{ll}
 \InTextDef{16em}{\C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\QM;\in
@@ -98,16 +99,16 @@ The definition of $\otherMethod(\C_0,\methods)$ is as follows:
 %A complete formalization would also generate the \Q@with@.
 The methods are generated when they are unimplemented in $\C_0$, because
 the return types need to be refined.
-To discover whether the methods need to be generated,
+To determine whether the methods need to be generated,
 we check if such \Q@with-@ or setter methods %\Q@clone@
-are required by $\C_0$, but are not already present in the methods directly declared in $\C_0$.
+are required by $\C_0$, but not declared directly in $\C_0$.
 
 
 \paragraph{The $\ofMethod$ method:}\label{subsec:ofmethod}
-The $\ofMethod$ function generates the method
-\QM{of}, which behaves like a factory. To avoid boring digressions about
-well-known ways to find unique names, for the sake of this formalization we
-assume that no-args methods start with an underscore, and we prefix method names with underscore to obtain valid  parameter names.
+The function $\ofMethod$ generates the method
+\QM{of}, as an object factory. To avoid boring digressions into 
+well-known ways to find unique names, %for the sake of this formalization 
+we assume that no-args methods start with an underscore, and we prefix method names with underscore to obtain valid  parameter names.
 
 \noindent$\begin{array}{l}
 \InTextDef{5em}{\ofMethod(\C_0)}{
