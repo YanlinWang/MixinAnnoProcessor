@@ -361,7 +361,7 @@ method.
 Now we need to check if the object is a valid extension for that specific interface.
 This can be logically divided into two steps.
 First  we check that all method headers are valid
-with respect to the corresponding method already present in $\C$;
+with respect to the corresponding method already present in $\C$:
 
 \noindent$\begin{array}{l}
 \InTextDef{10em}{\sigvalid(\mh_1\ldots\mh_n,I)
@@ -373,7 +373,7 @@ with respect to the corresponding method already present in $\C$;
 \noindent Here we require that for all newly declared methods, there is a method
 with the same name defined in the interface $\C$, and that such method is a
 supertype of the newly introduced one. We define subtyping between methods in a
-general form that will be useful also later.
+general form that will also be useful later.
 
 \noindent$\begin{array}{l}
 \InTextDef{18em}{
@@ -392,12 +392,13 @@ general form that will be useful also later.
 }\\
 \end{array}$
 
-\noindent Two method headers are subtypes if all the parameter types are the same and the return types are subtypes.
-That is, we allow return type specialization as introduced in Java 5.
-Default methods are subtypes if their method headers are subtypes.
-Secondly, we check that all abstract methods in the interface (that is methods that need
-to be explicitly overridden) have been
-implemented. That is, we define a method with the same name.
+\noindent We allow return type specialization as introduced in Java 5. A method
+header with return type $I$ is a subtype of another method header with return
+type $I'$ if all parameter types are the same, and $I <: I'$. A default method
+$\method_1$ is a subtype of another default method $\method_2$ iff
+$\mh^{\method_1}$ is a subtype of $\mh^{\method_2}$. Secondly, we check that all
+abstract methods (which need to be explicitly overridden) in the interface have
+been implemented: %That is, we define a method with the same name.
 
 \noindent$\begin{array}{l}
 \InTextDef{11em}{\alldefined(\mh_1\ldots\mh_n,I)}{
@@ -405,14 +406,13 @@ implemented. That is, we define a method with the same name.
 \end{array}$
 
 The rule \rn{t-intf} checks that an interface $\C$ is correctly
-typed.  First we check that the body of all the default and static
-methods are well typed.  Then we check that $\dom(\C)$ is the same of
+typed.  First we check that the body of all default and static
+methods are well typed.  Then we check that $\dom(\C)$ is the same as
 $\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)$.  This is not a
-trivial check, since $\dom(\C)$ is defined using $\mBody$, that is
+trivial check, since $\dom(\C)$ is defined using $\mBody$, which would be 
 undefined in many cases: notably if a method $\method\in\methods$ is
 not compatible with some method in $\dom(\C_1)\ldots\dom(\C_n)$ or if
-any method in both $\dom(\C_i)$ and $\dom(\C_j)$ ($i,j\in 1..n$) is
-conflicting.
+there are methods in any $\dom(\C_i)$ and $\dom(\C_j)$ ($i,j\in 1..n$) conflict.
 
 \subsection{Auxiliary Definitions}\label{sec:auxiliary}
 
