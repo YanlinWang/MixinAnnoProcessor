@@ -248,7 +248,7 @@ would be correct before translation, but would be ill-typed after the translatio
 is a useful and convenient feature, but not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantics and provide the right type while refining methods.
 
 \subsection{Results}
-To formally characterize the behaviour of our annotation, and the two level of guarantees that we offer, we provide some notations and two theorems:
+To formally characterize the behaviour of our annotation and the two levels of guarantees that we offer, we provide some notations and two theorems:
 \begin{itemize}
 \item We denote with $\C^{\II}$ the name of an interface.
 \item An interface table
@@ -273,7 +273,7 @@ then the interface table $[\![\II]\!]$ IT is OK.
 \end{thm}
 
 Informally, the theorems mean that for a client program that
-typechecks before a translation is applied, if the annotated type has
+typechecks before the translation is applied, if the annotated type has
 no subtypes, and no objects of that type are created, then type safety
 is guaranteed after the successful translation.
 
@@ -281,8 +281,8 @@ The second
 step of \mixin, namely what $\weakAnn$ does in the formalization, is
 guaranteed to be type-safe for the three kinds of coherence by the $\weakAnn$  tuning theorem.
 \mixin
-tuning is more interesting: Since \mixin does not guarantee heir
-coherence, we exclude explicitly the presence of heirs. In this way
+tuning is more interesting: since \mixin does not guarantee heir
+coherence, we explicitly exclude the presence of heirs. In this way
 \mixin tuning guarantees only self and client coherence. The formal
 theorem proofs are available in the supplementary materials.%~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
 
