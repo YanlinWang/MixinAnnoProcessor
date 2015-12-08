@@ -6,11 +6,11 @@ import static java.lang.System.out;
 interface Animal {} // no points yet!
 interface Horse extends Animal{
     default void run() {
-        out.println("I can run!");}
+        out.println("running!");}
 }
 interface Bird extends Animal{
     default void fly() {
-        out.println("I can fly!");}
+        out.println("flying!");}
 }
 interface Pegasus extends Horse, Bird {}
 //END_PEGASUS_JAVA
