@@ -5,7 +5,8 @@ then
     case "$1" in
     bib )       
         pdflatex paper.tex
-        bibtex paper     
+        bibtex paper
+        bibtex paper-without-appendix     
     ;;
     * )
         echo "Usage (In terminal with zsh):"
@@ -19,6 +20,9 @@ fi
 ruby computePositions.rb
 pdflatex paper.tex
 open paper.pdf
+
+pdflatex paper-without-appendix.tex
+open paper-without-appendix.pdf
 
 rm footempfile.txt
 # rm *.bbl
