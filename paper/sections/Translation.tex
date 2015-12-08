@@ -105,10 +105,12 @@ are required by $\C_0$, but not declared directly in $\C_0$.
 
 
 \paragraph{The $\ofMethod$ method:}\label{subsec:ofmethod}
-The function $\ofMethod$ generates the method
-\QM{of}, as an object factory. To avoid boring digressions into 
-well-known ways to find unique names, %for the sake of this formalization 
-we assume that no-args methods start with an underscore, and we prefix method names with underscore to obtain valid  parameter names.
+The function $\ofMethod$ generates the method \QM{of}, as an object factory. To
+avoid boring digressions into well-known ways to find unique
+names, %for the sake of this formalization
+we assume that all methods with no parameters do not start with an underscore,
+and we prefix method names with underscores to obtain valid parameter names for
+\QM{of}.
 
 \noindent$\begin{array}{l}
 \InTextDef{5em}{\ofMethod(\C_0)}{
@@ -124,8 +126,8 @@ we assume that no-args methods start with an underscore, and we prefix method na
 %\tab\tab\cloneMethod(\C_0,\es)\\
 %\tab\tab\withMethod(\C_0)\\
 \tab\QM{\};\}} \\
-\InTextWith{\fieldsFunc(\C_0)=\C_1\ \m_1\QM{();},\ldots \C_n\ \m_n\QM{();}
-\mbox{and }\es_i=\m_1\QM,\ldots\QM, \m_{i-1}\QM,\QM{_val,}\m_{i+1}\QM,\ldots\QM, \m_n}
+\InTextWith{\C_1\ \m_1\QM{();},\ldots \C_n\ \m_n\QM{();} = \fieldsFunc(\C_0) 
+\mbox{ and }\es_i=\m_1\QM,\ldots\QM, \m_{i-1}\QM,\QM{_val,}\m_{i+1}\QM,\ldots\QM, \m_n}
 \end{array}$
 
 \noindent Note that, the function $\fieldsFunc(\C_0)$ denotes all the fields in the current interface:
@@ -143,7 +145,8 @@ we assume that no-args methods start with an underscore, and we prefix method na
    \item $\m_i$ is the field name, and has type $\C_i$.
    \item $\m_i$\QM{()} is the getter, and just returns the current field value.
    \item if a method \Q@with#@$\m_i$ is required, then it is implemented by calling the \Q@of@ method using
-    the current value for all the fields except for $\m_i$. Such new value is provided as parameter. This corresponds to the expressions $\es_i$.
+    the current value for all the fields except for $\m_i$. Such new value is
+    provided as a parameter. This corresponds to the expressions $\es_i$.
 \item \QM_$\m_i$\QM($\C_i\ $\QM{ _val)} is the setter. In our prototype we use name $\m_i$, here we use the underscore to avoid modelling overloading.
 %   \item similarly, for the \Q@clone@ method, \Q@of@ is called using the current value for all the fields.
    %\item To complete our generation, we need to generate setters, fluent setters and the with method.
@@ -156,13 +159,13 @@ The auxiliary functions are defined below. Note that we do not need to check if 
 \InTextDef{10em}{\withMethod(\C,\m,\C_0,\es)}{
 \C_0\ \QM{with#}\m\oR \C\ \QM{_val}\cR\ \QM{\{}
 \QM{return}\ \C_0\QM{.of(}\es\QM{);\}}} \\
-\InTextWith{\mBody(\QM{with#}\m,\C_0) \mbox{ is of form }\mh\QM;}\\
+\InTextWith{\mBody(\QM{with#}\m,\C_0) \mbox{ having the form }\mh\QM;}\\
 \InTextDef{10em}{\withMethod(\C,\m,\C_0,\es)}{\emptyset\mbox{ otherwise}}\\
 \InTextDef{10em}{\setterMethod(\C,\m,\C_0)}{
 \C_0\ \QM_\m\oR \C\ \QM{_val}\cR\ \QM{\{}
  \m\QM{= _val;return this;\}}} \\
 \InTextWith{
-\mBody(\QM_\m,\C_0) \mbox{ is of form }\mh\QM;}\\
+\mBody(\QM_\m,\C_0) \mbox{ having the form }\mh\QM;}\\
 \InTextDef{10em}{\setterMethod(\C,\m,\C_0)}{\emptyset\mbox{ otherwise}}\\
 %\cloneMethod:&\cloneMethod(\C_0,\es)=
 %\C_0\ \QM{clone()\{return}\ \C_0\QM{.of(}\es\QM{);\}} \\
