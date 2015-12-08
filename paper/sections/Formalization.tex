@@ -443,7 +443,8 @@ there are methods in any $\dom(\C_i)$ and $\dom(\C_j)$ ($i,j\in 1..n$) conflict.
 \end{comment}
 
 
-Defining \mBody{} is not trivial, and requires quite a lot of attention to the specific model of Java Interfaces, and on how it differs w.r.t. Java Class model.
+Defining \mBody{} is not trivial, and requires quite a lot of attention to the
+specific model of Java interfaces, and to how it differs w.r.t. Java Class model.
 $\mBody(\m,\C)$ denotes the actual method $\m$ (body included) that
 interface $\C$ owns. The method can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
 \noindent$\begin{array}{l}
@@ -463,8 +464,10 @@ interface $\C$ owns. The method can either be defined originally in $\C$ or in i
 \noindent The definition of $\mBody$ reconstruct the full set of supertypes $\Cs$ and then delegates the work to two other auxiliary functions:
  $\tops(m,\Cs)$ and $\override(\method,\methods)$.
 
+\yanlin{I think the explaination for needed might be hard to understand (for
+  reviewer). need revising.}
 \paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
-the non-static ones that are not reachable by another, less specific, superinterface.
+the non-static ones that are not reachable by another, less specific superinterface.
 Since the second parameter of \tops{} is a set, we can choose an arbitrary element to be $\C_0$.
 In the definition we denote by $\Aux{originalMethod}(\m,\C)=\method$ the non-static method called $\m$ defined directly in $\C$.
 %\hl{Another two functions $\super(\C_0)$ and $\get(\m,\C_0)$ are used for the definition. $\super(\C_0)$ collects the
@@ -533,7 +536,7 @@ Formally:
 %
 \paragraph{override} models how a method in an interface can
 override an implementation in the superinterface, even in case of a
-conflict.  Note how we use the special value $\none$, and how (forth
+conflict. Note how the special value $\none$ is used, and how (the 4th
 case) overriding can solve a conflict.
 % The notation in the last case below
 %means $\method'$ is not static, and is supertype of $\method$.
@@ -545,17 +548,17 @@ case) overriding can solve a conflict.
 \InTextDef{20ex}{\override(\none,\overline{\mh\QM;})}{\Aux{mostSpecific}(\overline{\mh\QM;})}\\
 \InTextDef{20ex}{\override(\method,\methods)}{\method}\\
 \InTextWith{
-\forall \method' \in \methods \ \
+\forall \method' \in \methods : 
 %\method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
 \method\subtype\method'
 }
 \end{array}$
-
+\yanlin{added a colon}
 \noindent The definition $\Aux{mostSpecific}$ returns the most
-specific method, that is a method whose type is the subtype of all the
+specific method whose type is the subtype of all the
 others.  Since method subtyping is a partial ordering,
 $\Aux{mostSpecific}$ may not be defined, this in turn forces us to rely on the last clause of $\override$; otherwise
-the whole \mBody{} would be not defined for that specific $\m$.
+the whole \mBody{} would not be defined for that specific $\m$.
 Rule \rn{t-intf} relies on this behaviour.
 
 \noindent$\begin{array}{l}
