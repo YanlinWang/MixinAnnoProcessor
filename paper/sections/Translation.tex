@@ -141,7 +141,7 @@ and we prefix method names with underscores to obtain valid parameter names for
 \noindent For methods inside the interface with the form $\C_i\ \m_i$\QM{();}
   \begin{itemize}
    \item $\m_i$ is the field name, and has type $\C_i$.
-   \item $\m_i$\QM{()} is the getter, and just returns the current field value.
+   \item $\m_i$\QM{()} is the getter and just returns the current field value.
    \item if a method \Q@with#@$\m_i()$ is required, then it is implemented by calling the \Q@of@ method using
     the current value for all the fields except for $\m_i$. Such new value is
     provided as a parameter. This corresponds to the expressions $\es_i$.
@@ -272,7 +272,7 @@ then the interface table $[\![\II]\!]$ IT is OK.
 
 Informally, the theorems mean that for a client program that
 typechecks before the translation is applied, if the annotated type has
-no subtypes, and no objects of that type are created, then type safety
+no subtypes and no objects of that type are created, then type safety
 is guaranteed after the successful translation.
 
 The second
