@@ -343,7 +343,7 @@ mutable state.
 \Q@location@.  Without the \mixin annotation, there is no convenient way to
 instantiate \texttt{Animal}.  For \texttt{Horse}, the \mixin annotation is used
 and an implementation of \texttt{run()} is defined using a \Q@default@
-method. The implementation of \texttt{run()} further illustrates the convenience of \emph{with} methods:
+method. The implementation of \texttt{run()} further illustrates the convenience of \texttt{with} methods:
 
 \lstinputlisting[linerange=62-63]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
 
@@ -361,7 +361,7 @@ state are available to users. Object interfaces provide support for four
 different types of abstract state operations, which are summarized in
 Figure~\ref{fig:abstractstate}.  The abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of
-conventional setters, and are discussed in detail in Section~\ref{sec:dsls}.
+conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
 
 \begin{figure}
 \saveSpaceFig

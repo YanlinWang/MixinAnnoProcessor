@@ -354,7 +354,7 @@ most interesting rules, that is \rn{t-Obj} and \rn{t-Intf}. Rule
 \rn{t-Obj} is the most complex typing rule. Firstly, we need to
 ensure that all field initializations are type correct, by looking up the type of
 each variable assigned to a field in the typing environment and verifying that such type is a
-subtype of the field type. Secondly, we check that all method bodies are
+subtype of the field type. Finally, we check that all method bodies are
 well-typed. To do this the environment used to check the method body
 needs to be extended appropriately: we add all fields and their types;
 add $\this:I$; and add the arguments (and types) of the respective
@@ -462,7 +462,7 @@ interface $\C$ owns. The method can either be defined originally in $\C$ or in i
 }
 \end{array}$
 
-\noindent The definition of $\mBody$ reconstruct the full set of supertypes $\Cs$ and then delegates the work to two other auxiliary functions:
+\noindent The definition of $\mBody$ reconstructs the full set of supertypes $\Cs$ and then delegates the work to two other auxiliary functions:
  $\tops(m,\Cs)$ and $\override(\method,\methods)$.
 
 \paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
