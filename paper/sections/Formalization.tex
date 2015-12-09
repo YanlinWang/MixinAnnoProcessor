@@ -65,13 +65,13 @@ We now try to classify possible outcomes for composition of methods with the sam
 signature).
 We will use the following (correct) declarations:
 \begin{lstlisting}
-interface A1{T m(); }
-interface A2 extends A1{default T m(){ ... } }
-interface A3 extends A2{T m(); }
+interface A1 { T m(); }
+interface A2 extends A1 { default T m(){ ... } }
+interface A3 extends A2 { T m(); }
 
-interface B1{default T m(){ ... } }
-interface B2 extends B1{T m(); }
-interface B3 extends B2{default T m(){ ... } }
+interface B1 { default T m(){ ... } }
+interface B2 extends B1 { T m(); }
+interface B3 extends B2 { default T m(){ ... } }
 \end{lstlisting}
 
 \noindent

@@ -4,16 +4,16 @@ import lombok.Obj;
 
 //BEGIN_FLUENT_DATABASE
 @Obj interface Database {
-	String select(); Database select(String select);
-	String from(); 	 Database from(String from);
-	String where();  Database where(String where);
-	static Database of() {return of("", "", "");}}
+    String select(); Database select(String select);
+    String from();   Database from(String from);
+    String where();  Database where(String where);
+    static Database of() {return of("", "", "");} }
 //END_FLUENT_DATABASE
 
 //BEGIN_FLUENT_DATABASE_EXT
 @Obj interface ExtendedDatabase extends Database {
-	String orderBy(); ExtendedDatabase orderBy(String orderBy);
-	static ExtendedDatabase of() {return of("", "", "","");}}
+    String orderBy(); ExtendedDatabase orderBy(String orderBy);
+    static ExtendedDatabase of() {return of("", "", "","");} }
 //END_FLUENT_DATABASE_EXT
 
 public interface DatabaseTest {

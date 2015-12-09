@@ -135,14 +135,14 @@ interfaces. Since Java disallows fields inside interfaces, state is modeled
 using abstract (getter) methods:
 
 \begin{lstlisting}
-interface Point2D{ int x(); int y();}
+interface Point2D { int x(); int y(); }
 \end{lstlisting}
 
 \noindent Unfortunately, creating a new point object is cumbersome, even
 with anonymous classes:
 
 \begin{lstlisting}
-Point2D p = new Point2D(){ public int x(){return 4;} public int y(){return 2;}}
+Point2D p = new Point2D() { public int x(){return 4;} public int y(){return 2;} }
 \end{lstlisting}
 
 \noindent However this cumbersome syntax is not required for every
@@ -150,7 +150,7 @@ object allocation. As programmers do, for ease or reuse, the boring
 repetitive code can be encapsulated in a method. A generalization of the
 \texttt{of} static factory method is appropriate in this case:
 \begin{lstlisting}
-interface Point2D{ int x(); int y();
+interface Point2D { int x(); int y();
     static Point2D of(int x, int y) { return new Point2D() {
         public int x(){return x;} 
         public int y(){return y;}};}
@@ -167,7 +167,7 @@ what are the fields, then generates an \Q@of@ method with one parameter for each
 of them. That is, we can just write
 
 \begin{lstlisting}
-@Obj interface Point2D{ int x(); int y();}
+@Obj interface Point2D { int x(); int y(); }
 \end{lstlisting}
 
 \noindent More precisely, a field or factory parameter is generated for every
@@ -209,34 +209,34 @@ This provides a more uniform translation that can work also for mutable data str
 }
 
 \begin{lstlisting}
-interface Point2D{ int x(); int y();
-  static Point2D of(int _x, int _y){return new Point2D(){
-    int x=_x; int y=_y;
-    public int x(){return x;}   public int y(){return y;}
-    Point2D withX(int val){ return Point2D.of(val,this.y());}
-    Point2D withY(int val){ return Point2D.of(this.x(),val);}
-    };}
-  Point2D withX(int val);    Point2D withY(int val);}
+interface Point2D { int x(); int y();
+    static Point2D of(int _x, int _y){ return new Point2D(){
+        int x=_x; int y=_y;
+        public int x(){return x;}   public int y(){ return y; }
+        Point2D withX(int val){ return Point2D.of(val,this.y()); }
+        Point2D withY(int val){ return Point2D.of(this.x(),val); }
+    }; }
+  Point2D withX(int val);    Point2D withY(int val); }
 \end{lstlisting}
 \end{comment}
 Moreover, if the programmer wants a different implementation, he may
 provide an alternative implementation using \Q@default@ methods. For example:
 \begin{lstlisting}
-@Obj interface Point2D{
+@Obj interface Point2D {
     int x(); int y();
-    default Point2D withX(int val){ ... }  default Point2D withY(int val){ ... }}
+    default Point2D withX(int val){ ... } default Point2D withY(int val){ ... } }
 \end{lstlisting}
 
 %\begin{comment}
 %\marco{I re-enabled this code, I think is needed for understandability}
 \noindent is expanded into
 \begin{lstlisting}
-interface Point2D{ int x(); int y();
-  static Point2D of(int _x, int _y){return new Point2D(){
-    int x=_x;    int y=_y;
-    public int x(){return x;}    public int y(){return y;}
-    };}
-  default Point2D withX(int val){ ... }    default Point2D withY(int val){ ... }}
+interface Point2D { 
+    int x(); int y();
+    default Point2D withX(int val){ ... } default Point2D withY(int val){ ... }
+    static Point2D of(int _x, int _y){ return new Point2D(){
+        int x=_x;    int y=_y;
+        public int x(){return x;}    public int y(){return y;} }; } }
 \end{lstlisting}
 
 \noindent Only code for methods needing implementation is generated. Thus,
@@ -503,7 +503,7 @@ example a distracted programmer may swap the arguments of calls to
 return type, so that code like:
 
 \begin{lstlisting}
-Point3D p=Point3D.of(1,2,3); p=p.withX(42);
+Point3D p = Point3D.of(1,2,3); p = p.withX(42);
 \end{lstlisting}
 
 \noindent will be accepted. If the programmer wishes to suppress this behavior
