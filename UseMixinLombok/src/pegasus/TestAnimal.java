@@ -1,4 +1,4 @@
-package test;
+package pegasus;
 
 import lombok.Obj;
 import static java.lang.System.out;

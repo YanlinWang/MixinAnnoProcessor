@@ -1,4 +1,4 @@
-package test;
+package futurework;
 
 //BEGIN_STATE_INIT
 interface Box { 

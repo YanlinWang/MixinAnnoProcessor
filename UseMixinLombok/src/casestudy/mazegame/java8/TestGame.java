@@ -1,4 +1,4 @@
-package gameori;
+package casestudy.mazegame.java8;
 import static java.lang.System.out;
 
 /* Defines a base-door with no particular features */

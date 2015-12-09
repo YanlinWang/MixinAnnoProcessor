@@ -6,7 +6,7 @@
 \includegraphics[height=4cm]{PegasusDetail.pdf}\hspace{20pt} &
 \begin{minipage}{7cm}
 \vspace{-90pt}
-\lstinputlisting[linerange=6-17]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_JAVA
+\lstinputlisting[linerange=6-17]{../UseMixinLombok/src/pegasus/simple/java8/Main.java}% APPLY:linerange=PEGASUS_JAVA
 %basicstyle=\ttfamily\scriptsize
 \end{minipage}
 \end{tabular}
@@ -51,7 +51,7 @@ objects must be created first. A first problem with using
 interfaces to model the animal system is simply that interfaces
 cannot be directly instantiated. Classes, such as:
 
-\lstinputlisting[linerange=21-23]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_INST
+\lstinputlisting[linerange=21-23]{../UseMixinLombok/src/pegasus/simple/java8/Main.java}% APPLY:linerange=PEGASUS_INST
 
 \noindent are needed for instantiation. Now a \texttt{Pegasus} animal can be created
 using the class constructor:
@@ -88,7 +88,7 @@ To model the animal system with object interfaces all that a user
 needs to do is to add a \mixinAnn{} annotation to the \texttt{Horse},
 \texttt{Bird}, and \texttt{Pegasus} interfaces:
 
-\lstinputlisting[linerange=9-11]{../UseMixinLombok/src/pegasusLombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
+\lstinputlisting[linerange=9-11]{../UseMixinLombok/src/pegasus/simple/lombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
 
 \noindent The effect of the annotations is that a static \emph{factory} method called
 \texttt{of} is automatically added to the interfaces. With the
@@ -254,7 +254,7 @@ programmers can easily customize the behavior for their special needs.
 % define member fields inside interfaces, we propose to simulate fields by
 % abstract methods inside interfaces:
 
-%\lstinputlisting[linerange=42-48]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT2D
+%\lstinputlisting[linerange=42-48]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=POINT2D
 
 %\paragraph{Instantiation}
 %In Java, to implement an interface like \texttt{Point2D}, a typical and trivial
@@ -329,7 +329,7 @@ programmers can easily customize the behavior for their special needs.
 %  }
 %\end{lstlisting}
 %
-%\lstinputlisting[linerange=15-27]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT_OF
+%\lstinputlisting[linerange=-]{} % APPLY:linerange=POINT_OF
 
 \paragraph{\Q@Animal@ and \Q@Horse@: simple mutable data with fields}
 2D points are mathematical entities, thus we choose immutable data structure to
@@ -341,7 +341,7 @@ mutable state.
 %field''.
 %%Not again, before we used only getters!
 % Again, we model this member field with getter and setter methods:
-\lstinputlisting[linerange=58-58]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=ANIMAL
+\lstinputlisting[linerange=58-58]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=ANIMAL
 
 \noindent Here we declare abstract getter and setter for the mutable ``field''
 \Q@location@.  Without the \mixin annotation, there is no convenient way to
@@ -349,11 +349,11 @@ instantiate \texttt{Animal}.  For \texttt{Horse}, the \mixin annotation is used
 and an implementation of \texttt{run()} is defined using a \Q@default@
 method. The implementation of \texttt{run()} further illustrates the convenience of \texttt{with} methods:
 
-\lstinputlisting[linerange=62-63]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
+\lstinputlisting[linerange=62-63]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=HORSE
 
 \noindent Creating and using \texttt{Horse} is quite simple:
 
-\lstinputlisting[linerange=10-12]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=USINGHORSE
+\lstinputlisting[linerange=10-12]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=USINGHORSE
 
 \noindent Note how the \texttt{of}, \texttt{withX} and
 \texttt{location} methods (all generated automatically) provide a
@@ -441,7 +441,7 @@ Object interfaces address the challenge of type-refinement as follows:
 
 Thus, with object interfaces, the code for the \Q@Bird@ interface is:
 
-\lstinputlisting[linerange=67-70]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
+\lstinputlisting[linerange=67-70]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=BIRD
 
 %Interface \texttt{Point3D} extends \texttt{Point2D} with a new abstract method
 %\texttt{int z()} (treated as a getter for member field \texttt{z}). Note that
@@ -460,7 +460,7 @@ implementation is a new type of \Q@with@ method, called a property updater.
 \paragraph{\Q@Point3D@ and properties updaters}
 The \Q@Point3D@ interface is defined as follows:
 
-\lstinputlisting[linerange=52-55]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
+\lstinputlisting[linerange=52-55]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=POINT3D
 
 \noindent \Q@Point3D@ includes a
 \Q@with@ method, taking a \Q@Point2D@ as an argument.
@@ -490,7 +490,7 @@ to store. Note how all the information about what fields sit in
 
 \begin{figure}
 \saveSpaceFig
-\lstinputlisting[linerange=79-91]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=GENERATED_POINT3D
+\lstinputlisting[linerange=79-91]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=GENERATED_POINT3D
 \caption{Generated boilerplate code.}
 \label{fig:boilerplate}
 \end{figure}
@@ -524,7 +524,7 @@ transparently composed, and \texttt{Pegasus} has a \Q@Point3D@
 % any field type refinement, otherwise we may have to choose/create a
 % common subtype in order for \texttt{Pegasus} to exists.
 
-\lstinputlisting[linerange=74-74]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
+\lstinputlisting[linerange=74-74]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=PEGASUS
 
 
 \begin{comment}
@@ -553,7 +553,7 @@ approach that programmers usually do is creating a class extending the interface
 and providing implementation for all methods inside. For example, this is the
 implementation for interface \texttt{Point}:
 
-\lstinputlisting[linerange=33-46]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINTIMPL
+\lstinputlisting[linerange=-]{} % APPLY:linerange=POINTIMPL
 
 \texttt{PointImpl} implements \texttt{Point} and provides a constructor with
 quite mechanical code. What's worse, the implementation in \texttt{PointImpl}
@@ -563,7 +563,7 @@ may not be reused in a single inheritance language.
 Instead of writing a whole another class to provide the implementation for
 \texttt{Point}, we annotate on interface \texttt{Point} directly with \mixin:
 
-\lstinputlisting[linerange=6-10]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT
+\lstinputlisting[linerange=-]{} % APPLY:linerange=POINT
 
 The \mixin annotation will generate a static method \texttt{of} inside
 \texttt{Point}. The method \texttt{of} mimic the functionality of constructors,
@@ -576,7 +576,7 @@ implementations for various methods and a mechanism to instantiate
 objects. \mixin annotation helps programmers to write less cumbersome code and
 instantiate interfaces in Java.
 
-\lstinputlisting[linerange=15-27]{../UseMixinLombok/src/overview/TestPoint.java} % APPLY:linerange=POINT_OF
+\lstinputlisting[linerange=-]{} % APPLY:linerange=POINT_OF
 \end{comment}
 
 
@@ -586,17 +586,17 @@ Besides the benefit of freeing programmers from writing boilerplate code, our
 \mixin annotation can also allow programs to mimic multiple inheritance in a
 restricted form easily.
 
-\lstinputlisting[linerange=42-48]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT2D
+\lstinputlisting[linerange=42-48]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=POINT2D
 
-\lstinputlisting[linerange=52-55]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=POINT3D
+\lstinputlisting[linerange=52-55]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=POINT3D
 
-\lstinputlisting[linerange=58-58]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=ANIMAL
+\lstinputlisting[linerange=58-58]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=ANIMAL
 
-\lstinputlisting[linerange=62-63]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=HORSE
+\lstinputlisting[linerange=62-63]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=HORSE
 
-\lstinputlisting[linerange=67-70]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=BIRD
+\lstinputlisting[linerange=67-70]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=BIRD
 
-\lstinputlisting[linerange=74-74]{../UseMixinLombok/src/test/TestAnimal.java}% APPLY:linerange=PEGASUS
+\lstinputlisting[linerange=74-74]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=PEGASUS
 
 Interface \texttt{Point3D} extends \texttt{Point/Point2D} with a new abstract
 method \texttt{int z()} (treated as a getter for member field

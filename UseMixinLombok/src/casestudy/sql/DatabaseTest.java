@@ -1,4 +1,4 @@
-package jooq;
+package casestudy.sql;
 
 import lombok.Obj;
 

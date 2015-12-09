@@ -1,4 +1,4 @@
-package game;
+package casestudy.mazegame.lombok;
 
 import static java.lang.System.out;
 import lombok.Obj;

@@ -1,12 +1,9 @@
-package UnitTest;
+package test;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
-
-import test.TestAnimal;
-import test.TestExpression;
-import test.TestLombok;
+import pegasus.TestAnimal;
+import casestudy.ep.TestExpression;
 
 public class AutoTest {
 	@Test
@@ -18,14 +15,7 @@ public class AutoTest {
 		s += "(3 + 4) = 7" + "\n";
 		assertEquals(s, TestExpression.runTest());
 	}
-	@Test
-	public void testLombok() {
-		String s = "p1 = Point.of(2, 3);" + "\n";
-		s += "print p1: 2 3" + "\n";
-		s += "p1.x(4); p1.y(5);" + "\n";
-		s += "print p1: 4 5" + "\n";
-		assertEquals(s, TestLombok.runTest());
-	}
+
 	@Test
 	public void testAnimal() {
 		String s = "horse initialized at 42, 0" + "\n";

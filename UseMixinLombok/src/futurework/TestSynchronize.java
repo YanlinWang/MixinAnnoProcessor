@@ -1,4 +1,4 @@
-package test;
+package futurework;
 
 /*
  \yanlin{ what would happen if Classless Java is used in parallel programming

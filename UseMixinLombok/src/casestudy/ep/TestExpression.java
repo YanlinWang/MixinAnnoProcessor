@@ -1,4 +1,4 @@
-package test;
+package casestudy.ep;
 
 import java.util.ArrayList;
 import java.util.List;

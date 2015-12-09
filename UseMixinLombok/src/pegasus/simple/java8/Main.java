@@ -1,4 +1,4 @@
-package pegasusJava;
+package pegasus.simple.java8;
 
 import static java.lang.System.out;
 
