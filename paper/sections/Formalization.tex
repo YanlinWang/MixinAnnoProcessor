@@ -82,15 +82,15 @@ What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
 \begin{tabular}{|l|l|l|l|}
 \hline
 \textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
-\textbf{B1}        & conservative error                        & conflict error      & conservative error       \\ \hline
-\textbf{B2}        & both abstract, accepted                        & conservative error       & both abstract, accepted       \\ \hline
+\textbf{B1}        & conservative error                     & conflict error      & conservative error       \\ \hline
+\textbf{B2}        & both abstract (accepted)     & conservative error       & both abstract (accepted)       \\ \hline
 \textbf{B3}        & \textbf{conservative error} &conflict  error       & conservative error      \\ \hline
 \end{tabular}
 \\*
 %We try to classify the results in the table:
 \begin{itemize}
 \item \textbf{conflict error} happens when the methods from both interfaces are implemented, which is also an error in most trait models.
-\item \textbf{both abstract, accepted} happens when the methods from both interfaces are abstract, which is also considered correct in all
+\item \textbf{both abstract (accepted)} happens when the methods from both interfaces are abstract, which is also considered correct in all
   trait models.
 \item \textbf{conservative error} happens when only one method is implemented
   (leaving another one abstract), which is different from what we would expect in

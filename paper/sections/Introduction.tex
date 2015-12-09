@@ -16,7 +16,7 @@ Java 8 can be found in the work by Bono et al.~\cite{bono14}. The Java 8
 team designing default methods, was also fully aware of that secondary
 use of interfaces, but it was not their objective to model traits:
 ``The key goal of adding default methods to Java was "interface
-evolution", not "poor man's traits"''~\cite{goetz13default}. As a result
+evolution", not "poor man's traits"''~\cite{goetz13default}. As a result, 
 they were happy to support the secondary use of interfaces with
 default methods as long as it did not make the implementation and
 language more complex.
@@ -30,7 +30,7 @@ In particular, we encountered difficulties because:
 
 \begin{itemize}
 
-\item {\em Interfaces have no constructors.} As a result classes are 
+\item {\em Interfaces have no constructors.} As a result, classes are 
 still required to create objects, leading to substantial boilerplate 
 code for initialization.
 
@@ -87,7 +87,7 @@ pre-existing tools can work transparently on the tuned language.  To
 exploit the full benefits of language tuning, our prototype
 implementation of object interfaces uses Java annotations to do AST
 rewriting, allowing existing Java tools (such as IDEs) to work
-out-of-the-box with our implementation. As a result we could
+out-of-the-box with our implementation. As a result, we could
 experiment object interfaces with several interesting Java programs,
 and conduct various case studies.
 
@@ -95,7 +95,7 @@ To formalize object interfaces, we propose Classless Java (CJ): a
 FeatherweightJava-style~\cite{Igarashi01FJ} calculus, which captures the essence
 of interfaces with default methods. The semantics of object interfaces
 is given as a syntax-directed translation from CJ to itself. In the
-resulting CJ code all object interfaces are translated into regular CJ
+resulting CJ code, all object interfaces are translated into regular CJ
 (and Java) interfaces with default methods. The translation is proved
 to be type-safe, ensuring that the translation does not
 introduce type-errors in client code. 
@@ -134,7 +134,7 @@ We prove several properties of the translation\footnote{Proofs and prototype imp
 
 \item {\bf Implementation and Case Studies:} We have a prototype
   implementation of object interfaces, using Java
-  annotations and AST rewriting. Moreover the usefulness of object interfaces is
+  annotations and AST rewriting. Moreover, the usefulness of object interfaces is
   illustrated through various examples and case studies.
 
 \item{\bf Language Tuning:} We identify the concept of language tuning 
