@@ -52,7 +52,7 @@ code for initialization.
 change Java and just remove these limitations. Scala's own
 notion of traits, for example, allows state in traits. Of course adding
 state (and other features) to interfaces would complicate the language
-and require changes in the compiler, and this would go beyond the
+and require changes to the compiler, and this would go beyond the
 goals of Java 8 development team.
 
 This paper takes a different approach. Rather than trying to get
@@ -84,8 +84,8 @@ lightweight language extension and a glorified library. Language
 tuning can offer many features usually implemented by a real language
 extension, but because it does not modify the language syntax
 pre-existing tools can work transparently on the tuned language.  To
-exploit the full-benefits of language tuning, our prototype
-implementation of object interfaces uses Java annotations and AST
+exploit the full benefits of language tuning, our prototype
+implementation of object interfaces uses Java annotations to do AST
 rewriting, allowing existing Java tools (such as IDEs) to work
 out-of-the-box with our implementation. As a result we could
 experiment object interfaces with several interesting Java programs,
