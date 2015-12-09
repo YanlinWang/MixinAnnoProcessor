@@ -465,8 +465,6 @@ interface $\C$ owns. The method can either be defined originally in $\C$ or in i
 \noindent The definition of $\mBody$ reconstruct the full set of supertypes $\Cs$ and then delegates the work to two other auxiliary functions:
  $\tops(m,\Cs)$ and $\override(\method,\methods)$.
 
-\yanlin{I think the explaination for needed might be hard to understand (for
-  reviewer). need revising.}
 \paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
 the non-static ones that are not reachable by another, less specific superinterface.
 Since the second parameter of \tops{} is a set, we can choose an arbitrary element to be $\C_0$.
@@ -555,7 +553,6 @@ case) overriding can solve a conflict.
 }
 \end{array}$
 
-\yanlin{added a colon}
 \noindent The definition $\Aux{mostSpecific}$ returns the most
 specific method whose type is the subtype of all the
 others.  Since method subtyping is a partial ordering,
