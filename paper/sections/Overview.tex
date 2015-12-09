@@ -21,12 +21,12 @@ Birds can \Q@fly@, thus their locations need to be three-dimensional \Q@Point3D@
 Finally, we model \Q@Pegasus@ (one of the best-known creatures in Greek
 mythology) as a kind of \Q@Animal@ with the skills
 of both \Q@Horse@s and \Q@Bird@s. A simple class diagram illustrating
-the basic system is given on the left side of Figure~\ref{fig:pegasus}.\footnote{Some research argues in favour of using subtyping for modelling taxonomies, other research argues against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
+the basic system is given on the left side of Figure~\ref{fig:pegasus}.\footnote{Some research argues in favor of using subtyping for modeling taxonomies, other research argues against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
 
 \subsection{Simple Multiple Inheritance with Default
   Methods}\label{sec:simple}
 
-Before modelling the complete animal system, we  start with a
+Before modeling the complete animal system, we  start with a
 simplified version without locations. This version serves the purpose of illustrating how
 Java 8 default methods can already model simple forms of multiple inheritance.
 \texttt{Horse} and \texttt{Bird} are subtypes
@@ -40,7 +40,7 @@ of Figure~\ref{fig:pegasus}.
 Note that the implementations of the methods \texttt{run}
 and \texttt{fly} are defined inside interfaces, using default
 methods. Moreover, because interfaces support multiple interface
-inheritance, the interface for \texttt{Pegasus} can inherit behaviour
+inheritance, the interface for \texttt{Pegasus} can inherit behavior
 from both \texttt{Horse} and \texttt{Bird}. Although Java interfaces
 do not allow instance fields, no form of state is needed so far to
 model the animal system.
@@ -64,7 +64,7 @@ Pegasus p = new PegasusImpl();
 purpose of the classes is to provide a way to instantiate
 objects. Although (in this case) it takes only one line of code to
 provide each of those classes, this code is essentially boilerplate
-code, which does not add behaviour to the system. Secondly,
+code, which does not add behavior to the system. Secondly,
 the namespace gets filled with three additional types. For example,
 both \texttt{Horse} and \texttt{HorseImpl} are needed: \texttt{Horse}
 is needed because it needs to be an interface so that \texttt{Pegasus}
@@ -117,12 +117,12 @@ namespace.
 
 \subsection{Object Interfaces with State}
 
-The animal system modelled so far is a simplified version of the
+The animal system modeled so far is a simplified version of the
 system presented in the left-side of Figure~\ref{fig:pegasus}, which still does not appear to
-justify the \mixinAnn{} annotation.  Now moving on to modelling
+justify the \mixinAnn{} annotation.  Now moving on to modeling
 the complete animal system where \Q@Animal@s will include a \Q@location@
 representing their positions in space, we shall
-see that modelling stateful components using plain Java 8 quickly becomes
+see that modeling stateful components using plain Java 8 quickly becomes
 cumbersome. The \mixinAnn{} annotation comes to rescue here and
  avoids significant amounts of boilerplate code.
 
@@ -236,7 +236,7 @@ interface Point2D{ int x(); int y();
 \end{lstlisting}
 
 \noindent Only code for methods needing implementation is generated. Thus,
-programmers can easily customize the behaviour for their special needs.
+programmers can easily customize the behavior for their special needs.
 %\end{comment}
 
 %Firstly, to model \texttt{Point2D} that has x-coordinate and y-coordinate by an
@@ -502,7 +502,7 @@ return type, so that code like:
 Point3D p=Point3D.of(1,2,3); p=p.withX(42);
 \end{lstlisting}
 
-\noindent will be accepted. If the programmer wishes to suppress this behaviour
+\noindent will be accepted. If the programmer wishes to suppress this behavior
 and keep the signature as it was, it is sufficient to redefine the \Q@with-@
 methods in the new interface repeating the old signature.  Again, the philosophy
 is that if the programmer provides something directly, \mixin does not touch it.

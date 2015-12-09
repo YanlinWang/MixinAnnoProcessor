@@ -17,7 +17,7 @@ In this section we discuss related work and comparison to Classless Java.
 %it is used in multiple classes).
 
 \paragraph{Multiple Inheritance in Object Oriented Languages}
-Many authors have argued in favour or against multiple inheritance.  Multiple
+Many authors have argued in favor or against multiple inheritance.  Multiple
 inheritance is very expressive, but difficult to model and implement, and can
 cause difficulty (including the famous diamond (fork-join)
 problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning about
@@ -45,29 +45,29 @@ generated \texttt{of} method, they can implement their own.
 %\paragraph{Mixins.}
 Mixins are a more restricted model than the C++ approach. Mixins allow to name
 components that can be applied to various classes as reusable functionality
-units. However, % they suffer from linearisation: the order of mixin application
+units. However, % they suffer from linearization: the order of mixin application
 % is relevant in often subtle and undesired ways. This hinders their usability
 % and the ability of resolving conflicts:
-the linearisation (total ordering) of
+the linearization (total ordering) of
 mixin inheritance cannot provide a satisfactory resolution in some cases and
 restricts the flexibility of mixin composition. To fight this limitation, an
 algebra of mixin operators is introduced~\cite{ancona2002calculus}, but this
 raises the complexity, especially when constructors and fields
-are considered~\cite{marco09FJigsaw}. Scala traits are in fact more like linearised mixins.
+are considered~\cite{marco09FJigsaw}. Scala traits are in fact more like linearized mixins.
 Scala avoids the object initialization
 problem by disallowing constructor parameters, causing no ambiguity in cases
 such as diamond problem. However this approach has limited expressiveness, and
-suffers from all the problems of linearised mixin composition. % Other languages, such as
+suffers from all the problems of linearized mixin composition. % Other languages, such as
 % Python, also use linearized mixins.
 \begin{comment}
-Python also offers multiple inheritance via linearised mixins. Indeed, in python any class is implicitly a mixin, and mixin composition informally expressed as\\*
+Python also offers multiple inheritance via linearized mixins. Indeed, in python any class is implicitly a mixin, and mixin composition informally expressed as\\*
 \Q@ class A use B,C {...new methods...}@\\*
 can be expressed in python as \\*
 \Q@ class Aux: ...new methods...@\\*
 \Q@ class A(B,C,Aux): pass@
 \end{comment}
 \noindent Java interfaces and default methods do not use
-linearisation: the semantics of Java \textbf{extends} clause in
+linearization: the semantics of Java \textbf{extends} clause in
 interfaces is unordered and symmetric.
 
 % However, in pure Java, there is no mechanism for creating objects in
@@ -94,7 +94,7 @@ initialization. Classes, as object factories, require functionality from
 (multiple) traits. Java 8 interfaces are closely related to
 traits: concrete method implementations are allowed (via the \textbf{default}
 keyword) inside interfaces. The introduction of default methods opens the gate
-for various flavours of multiple inheritance in Java. Traits offer an algebra
+for various flavors of multiple inheritance in Java. Traits offer an algebra
 of composition operations like sum, alias and exclusion, providing explicit conflict
 resolution. Former work~\cite{bono14} provides details on mimicking the trait
 algebra through Java 8 interfaces.  We briefly recall the main points of their
@@ -179,7 +179,7 @@ That is, in our approach there are only interfaces, our model requires a single 
 
 \item We provide \texttt{with-} methods as auxiliary constructors. A \texttt{with-} method is generated for each field, just like record update, returning the new object with that field updated
 %. A \texttt{clone} method is generated for the interface, returning a copy of the current object.
-Furthermore, we do automatic return type refinement for this kind of methods. This feature is comparatively useful in big examples, making operations and behaviours more flexible.%, which we will demonstrate later.
+Furthermore, we do automatic return type refinement for this kind of methods. This feature is comparatively useful in big examples, making operations and behaviors more flexible.%, which we will demonstrate later.
 \item We provide two options for generating setters. There are two kinds of setters which are commonly used, namely \textit{void setters} and \textit{fluent setters}. The only difference is that a fluent setter returns the object itself after setting, thus supporting a pipeline of such operations. The generation depends on which type of setter is declared in the interface by users.
 \end{itemize}
 \end{comment}
@@ -188,16 +188,16 @@ Furthermore, we do automatic return type refinement for this kind of methods. Th
 
 % \begin{enumerate}
 % \item Mixins allows to name components that can be applied to various classes as
-%   reusable functionality units. However, they suffer from linearisation: the
+%   reusable functionality units. However, they suffer from linearization: the
 %   order of mixin application is relevant in often subtitle and undesired
 %   ways. constraints. This hinders their usability and their ability of resolving
-%   conflicts: the linearisation (total ordering) of mixin inheritance cannot
+%   conflicts: the linearization (total ordering) of mixin inheritance cannot
 %   provide a satisfactory resolution in all cases and restricts the flexibility
 %   of mixin composition.  To fight those limitations, an algebra of mixin
 %   operators is introduced~\cite{ancona2002calculus}, but this raised the
 %   complexity of the approach, especially when constructors and fields are
 %   considered~\cite{marco09FJigsaw}.  Our approach does not have the
-%   linearisation problem, in that the semantics of Java \textbf{extends} clause
+%   linearization problem, in that the semantics of Java \textbf{extends} clause
 %   is unordered and symmetric.
 % \item Simplifying the mixin algebras approach, traits draw a strong line between
 %   units of reuse (traits) and object factories (classes) In this model,
@@ -321,7 +321,7 @@ of independently developed tunings is straightforward.
 Scala-Virtualized~\cite{Rompf2012scalavirtualized} is an extension to Scala,
 which allows blending shallow and deep embedding of DSLs. It redefines
 some of Scala's language constructs to method calls,
-which can be overridden by DSL implementors. Thus Scala-Virtualized
+which can be overridden by DSL implementer. Thus Scala-Virtualized
 can also reinterpret syntax, and be seen as a form of language tuning.
 However, although many Scala's language constructs are supported,
 not all language constructs can be virtualized.
@@ -376,4 +376,4 @@ and interfaces can have only one method \Q@m()@ without arguments, so
 as to simplify method overloading and renaming. Classless Java is more
 general, as it supports multiple methods with arguments, it supports
 static methods, and features such as multiple inheritance of
-interfaces and reabstraction of default methods are also modelled.
+interfaces and reabstraction of default methods are also modeled.

@@ -104,7 +104,7 @@ could generate the following code:
 \lstinputlisting[linerange=4-11]{../UseMixinLombok/src/test/TestStateInitialization.java}% APPLY:linerange=STATE_INIT
 
 We are unsure about the value of this workaround because of its trickiness. In
-order to define a state with initialization, users have to define a method trusting that it will be overridden later with a behavioural change, but
+order to define a state with initialization, users have to define a method trusting that it will be overridden later with a behavioral change, but
 such change is visible only after the first time the setter is called. Moreover, this code would cache
 the result instead of re-computing it every time. This can be very tricky in a
 non-functional setting.

@@ -1,6 +1,6 @@
 \section{Interaction of Interface Methods with Interface Composition}
 Before formalizing Classless Java and object interfaces, it is helpful
-to informally discuss the behaviour of methods in Java 8
+to informally discuss the behavior of methods in Java 8
 interfaces. In particular it is useful to understand how Java 8
 interfaces differ from conventional trait models.
 
@@ -43,7 +43,7 @@ interface E2 extends A2,C2 {} //rejected due to conflicting methods
 \end{lstlisting}
 Note how this is different from what happens in most trait models, where \Q@D2@
 would be accepted, and the implementation in \Q@A2@ would be part of the
-behaviour of \Q@D2@.
+behavior of \Q@D2@.
 
 \paragraph{Resolving conflicts:}
 A method in the current interface wins over any method in its
@@ -101,7 +101,7 @@ What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
 \paragraph{A bug:} During our experimentation, we found a bug in ECJ (Eclipse compiler for Java):
 the case \textbf{M} extending \textbf{B3} and \textbf{A1} is accepted by
 ECJ4.5.1 and rejected by javac.  By email communication with Brian Goetz
-(leading Java 8 designer) we have confirmed that the expected behaviour is
+(leading Java 8 designer) we have confirmed that the expected behavior is
 rejection, hence this is a bug in ECJ. This bug was also reported by
   others and is fixed in the ECJ developer branch, but not released as a stable
   version yet.
@@ -200,7 +200,7 @@ interesting type of expressions is super calls
 ($\C\QM{.super.}\m\QM(\es)$), whose semantics is to call the (non-static) method $\m$ over the $\this$ receiver, but statically
 dispatching to the version of the method as visible in the interface
 $\C$. A simple form of field updates ($\x\QM=\e\QM;\e'$) is also
-modelled. In the syntax of field updates $\x$ is expected to be a
+modeled. In the syntax of field updates $\x$ is expected to be a
 field name. After updating the field $\x$ using the value of $\e$, the
 expression $\e'$ is executed. To blend the statement based nature of
 Java and the expression based nature of our language, we consider a
@@ -217,7 +217,7 @@ To  be fully compatible with Java, the concrete syntax for an interface
 %one interesting piece of syntax in this article.
 %??? how is @Mixin not java8? in the sense that is java5?
   Following standard
-practise, we consider a global Interface Table (\metaVar{IT}) mapping
+practice, we consider a global Interface Table (\metaVar{IT}) mapping
 from interface names $\C$ to interface declarations $\II$.
 
 The environment $\Gamma$ is a mapping from variables to types.  As
@@ -244,7 +244,7 @@ the usual traditional subtyping relation between interfaces, that is the transit
 The auxiliary notation $\Gamma^\mh$ trivially
 extracts the environment from a method header, by collecting the all types
 and names of the method parameters.  The
-notation $\m^\mh$ and $\C^\mh$ denotes respectivelly, extracting the
+notation $\m^\mh$ and $\C^\mh$ denotes respectively, extracting the
 method name and the return type from a method header. $\mBody(\m,\C)$,
 defined in Section~\ref{sec:auxiliary},
 returns the full method declaration as seen by $\C$, that is the
@@ -558,7 +558,7 @@ specific method whose type is the subtype of all the
 others.  Since method subtyping is a partial ordering,
 $\Aux{mostSpecific}$ may not be defined, this in turn forces us to rely on the last clause of $\override$; otherwise
 the whole \mBody{} would not be defined for that specific $\m$.
-Rule \rn{t-intf} relies on this behaviour.
+Rule \rn{t-intf} relies on this behavior.
 
 \noindent$\begin{array}{l}
 \InTextDef{18ex}{\Aux{mostSpecific}(\methods)}{\method}\\

@@ -145,7 +145,7 @@ and we prefix method names with underscores to obtain valid parameter names for
    \item if a method \Q@with#@$\m_i()$ is required, then it is implemented by calling the \Q@of@ method using
     the current value for all the fields except for $\m_i$. Such new value is
     provided as a parameter. This corresponds to the expressions $\es_i$.
-\item \QM_$\m_i$\QM($\C_i\ $\QM{ _val)} is the setter. In our prototype we use name $\m_i$, here we use the underscore to avoid modelling overloading.
+\item \QM_$\m_i$\QM($\C_i\ $\QM{ _val)} is the setter. In our prototype we use name $\m_i$, here we use the underscore to avoid modeling overloading.
 %   \item similarly, for the \Q@clone@ method, \Q@of@ is called using the current value for all the fields.
    %\item To complete our generation, we need to generate setters, fluent setters and the with method.
    %\item \marco{should we just formalize setters?}
@@ -222,7 +222,7 @@ We guarantee \textit{Self coherence}.
 
 \item \textit{Client coherence}: all the client code (for example method calls)
   that is well-typed before code generation is also well-typed after the generation.
-The annotation just adds more behaviour without removing any functionality.
+The annotation just adds more behavior without removing any functionality.
 We guarantee \textit{Client coherence}.
 
 \item \textit{Heir coherence}: interfaces (and in general classes) inheriting the instrumented code are well-typed if they were well-typed without the instrumentation.
@@ -246,7 +246,7 @@ would be correct before translation, but would be ill-typed after the translatio
 is a useful and convenient feature, but not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantics and provide the right type while refining methods.
 
 \subsection{Results}
-To formally characterize the behaviour of our annotation and the two levels of guarantees that we offer, we provide some notations and two theorems:
+To formally characterize the behavior of our annotation and the two levels of guarantees that we offer, we provide some notations and two theorems:
 \begin{itemize}
 \item We denote with $\C^{\II}$ the name of an interface.
 \item An interface table
