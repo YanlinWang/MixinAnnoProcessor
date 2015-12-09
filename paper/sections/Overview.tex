@@ -3,10 +3,10 @@
 \begin{figure}
 \saveSpaceFig
 \begin{tabular}{c|c}
-\includegraphics[height=3.8cm]{PegasusDetail.pdf}\hspace{20pt} &
+\includegraphics[height=4cm]{PegasusDetail.pdf}\hspace{20pt} &
 \begin{minipage}{7cm}
 \vspace{-90pt}
-\lstinputlisting[linerange=6-15]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_JAVA
+\lstinputlisting[linerange=6-17]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_JAVA
 %basicstyle=\ttfamily\scriptsize
 \end{minipage}
 \end{tabular}
@@ -51,7 +51,7 @@ objects must be created first. A first problem with using
 interfaces to model the animal system is simply that interfaces
 cannot be directly instantiated. Classes, such as:
 
-\lstinputlisting[linerange=19-21]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_INST
+\lstinputlisting[linerange=21-23]{../UseMixinLombok/src/pegasusJava/Main.java}% APPLY:linerange=PEGASUS_INST
 
 \noindent are needed for instantiation. Now a \texttt{Pegasus} animal can be created
 using the class constructor:

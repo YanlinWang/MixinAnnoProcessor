@@ -34,9 +34,9 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 \begin{figure}
 \saveSpaceFig
 \begin{tabular}{l|l}
-\lstinputlisting[linerange=34-41]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
+\lstinputlisting[linerange=34-44]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
 &
-\lstinputlisting[linerange=50-57]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\lstinputlisting[linerange=53-63]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
 \end{tabular}
 \caption{The Expression Problem (left: initial system, right: code for adding
   print operation).}\label{fig:ep}
@@ -47,7 +47,7 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 In the OO paradigm, it is easy to add new types of expressions. For example, the
 following code shows how to add subtraction.
 
-\lstinputlisting[linerange=45-46]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
+\lstinputlisting[linerange=48-49]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
 %\marco{text under need to be improved}
 \paragraph{Adding a New Operation} The difficulty of the EP in OO  
@@ -80,7 +80,7 @@ interface ExpC extends Exp { List<Integer> collectLit(); }
 \noindent Now we combine the two extensions (\texttt{print} and
 \texttt{collectLit}) together:
 
-\lstinputlisting[linerange=81-83]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
+\lstinputlisting[linerange=87-89]{../UseMixinLombok/src/test/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
 
 
 \noindent \texttt{ExpPC} is the new expression interface supporting
