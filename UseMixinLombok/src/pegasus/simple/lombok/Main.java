@@ -2,7 +2,6 @@ package pegasus.simple.lombok;
 
 import lombok.Obj;
 import static java.lang.System.out;
-
 interface Animal {}
 
 //BEGIN_PEGASUS_LOMBOK
@@ -14,6 +13,8 @@ interface Animal {}
 public interface Main {
 	public static void main(String[] args) {
 		Pegasus p = Pegasus.of();
+		p.run();
+		p.fly();
 	}
 
 }

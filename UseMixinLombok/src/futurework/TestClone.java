@@ -15,6 +15,38 @@ import lombok.Obj;
   } 
 }*/
 
+
+//@Obj 
+interface Y {
+    /** provided **/
+    int x();
+    default Y clone() { return Y.of(0); } //user defined clone
+    /** generated **/
+    public static Y of(int _x) {
+        return new Y() {
+            int _x;
+            public Y clone() { return Y.super.clone();}
+            public int x() { return _x; }
+        };
+    } 
+}
+
+//@Obj
+interface Z {
+    /** provided **/
+    int x();
+    Z clone();
+    /** generated **/
+    public static Y of(int _x) {
+        return new Y() {
+            int _x;
+            public Y clone() { return of(x()); }
+            public int x() { return _x; }
+        };
+    }
+}
+
+
 public interface TestClone{
     int foo();
     public static TestClone of(int val){

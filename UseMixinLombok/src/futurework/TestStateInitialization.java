@@ -11,5 +11,19 @@ interface Box {
     };} }
 //END_STATE_INIT
 
+interface X {
+    /** provided **/
+    //@Default(3)
+    int val();
+    X val(int val);
+    /** generated **/
+    static X of() { return new X() {
+        int _val = 3;
+        public int val() { return _val; }
+        public X val(int val) { _val = val; return this; }
+    };}
+}
+
 public class TestStateInitialization {
 }
+
