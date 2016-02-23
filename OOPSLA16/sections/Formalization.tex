@@ -1,31 +1,677 @@
-\section{Formal Semantics}\label{sec:formalization}
+\section{Interaction of Interface Methods with Interface Composition}
+Before formalizing Classless Java and object interfaces, it is helpful
+to informally discuss the behavior of methods in Java 8
+interfaces. In particular it is useful to understand how Java 8
+interfaces differ from conventional trait models.
 
-\begin{figure*}[t]
-\[\begin{array}{llll}
-T & ::= & I_1.\cdots.I_n                                                                                                         & \hspace{1in} \textrm{path} \\
-e & ::= & x \Or e.m(\overline{e}) \Or T.m(\overline{e}) \Or T.\mathbf{super}.m(\overline{e}) \Or x = e;e' \Or obj         & \hspace{1in} \textrm{expressions} \\
-obj & ::= & \mathbf{new}\ T()\ \{\overline{field}\ mh_1\{\mathbf{return}\ e_1;\}\cdots mh_n\{\mathbf{return}\ e_n;\}\}& \hspace{1in} \textrm{object creation} \\
-field & ::= & T\ f=x;                                                                                              & \hspace{1in}  \textrm{field declaration} \\
-\mathbb{I} & ::= & ann\ \mathbf{interface}\ I\ \mathbf{extends}\ \overline{T}\ \{\overline{meth}\ \overline{\mathbb{I}}\}& \hspace{1in} \textrm{interface declaration} \\
-meth & ::= & \mathbf{static}\ mh\{\mathbf{return}\ e;\} \Or \mathbf{default}\ mh\{\mathbf{return}\ e;\} \Or mh; & \hspace{1in} \textrm{method declaration} \\
-mh & ::= & T_0\ m(T_1\ x_1\cdots T_n\ x_n)  & \hspace{1in} \textrm{method header} \\
-ann & ::= & \mathbf{@Family} \Or \emptyset & \hspace{1in} \textrm{annotations} \\
-\Gamma & ::= & x_1:T_1\cdots x_n:T_n & \hspace{1in} \textrm{environment}
-\end{array}\]
-\caption{Grammar.}
-\end{figure*}
+%We show several interesting cases
+%and summarize compilation result of method composition into 3 categories:
+%conflict error, accepted (both abstract) and conservative error. Meanwhile we
+%also show different composition handling mechanism among traits, javac and ECJ.
 
-\begin{figure*}[t]
-\[\begin{array}{lll}
-Exact(T_1.I,\ T_2) & = & Exact(I,\ Exact(T_1,\ T_2)) \\
-Exact(I,\ I_1.\cdots.I_n) & = & Exact2(I,\ I_1.\cdots.I_i) \\
-& & \ \ \ \ \textrm{for the smallest }i\in[0,n],\forall j\in(i,n],Exact2(I,\ I_1.\cdots.I_j) = \emptyset \\
-Exact2(I,\ \emptyset) & = & CT(I) \\
-Exact2(I,\ T_0.I_0) & = & \mathbb{I} \\
-& & \ \ \ \ \textrm{if } \mathbb{I}\in\overline{\mathbb{I}} \textrm{ and } name(\mathbb{I})=I \\
-& & Exact(I,\ Exact(T,\ T_0)) \\
-& & \ \ \ \ \textrm{if } T\in\overline{T} \textrm{ and }\forall T'\in\overline{T}, Exact(I,\ Exact(T',\ T_0))\in\{\ Exact(I,\ Exact(T,\ T_0)),\ \emptyset\ \} \\
-& & \textrm{where } CT(T_0.I_0) = ann\ \mathbf{interface}\ I_0\ \mathbf{extends}\ \overline{T}\ \{\overline{meth}\ \overline{\mathbb{I}}\}
-\end{array}\]
-\caption{Typing rules.}
-\end{figure*}
+\subsection{Methods in Java 8 Interfaces}
+In Java 8 interfaces there are three types of methods: abstract, default, and static methods. Default and static methods were not allowed in interfaces in previous versions of Java.
+
+\paragraph{Static methods} are handled in a very clean way: they are visible only in
+  the interface in which they are explicitly defined. This means the following code
+  is ill-typed.
+\begin{lstlisting}
+interface A0 { static int m(){return 1;} }
+interface B0 extends A0 {}
+... B0.m()//ill typed
+\end{lstlisting}
+This is different from the way static methods are handled in classes. Here
+static methods have simply no interaction with interface
+composition (\Q@extends@ or \Q@implements@).
+
+\paragraph{Abstract method} composition is accepted when there exists a most specific one.
+  For example, here method \texttt{Integer m()} from \texttt{B1} is visible in \Q@C1@.
+\begin{lstlisting}
+interface A1 { Object m(); }
+interface B1 { Integer m();}
+interface C1 extends A1,B1 {} //accepted
+\end{lstlisting}
+
+\paragraph{Default methods} conflict with any other default or abstract method. For
+  example the following code is rejected due to method conflicts.
+\begin{lstlisting}
+interface A2 { default int m() {return 1;}}
+interface B2 { int m(); }
+interface C2 { default int m() {return 2;}}
+interface D2 extends A2,B2 {} //rejected due to conflicting methods
+interface E2 extends A2,C2 {} //rejected due to conflicting methods
+\end{lstlisting}
+Note how this is different from what happens in most trait models, where \Q@D2@
+would be accepted, and the implementation in \Q@A2@ would be part of the
+behavior of \Q@D2@.
+
+\paragraph{Resolving conflicts:}
+A method in the current interface wins over any method in its
+super-interfaces, provided that the method
+is the most specific one. This method also overrides conflict due to
+inheritance. For example, the following code is accepted, but would be rejected
+(see before) if the method \Q@m@ was not redefined in \texttt{D3} and
+\texttt{E3}.
+\begin{lstlisting}
+interface D3 extends A2,B2 { int m(); } //accepted
+interface E3 extends A2,C2 { default int m(){return 42;} } //accepted
+\end{lstlisting}
+
+\subsection{Classifying Outcomes of Interface Composition}
+%When interfaces are composed and methods with the same name (and
+%signature) exist, there are 3 possible outcomes.
+%
+We now try to classify possible outcomes for composition of methods with the same name (and
+signature).
+We will use the following (correct) declarations:
+\begin{lstlisting}
+interface A1 { T m(); }
+interface A2 extends A1 { default T m(){ ... } }
+interface A3 extends A2 { T m(); }
+
+interface B1 { default T m(){ ... } }
+interface B2 extends B1 { T m(); }
+interface B3 extends B2 { default T m(){ ... } }
+\end{lstlisting}
+
+\noindent
+What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
+\Q@B@${}_j$?\\*
+% Nine representative cases are shown next:\\*
+\noindent
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
+\textbf{B1}        & conservative error                     & conflict error      & conservative error       \\ \hline
+\textbf{B2}        & both abstract (accepted)     & conservative error       & both abstract (accepted)       \\ \hline
+\textbf{B3}        & \textbf{conservative error} &conflict  error       & conservative error      \\ \hline
+\end{tabular}
+\\*
+%We try to classify the results in the table:
+\begin{itemize}
+\item \textbf{conflict error} happens when the methods from both interfaces are implemented, which is also an error in most trait models.
+\item \textbf{both abstract (accepted)} happens when the methods from both interfaces are abstract, which is also considered correct in all
+  trait models.
+\item \textbf{conservative error} happens when only one method is implemented
+  (leaving another one abstract), which is different from what we would expect in
+  a trait model, but is coherent with the conservative idea that a method
+  defined in an interface should not silently satisfy a method in another one.
+\end{itemize}
+
+\paragraph{A bug:} During our experimentation, we found a bug in ECJ (Eclipse compiler for Java):
+the case \textbf{M} extending \textbf{B3} and \textbf{A1} is accepted by
+ECJ4.5.1 and rejected by javac.  By email communication with Brian Goetz
+(leading Java 8 designer) we have confirmed that the expected behavior is
+rejection, hence this is a bug in ECJ. This bug was also reported by
+  others and is fixed in the ECJ developer branch, but not released as a stable
+  version yet.
+%Table~\ref{table:javabug} shows the method overriding bug in Java. In the
+%example, there are 6 interfaces \texttt{A1,A2,A3,B1,B2,B3} with methods all
+%named as \texttt{m} which are either abstract or default methods. If we define a
+%new interface \texttt{M} that extends two of these interfaces, then the method
+%overriding result is shown in the table. For example, row2 col2 means \texttt{M
+%  extends A1,B1}. The result is \texttt{ERROR} because the abstract method
+%\texttt{T m();} in \texttt{A1} conflicts with the method \texttt{default T m()
+%  {...}} in \texttt{B1}. Readers may also figure out other extending cases by
+%following this way of interpretation.
+
+% The interesting case in row4 col2 where
+%Indeed, to be coherent with the idea of \textbf{conservative error}, the case should not be accepted.
+%We do not see how this should behave differently from \textbf{B1},\textbf{A1}, and \textbf{B3},\textbf{A3}.
+%We fear that the only retro-compatible fix for this strange behaviour is to accept all the cases of \textbf{conservative error} in a future version of Java.
+%the experimental result is \texttt{B3.m}. Because if we think consistently, this
+
+%\lstinputlisting[linerange=4-9]{../UseMixinLombok/src/methodshadowing/test5/Test5.java} % APPLY:linerange=JAVABUG
+
+%In our approach, we choose to not model this strange behaviour (a bug?).
+%Our auxiliary function $\mBody(\m,\C)$ enforce the \textbf{conservative error} strategy.
+%The rest of our formalization is parametric with the definition of $\mBody(\m,\C)$, thus if Java changes its resolution strategy to a more permissive one, only minor adaptations in $\mBody(\m,\C)$ would be needed.
+
+\section{Formal Semantics}\label{sec:formal}
+
+This section presents a formalization of Classless Java: a minimal
+FeatherweightJava-like calculus which models the essence of Java
+interfaces with default methods. This formalization is used in
+Section~\ref{sec:translation} to define the semantics of object interfaces.
+
+
+\begin{figure}[t]
+\saveSpaceFig
+\begin{grammar}
+\production{
+\e
+}{
+  \x\mid\MCall\e\m\es\mid\MCall{\C}\m\es\mid\MCall{\C\QM{.super}}\m\es\mid\x\QM=\e\QM;\e'\mid\obj
+  }{expressions}\\
+\production{
+\obj
+}{
+\QM{new}\ \C\oR\cR\oC\fields\
+\mh_1\oC\QM{return}\ \e_1\QM{;}\!\cC
+\ldots
+\mh_n\oC\QM{return}\ \e_n\QM{;}\!\cC
+\cC
+  }{object creation}\\
+\production{\field}{\T\ \f \QM= \x\QM;}{field declaration}\\
+\production{
+\II
+}{
+ \ann\ \QM{interface}\ \C\ \QM{extends}\ \Cs\ \oC \methods\ \cC
+  }{interface declaration}\\
+\production{
+\method
+}{
+ \QM{static}\ \mh\ \oC\QM{return}\ \e\QM{;}\!\cC
+\mid
+\QM{default}\ \mh\ \oC\QM{return}\ \e\QM{;}\cC
+\mid
+\mh\QM{;}
+  }{method declaration}\\
+\production{
+\mh
+}{
+ \T_0\ \m\ \oR\T_1\ \x_1\ldots\T_n\ \x_n\cR
+  }{method header}\\
+\production{
+\ann
+}{
+  \mixinAnn|\emptyset
+  }{annotations}\\
+\production{\Gamma}{
+\x_1{:}\C_1\ldots\x_n{:}\C_n
+}{environment}
+\end{grammar}
+\caption{Grammar of Classless Java}
+\label{Grammar}
+\end{figure}
+
+\subsection{Syntax}
+
+Figure~\ref{Grammar} shows the syntax of Classless Java.
+The syntax formalizes a minimal
+subset of Java 8, focusing on interfaces, default methods and object
+creation literals.  There is no syntax for classes.
+To help readability we use many metavariables to represent identifiers: $C,x,f$ and $m$; however they all map to a single set of identifiers as in Java.  Expressions
+consist of conventional constructs such as variables ($\x$), method
+calls ($\e\QM.\m\QM(\es)$) and static method calls
+($\C\QM.\m\QM(\es)$). For simplicity the degenerate case of calling a
+static method over the $\this$ receiver is not considered.  A more
+interesting type of expressions is super calls
+($\C\QM{.super.}\m\QM(\es)$), whose semantics is to call the (non-static) method $\m$ over the $\this$ receiver, but statically
+dispatching to the version of the method as visible in the interface
+$\C$. A simple form of field updates ($\x\QM=\e\QM;\e'$) is also
+modeled. In the syntax of field updates $\x$ is expected to be a
+field name. After updating the field $\x$ using the value of $\e$, the
+expression $\e'$ is executed. To blend the statement based nature of
+Java and the expression based nature of our language, we consider a
+method body of the form \Q@return@ $\x\QM=\e\QM;\e'$ to represent
+$\x\QM=\e\QM;\QM{return}\ \e'$ in Java.  Finally, there is an object
+initialization expression from an interface $\C$, where (for
+simplicity) all the fields are initialized with a variable present in
+scope.
+To  be fully compatible with Java, the concrete syntax for an interface
+  declaration with empty supertype list  would also
+  omit the \Q@extends@ keyword.
+% The single
+%non-Java 8 piece of syntax is the \mixin annotation, which is the only
+%one interesting piece of syntax in this article.
+%??? how is @Mixin not java8? in the sense that is java5?
+  Following standard
+practice, we consider a global Interface Table (\metaVar{IT}) mapping
+from interface names $\C$ to interface declarations $\II$.
+
+The environment $\Gamma$ is a mapping from variables to types.  As
+usual, we allow a functional notation for $\Gamma$ to do variable
+lookup.  Moreover, to help us define auxiliary functions, a functional
+notation is also allowed for a set of methods $\methods$, using the
+method name $\m$ as a key.  That is, we define $\methods(\m)=\method$
+iff there is a unique $\method\in\methods$ whose name is $\m$.  For
+convenience, we define $\methods(\m)=\none$ otherwise; moreover
+$\m\in\dom(\methods)\ \miff\ \methods(\m)=\method$.
+For simplicity, we do not model overloading, thus for an interface to be well formed its methods must be uniquely identified by their names.
+
+\subsection{Typing}
+
+Typing statement $\Gamma \vdash \e\in\C$ reads ``in the environment
+$\Gamma$, expression $\e$ has type $\C$.''.
+Before discussing the typing rules we discuss some of the used notation.
+As a shortcut, we write
+$\Gamma \vdash \e\in\C<:\C'$ instead of $\Gamma \vdash \e\in\C$ and
+$\C<:\C'$.
+
+We omit the definition of
+the usual traditional subtyping relation between interfaces, that is the transitive and reflexive closure of the declared \Q@extends@ relation.
+The auxiliary notation $\Gamma^\mh$ trivially
+extracts the environment from a method header, by collecting the all types
+and names of the method parameters.  The
+notation $\m^\mh$ and $\C^\mh$ denotes respectively, extracting the
+method name and the return type from a method header. $\mBody(\m,\C)$,
+defined in Section~\ref{sec:auxiliary},
+returns the full method declaration as seen by $\C$, that is the
+method $\m$ can be declared in $\C$ or inherited from another
+interface.
+$\textsf{mtype}(\m,\C)$ and $\textsf{mtypeS}(\m,\C)$ return the type
+signature from a method (using $\mBody(\m,\C)$ internally).
+$\textsf{mtype}(\m,\C)$ is defined only for non static methods, while
+$\textsf{mtypeS}(\m,\C)$ only for static ones. We use $\dom(\C)$ to
+denote the set of methods that are defined for type $\C$, that is:
+$\m\in\dom(\C)\ \miff \ \mBody(\m,\C)=\method$.
+
+\begin{figure}[t]
+\saveSpaceFig
+$
+\begin{array}{l}
+
+%% T-Invk
+\inferrule[(T-Invk)]{
+ \Gamma \vdash \e \in \C_0 \\\\
+\forall i\in 1..n\ \ \Gamma \vdash \e_i \in \_<:\C_i \\\\
+  \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
+%\textsf{mmodifier}(\m,\C) \neq \textbf{static}
+ }{
+ \Gamma \vdash \e\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C }
+\quad\quad
+
+%%T-StaticInvk
+\inferrule[(T-StaticInvk)]{
+\forall i\in 1..n\  \ \Gamma \vdash \e_i\in \_<:\C_i \\\\
+\textsf{mtypeS}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\to\! \C
+%\textsf{mmodifier}(\m,\C) = \textbf{static}
+}{
+\Gamma \vdash \C_0\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
+\quad\quad
+
+%%T-SuperInvk
+\inferrule[(T-SuperInvk)]{
+\Gamma(\this) <: \C_0 \\\\
+\forall i\in 1..n\ \ \Gamma \vdash \e_i\in \_<:\C_i \\\\
+  \textsf{mtype}(\m,\C_0) \!=\! \C_1\ldots\C_n \!\!\to\! \C
+%\textsf{mmodifier}(\m,\C_0) \neq \textbf{static} \\\\
+}{\Gamma \vdash \C_0\QM.\QM{super}\QM.\m\QM(\e_1\ldots\e_n\QM) \in \C}
+
+
+%%T-Var
+\\[5ex]
+\inferrule[(T-Var)]{
+\Gamma(\x)=\C
+}{
+\Gamma \vdash \x \in\C}
+\quad\quad
+
+%%T-Obj
+\inferrule[(T-Obj)]{
+\forall i\in 1..k\ \ \Gamma(\x_i)\subtype\T_i\\\\
+\forall i\in 1..n\ \
+%\Gamma_i
+\Gamma,\f_1{:}\T_1,\ldots,\f_k{:}\T_k,\,\QM{this}{:}\C,\Gamma^{\mh_i}
+\vdash\e_i\in \_\subtype\C^{\mh_i}\\\\
+\sigvalid(\mh_1\ldots\mh_n,I)\quad\quad\quad\quad
+%\forall i\in 1..n\ \mh_i\subtype\mBody(\m^{\mh_i},\C)\\\\
+\alldefined(\mh_1\ldots\mh_n,I)
+%\forall\m\mbox{ such that }
+%\mBody(\m,\C)=\mh\QM; \exists i\in 1..n\ \m^{\mh_i}=\m
+%\forall i\in 1\ldots n\ \Gamma_i=\Gamma,\f_1{:}\T_1,\ldots,\f_k{:}\T_k,\,\QM{this}{:}\C,\Gamma^{\mh_i}
+}{
+\Gamma \vdash\QM{new}\ \C\oR\cR\oC\T_1\ \f_1\QM=\x_1\QM;\ldots\T_k\ \f_k\QM=\x_k\QM;\
+\mh_1\oC\QM{return}\ \e_1\QM{;}\!\cC
+\ldots
+\mh_n\oC\QM{return}\ \e_n\QM{;}\!\cC
+\cC
+\in\C
+}
+\\[5ex]
+
+
+
+%%T-update
+\quad
+\inferrule[(T-update)]{
+\Gamma \vdash \e\in\_<:\Gamma(\x)\\\\
+\Gamma \vdash \e'\in\C
+}{
+\Gamma \vdash \x\QM=\e\QM;\e'\in\C }
+\quad\quad\quad
+
+%%T-Intf
+ \inferrule[(T-Intf)]{
+IT(\C) = \ann\ \QM{interface}\ \C\ \QM{extends}\ \C_1\ldots\C_n \
+\oC\methods\ \cC\\\\
+ \forall \QM{default}\ \mh\ \oC\QM{return}\ \e\QM;\cC \in \methods,
+\ \ \Gamma^{\mh},\,\QM{this}{:}\C\vdash\e\in \_\subtype\C^{\mh} \\\\
+ \forall \QM{static}\ \mh\ \oC\QM{return}\ \e\QM;\cC \in \methods,
+\ \ \Gamma^{\mh}\vdash\e\in \_\subtype\C^{\mh} \\\\
+\dom(\C)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)
+ }{
+\C \text{ OK}
+}
+\end{array}$
+\caption{CJ Typing}
+\label{ET}
+\end{figure}
+
+In Figure~\ref{ET} we show the typing rules.  We discuss the
+most interesting rules, that is \rn{t-Obj} and \rn{t-Intf}. Rule
+\rn{t-Obj} is the most complex typing rule. Firstly, we need to
+ensure that all field initializations are type correct, by looking up the type of
+each variable assigned to a field in the typing environment and verifying that such type is a
+subtype of the field type. Finally, we check that all method bodies are
+well-typed. To do this the environment used to check the method body
+needs to be extended appropriately: we add all fields and their types;
+add $\this:I$; and add the arguments (and types) of the respective
+method.
+Now we need to check if the object is a valid extension for that specific interface.
+This can be logically divided into two steps.
+First  we check that all method headers are valid
+with respect to the corresponding method already present in $\C$:
+
+\noindent$\begin{array}{l}
+\InTextDef{10em}{\sigvalid(\mh_1\ldots\mh_n,I)
+}{
+\forall i\in 1..n\ \ \mh_i\QM;\subtype\mBody(\m^{\mh_i},\C)
+}
+\end{array}$
+
+\noindent Here we require that for all newly declared methods, there is a method
+with the same name defined in the interface $\C$, and that such method is a
+supertype of the newly introduced one. We define subtyping between methods in a
+general form that will also be useful later.
+
+\noindent$\begin{array}{l}
+\InTextDef{18em}{
+\T\ \m\oR\T_1\x_1\ldots \T_n\x_n\cR\QM; \subtype \T' \m\oR\T_1\x_1'\ldots\T_n\x_n'\cR\QM;
+}{
+\T\subtype \T'
+}\\
+\InTextDef{18em}{\method \subtype
+\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}
+}{
+\method\subtype\mh\QM;
+}\\
+\InTextDef{18em}{\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}\subtype\method
+}{
+\mh\QM;\subtype\method
+}\\
+\end{array}$
+
+\noindent We allow return type specialization as introduced in Java 5. A method
+header with return type $I$ is a subtype of another method header with return
+type $I'$ if all parameter types are the same, and $I <: I'$. A default method
+$\method_1$ is a subtype of another default method $\method_2$ iff
+$\mh^{\method_1}$ is a subtype of $\mh^{\method_2}$. Secondly, we check that all
+abstract methods (which need to be explicitly overridden) in the interface have
+been implemented: %That is, we define a method with the same name.
+
+\noindent$\begin{array}{l}
+\InTextDef{11em}{\alldefined(\mh_1\ldots\mh_n,I)}{
+\forall\m\mbox{ such that } \mBody(\m,\C)=\mh\QM; \exists i\in 1..n\ \m^{\mh_i}=\m}
+\end{array}$
+
+The rule \rn{t-intf} checks that an interface $\C$ is correctly
+typed.  First we check that the body of all default and static
+methods are well typed.  Then we check that $\dom(\C)$ is the same as
+$\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)$.  This is not a
+trivial check, since $\dom(\C)$ is defined using $\mBody$, which would be
+undefined in many cases: notably if a method $\method\in\methods$ is
+not compatible with some method in $\dom(\C_1)\ldots\dom(\C_n)$ or if
+there are methods in any $\dom(\C_i)$ and $\dom(\C_j)$ ($i,j\in 1..n$) conflict.
+
+\subsection{Auxiliary Definitions}\label{sec:auxiliary}
+
+\begin{comment}
+\subsubsection{Auxiliary function: \textsf{mtype}}
+- \textsf{mtype(m, C)} : the signature of method m in C.
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
+  E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
+{ \textsf{mtype(m,T)} = \overline{D} \to E } \]
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C \{ \overline{M} \} \\
+  m \notin M}
+{ \textsf{mtype(m,T)} = \emptyset } \]
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C \text{ extends } C_1,...,C_k \{ \overline{M} \} \\
+  E \spc m(\overline{D} \spc \overline{x}) \{ \text{return } e; \} \in M}
+{ \textsf{mtype(m,T)} = \overline{D} \to E } \]
+
+\[ \inferrule{
+  IT(T) = \text{\emph{ann} interface } C_0 \text{ extends } \overline{C} \{
+  \overline{M} \} \\
+  m \notin M}
+{ \textsf{mtype(m,T)} = \bigcup \textsf{mtype}(m,\overline{D}) } \]
+\end{comment}
+
+
+Defining \mBody{} is not trivial, and requires quite a lot of attention to the
+specific model of Java interfaces, and to how it differs w.r.t. Java Class model.
+$\mBody(\m,\C)$ denotes the actual method $\m$ (body included) that
+interface $\C$ owns. The method can either be defined originally in $\C$ or in its supertypes, and then passed to $\C$ via inheritance.
+\noindent$\begin{array}{l}
+\InTextDef{15ex}{
+\mBody(\m,\C_0)
+}{
+\override(\methods(\m),
+\tops(\m,\Cs))
+}\\
+\InTextWith{\metaVar{IT}(\C_0) =
+\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \C_1\ldots\C_n\ \oC\methods\ \cC \mbox{ and }
+ \C\in\Cs \mbox{ if } \C_i\subtype\C, i\in 1..n
+
+}
+\end{array}$
+
+\noindent The definition of $\mBody$ reconstructs the full set of supertypes $\Cs$ and then delegates the work to two other auxiliary functions:
+ $\tops(m,\Cs)$ and $\override(\method,\methods)$.
+
+\paragraph{\tops{}} recovers from the interface table only the ``needed'' methods, that is,
+the non-static ones that are not reachable by another, less specific superinterface.
+Since the second parameter of \tops{} is a set, we can choose an arbitrary element to be $\C_0$.
+In the definition we denote by $\Aux{originalMethod}(\m,\C)=\method$ the non-static method called $\m$ defined directly in $\C$.
+%\hl{Another two functions $\super(\C_0)$ and $\get(\m,\C_0)$ are used for the definition. $\super(\C_0)$ collects the
+%super interfaces of $\C_0$ recursively, and $\get(\m,\C_0)$ returns the non-static method declared in $\C_0$ with name $\m$, or $\emptyset$ otherwise.
+%Finally, $\tops(\m,\C_0)$ returns the topmost methods $m$ from the super interfaces.}
+Formally:
+
+\noindent$\begin{array}{l}
+\InTextDef{20ex}{
+\Aux{originalMethod}(\m,\C_0)}{
+\method
+}\\
+\InTextWith{\metaVar{IT}(\C_0) =
+\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC, \method\in\methods\mbox{ not static},\m=\m^\method}
+ \\
+
+\InTextDef{44ex}{
+\Aux{originalMethod}(\m,\C_0)\in\tops(\m,\C_0\dots\C_n)}{
+ }{}\\
+\tab\tab
+\not\exists i\in1..n \mbox{ such that }
+\Aux{originalMethod}(\m,\C_i) \mbox{ is defined and }
+\C_i \subtype \C_0
+
+%\\
+%\InTextDef{13ex}{
+%\tops(\m,\C_0)}{
+%}{
+%\{\ \get(\m, \C)\ |\ \C\in\super(\C_0), \get(\m, \C) \ne\emptyset,\mbox{ and }
+%}\\
+%\hspace{2.1in}\forall\C'\in\super(\C_0)\mbox{ and }\get(\m,\C')\ne\emptyset: \C'<:\C\Rightarrow\C'=\C\ \}\\
+%\InTextDef{13ex}{
+%\super(\C_0)}{
+%}{
+%\{\ \C'\ |\ \C'\in\Cs,\mbox{ or }\exists\C\in\Cs,\C'\in\super(\C)\ \}
+%}\\
+%\InTextWith{\metaVar{IT}(\C_0) =
+%\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC}\\
+%\InTextDef{13ex}{
+%\get(\m,\C_0)}{
+%}{
+%\method
+%}\\
+%\InTextWith{\metaVar{IT}(\C_0) =
+%\ \ann\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC\methods\ \cC, \method\in\methods\mbox{ not static},\m=\m^\method}
+\end{array}$
+
+
+%\paragraph{\shadow{}} chooses the most specific version of a method,
+%that is the unique version available, or a conflicted version from a
+%set of possibilities. In this case all the conflicting defintions are returned.
+%We do not model overloading, so it is an error if multiple versions are available with different parameter types. Formally:
+%
+%\noindent
+%$\begin{array}{l}
+%\InTextDef{15ex}{
+%\shadow()}{\none}\\
+%\InTextDef{15ex}{\shadow(\method)}{\method}\\
+%\InTextDef{15ex}{\shadow(\overline{\mh\QM;})}{\Aux{mostSpecific}(\overline{\mh\QM;})}\\
+%\InTextDef{15ex}{\shadow(\methods)}{\methods}\\
+%\InTextWith{\mbox{ the former case not applicable} }
+%%\methods\mbox{ not of the form }\overline{\mh\QM;}
+%%\mbox{ and }
+%%\Aux{mostSpecific}(\methods)\in\{\mh\QM;,\QM{default}\ \mh\mbox{\Q@\{return \_;\}@}\}}\\
+%\end{array}$
+%
+\paragraph{override} models how a method in an interface can
+override implementations in its superinterfaces, even in the case of
+conflicts. Note how the special value $\none$ is used, and how (the 5th
+case) overriding can solve a conflict.
+% The notation in the last case below
+%means $\method'$ is not static, and is supertype of $\method$.
+
+\noindent$\begin{array}{l}
+\InTextDef{20ex}{\override(\none,\emptyset)}{\none}\\
+\InTextDef{20ex}{\override(\method,\emptyset)}{\method}\\
+\InTextDef{20ex}{\override(\none,\method)}{\method}\\
+\InTextDef{20ex}{\override(\none,\overline{\mh\QM;})}{\Aux{mostSpecific}(\overline{\mh\QM;})}\\
+\InTextDef{20ex}{\override(\method,\methods)}{\method}\\
+\InTextWith{
+\forall \method' \in \methods :
+%\method'\in\{\mh\QM;,\QM{default}\ \mh\,\mbox{\Q@\{return \_;\}@}, \conflicted\ \mh\QM; \},
+\method\subtype\method'
+}
+\end{array}$
+
+\noindent The definition $\Aux{mostSpecific}$ returns the most
+specific method whose type is the subtype of all the
+others.  Since method subtyping is a partial ordering,
+$\Aux{mostSpecific}$ may not be defined, this in turn forces us to rely on the last clause of $\override$; otherwise
+the whole \mBody{} would not be defined for that specific $\m$.
+Rule \rn{t-intf} relies on this behavior.
+
+\noindent$\begin{array}{l}
+\InTextDef{18ex}{\Aux{mostSpecific}(\methods)}{\method}\\
+\InTextWith{\method \in \methods\ \mand\ \forall \method' \in \methods :  \method \subtype \method'}
+\end{array}$
+
+To illustrate the mechanism of $\mBody$, we present an example. We compute $\mBody(\QM{m},\QM{D})$:
+\begin{lstlisting}
+interface A { Object m(); }
+interface B extends A { default Object m() {return this.m();} }
+interface C extends A {}
+interface D extends B, C { String m(); }
+\end{lstlisting}
+\vspace{-2ex}
+\begin{itemize}
+\item First $\{\QM{A,B,C}\}$, the full set of supertypes of $\QM{D}$ is obtained.
+\item Then we compute 
+$\tops(\QM{m},\{\QM{A,B,C}\})= $
+\Q@default Object m() {...}@,
+ that is $\QM{B.m}$.
+That is, we do not consider either
+$\QM{C.m}$ (since $\QM{m}$ is not declared directly in $\QM{C}$, hence $\Aux{originalMethod}(\QM{m},\QM{C})$ is undefined) or $\QM{B.m}$ 
+(that is a subtype of $\QM{A}$, thus $\QM{B.m}$ hides $\QM{A.m}$).
+\item The final step computes $\override(\QM{D.m},\QM{B.m})=\QM{D.m}$,
+by the last case of $\override$ we get that $\QM{D.m}$ hides $\QM{B.m}$ successfully ($\QM{String}$ is a subtype of $\QM{Object}$). Finally we get $\mBody(\QM{m},\QM{D}) = \QM{D.m}$.
+\end{itemize}
+
+%The \textsf{shadow} function takes two same methods (with the same name and types of arguments), and return the method which shadows the other during inheritance.
+%exmples to motivate our design
+%interface A{static String m(){return "A";}}
+%interface C extends A{
+%	default String dm(){
+%		  this.m();//wrong in java
+%		  A.m();
+%		  C.m();//wrong in java
+%		}
+%}
+%
+%
+%(1) Static methods are not inherited. Also, if one of $\{body_1,body_2\}$ is null, \textsf{shadow} simply returns the other one. Hence
+
+\begin{comment}
+%Now it is correct, but may be we do not need it?
+We abbreviate typing statements on
+sequences in a simple way, writing $\Gamma \vdash \overline{t}:\overline{C}$ as
+shorthand for $\Gamma \vdash t_1:C_1,..., \Gamma \vdash t_n:C_n$.
+\end{comment}
+
+
+
+\begin{comment}
+\subsubsection{Method Typing}
+
+
+\[
+\inferrule
+{ }
+{T_0 \spc m(\overline{T} \spc \overline{x}); \text{ OK IN I} }
+\quad \textsc{(T-Meth)}
+\]
+
+\[
+\inferrule
+{\overline{x}:\overline{T} \vdash e:S \\ S <: T_0}
+{T_0 \spc m(\overline{T} \spc \overline{x}) \text{ \{ return } e;\} \text{ OK IN
+    I} \\\\ \Gamma \vdash \textbf{this}:I }
+\quad \textsc{(T-MethBody)}
+\]
+
+\[
+\inferrule
+{IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\
+\forall i,\text{if \textsf{mtype}}(m,J_i) = \overline(T) \to U_0, \text{then }
+T_0 <: U_0 }
+{T_0 \spc m(\overline{T} \spc \overline{x}); \text{ OK IN I} }
+\quad \textsc{(T-MethExt)}
+\]
+
+\[
+\inferrule
+{\textbf{this}:I, \overline{x}:\overline{T} \vdash e:S \\ S <: T_0 \\\\
+IT(I)=\text{interface } I \text{ extends } \overline{J} \text{\{...\}} \\\\
+\forall i,\text{if \textsf{mtype}}(m,J_i) = \overline(T) \to U_0, \text{then }
+T_0 <: U_0 }
+{T_0 \spc m(\overline{T} \spc \overline{x}) \text{ \{ return } e;\} \text{ OK IN
+    I} }
+\quad \textsc{(T-MethBodyExt)}
+\]
+
+\[ \inferrule
+{\textbf{interface } I \textbf{ extends } \overline{J} \{ \overline{M} \} \\\\
+ \forall J_i \in \overline{J}, J_i \text{ OK} \\\\
+ \forall m \in \overline{M}, \textsf{mbody}(m,I) \neq \error \\\\
+ \forall J_i \in \overline{J}, \forall m \text{ inside } J_i,
+ \textsf{mbody}(m,I) \neq \error }
+{I \text{ OK}}
+\quad \textsc{(T-Intf)}
+ \]
+
+Interface $I$ type checks well, if:
+\begin{itemize}
+\item All its super-interfaces $\overline{J}$ OK.
+\item All methods inside interface $I$ are OK.
+\item All methods that $I$ is inheriting from super-interfaces are OK.
+\end{itemize}
+\subsubsection{Subtyping}
+
+\[ \inferrule{}{T <: T} \]
+
+\[ \inferrule{S <: T \\ T <: U}{S <: U}\]
+
+\[ \inferrule{\emph{ann} \spc \textbf{interface} \spc C_0 \spc \textbf{extends} \spc C_1,...,C_k \{...\}}
+{C_0 <: C_1 \\ ... \\ C_0 <: C_k} \]
+\end{comment}
+%\subsubsection{Interface Table}
+
