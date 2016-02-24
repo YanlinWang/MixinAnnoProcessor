@@ -76,9 +76,10 @@ interface B3 extends B2 { default T m(){ ... } }
 
 \noindent
 What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
-\Q@B@${}_j$?\\*
+\Q@B@${}_j$?
 % Nine representative cases are shown next:\\*
-\noindent
+\begin{figure*}[htbp]
+\centering
 \begin{tabular}{|l|l|l|l|}
 \hline
 \textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
@@ -86,7 +87,7 @@ What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
 \textbf{B2}        & both abstract (accepted)     & conservative error       & both abstract (accepted)       \\ \hline
 \textbf{B3}        & \textbf{conservative error} &conflict  error       & conservative error      \\ \hline
 \end{tabular}
-\\*
+\end{figure*}
 %We try to classify the results in the table:
 \begin{itemize}
 \item \textbf{conflict error} happens when the methods from both interfaces are implemented, which is also an error in most trait models.
@@ -135,7 +136,8 @@ interfaces with default methods. This formalization is used in
 Section~\ref{sec:translation} to define the semantics of object interfaces.
 
 
-\begin{figure}[t]
+\begin{figure*}[t]
+\centering
 \saveSpaceFig
 \begin{grammar}
 \production{
@@ -183,7 +185,7 @@ Section~\ref{sec:translation} to define the semantics of object interfaces.
 \end{grammar}
 \caption{Grammar of Classless Java}
 \label{Grammar}
-\end{figure}
+\end{figure*}
 
 \subsection{Syntax}
 
@@ -257,7 +259,8 @@ $\textsf{mtypeS}(\m,\C)$ only for static ones. We use $\dom(\C)$ to
 denote the set of methods that are defined for type $\C$, that is:
 $\m\in\dom(\C)\ \miff \ \mBody(\m,\C)=\method$.
 
-\begin{figure}[t]
+\begin{figure*}[t]
+\centering
 \saveSpaceFig
 $
 \begin{array}{l}
@@ -347,7 +350,7 @@ IT(\C) = \ann\ \QM{interface}\ \C\ \QM{extends}\ \C_1\ldots\C_n \
 \end{array}$
 \caption{CJ Typing}
 \label{ET}
-\end{figure}
+\end{figure*}
 
 In Figure~\ref{ET} we show the typing rules.  We discuss the
 most interesting rules, that is \rn{t-Obj} and \rn{t-Intf}. Rule
@@ -575,12 +578,12 @@ interface D extends B, C { String m(); }
 \vspace{-2ex}
 \begin{itemize}
 \item First $\{\QM{A,B,C}\}$, the full set of supertypes of $\QM{D}$ is obtained.
-\item Then we compute 
+\item Then we compute
 $\tops(\QM{m},\{\QM{A,B,C}\})= $
 \Q@default Object m() {...}@,
  that is $\QM{B.m}$.
 That is, we do not consider either
-$\QM{C.m}$ (since $\QM{m}$ is not declared directly in $\QM{C}$, hence $\Aux{originalMethod}(\QM{m},\QM{C})$ is undefined) or $\QM{B.m}$ 
+$\QM{C.m}$ (since $\QM{m}$ is not declared directly in $\QM{C}$, hence $\Aux{originalMethod}(\QM{m},\QM{C})$ is undefined) or $\QM{B.m}$
 (that is a subtype of $\QM{A}$, thus $\QM{B.m}$ hides $\QM{A.m}$).
 \item The final step computes $\override(\QM{D.m},\QM{B.m})=\QM{D.m}$,
 by the last case of $\override$ we get that $\QM{D.m}$ hides $\QM{B.m}$ successfully ($\QM{String}$ is a subtype of $\QM{Object}$). Finally we get $\mBody(\QM{m},\QM{D}) = \QM{D.m}$.

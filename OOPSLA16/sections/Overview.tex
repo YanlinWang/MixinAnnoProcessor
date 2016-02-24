@@ -1,6 +1,7 @@
 \section{A Running Example: Animals}\label{sec:ep}
 
-\begin{figure}
+\begin{figure*}
+\centering
 \saveSpaceFig
 \begin{tabular}{c|c}
 \includegraphics[height=4cm]{pdfs/PegasusDetail.pdf}\hspace{20pt} &
@@ -11,7 +12,7 @@
 \end{minipage}
 \end{tabular}
 \caption{The animal system (left: complete structure, right: code for simplified animal system).}\label{fig:pegasus}
-\end{figure}
+\end{figure*}
 
 This section illustrates how object interfaces, expressed using the \mixinAnn{} annotation, enable powerful
 idioms using multiple inheritance in Java.
@@ -88,7 +89,7 @@ To model the animal system with object interfaces all that a user
 needs to do is to add a \mixinAnn{} annotation to the \texttt{Horse},
 \texttt{Bird}, and \texttt{Pegasus} interfaces:
 
-\lstinputlisting[linerange=9-11]{../UseMixinLombok/src/pegasus/simple/lombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
+\lstinputlisting[linerange=8-10]{../UseMixinLombok/src/pegasus/simple/lombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
 
 \noindent The effect of the annotations is that a static \emph{factory} method called
 \texttt{of} is automatically added to the interfaces. With the
@@ -367,7 +368,8 @@ Figure~\ref{fig:abstractstate}.  The abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of
 conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
 
-\begin{figure}
+\begin{figure*}
+\centering
 \saveSpaceFig
 \begin{tabular}{|l|l|l|}
 \hline
@@ -386,7 +388,7 @@ object; updates field \texttt{x} to \texttt{val}.             \\ \hline
 
 \label{fig:abstractstate}
 
-\end{figure}
+\end{figure*}
 
 % by method
 %\texttt{run()}: method \texttt{withX} returns a new point object with field
