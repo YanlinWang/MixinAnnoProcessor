@@ -1,0 +1,36 @@
+Review #38A
+On the other, every class still needs to be updated when a new operation is
+added. So it is debatable whether this constitutes a solution to the Expression
+Problem.
+No, every interface is unchanged.
+
+In Section 4.3, what is the difference between NONE and the empty set? This was
+not properly explained making that section hard to understand. Rule 5 especially
+needs more explanation.
+
+
+
+Review #38B
+invariant violations:
+1) @Obj allow programmers to write their own `with` methods.
+2) There's not even obvious way to describe the invariant relation. Therefore,
+we human know the invariant (len == list.length()) but we don't expect the
+program to take care of this invariant. 
+
+Review #38C
+Why supporting getter, wither, and setter methods and not different or
+additional ones?
+"Object Interfaces" is a general concept which is for sure not limited to
+getters, setters and withers. However, we choose these methods to demonstrate
+and implement because with the help of these methods it's enough to show the
+power and convenience of object interfaces (by solving various problems showed
+in the paper). Later on, more methods can be added as future work.
+
+Object interfaces can be readily implemented using a macro system. How does the
+presented extension add to the sate of the art?
+
+
+Review #38D
+
+Review #38E
+
