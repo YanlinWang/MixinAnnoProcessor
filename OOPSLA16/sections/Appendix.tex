@@ -40,12 +40,12 @@ By the definition of $\ofMethod(\C)$, the return value is an object $$\QM{return
 To prove it is of type $\C^\II$, we use the typing rule \rn{t-Obj}.
 
 \begin{itemize}
-\item All field initializations are type correct. By the definition of $\ofMethod(\C^\II)$ in Section~\ref{subsec:ofmethod}, the fields $m_1,\ldots,m_n$ are initialized by $\QM{of}$'s arguments, and types are compatible.
+\item All field initializations are type correct. By the definition of $\ofMethod(\C^\II)$ in Appendix~\ref{subsec:ofmethod}, the fields $m_1,\ldots,m_n$ are initialized by $\QM{of}$'s arguments, and types are compatible.
 \item All method bodies are well-typed.
     \begin{itemize}
     \item Typing of the $i$-th getter $m_i$. \[\Gamma, m_i:\C_i, \QM{this}:\C^\II \vdash m_i\in \C_i\]
         We know that $\C_i=\C^{\mh_i}$ since the $i$-th getter has its return type the same as the corresponding field $m_i$.
-    \item Typing of the \QM{with-} method of an arbitrary field $m_i$. By Section~\ref{subsec:ofmethod}, if the \QM{with-} method of $m_i$ is well-defined, it has the form \[\C^\II\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{}\QM{return}\ \C^\II\QM{.of(}\es_i\QM{);\}}\]
+    \item Typing of the \QM{with-} method of an arbitrary field $m_i$. By Appendix~\ref{subsec:ofmethod}, if the \QM{with-} method of $m_i$ is well-defined, it has the form \[\C^\II\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{}\QM{return}\ \C^\II\QM{.of(}\es_i\QM{);\}}\]
         $\es_i$ is obtained by replacing $m_i$ with $\QM{_val}$ in the list of fields, and since they have the same type $\C_i$, the arguments $\es_i$ are compatible with $\C^\II.\QM{of}$ method. Hence \[\Gamma, m_1:\C_1\ldots m_n:\C_n, \QM{this}:\C^\II,\ \QM{_val} : \C_i \vdash \C^\II\QM{.of}\oR\es_i\cR\in \C^\II\]
         We know that $\C^\II=\C^{\mh_i}$ by the return type of $\QM{with#}\m_i$ shown as above.
     \item Typing of the $i$-th setter \QM_$m_i$. If the \QM_$m_i$ method is well-defined, it has the form
