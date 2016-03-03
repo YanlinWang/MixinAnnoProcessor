@@ -1,0 +1,809 @@
+> ===========================================================================
+>                          ECOOP 2016 Review #38A
+> ---------------------------------------------------------------------------
+>             Paper #38: Classless Java: Tuning Java Interfaces
+> ---------------------------------------------------------------------------
+> 
+>                      Overall merit: B. OK paper, but I will not champion
+>                                        it
+>                         Confidence: Y. I am knowledgeable in this area,
+>                                        but not an expert
+>                    Writing Quality: P. Well-written
+> 
+>                         ===== Paper Summary =====
+> 
+> This paper presents an idiom of Java8 where there are no classes and
+> all objects are created by factory methods defined in special “object
+> interfaces”. It relies on Java8’s ability to define default methods in
+> interfaces. This mechanism supports multiple inheritance, as well as
+> state using abstract operations.
+> 
+> The idiom is implemented with an @Obj annotation on interfaces, using
+> the Lombok infrastructure. Java code annotated in this way is
+> translated to code that contains boiler plate method definitions (such
+> as factory method for object creation, “with” methods to simplify
+> setting fields, as well as getter and setter methods).
+> 
+> The paper presents formal semantics in the form of a calculus similar
+> to Featherweight Java. Several guarantees are offered such as
+> type-safety of the translation, ensuring that it does not introduce
+> type-errors in client code.
+> 
+> The paper also presents several case study to illustrate the
+> expressivity and productivity of the idiom.
+> 
+> Finally, the paper introduces the term “language tuning” for
+> qualifying this kind of language extension: there is no additional
+> syntax other than annotations, and the translation machinery can be
+> seamlessly weaved with existing tools.
+> 
+>                    ===== Points For and Against =====
+> 
+> Points in favor:
+> - Paper is very well written.
+> - Interesting language idiom.
+> - Formal semantics and guarantees
+> 
+> Points against:
+> - The case studies are not very convincing. 
+> - The heir coherence property is not satisfied, meaning that it is best not to extend an interface that was annotated with @Obj
+> - The language tuning contribution is not very convincing.
+> 
+>                       ===== Detailed Comments =====
+> 
+> This is a very well-written paper and an interesting read. It proposes
+> an idiom of Java8 that makes it possible to directly instantiate
+> interfaces and supports multiple inheritance with state. The mechanism
+> is interesting because of its simplicity and ease of implementation.
+> There are 2 somewhat orthogonal contributions in this paper. The first
+> is the recognition of this idiom in Java 8. The second is that the
+> idiom involves a lot of boiler-plate code and that a simple annotation
+> can be used to generate the boiler-plate code automatically. The paper
+> presents a calculus to define the semantics of the idiom in the style
+> of Featherweight Java and case studies to show its expressivity and
+> how fewer lines of code can achieve the same results.
+> 
+> The paper introduces the terminology “language tuning” for this type of
+> language contribution. It is unclear why other annotation mechanisms
+> don’t also fall in the category of language tuning. For example, JUnit
+> test annotations can also be viewed in the same way. So the novelty of
+> language tuning is not completely clear. One advantage of a regular
+> language extension (by adding new syntax) is backward compatibility.
+> Existing programs that do not use the new syntax continue to work as
+> expected. This is not the case with language tuning, since existing
+> syntax is interpreted in a different way. This problem is alleviated
+> with the choice of annotating with @Obj. But such an idiom still
+> requires a lot of code rewriting for existing projects, which would
+> limit its adoption.
+> 
+> One concern with the paper is that the heir coherence property is not
+> satisfied, meaning that an interface that extends an object interface
+> can be well-typed before translation, and ill-typed afterwards. This
+> seems to be a major limitation of the idiom. Classes and object
+> interfaces are not expected to mix, but at least regular interfaces
+> and object interfaces should be allowed to mix freely, which is not
+> the case.
+> 
+> The idiom reduces the number of lines of code necessary in certain
+> situations. Interfaces do not need implementation classes, they can be
+> directly instantiated and multiple inheritance allows composing
+> concepts. However, it is unclear that the idiom is less error-prone.
+> Though tedious to write, boiler-plate code makes the intent of the
+> programmer explicit. Conflict resolution in multiple inheritance
+> continues to be hard to reason about.
+> 
+> The Expression Problem case study is not very convincing. On the one
+> hand, the independent extensibility aspect is a nice property. On the
+> other, every class still needs to be updated when a new operation is
+> added. So it is debatable whether this constitutes a solution to the
+> Expression Problem.
+> 
+> The Maze case study is very small, comprising of only a few hundred
+> lines of code, so it is not very convincing either.
+> 
+> The formal semantics do not contain ‘with’. It seems that the
+> implementation and the informal description of the semantics do not
+> match exactly. In the implementation there is one instanceof check,
+> and then the parameter is assumed to be in the right shape. In the
+> informal description of the semantics, there appears to be more
+> checks in the case where the instanceof fails. It would be good to
+> clarify this point.
+> 
+> In Section 4.3, what is the difference between NONE and the empty
+> set? This was not properly explained making that section hard to
+> understand. Rule 5 especially needs more explanation.
+> 
+> This Paper Ought to Have an Accompanying Artifact:
+>                                     1. No, does not need to
+> 
+> ===========================================================================
+>                          ECOOP 2016 Review #38B
+>                     Updated 17 Feb 2016 7:12:38pm EST
+> ---------------------------------------------------------------------------
+>             Paper #38: Classless Java: Tuning Java Interfaces
+> ---------------------------------------------------------------------------
+> 
+>                      Overall merit: D. Reject
+>                         Confidence: X. I am an expert in this area
+>                    Writing Quality: Q. Adequate
+> 
+>                         ===== Paper Summary =====
+> 
+> This paper presents the concept of object interfaces in the context of a
+> calculus called Classless Java. The idea is that Java 8 interfaces (which
+> allow for static and default methods) are reinterpreted when the annotation
+> @Obj is present; certain abstract methods are then taken to be getters and
+> setters, and others ('with..') are taken to be part of a fluent interface
+> that allows for convenient object construction (including functional style
+> updates). The fields corresponding to those getters and setters are
+> generated automatically as well as the getter/setter implementations, and
+> so are the implementations of 'with..' methods. The paper introduces the
+> ideas using examples, then proceeds to present the calculus, describes
+> the translation and states some theorems (essentially, that type correct
+> programs are translated into type correct programs), and finally describes
+> three example programs expressed using the prototype implementation of
+> this language.
+> 
+>                    ===== Points For and Against =====
+> 
+> + The paper contains interesting ideas, e.g., using slice-updates to overcome
+> the soundness problem associated with covariant specialization of method
+> arguments (so you receive a 'Point2D' intended as an update to a field whose
+> type is actually 'Point3D', but then we just reuse the 'z' from the old value).
+> 
+> + It seems likely that the description of the translation is a faithful
+> presentation of the approach used in the prototype implementation, that is,
+> it is probably grounded in something that works in practice.
+> 
+> - As the detailed comments explain, the paper has an unfortunate tendency to
+> make highly imprecise and confusing claims. It is as if the authors have
+> not been thinking precisely when writing those things.
+> 
+> - The foundation for the formal treatment is seriously flawed: It is
+> claimed early in the paper that the semantics of Classless Java (CJ)
+> is defined by translation into CJ itself. Obviously, that would never
+> provide any actual semantics, unless it really meant "translation into
+> a proper sublanguage of CJ", whose elements would subsequently be
+> defined in some other way. We could then have checked out the formal
+> semantics of the language (or a sublanguage), but no such thing is
+> ever even mentioned. Still, Sect. 4 is called 'Formal Semantics'. It
+> is also deeply worrying that the paper refers to Featherweight Java
+> (only) when indicating how to understand the calculus, given that this
+> calculus supports mutable state and unlimited nesting of binders
+> (possibly with lexical scoping, but that's never specified either,
+> except indirectly because that would match the given type rules).
+> 
+> In general, claiming that the paper gives a formalization of something, and
+> then presenting something which is so far away from an actual formalization,
+> that is a serious problem in itself. It would therefore be very useful for
+> the dissemination of the ideas in this paper to make it much more directly
+> implementation oriented; alternatively, the foundations should be
+> cleaned up, radically.
+> 
+>                       ===== Detailed Comments =====
+> 
+> - page 2, 'general purpose methods require special care': Could you revise
+> this description such that it directly communicates the issue? Surely there
+> must be a more precise point to make here.
+> 
+> - p2, 'do not require changes to the Java .. compiler': Aha? How could you
+> then introduce 'a simple language feature' of any kind? Maybe you presume
+> that translation takes two steps: Preprocessing (your tool) and then
+> (standard Java) compilation? Otherwise it looks like a typo to claim that
+> you will keep the compiler and the runtime unmodified.
+> 
+> - p2, 'because it does not modify .. syntax pre-existing tools can work':
+> Obviously you could keep the same syntax and change the type rules, or
+> you could change the dynamic semantics, and in both cases at least some
+> tools would need to be modified.
+> 
+> - p2, 'our .. implementation .. [uses] AST rewriting': Aha, so you do
+> pre-process the programs. But I don't understand how that should stop
+> IDEs from declaring that the un-pre-processed program that you keep in
+> an editor would be incorrect, considered as standard Java code. Or do you
+> actually have the property that all your correct programs are at the same
+> time correct standard Java programs, only with a different semantics? That
+> would be a rather surprising property..
+>  Of course, it's possible that you only deliver the pre-processsed program
+> to the IDE-based type checker and compiler, in which case the tools would
+> receive a program in standard Java, but then you'd need to map things like
+> line numbers in error messages back from the pre-processed program to the
+> source program. That doesn't really justify the phrase 'pre-existing tools
+> can work transparently on the tuned language'.
+> 
+> - p2, 'translation from CJ to itself': That's not very convincing. If it's
+> from CJ to itself then you can translate it once more (after all, the output
+> from the first translation is a CJ program), and again and again ad libitum.
+> Does that actually work? If it works then it seems likely that it is because
+> the first translation eliminates certain constructs from the program,
+> which means that the output is a program in a sublanguage of CJ, which may
+> be a sublanguage of Java as well (who knows), for which the translation is
+> known to have no effect. The whole idea that you can specify the semantics
+> of a language L as a translation of programs in L to programs in L smells
+> really bad, but translation into a proper sublanguage L' would work (this
+> is what they have done for Scheme for decades). In fact, translation from
+> L to L does not specify any semantics _at_all_, because the translated
+> program is an L program, and --- by definition --- we have no idea about
+> what such a program means during the process of defining the semantics of
+> L.
+> 
+> - p2, 'translation .. type-safe': This is also a very imprecise statement.
+> A translation could be such that it preserves typability (a typable program
+> or module is guaranteed to be translated into a typable program/module),
+> but it's hard to tell what it means for the translation to be 'type-safe'.
+> Maybe it's implemented as a program (in some implementation language) that
+> can be type-checked with no errors? You continue to write '.. the translation
+> does not introduce type-errors in client code' which sounds like
+> preservation of typability, but 'client code' is a disturbing element---
+> which parts of the translated program or module are 'client code', and
+> what's the rest of it called?
+>  OK, there are friendly ways of interpreting your text which would make
+> a lot of attempts to find a meaning for each of these things, but it is
+> unscientific to write highly imprecise descriptions of what you propose
+> and what you have done. So please, please, don't be so impressively imprecise
+> in your writing. I won't comment on a lot of similar issues henceforth, but
+> you should be aware that it detracts significantly from your credibility every
+> single time the reader has to compensate for your lack of precision.
+> 
+> - p6, 'run() {..}': It is tempting to mention that 'location.x += 20' is
+> even more concise than the body of 'run' that you mention. Do you think
+> that's because 'run' makes an attempt to write a functional-inspired type
+> of computation ('location().withX(location.x() + 20)') in an imperative
+> context (the setter invocation 'location(..)')? To the extent that you are
+> talking to people who are looking at the world from an imperative point of
+> view the 'run' method doesn't look particularly convenient.
+> 
+> - p7, 'Redefine getters and setters': You forgot to mention that the
+> redefinition of the getter is unproblematic because it just relies on
+> return type covariance (available in Java since 1.5). It does need a
+> cast if you wish to return the value of a 'Point2D' typed field, but
+> it seems likely that you could avoid that: The 'Animal' interface would
+> not have such a field, and a 'Bird' instance would be an instance of a
+> generated class implementing 'Bird' and (by transitivity) 'Animal',
+> it would not be a subclass of any anonymous generated classes used
+> for instantiation of 'Animal' (if such classes even exist). So you would
+> have a Point3D field and the getter would return that---no cast needed.
+> The getter is another matter, because it would require covariant
+> specialization of the argument type, which is unsafe and (hence)
+> unsupported in standard Java: The type of an argument is a contravariant
+> position.
+> 
+> - p7, 'Point3D with(Point2D val);': OK, that's a nice trick! ;-)
+> However, it is incompatible with whatever constraints you might have for the
+> "slice-updated" value (here: the Point3D is updated with respect to its
+> "Point2D slice"). For instance, you could have an immutable list and a
+> subclass where the length of the list is available as an 'int' value, and
+> then you could generate code that would allow you to create a new
+> list-with-length whose length is wrong, because the contents comes from
+> the argument to the setter and the length is taken from the previous
+> contents. If you generate those slice-update methods automatically then
+> you'd surely see unexpected inconsistencies, unless you can convince all
+> programmers that they cannot ever require any relationships among the
+> fields in these immutable objects. Even without the inconsistencies caused
+> by slice-updating you could have issues with this semantics: If you
+> assign a certain 'Point2D' to the 'location' of two different 'Animal's
+> then it's not unreasonable to assume that their location would be known
+> to be equal (until further updates, of course). But that would not be
+> true if the 'Animal's turned out to be 'Bird's flying at different
+> heights. So it's a nice trick at first, but it is certainly also an approach
+> that may create nasty surprises, and I'm not convinced that you would want
+> that as the semantics of a language (i.e., such that it happens all the
+> time and everywhere in your programs).
+> 
+> - p10, Fig. 4: It is surprising that you refer to Featherweight Java (p2
+> and p10), given that (1) your calculus seems to support mutable state and
+> (2) you calculus seems to support unlimited nesting of binders (any
+> expression 'e' could contain an 'obj' which contains identifier declarations
+> whose scope extend over other expressions). This is radically different from
+> Featherweight Java, so you would be expected to specify the calculus very
+> carefully in order to provide a meaningful message---relying on FJ for
+> the semantics just won't cut it. For instance, the word 'scope' only occurs
+> once in the paper (p10, mid), and other forms like 'scoping' do not occur.
+> So do you assume lexical scoping? The type rules would fit with that,
+> assuming that repeated names in the concatenated environments would use
+> shadowing such that all other declarations that the rightmost one would be
+> ignored. But how would you specify the semantics of the program such that
+> lexical scoping can be maintained correctly when a method it called? FJ
+> uses substitution to insert actual argument expressions to replace formal
+> argument identifiers, but that doesn't work when you have mutable state.
+> But then, moving an expression from one context to another (which is what
+> the substitution will do) may cause identifiers in that expression to change
+> meaning. So you'd need an entirely new approach to the dynamic semantics
+> (or you'd need to refer to some other calculus than FJ as the starting point)
+> in order to communicate precisely how this would all work! So I'll check out
+> whether we get something like that in the rest of the paper, but a quick
+> check leaves me with the impression that we won't get it.
+> 
+> - Sect. 4 and 5: No dynamic semantics is specified here, so the calculus
+> is seriously incomplete. What you offer is essentially the syntax and
+> (presumably) an informal appeal to the semantics of standard Java, and
+> then the translation. The description of the translation looks like it
+> could be a description of an actual implementation, and it might work
+> nicely in practice. But as long as the foundation is that you are
+> translating from Classless Java to Classless Java it doesn't say anything
+> about the semantics. So you're not presenting a formal model of your
+> language, you are presenting the translation that you have implemented
+> using Lombak, and then you have added a number of elements that make it
+> look more like a formal calculus. This is directly counter-productive,
+> because the result has low credibility. You ought to fix it as a formal
+> model, or present the informal translation as such.
+> 
+> # Update in response to author response
+> 
+> Thanks for the response! The claim that `with` would only be used when
+> it will never violate a class invariant makes sense.
+> 
+> With respect to the frustration I had with the level of precision in
+> the presentation, I'm afraid it calls for a deep revision of the
+> paper, so I remain sceptical in that respect.
+> 
+>           ===== Questions for Authors in Response Period =====
+> 
+> Do you have any mechanisms available that would allow you to prevent
+> the invariant violations mentioned in the detailed comments, about
+> the list-with-length issue mentioned in relation to the
+> `Point3D with(Point2D val)` method?
+> 
+> This Paper Ought to Have an Accompanying Artifact:
+>                                     2. Yes, but reviewing it would not
+>                                        make a difference to the decision
+> 
+> ===========================================================================
+>                          ECOOP 2016 Review #38C
+> ---------------------------------------------------------------------------
+>             Paper #38: Classless Java: Tuning Java Interfaces
+> ---------------------------------------------------------------------------
+> 
+>                      Overall merit: D. Reject
+>                         Confidence: Y. I am knowledgeable in this area,
+>                                        but not an expert
+>                    Writing Quality: P. Well-written
+> 
+>                         ===== Paper Summary =====
+> 
+> The paper presents a variant of Java where interfaces optionally are
+> accommodated with an instantiating class, a constructor, getters,
+> setters, and withers. Such interfaces are called object interface and
+> marked through a Java annotation `@Obj`. The paper describes how to
+> generate the boilerplate code for object interfaces using the Java
+> annotation processor and it formalizes the translation on top of a new
+> core calculus called Classless Java. Case studies show that object
+> interfaces indeed eliminate some boilerplate code. The paper proposes
+> the term _language tuning_ for language variants that share (mostly)
+> the same syntax as the original language.
+> 
+>                    ===== Points For and Against =====
+> 
+> + The design of object interfaces seems useful in the context of Java,
+> where a simple default implementation of an interface requires a large
+> amount of boilerplate code.
+> 
+> - Object interfaces are conceptually unsurprising.
+> 
+> - Object interfaces support getters, withers, and setters. Why these
+> methods and not different or additional ones?
+> 
+> - Language tuning is a special case of language extension. The
+> annotation `@Obj` is essentially extended syntax.
+> 
+> - The calculus Classless Java is not useful on its own yet, because it
+> is lacking a dynamic semantics and a soundness proof for its static
+> semantics.
+> 
+>                       ===== Detailed Comments =====
+> 
+> I understand that syntactic boilerplate is a practical problem in
+> Java. But I don't think solving this instance of the problem adds to
+> the state of the art in a significant way.
+> 
+> Regarding the design of object interfaces, only supporting getters,
+> withers, and setters seems rather limiting (the paper itself mentions
+> equals and hashcode). On the other hand, you do not want to support
+> all possible methods. This is a common problem that language
+> extensibility aims to solve: Have the users select and implement the
+> extension.
+> 
+> The definition of object interfaces actually relies on Java's support
+> for extensibility via the annotation processor. The annotation `@Obj`
+> is new syntax that was added to mark object interfaces and to trigger
+> the transformation. In Scala this would have been an annotation macro,
+> in Racket this would have been a syntax macro. In Java, Scala, and
+> Racket, the syntax of the base language remains unchanged when adding
+> object interfaces because support for extensions is built-in already.
+> I am not sure the term "language tuning" usefully adds to the existing
+> terminology.
+> 
+> I found Section 3 (Interaction of interface methods with interface
+> composition) very helpful. A calculus that explains the outcomes of
+> interface composition formally is useful and I can imagine other
+> researchers would like to build on top of it. The calculus currently
+> lacks a dynamic semantics and soundness proof before it can be reused
+> elsewhere. Given a dynamic semantics, you could also prove that some
+> interface compositions are overly conservative.
+> 
+>           ===== Questions for Authors in Response Period =====
+> 
+> * Why supporting getter, wither, and setter methods and not different
+> or additional ones?
+> 
+> * Object interfaces can be readily implemented using a macro system.
+> How does the presented extension add to the sate of the art?
+> 
+> This Paper Ought to Have an Accompanying Artifact:
+>                                     2. Yes, but reviewing it would not
+>                                        make a difference to the decision
+> 
+> ===========================================================================
+>                          ECOOP 2016 Review #38D
+> ---------------------------------------------------------------------------
+>             Paper #38: Classless Java: Tuning Java Interfaces
+> ---------------------------------------------------------------------------
+> 
+>                      Overall merit: B. OK paper, but I will not champion
+>                                        it
+>                         Confidence: Z. I am not an expert; my evaluation
+>                                        is that of an informed outsider
+>                    Writing Quality: P. Well-written
+> 
+>                         ===== Paper Summary =====
+> 
+> The paper suggests a variant of Java without classes. The variant
+> takes advantage of Java 8 features, namely that methods in interfaces
+> can be static and can include an implementation. It takes another step
+> in extending interfaces to allow the instantiation of objects, thus,
+> in a way, making classes redundant.
+> 
+> This is achieved by introducing Object Interfaces, which allow various
+> programming idioms related to multiple-inheritance to be expressed
+> rather conveniently, in Java. The suggested variant is formalized. Its
+> translation to plain Java is defined, and some important properties of
+> it are stated and proved.
+> 
+> The work is further demonstrated and evaluated with three different
+> case study problems. The authors have implemented their ideas using an
+> existing tool for interpreting Java annotations, and have integrated
+> it with Eclipse.
+> 
+>                    ===== Points For and Against =====
+> 
+> + High quality writing, easy to read
+> 
+> + The problem and goals have been identified and studied before,
+> extensively, but the solution is elegant and seems well-thought out
+> 
+> + The work was implemented and evaluated with three different case
+> study programs
+> 
+> + Formal definitions are provided, proofs available in submitted
+> supplementary material
+> 
+> - The motivation relies more on intuition than on evidence; is it a
+> real challenge or an academic exercise?
+> 
+> - Evaluation done on “examples”, and not by application to any real,
+> large code base
+> 
+> - Mix of two contributions, “classless Java” and “language tuning”, is
+> confusing and weakens the submission
+> 
+>                       ===== Detailed Comments =====
+> 
+> The submission suggests a rather radical idea: the introduction of a
+> classless variant of Java. To support this, the authors take advantage
+> of Java language features that were introduced in Java 8, namely
+> static and default interface methods.
+> 
+> A single @obj annotation is defined, together with several name
+> conventions. The use of the annotation and the name conventions
+> results in the generation of plain Java code, not shown to the
+> engineer. Manually writing this boilerplate Java code would certainly
+> not be a good idea.
+> 
+> The running example in section 2 is very helpful to the reader. It
+> motivates the work and is small and simple enough to understand what
+> is going on. The limitations and disadvantages of existing plain Java
+> 8 code in the context of the submission are demonstrated nicely and
+> discussed in rather detail, including, e.g., a comparison between
+> alternatives.
+> 
+> The introduction and use of the concept of “language tuning” is
+> presented by the authors as an additional contribution. They define it
+> as a limited kind of language extension which comes with some
+> important guarantees (listed in section 5.3). I believe, though, that
+> mixing the two contributions the way they are mixed in the submission,
+> one very specific and thought out about instantiation of interfaces
+> etc. and one very general and still not well-defined at the level of a
+> classification of types of language extensions, is not best. The
+> concrete contribution of classless Java, with its nice properties
+> (including the guarantees in section 5.3), should better stand as the
+> main and only contribution of the paper. I would then suggest to
+> mention “language tuning” only in a late discussion or conclusion
+> section (and not in the title and abstract etc.), as a potential
+> generalization that can be investigated in future work.
+> 
+> The authors present three case studies. The first deals with the
+> expression problem. While a solution to this problem using plain Java
+> 8 is possible, the code that needs to be written is cumbersome. Thus
+> the use of the @obj annotation is helpful here. The second case study
+> focuses on fluent interfaces. The concrete example deals with a DSL
+> for database queries. The third example is the maze game, which
+> involves multiple inheritance and code reuse. The authors compare
+> their implementation using the @obj annotation to a plain Java 8
+> implementation presented in [4] in terms of the reduction in LOC and
+> number of classes and interfaces.
+> 
+> The authors report that they have implemented their ideas using an
+> existing tool for Java annotations, and integrated it with Eclipse.
+> Limitations of the prototype implementation are listed. In my view
+> these limitations do not affect the quality of the submission.
+> 
+> Related work seems to be comprehensively cited and discussed,
+> including alternative means to deal with multiple inheritance, mixins,
+> and traits.
+> 
+> “similar as ours” should be “similar to ours”? (page 17)
+> 
+> This Paper Ought to Have an Accompanying Artifact:
+>                                     2. Yes, but reviewing it would not
+>                                        make a difference to the decision
+> 
+> ===========================================================================
+>                          ECOOP 2016 Review #38E
+> ---------------------------------------------------------------------------
+>             Paper #38: Classless Java: Tuning Java Interfaces
+> ---------------------------------------------------------------------------
+> 
+>                      Overall merit: B. OK paper, but I will not champion
+>                                        it
+>                         Confidence: Z. I am not an expert; my evaluation
+>                                        is that of an informed outsider
+>                    Writing Quality: P. Well-written
+> 
+>                         ===== Paper Summary =====
+> 
+> The paper demonstrates how Java interfaces which support default methods since
+> Java 8, together with some annotations and compile-time code generation can be
+> used as an alternative to classes. They present a way to compose functionality
+> that supports multiple inheritance, state, type refinement etc. They formally
+> define the (limited amount of) code that they need to formally generate and
+> prove that it will always be type-safe in a calculus derived from Featherweight
+> Java. They discuss three small applications where their system brings benefits.
+> 
+>                    ===== Points For and Against =====
+> 
+> + Novel solution to define a new variant of traits with multiple inheritance +
+>  state in a surprisingly simple way.
+> 
+> + Formalisation is simple but useful.
+> 
+> + Solution seems ready to use by industry programmers in standard Java.
+> 
+> + Well written, good introduction, good motivation etc.
+> 
+> - Important missing piece: visibility qualifiers are not supported, all state is
+>  public. OO encapsulation goes out the window. The authors mention the problem
+>  and a possible solution which seems plausible but which they have
+>  unfortunately not implemented or discussed in more detail.
+> 
+> I liked this paper very much, but I find encapsulation to be the one aspect of
+> OO that one CANNOT do without, so I think you still need to do a little more
+> work on that side.
+> 
+>                       ===== Detailed Comments =====
+> 
+> * A comment about your notion of `language tuning`: I think this
+> concept is (exactly?) the same as the notion of "Languages as
+> Libraries" (see paper by Tobin-Hochstadt, St-Amour, Culpepper, Flatt
+> and Felleisen) which means using a compile-time meta-programming
+> feature (in their case Racket macro's) to provide language features
+> that are absent from the actual base language.
+> 
+> * Fig.5: should'nt T-Update enforce that x has a correct type too?
+> 
+> * Section 2: You show in this section that the Point2D state of an
+> Animal can be refined into the Point3D state of a Bird. This is
+> already interesting, but my impression is that this falsely suggests
+> that this is limited to refining state variables to subclasses. My
+> impression is that you can do more: replace the getter by a function
+> that calculates the value from other parts of the state and replace
+> the setter by a function that updates other parts of the state to
+> effect the requested modification. The latter seems significantly more
+> powerful and while I can't come up with a good example of the top of
+> my head, maybe you can? In any case, it seems worth mentioning.
+> 
+> * A big missing piece in your story is a treatment of visibility
+> modifiers and encapsulation. If I understand correctly, then there is
+> no way to have a getter and setter but not make it public? This seems
+> like a MAJOR problem, right?
+> 
+> * p.11: so T-Obj does not allow introducing new methods in an object
+> literal? While this makes sense because such methods wouldn't ever be
+> callable from outside the object, I think they could still be useful
+> to capture functionality that is common between implementations of
+> other methods? Not sure what Java does here...
+> 
+> * p.11: I don't like the name mbody since it returns the method
+> declaration, which may not even contain a method body. Why not mdecl?
+> 
+> * p.12: definition of override: the third case is not strictly needed, I guess?
+> 
+> * p.13: "we do not consider either C.m (...) or B.m (that is a subtype
+> of A, thus B.m hides A.m)." I guess that should say "... or A.m (it is
+> hidden by the definition of m in B, which is a subtype of A)"
+> 
+> * p.16: [description of project Lombok]: does it use compile-time or
+> run-time code generation?
+> 
+> * p.20: when talking about constructors in the context of multiple
+> inheritance, it might be worth mentioning that you have no notion of a
+> constructor for a sub-interface invoking the constructor for a
+> super-interface, which is considered useful/important in some systems,
+> especially when constructors can be custom-built.
+> 
+> * p.22: "[Java] provides ways to integrate [compile-time code
+> generation tools] in its own compilation process via annotation
+> processing": I thought the annotation processing stuff (the apt tool
+> and so on) was deprecated since JAVA 7?
+> 
+> * p.23: [@Private annotation...]: To be honest, I'm not sure why you
+> haven't done this yet. It seems like the obvious solution for a
+> crucial problem of your approach... Do you foresee any problems here?
+> 
+> * p.23: I would prefer that you mention the lack of qualifiers
+> earlier. I was bothered by this several times while reading the paper
+> until I noticed that you mentioned it at almost the very end. Why not
+> mention this earlier and mention that you will discuss this in Section
+> 9?
+> 
+> Typo's and small stuff
+> 
+> * p.10: "For simplicity the degenerate case of ..." -> not at all
+> clear what you mean here. Maybe just drop this note?
+> 
+> * p.11: "has type $I''.$."  -> one dot too many
+> 
+> * p.12: if you refer to the 5th case in an enumeration, then it's
+> better to number the cases than bullet them...
+> 
+> * p.13: "special names are ...": "of" should be considered special
+> too, right?
+> 
+> * p.13: "same signature of an ..." -> as an...
+> 
+> * p.22: "nonheritable" -> non-inheritable?
+> 
+> * p.22: "since it already provide" -> provides
+> * p.23: "that does not directly maps" -> map
+> 
+> This Paper Ought to Have an Accompanying Artifact:
+>                                     2. Yes, but reviewing it would not
+>                                        make a difference to the decision
+> 
+> 
+> ===========================================================================
+>         Response by Marco Servetto <marco.servetto@ecs.vuw.ac.nz>
+>             Paper #38: Classless Java: Tuning Java Interfaces
+> ---------------------------------------------------------------------------
+> Rev2:
+> 
+> "all your correct programs are at the same time correct standard Java
+> programs, only with a different semantics?"
+> 
+> Yes, this is the case. We only produce implementations for abstract
+> methods, thus our translation just enriches the provided semantics.
+> This allows most tools (including IDE's) to work unchanged with our
+> language feature. Moreover, in the Java environment, tools accepts
+> hints about features generated from compilation agents.
+> 
+> "the paper refers to Featherweight Java (only) when indicating how to
+> understand the calculus"
+> 
+> Our type system formalization is inspired by FJ, however the type
+> system behavior and the language semantics are the ones of Java 8.
+> Modelling the semantics of CJ would be overkill, CJ is just a proper
+> subset of Java 8. We formalize CJ type system to model/prove our three
+> properties: Self, client and heir coherence. Those properties are more
+> appropriate w.r.t. preservation of typability in a software ecosystem
+> model allowing inheritance, and separate compilation.
+> 
+> We wanted to prove what happens when modularly translating a single
+> class embedded in a larger CJ program. All our safety properties are
+> about typing, not semantics; that is why a semantic is not formalized.
+> We are sorry about our unclear connection between the formal and
+> informal part of our work, and our lack in connecting our work to
+> standard terminology in general translation/rewriting systems. We will
+> work to improve it.
+> 
+> "semantics of Classless Java (CJ) is defined by translation into CJ itself"
+> 
+> Many approaches model semantics by translation in the language itself.
+> Examples include various approaches to coercive subtyping, where
+> subtyping is eliminated by translating the uses of subtyping into
+> coercions in the *same* language. One example (among many others) is
+> the following work:
+> 
+> """Elaborating Intersection and Union Types, Dunfield, ICFP 2012""" (see figure 4).
+> 
+> Application of our translation to the whole program removes all the
+> @Obj annotations. So the final destination of our translation is a
+> subset of CJ, (CJ-@Obj). However our theorems are more general, and
+> hold step by step, when only a set of classes are already translated.
+> This originally motivated translation from CJ to itself.
+> 
+> * Rev2 Question:
+> 
+> The behavior of methods "with( T)" is defined by the existing
+> "with**(val)". If they preserve class invariants, so is "with(T)". A
+> List will not offer "withSize(int val)": that would break the class
+> invariant. The List programmer will not declare an abstract
+> "withSize(int val);" method.
+> 
+> Rev1:
+> 
+> "One advantage is backward compatibility. Existing programs
+> that do not use the new syntax continue to work as expected."
+> "a lot of code rewriting for existing projects"
+> 
+> Without the annotation the program has the normal Java8 semantics:
+> code without @Obj works as before and does not need any rewriting.
+> 
+> We think Rev1 is exaggerating the impact of heir coherence: Java
+> libraries always break heir coherence during evolution (is just enough
+> to add any method anywhere), and still claim backward compatibility
+> (false in theory but statistically true in practice). Refining return
+> types breaks heir coherence "less" than normal library evolution.
+> 
+> - Expression Problem not very convincing:
+> "every class still needs to be updated when a new operation is added"
+> 
+> Those are *new classes* (note the different names) providing the
+> implementation of the new operation; we do not touch the code of
+> existing classes. We do not violate any of Wadler's requirements of
+> the Expression Problem. The reviewer is invited to look at the paper
+> that has been accepted at Modularity 2016 (reference [26]) for more
+> details.
+> 
+> Reviewer 3:
+> 
+> - Why supporting getter, wither, and setter methods and not different
+> or additional ones?
+> 
+> Because those are the methods that we need to overcome the limitations
+> of interfaces with respect to classes. Classes allow for fields, but
+> interfaces do not. Thus if we want to use interfaces with state in
+> plain Java, overcoming the lack of support for fields leads to a lot
+> of code. Our getter, wither and setter methods overcome that
+> limitation.
+> 
+> Our proposal is orthogonal of the used implementation technique. We
+> use compilation agents as our implementation technique. We could
+> instead use (in a typed Java setting ) a macro system inspired on the
+> lisp one. A LispJava macro proven to respect at least self and client
+> coherence, and if possible heir coherence, would be a form of language
+> tuning. We need to report errors after translation, as for macro
+> expansion. BUT we know that all errors in [[CJ]] ARE actual java
+> errors in the CJ source as directly wrote by the programmer; except
+> for Heir coherence.
+> 
+> Rev5:
+> 
+> - Encapsulation: We agree that encapsulation is important, and it
+> should have been emphasized earlier. We haven't yet integrated
+> encapsulation into our approach, although we believe that the solution
+> that we propose in Future Work will work well. However, we should
+> point out that this problem will mostly be solved by Java9, which will
+> support private methods in interfaces.
+> 
+> ===========================================================================
+>                                  Comment
+>             Paper #38: Classless Java: Tuning Java Interfaces
+> ---------------------------------------------------------------------------
+> 
+> I have an additional comment regarding encapsulation: I'm interested
+> to hear that Java 9 will support private interface methods. From what
+> I understand, this has been implemented in the development version of
+> OpenJDK, so perhaps it is somewhat usable already? So, I would like to
+> suggest that perhaps you can add a section discussing how
+> encapsulation might be supported in Java 9, in terms of the current
+> unstable version implemented in Java 9. I would find this a
+> significant improvement of the paper.
