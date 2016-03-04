@@ -14,20 +14,20 @@
 \caption{The animal system (left: complete structure, right: code for simplified animal system).}\label{fig:pegasus}
 \end{figure*}
 
-This section illustrates how object interfaces, expressed using the \mixinAnn{} annotation, enable powerful
-idioms using multiple inheritance in Java.
-To propose a standard example for multiple inheritance, we show \Q@Animal@s with a two-dimensional \Q@Point2D@ representing their \Q@location@.
+This section illustrates how our programming style, supported by the \mixinAnn{} annotation, enable powerful
+idioms similar to multiple inheritance and field type refinement.
+We propose a standard example: \Q@Animal@s with a two-dimensional \Q@Point2D@ representing their \Q@location@.
 Some kinds of animals are \Q@Horse@s and \Q@Bird@s.
-Birds can \Q@fly@, thus their locations need to be three-dimensional \Q@Point3D@s.
+Birds can \Q@fly@, thus their locations need to be three-dimensional \Q@Point3D@s (field type refinement).
 Finally, we model \Q@Pegasus@ (one of the best-known creatures in Greek
 mythology) as a kind of \Q@Animal@ with the skills
-of both \Q@Horse@s and \Q@Bird@s. A simple class diagram illustrating
+of both \Q@Horse@s and \Q@Bird@s (multiple inheritance). A simple class diagram illustrating
 the basic system is given on the left side of Figure~\ref{fig:pegasus}.\footnote{Some research argues in favor of using subtyping for modeling taxonomies, other research argues against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
 
 \subsection{Simple Multiple Inheritance with Default
   Methods}\label{sec:simple}
 
-Before modeling the complete animal system, we  start with a
+Before modelling the complete animal system, we  start with a
 simplified version without locations. This version serves the purpose of illustrating how
 Java 8 default methods can already model simple forms of multiple inheritance.
 \texttt{Horse} and \texttt{Bird} are subtypes
@@ -41,7 +41,7 @@ of Figure~\ref{fig:pegasus}.
 Note that the implementations of the methods \texttt{run}
 and \texttt{fly} are defined inside interfaces, using default
 methods. Moreover, because interfaces support multiple interface
-inheritance, the interface for \texttt{Pegasus} can inherit behavior
+inheritance, the interface for \texttt{Pegasus} can inherit behaviour
 from both \texttt{Horse} and \texttt{Bird}. Although Java interfaces
 do not allow instance fields, no form of state is needed so far to
 model the animal system.
