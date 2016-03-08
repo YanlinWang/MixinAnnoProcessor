@@ -3,27 +3,32 @@
 
 Object oriented languages always strive to offer great code reuse,
 they aim to couple flexibility and rigour, expressive power and modular reasoning.
-Two main idea have emerged to this end: prototype based  and class based language.
-In prototype based language an objects inherits from other objects,
+Two main idea have emerged to this end: prototype based (PB) and class based (CB) languages.
+In prototype based languages an objects inherits from other objects,
 and thus objects own both behaviour and state (and objects is all you have).
 In class based languages an object is instance of a specific class, and classes inherits from other classes.
 Here objects own the state, while classes contains behaviour and the structure of the state.
 
 We present here a third alternative: the concept of
- \textbf{Interface based object oriented languages}, where 
+ \textbf{Interface based object oriented languages} (IB), where 
   objects implements interfaces, and they own implementation for the behaviour,
 that is structurally defined in their interface.
   
   State is just a special kind of behaviour, and is accessed by getter and setter methods.
   
-  The literature of traits provide good examples on how easy and modular can be combining
-  multiple sources of behaviour, and the literature over multiple inheritance show us how
-  hard it is to modularly combine multiple sources of \textbf{and} state.
+  The literature provide good examples on how easy and modular can be combining
+  multiple sources of pure behaviour (traits[]), and how
+  hard it is to modularly combine multiple sources of behaviour \textbf{and} state (multiple inheritance[]).
   However, our object are the only responsible to define 
   the ultimate behaviour or a method, and if such method is just a getter/setter.
 
-We could define our approach as a novel language, with new syntax and semantic, but this would have a
-steep learning curve; so for the sake of providing a more accessible explanation, we will encode our ideas
+Our idea could be explained by defining a novel language, with new syntax and semantic.
+However, this would have a
+steep learning curve; for the sake of providing a more accessible explanation, we will encode
+\footnote{
+In the same sense, you can encode prototype based programming over class based with
+the strategy pattern, and class based programming with prototypes by creating ``class'' objects.
+} our ideas
 over Java, relying on the new features of Java 8; namely
 interface \emph{static methods}, and \emph{default methods}, allowing interfaces to have
 method implementations. While the motivation for default methods was
@@ -88,11 +93,11 @@ language more complex.}
 %interface inheritance are in fact very expressive.
 
 We propose a programming style, where we never use classes\footnote{More precisely, we never use the \Q@class@ keyword.}.
-We call this restricted version of Java \emph{class-less java}.
+We call this restricted version of Java \emph{Class-less Java}.
 Our proposed style enables powerful object-oriented idioms, similar to 
 multiple inheritance.
 
-Since Java was not designed to be used in this way, our style can get pretty verbose, especially about
+Since Java was not designed to be used in this way, our style can be verbose, especially about
 object instantiation.
 We will annotate with \Q|@Obj| certain interfaces and rely on
 the Annotation processing to generate boring and repetitive code
