@@ -5,10 +5,6 @@ import java.io.Console;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import mumbler.simple.env.Environment;
-import mumbler.simple.node.Node;
-import mumbler.simple.node.MumblerListNode;
-
 public class SimpleMumblerMain {
     public static void main(String[] args) throws IOException {
         assert args.length < 2 : "SimpleMumbler only accepts 1 or 0 files";
@@ -19,7 +15,7 @@ public class SimpleMumblerMain {
         }
     }
 
-    private static void startREPL() throws IOException {
+    static void startREPL() throws IOException {
         Environment topEnv = Environment.getBaseEnvironment();
 
         Console console = System.console();
@@ -45,7 +41,7 @@ public class SimpleMumblerMain {
         }
     }
 
-    private static void runMumbler(String filename) throws IOException {
+    static void runMumbler(String filename) throws IOException {
         Environment topEnv = Environment.getBaseEnvironment();
 
         MumblerListNode<Node> nodes = Reader.read(new FileInputStream(filename));
