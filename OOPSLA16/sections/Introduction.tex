@@ -1,3 +1,189 @@
 \section{Introduction}\label{sec:intro}
 
-The text of the paper begins here.
+
+Object oriented languages always strive to offer great code reuse,
+they aim to couple flexibility and rigour, expressive power and modular reasoning.
+Two main idea have emerged to this end: prototype based  and class based language.
+In prototype based language an objects inherits from other objects,
+and thus objects own both behaviour and state (and objects is all you have).
+In class based languages an object is instance of a specific class, and classes inherits from other classes.
+Here objects own the state, while classes contains behaviour and the structure of the state.
+
+We present here a third alternative: the concept of
+ \textbf{Interface based object oriented languages}, where 
+  objects implements interfaces, and they own implementation for the behaviour,
+that is structurally defined in their interface.
+  
+  State is just a special kind of behaviour, and is accessed by getter and setter methods.
+  
+  The literature of traits provide good examples on how easy and modular can be combining
+  multiple sources of behaviour, and the literature over multiple inheritance show us how
+  hard it is to modularly combine multiple sources of \textbf{and} state.
+  However, our object are the only responsible to define 
+  the ultimate behaviour or a method, and if such method is just a getter/setter.
+
+We could define our approach as a novel language, with new syntax and semantic, but this would have a
+steep learning curve; so for the sake of providing a more accessible explanation, we will encode our ideas
+over Java, relying on the new features of Java 8; namely
+interface \emph{static methods}, and \emph{default methods}, allowing interfaces to have
+method implementations. While the motivation for default methods was
+to allow interfaces to be extended over time while preserving backwards
+compatibility (\emph{interface evolution}),
+ default methods can also emulate \emph{traits}~\cite{scharli03traits}.
+\footnote{The
+original notion of traits by Scharli et al. prescribes, among other
+things, that: 1) a trait provides a set of methods that implement
+behavior; and 2) a trait does not specify any state variables, so the
+methods provided by traits do not access state variables
+directly. Java 8 interfaces follow similar principles too. Indeed, a
+detailed description of how to emulate trait-oriented programming in
+Java 8 can be found in the work by Bono et al.~\cite{bono14}. The Java 8
+team designing default methods, was also fully aware of that secondary
+use of interfaces, but it was not their objective to model traits:
+``The key goal of adding default methods to Java was "interface
+evolution", not "poor man's traits"''~\cite{goetz13default}. As a result, 
+they were happy to support the secondary use of interfaces with
+default methods as long as it did not make the implementation and
+language more complex.}
+
+
+
+%Still, the design is quite conservative and appears to be quite limited
+% in its current form to model advanced forms of multiple inheritance.
+%Indeed, our own personal experience of combining default methods 
+%and multiple interface inheritance in Java to achieve multiple implementation 
+%inheritance is that many workarounds and boilerplate code are needed. 
+%In particular, we encountered difficulties because:
+
+%\begin{itemize}
+%
+%\item {\em Interfaces have no constructors.} As a result, classes are 
+%still required to create objects, leading to substantial boilerplate 
+%code for initialization.
+%
+%\item {\em Interfaces do not have state.} This creates a tension between 
+% using multiple inheritance and having state. Using setter and
+%  getter methods is a way out of this tension, but this workaround
+%  requires tedious boilerplate classes that later implement those
+%  methods.
+%
+%\item {\em Useful, general purpose methods require special care in
+%  the presence of subtyping.} Methods such as
+%  \emph{fluent} setters~\cite{fowler2005fluentinterface}, not only require access to the
+%  internal state of an object, but they also require their return types to be
+%  refined in subtypes.
+%
+%\end{itemize}
+
+%\noindent Clearly, a way around those difficulties would be to change
+%Java and just remove these limitations. Scala's own notion of
+%traits~\cite{scala-overview}, for example, allows state in traits. Of
+%course adding state (and other features) to interfaces would
+%complicate the language and require changes to the compiler, and this
+%would go beyond the goals of Java 8 development team.
+
+%This paper takes a different approach. Rather than trying to get
+%around the difficulties by changing the language in fundamental ways,
+%we show that, with a simple language feature, default methods and
+%interface inheritance are in fact very expressive.
+
+We propose a programming style, where we never use classes\footnote{More precisely, we never use the \Q@class@ keyword.}.
+We call this restricted version of Java \emph{class-less java}.
+Our proposed style enables powerful object-oriented idioms, similar to 
+multiple inheritance.
+
+Since Java was not designed to be used in this way, our style can get pretty verbose, especially about
+object instantiation.
+We will annotate with \Q|@Obj| certain interfaces and rely on
+the Annotation processing to generate boring and repetitive code
+allowing interface instantiation.
+We call such annotated interface \emph{object interfaces};
+they support \emph{abstract state operations}, providing a way
+to use multiple inheritance with state in Java. The abstract state
+operations include various common utility methods (such as getters and
+setters, or clone-like methods). In the presence of subtyping, such
+operations often require special care, as their types need to be
+refined. Object interfaces provide support for type-refinement and can
+automatically produce code that deals with type-refinement
+adequately. %With object interfaces, many Java programs can be built
+%without using a single class!
+
+
+%
+%Object interfaces do not require changes to the Java runtime or compiler, 
+%and they also do not introduce any new syntax. All three features of object interfaces are
+%achieved by reinterpreting existing Java syntax, and are translated
+%into regular Java code without loss of type-safety. Since no new
+%syntax is introduced, it would be incorrect to call object interfaces
+%a language extension or syntactic sugar. So we use the term
+%\emph{language tuning} instead. Language tuning sits in between a
+%lightweight language extension and a glorified library. Language
+%tuning can offer many features usually implemented by a real language
+%extension, but because it does not modify the language syntax
+%pre-existing tools can work transparently on the tuned language.  To
+%exploit the full benefits of language tuning,
+
+We formally define the behaviour of our \Q|Obj| annotation and we provide a
+prototype
+implementation using Java annotations to do AST
+rewriting, allowing existing Java tools (such as IDEs) to work
+out-of-the-box with our implementation. As a result, we could
+experiment object interfaces with several interesting Java programs,
+and conduct various case studies.
+
+%To formalize object interfaces, we propose Classless Java (CJ): a
+%FeatherweightJava-style~\cite{Igarashi01FJ} calculus, which captures the essence
+%of interfaces with default methods. The semantics of object interfaces
+%is given as a syntax-directed translation from CJ to itself. In the
+%resulting CJ code, all object interfaces are translated into regular CJ
+%(and Java) interfaces with default methods. The translation is proved
+%to be type-safe, ensuring that the translation does not
+%introduce type-errors in client code. 
+%CJ's usefulness goes beyond serving as a
+%calculus to formalize object interfaces. During the development
+%process of CJ, we encountered a bug in the implementation of default
+%methods for the Eclipse Compiler for Java (ECJ). For the program revealing the 
+%bug, ECJ behaves differently from both our formalization and Oracle's 
+%Java compiler.
+
+To evaluate the usefulness of object interfaces, we illustrate 3
+applications. The first application is a simple 
+solution to the Expression Problem~\cite{wadler98expression}, supporting independent 
+extensibility~\cite{zenger05independentlyextensible}, and without boilerplate code. The second
+application shows how embedded DSLs using fluent interfaces~\cite{fowler2005fluentinterface} 
+can be easily defined using object interfaces. The last
+application is a larger case study for a simple Maze game implemented with 
+multiple inheritance. For the last application we show that there is a
+significant reduction in the numbers of lines of code when compared 
+to an existing implementation~\cite{bono14} using plain Java 8. 
+Noteworthy, all applications are implemented 
+without defining a single class!
+
+In summary, the contributions of this paper are:
+\begin{itemize}
+
+\item {\bf Object Interfaces:} A simple feature that allows various
+  powerful multiple-inheritance programming idioms to be expressed
+  conveniently in Java. We provide examples, informal and formal description.
+
+\item{\bf Type preservation guarantees:}
+We discuss our formalization of a subset of Java8 type system and how we use this
+to characterize safety properties about our annotations.
+%\item {\bf Classless Java (CJ):} A simple formal calculus that models 
+%the essential features of Java 8 interfaces with default methods, and 
+%can be used to formally define the translation of object interfaces. 
+%We prove several properties of the translation\footnote{Proofs and prototype implementation are available in
+%  the supplementary materials.}.
+
+\item {\bf Implementation and Case Studies:} We have a prototype
+  implementation of object interfaces, using Java
+  annotations and AST rewriting. Moreover, the usefulness of object interfaces is
+  illustrated through various examples and case studies.
+
+
+%\item{\bf Language Tuning:} We identify the concept of language tuning 
+%and describe object interfaces as an example. We also discuss 
+%how other existing approaches, such as the annotations in project 
+%Lombok~\cite{lombok},  can be viewed as language tuning.
+
+\end{itemize}

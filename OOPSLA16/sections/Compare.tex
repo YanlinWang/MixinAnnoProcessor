@@ -1,0 +1,97 @@
+%\section{Comparing to traits and mixins}\label{sec:comparison}
+\subsection{Multiple Inheritance in ClassLess Java}
+\begin{comment}
+Haoyuan
+
+   - vs both: we do automatic return type refinement, which has useful applications
+   (example: Expression Problem)
+
+   - vs traits: we support of methods to create new objects (a replacement to constructors);
+   Moreover we have the with and clone methods (we miss more applications for those). Show
+   how to model the operations on traits; discuss operations that we cannot model
+   (example: renaming).
+
+   - vs mixins: we use the trait model of explicitly resolving conflicts. This is arguably
+   better for reasoning.
+\end{comment}
+
+Our approach is based on forbidding the use of certain language constructs (classes), in order to rely on the modular composition offered by the rest of the language (interfaces).
+Since Java was designed for classes, a direct class-less programming style is verbose and feel unnatural. However, annotation driven code generation is enough to overcome this difficulty, and
+the resulting programming style encourages modularity, composability and reusability, by keeping a strong object oriented feel.
+We consider our approach as an alternative to traits or mixins.
+
+A comparison on how to to emulate the original operations on traits using Java8 can be find in\cite{bono14}. We briefly recall the main points of their encoding; however we propose a different representation of
+ \textbf{exclusion}.
+The author of ~\cite{bono14} agree that our revised version is cleaner, typesafe and more direct.\bruno{is this something to 
+say in the paper?}
+
+%%\newcommand\shortItem{\vspace{-1ex}}
+\begin{itemize}
+\begin{comment}%I shoreten up a lot after. I think this version is better but longer, and this content is just repeating bono at all.
+\item \textbf{Symmetric sum}: the symmetric composition of two disjoint traits is achieved by simply implementing two interfaces in Java correspondingly, without overriding any method. The composition relies on multiple inheritance on interfaces, which is supported by Java. Below is a simple example.
+    \begin{lstlisting}
+    interface A { int x(); }
+    interface B { int y(); }
+    interface C extends A, B {}
+    \end{lstlisting}
+\item \textbf{Override}: the overriding operation (also known as asymmetric/preferential sum) is modelled by implementing many interfaces, while overriding some methods inside. The code below gives an example of explicitly specifying which super interface take precedence, regarding conflict on a specific method.
+    \begin{lstlisting}
+    interface A { default int m() {return 1;} }
+    interface B { default int m() {return 2;} }
+    interface C extends A, B { default int m() {return B.super.m();} }
+    \end{lstlisting}
+    Here the method \texttt{m()} in interface \texttt{C} simply inherits from \texttt{B.m()}.
+\item \textbf{Alias}: an alias operation adds a new name to an old method when creating the new trait. In Java, we just create a new method with reference to the existing method in its super interface. See the example below, where the new method \texttt{k()} is an alias of the existing method \texttt{m()}.
+    \begin{lstlisting}
+    interface A { default int m() {return 1;} }
+    interface B extends A { default int k() {return A.super.m();} }
+    \end{lstlisting}
+\end{comment}
+
+\item \textbf{Symmetric sum} can be obtained by simple multiple inheritance between interfaces.
+\shortItem
+    \begin{lstlisting}
+    interface A { int x(); }    interface B { int y(); }    interface C extends A, B {}
+    \end{lstlisting}
+\shortItem
+\item \textbf{Overriding} a conflict is obtained by specifying which super interface take precedence.
+\shortItem
+    \begin{lstlisting}
+    interface A { default int m() {return 1;} } 
+    interface B { default int m() {return 2;} }
+    interface C extends A, B { default int m() {return B.super.m();} }
+    \end{lstlisting}
+\shortItem
+\item \textbf{Alias} is creating  a new method delegating to the existing super interface.
+\shortItem
+    \begin{lstlisting}
+    interface A { default int m() {return 1;} }
+    interface B extends A { default int k() {return A.super.m();} }
+    \end{lstlisting}
+\shortItem
+
+\item \textbf{Exclusion}: exclusion is also supported in Java, where method declarations can hide the default methods correspondingly in the super interfaces.
+\shortItem
+    \begin{lstlisting}
+    interface A { default int m() {return 1;} }
+    interface B extends A { int m(); }
+    \end{lstlisting}
+\shortItem
+\end{itemize}
+
+Besides, we support more features than the original trait model:
+\begin{itemize}
+\item We provide \texttt{of} methods for the annotated interfaces. During annotation processing time, the ``fields'' inside an interface are observed and a static method \texttt{of} is automatically injected to the interface with its arguments correspondingly. Such a method is a replacement to the constructors in original traits, making instantiation more convenient to use.
+That is, in our approach there are only interfaces, our model requires a single concept, while the trait model requires traits \emph{and} classes.
+
+\item We provide \texttt{with-} methods as auxiliary constructors. A \texttt{with-} method is generated for each field, just like record update, returning the new object with that field updated
+%. A \texttt{clone} method is generated for the interface, returning a copy of the current object.
+Furthermore, we do automatic return type refinement for these kind of methods. This feature is comparatively useful in big examples, making operations and behaviours more flexible.%, which we will demonstrate later.
+\item We provide two options for generating setters. There are two kind of setters which are commonly used, namely \textit{void setters} and \textit{fluent setters}. The only difference is that a fluent setter returns the object itself after setting, thus supporting a pipeline of such operations. The generation depends on which type of setter is declared in the interface by users.
+\end{itemize}
+
+These are the additional features supported by our model, conversely, there are certain operations we cannot model, such as method renaming (as in [Reppy2006]), which breaks structural subtyping.
+
+There are other limitations of our current approach, but they may be addressed
+in future work (see Section~\ref{sec:futurework}).
+

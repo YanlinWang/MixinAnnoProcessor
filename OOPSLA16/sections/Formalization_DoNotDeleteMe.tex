@@ -1,0 +1,32 @@
+\section{Formal Semantics}\label{sec:formalization}
+
+\begin{figure*}[t]
+\[\begin{array}{llll}
+T & ::= & I_1.\cdots.I_n                                                                                                         & \hspace{1in} \textrm{path} \\
+e & ::= & x \Or e.m(\overline{e}) \Or T.m(\overline{e}) \Or T.\mathbf{super}.m(\overline{e}) \Or x = e;e' \Or obj         & \hspace{1in} \textrm{expressions} \\
+obj & ::= & \mathbf{new}\ T()\ \{\overline{field}\ mh_1\{\mathbf{return}\ e_1;\}\cdots mh_n\{\mathbf{return}\ e_n;\}\}& \hspace{1in} \textrm{object creation} \\
+field & ::= & T\ f=x;                                                                                              & \hspace{1in}  \textrm{field declaration} \\
+\mathbb{I} & ::= & ann\ \mathbf{interface}\ I\ \mathbf{extends}\ \overline{T}\ \{\overline{meth}\ \overline{\mathbb{I}}\}& \hspace{1in} \textrm{interface declaration} \\
+meth & ::= & \mathbf{static}\ mh\{\mathbf{return}\ e;\} \Or \mathbf{default}\ mh\{\mathbf{return}\ e;\} \Or mh; & \hspace{1in} \textrm{method declaration} \\
+mh & ::= & T_0\ m(T_1\ x_1\cdots T_n\ x_n)  & \hspace{1in} \textrm{method header} \\
+ann & ::= & \mathbf{@Family} \Or \emptyset & \hspace{1in} \textrm{annotations} \\
+\Gamma & ::= & x_1:T_1\cdots x_n:T_n & \hspace{1in} \textrm{environment}
+\end{array}\]
+\caption{Grammar.}
+\end{figure*}
+
+\begin{figure*}[t]
+\[\begin{array}{lll}
+Exact(T_1.I,\ T_2) & = & Exact2(I,\ Exact(T_1,\ T_2)) \\
+Exact(I,\ I_1.\cdots.I_n) & = & Exact2(I,\ I_1.\cdots.I_i) \\
+& & \ \ \ \ \textrm{for the smallest }i\in[0,n],\forall j\in(i,n],Exact2(I,\ I_1.\cdots.I_j) = \emptyset \\
+Exact2(I,\ \emptyset) & = & I \\
+& & \ \ \ \ \textrm{if } CT(I) = ann\ \mathbf{interface}\ I\ \mathbf{extends}\ \overline{T}\ \{\overline{meth}\ \overline{\mathbb{I}}\}\\
+Exact2(I,\ T_0.I_0) & = & T_0.I_0.I \\
+& & \ \ \ \ \textrm{if } \mathbb{I}\in\overline{\mathbb{I}} \textrm{ and } name(\mathbb{I})=I \\
+& & Exact2(I,\ Exact(T,\ T_0)) \\
+& & \ \ \ \ \textrm{if } T\in\overline{T} \textrm{ and }\forall T'\in\overline{T}, Exact(I,\ Exact(T',\ T_0))\in\{\ Exact(I,\ Exact(T,\ T_0)),\ \emptyset\ \} \\
+& & \textrm{where } CT(T_0.I_0) = ann\ \mathbf{interface}\ I_0\ \mathbf{extends}\ \overline{T}\ \{\overline{meth}\ \overline{\mathbb{I}}\}
+\end{array}\]
+\caption{Typing rules.}
+\end{figure*}

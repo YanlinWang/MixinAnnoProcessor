@@ -1,0 +1,379 @@
+\section{Related Work}\label{sec:related}
+In this section we discuss related work and how it compares to Classless Java.
+
+%\yanlin{need to discuss: whether the comments for FTJ is fair.}
+
+%No, was not fair, I know that work, it does modular type checking, and
+%more work after that they extend with more safe/modular typing things.
+%also, Java8 IS a language extension on Java
+%However, language extensions (including FTJ)
+%have a natural drawback: the programmer has to learn new syntax. In contrast,
+%our approach is completely compatible with the current Java language, so that
+%programmers don't need to pay any learning cost to adapt to this new classless
+%programming pattern. Another drawback which is particular for FTJ is that FTJ
+%doesn't have type for traits, hence the correctness check of trait is done when
+%type-checking classes. This choice makes the design of FTJ simpler but lost
+%typechecking efficiency (one trait will be potentially checked multiple times if
+%it is used in multiple classes).
+
+\paragraph{Multiple Inheritance in Object Oriented Languages}
+Many authors have argued in favor or against multiple inheritance.  Multiple
+inheritance is very expressive, but difficult to model and implement, and can
+cause difficulty (including the famous diamond (fork-join)
+problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning about
+programs. To conciliate the need for expressive power and simplicity, many
+models have been proposed, including C++ virtual inheritance,
+mixins~\cite{bracha90mixin}, traits~\cite{scharli03traits}, and hybrid models
+such as CZ~\cite{malayeri2009cz}.  They provide novel programming architecture
+models in the OO paradigm. In terms of restrictions set on these models, C++
+virtual inheritance aims at a relative general model; the mixin model adds some
+restrictions; and the trait model is the most restricted one (excluding
+state, instantiation, etc).
+
+%\paragraph{C++ Approach.}
+C++ tries to provide a general solution to multiple inheritance by
+virtual inheritance, dealing with the diamond problem by keeping only
+one copy of the base class~\cite{ellis1990annotated}. However C++
+suffers from the object initialization problem~\cite{malayeri2009cz}.
+It bypasses all constructor calls to virtual superclasses, which can
+potentially cause serious semantic errors. In our approach, the \mixin
+annotation has full control over object initialization,
+and the mechanism is transparent to users. Moreover, customized factory
+methods are also allowed: if users are not satisfied with the default
+generated \texttt{of} method, they can implement their own.
+
+%\paragraph{Mixins.}
+Mixins are a more restricted model than the C++ approach. Mixins allow to name
+components that can be applied to various classes as reusable functionality
+units. However, % they suffer from linearization: the order of mixin application
+% is relevant in often subtle and undesired ways. This hinders their usability
+% and the ability of resolving conflicts:
+the linearization (total ordering) of
+mixin inheritance cannot provide a satisfactory resolution in some cases and
+restricts the flexibility of mixin composition. To fight this limitation, an
+algebra of mixin operators is introduced~\cite{ancona2002calculus}, but this
+raises the complexity, especially when constructors and fields
+are considered~\cite{marco09FJigsaw}. Scala traits are in fact more like linearized mixins.
+Scala avoids the object initialization
+problem by disallowing constructor parameters, causing no ambiguity in cases
+such as diamond problem. However this approach has limited expressiveness, and
+suffers from all the problems of linearized mixin composition. % Other languages, such as
+% Python, also use linearized mixins.
+\begin{comment}
+Python also offers multiple inheritance via linearized mixins. Indeed, in python any class is implicitly a mixin, and mixin composition informally expressed as\\*
+\Q@ class A use B,C {...new methods...}@\\*
+can be expressed in python as \\*
+\Q@ class Aux: ...new methods...@\\*
+\Q@ class A(B,C,Aux): pass@
+\end{comment}
+\noindent Java interfaces and default methods do not use
+linearization: the semantics of Java \textbf{extends} clause in
+interfaces is unordered and symmetric.
+
+% However, in pure Java, there is no mechanism for creating objects in
+% interfaces. Also, our approach supports proper constructor mechanism.
+
+%\paragraph{CZ.}
+Malayeri and Aldrich proposed a model CZ~\cite{malayeri2009cz} which
+aims to do multiple inheritance without the diamond problem. They
+divide inheritance into two separate concepts: inheritance dependency
+and implementation inheritance. Using a combination of
+\texttt{requires} and \texttt{extends}, a program with diamond
+inheritance can be transformed to one without diamonds. Moreover,
+fields and multiple inheritance can coexist. However untangling
+inheritance also untangles the class structure. In CZ, not only the
+number of classes, but also the class hierarchy complexity
+increases. \mixin does not complicate the class structure, and state
+can also coexist with multiple inheritance.
+
+%\paragraph{Traits and Java's default methods}
+Simplifying the mixins approach, traits~\cite{scharli03traits} draw a strong
+line between units of reuse and object factories. Traits, as units of reusable
+code, contain only methods as reusable functionality, ignoring state and state
+initialization. Classes, as object factories, require functionality from
+(multiple) traits. Java 8 interfaces are closely related to
+traits: concrete method implementations are allowed (via the \textbf{default}
+keyword) inside interfaces. The introduction of default methods opens the gate
+for various flavors of multiple inheritance in Java. Traits offer an algebra
+of composition operations like sum, alias and exclusion, providing explicit conflict
+resolution. Former work~\cite{bono14} provides details on mimicking the trait
+algebra through Java 8 interfaces.  We briefly recall the main points of their
+encoding; however we propose a different representation of \textbf{exclusion}.
+The first author of~\cite{bono14} agreed (via personal communication) that
+our revised version for exclusion is cleaner, typesafe and more direct.
+\newcommand\shortItem{\vspace{-1ex}}
+\begin{itemize}
+\item \textbf{Symmetric sum} can be obtained by simple multiple inheritance between interfaces.
+    \begin{lstlisting}
+    interface A { int x(); }    interface B { int y(); }    interface C extends A, B {}
+    \end{lstlisting}
+\shortItem
+\item \textbf{Overriding} a conflict is obtained by specifying which super interface take precedence.
+    \begin{lstlisting}
+    interface A { default int m() {return 1;} }
+    interface B { default int m() {return 2;} }
+    interface C extends A, B { default int m() {return B.super.m();} }
+    \end{lstlisting}
+\shortItem
+\item \textbf{Alias} is creating  a new method delegating to the existing super interface.
+    \begin{lstlisting}
+    interface A { default int m() {return 1;} }
+    interface B extends A { default int k() {return A.super.m();} }
+    \end{lstlisting}
+\shortItem
+
+\item \textbf{Exclusion}: exclusion is also supported in Java, where method declarations can hide the default methods correspondingly in the super interfaces.
+    \begin{lstlisting}
+    interface A { default int m() {return 1;} }
+    interface B extends A { int m(); }
+    \end{lstlisting}
+\shortItem
+\end{itemize}
+
+There are also proposals for extending Java with traits. For
+example, FeatherTrait Java (FTJ)~\cite{Liquori08ftj} extends
+FJ~\cite{Igarashi01FJ} with statically-typed traits, adding trait-based
+inheritance in Java.  Except for few, mostly syntactic details, their work can
+be emulated with Java 8 interfaces. There are also extensions to the original
+trait model, with operations (e.g. renaming~\cite{reppy2006foundation}, which breaks
+structural subtyping) that default methods and interfaces cannot
+model.
+
+\emph{Traits vs Object Interfaces.}
+We consider object interfaces to be an alternative to traits or mixins.  In the
+trait model two concepts (traits and classes) coexist and cooperate. Some
+authors~\cite{BettiniDSS13} see this as good language design fostering good
+software development by helping programmers to think about the structure of
+their programs.  However, other authors see the need of two concepts and the
+absence of state as drawbacks of this model~\cite{malayeri2009cz}.  Object
+interfaces are units of reuse, and at the same time they provide factory methods
+for instantiation and support state.  Our approach promotes the use of
+interfaces instead of classes, in order to rely on the modular composition
+offered by interfaces. Since Java was designed for classes, a direct classless
+programming style is verbose and unnatural. However, annotation-driven code
+generation is enough to overcome this difficulty, and the resulting programming
+style encourages modularity, composability and reusability, by keeping a strong
+OO feel. In that sense, we promote object interfaces as being both units of
+reusable code and object factories. Our practical experience is that, in Java,
+separating the two notions leads to a lot of boilerplate code, and is quite
+limiting when multiple inheritance with state is required.  Abstract state
+operations avoid the key difficulties associated with multiple inheritance and
+state, while still being quite expressive.  Moreover the ability to support
+constructors adds expressivity, which is not available in approaches
+such as Scala's traits/mixins.
+
+%Nevertheless, we
+%believe that in other languages the separation can be more practical
+%than in Java, and we do not necessarily advocate that merging the two
+%notions is a better approach in general.
+
+%There are other limitations of our current approach, but they may be addressed
+%in future work (see Section~\ref{sec:futurework}).
+
+
+\begin{comment}
+Besides, we support more features than the original trait model:
+\begin{itemize}
+\item We provide \texttt{of} methods for the annotated interfaces. During annotation processing time, the ``fields'' inside an interface are observed and a static method \texttt{of} is automatically injected to the interface with its arguments correspondingly. Such a method is a replacement to the constructors in original traits, making instantiation more convenient to use.
+That is, in our approach there are only interfaces, our model requires a single concept, while the trait model requires traits \emph{and} classes.
+
+\item We provide \texttt{with-} methods as auxiliary constructors. A \texttt{with-} method is generated for each field, just like record update, returning the new object with that field updated
+%. A \texttt{clone} method is generated for the interface, returning a copy of the current object.
+Furthermore, we do automatic return type refinement for this kind of methods. This feature is comparatively useful in big examples, making operations and behaviors more flexible.%, which we will demonstrate later.
+\item We provide two options for generating setters. There are two kinds of setters which are commonly used, namely \textit{void setters} and \textit{fluent setters}. The only difference is that a fluent setter returns the object itself after setting, thus supporting a pipeline of such operations. The generation depends on which type of setter is declared in the interface by users.
+\end{itemize}
+\end{comment}
+
+
+
+% \begin{enumerate}
+% \item Mixins allows to name components that can be applied to various classes as
+%   reusable functionality units. However, they suffer from linearization: the
+%   order of mixin application is relevant in often subtitle and undesired
+%   ways. constraints. This hinders their usability and their ability of resolving
+%   conflicts: the linearization (total ordering) of mixin inheritance cannot
+%   provide a satisfactory resolution in all cases and restricts the flexibility
+%   of mixin composition.  To fight those limitations, an algebra of mixin
+%   operators is introduced~\cite{ancona2002calculus}, but this raised the
+%   complexity of the approach, especially when constructors and fields are
+%   considered~\cite{marco09FJigsaw}.  Our approach does not have the
+%   linearization problem, in that the semantics of Java \textbf{extends} clause
+%   is unordered and symmetric.
+% \item Simplifying the mixin algebras approach, traits draw a strong line between
+%   units of reuse (traits) and object factories (classes) In this model,
+%   traits~\cite{scharli03traits} units of reusable code, containing only methods
+%   as reusable functionalities. Thus, no state/state initialization is
+%   considered.
+
+%   Classes act as object factories, requiring functionalities from multiple
+%   traits.  Traits offers a trait algebra with operations like sum, alias and
+%   exclusion, provided for explicit conflict resolution.
+
+%   Concluding, (pure) traits do not allow state and they do not offers any reuse
+%   instrument to ensure that state is coherently initialized when finally defined
+%   in classes.  Traits can't be instantiated. This model requires two concepts
+%   (traits and classes) to coexist and cooperate.
+
+%   Some authors see this as good language design fostering good software
+%   development by helping programmers to think about the structure of their
+%   programs.  However, other authors see the need of two concepts and the absence
+%   of state as drawbacks of this model. Our approach takes interfaces as units of
+%   reuse, and meanwhile generates factory method for instantiation.
+
+% \item C++ and Scala also try to provide solutions to multiple inheritance, but
+%   both suffer from object initialization problems. Virtual inheritance in C++
+%   provides another solution to multiple inheritance (especially the diamond
+%   problem by keeping only one copy of the base class)~\cite{ellis1990annotated},
+%   however suffers from object initialization problem as pointed out by Malayeri
+%   et al.~\cite{malayeri2009cz}. It bypasses all constructor calls to virtual
+%   superclasses, which would potentially cause serious semantic error. Scala
+%   solution (very similar to linearised mixins, but misleadingly called traits in
+%   the language) avoids this problem by disallowing constructor parameters,
+%   causing no ambiguity in cases such as diamond problem.  This approach has
+%   limited expressiveness, and suffers from all the problems of linearised mixin
+%   composition.
+%   Python also offers multiple inheritance via linearised mixins. Indeed in python any class is implicitly a mixin, and mixin composition informally expressed as\\*
+%   \Q@ class A use B,C {...new methods...}@\\*
+%   can be expressed in python as \\*
+%   \Q@ class Aux: ...new methods...@\\*
+%   \Q@ class A(B,C,Aux): pass@
+%   Our approach not only does not involve linearised mixin problem, but also
+%   support proper constructor mechanism.
+% \end{enumerate}
+
+% \input{sections/Compare.tex}
+
+\paragraph{ThisType and MyType}
+%\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namely it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolishes most advantages of interfaces.}
+In certain situations, object interfaces allow automatic refinement for \emph{return
+types}. This is part of a bigger topic in class-based languages: expressing and
+preserving type recursion and (nominal/structural) subtyping at the same time.
+
+One famous attempt in this direction is provided by
+\emph{MyType}~\cite{bruce1994paradigmatic}, representing the type of
+\textbf{this}, changing its meaning along with inheritance. However when
+invoking a method with MyType in a parameter position, the exact type of the
+receiver must be known.  This is a big limitation in class based object oriented
+programming, and is exasperated by the interface-based programming we propose: no
+type is ever going to be exact since classes are not explicitly used. A recent
+article~\cite{Saito2013933} lights up this topic, proposing two
+new features: exact statements and nonheritable methods. Both are
+related to our work: 1) any method generated inside of the \Q@of@ method is indeed
+non-inheritable since there is no class name to extend from; 2) exact
+statements (a form of wild-card capture on the exact run-time type) could
+capture the ``exact type'' of an object even in a class-less
+environment.
+Admittedly, MyType greatly enhances the expressiveness and extensibility of
+object-oriented programming languages. Object interfaces use covariant-return types to
+simulate some uses of MyType. But our approach only works for refining
+return types, whereas MyType is more general, as it also works for
+parameter types. Nevertheless, as illustrated with our examples and
+case studies, object interfaces are still very useful in many
+practical applications.
+% The addition of MyType to a language will allow easy definition of
+%binary methods, methods with recursive types (i.e., the same type of the
+%receiver appears in the argument or return positions of methods), etc.
+
+
+\begin{comment}
+\subsection{Type-Directed Translations/Syntactic Sugar}
+\marco{I'm tring to merge this and the next one}
+Language extensions are often implemented as syntactic sugar of the base
+language. For example, Scala compiler supports XML syntax in normal Scala code
+directly (after Scala ?, users need to import \texttt{scala-xml} library
+manually). However, this approach is hard in terms of implementation, because it
+requires extending the compiler. Also, this approach does not support combining
+multiple extensions into one.
+
+SugarJ~\cite{erdweg11sugarj} is a Java-based extensible programming language
+that allows programmers to extend the base language with custom language
+features by definitions in meta-DSLs (SDF, Stratego, etc).
+\yanlin{Is new syntax really a ``drawback''? I think for some system, like
+  SugarJ, one of purpose IS to introduce these new syntax.}  Drawbacks: new
+syntax. To create the extension, programmers have to work with multiple
+languages (SDF, stratego, etc) while our approach works totally in Java
+environment.
+
+We can model certain types of language extensions with annotations
+only, but those extensions do not introduce new syntax: they
+merely do automatic code generation.
+\end{comment}
+
+\paragraph{Meta-Programming Competes with Language Extensions}
+The most obvious solution to adding features to a language is via syntactic
+extensions. Syntactic extensions are often implemented as
+desugarings to the base language. For example,
+the Scala compiler was extended to directly support XML syntax.
+However, when syntactic extensions are independently created it is hard
+to combine multiple extensions into one.
+SugarJ~\cite{erdweg11sugarj} is a Java-based extensible language that
+aims at making the creation and composition of syntactic sugar
+extensions easy, by allowing programmers to extend Java with custom
+features (typically for DSLs). However SugarJ's goals are different
+from language tuning: SugarJ aims at creating and composing new syntax;
+whereas language tuning merely reinterprets existing syntax. It is
+clear that reinterpreting existing syntax only can be limiting
+for some applications. However, when language tuning is possible
+it has the advantage that existing tools for the language work
+out-of-the-box (since the syntax is still the same); and composition
+of independently developed tunings is straightforward.
+
+Scala-Virtualized~\cite{Rompf2012scalavirtualized} is an extension to Scala,
+which allows blending shallow and deep embedding of DSLs. It redefines
+some of Scala's language constructs to method calls,
+which can be overridden by DSL implementer. Thus Scala-Virtualized
+can also reinterpret syntax, and be seen as a form of language tuning.
+However, although many Scala's language constructs are supported,
+not all language constructs can be virtualized.
+
+%These extensions are admittedly useful, however they are essentially
+%creating a fork of the language, and rarely the new fork gains enough
+%traction to become the main language release. % On this
+% topic we mention
+
+
+When the base language has a flexible enough syntax and a fast and
+powerful enough reflection mechanism, we may just need to play with
+operator overloading and other language tricks to discover that the
+language feature we need can be expressed as a simple library in our
+language. An example of this is SQLAlchemy~\cite{bayer2012sqlalchemy} in
+Python, which uses operator overloading to dynamically turn normal python expressions into database queries
+without requiring any syntactic extensions to Python.
+Java-like languages tend to sit in the middle of two extremes:
+libraries can not influence the type system, so many solutions valid
+in Python or other dynamic languages are not applicable, or have the
+cost of losing type-safety.
+
+In Java-like languages compile time code generation comes at the rescue: if, for a certain feature
+(\mixin in our case), it is possible to use the original language syntax to
+\emph{express/describe} any specific instantiation of such feature (annotating a
+class and providing getters), then we can insert in the compilation process a tool
+that examines and enriches the code before compilation. No need to modify the
+original source (for example we can work on temporary files).
+Java is a particular
+good candidate for this kind of manipulation since it already provide ways to
+define and integrate such tools in its own compilation process via annotation
+processing. In this way
+there is no need of temporary files, and there is a well-defined way of putting
+multiple extensions together.
+
+Other languages offer even stronger support for safe code manipulation:
+Template Haskell~\cite{sheard2002template}, F\# (type providers)~\footnote{http://research.microsoft.com/fsharp/} and MetaFjig (Active Libraries)~\cite{servetto2010metafjig}
+all allow to execute code at compile time. They generate code that is
+transparently integrated in the program that is being
+generated/processed/compiled. In particular, MetaFjig offers a property called
+\emph{meta-level-soundness}, ensuring by construction that library code (even if wrong or unreasonable) never generates ill-typed code. This is roughly equivalent to
+\textit{Self coherence}, that we have to manually prove.
+Since MetaFjig is not working on annotated classes, there is not a ``semantic with/without annotations''. Our \mixin tuning theorem does not make sense in such context.
+
+\paragraph{Formalization of Java 8}
+We provide a simple formalization for a subset of Java including
+default/static interface methods and object initialization literals
+(often called anonymous local inner classes).  A similar formalization
+was drafted by Goetz and Field~\cite{goetz12fdefenders} to formalize
+defender (default) methods in Java. In their formalization, classes
+and interfaces can have only one method \Q@m()@ without arguments, so
+as to simplify method overloading and renaming. Classless Java is more
+general, as it supports multiple methods with arguments, it supports
+static methods, and features such as multiple inheritance of
+interfaces and reabstraction of default methods are also modeled.

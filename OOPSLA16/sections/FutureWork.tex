@@ -1,0 +1,158 @@
+\section{Future work}\label{sec:futurework}
+In this section we discuss potential future work.
+\begin{comment}
+\subsection{Encapsulation}
+The biggest limitation of our approach is the inability to model visibility restrictions. For example, the absence
+of support for private/protected methods in Java 8 interfaces forces all
+members of interfaces to be public, including static methods. Since we use
+abstract methods to encode state, our state is always all public. Still, because 
+the state can only be accessed by methods, it 
+is impossible for the user to know if a certain method maps directly to a field
+or if it has a default implementation.  If the user wants a constructor that
+does not directly maps to the fields, (as for secondary constructors in Scala)
+he can simply define its own \Q@of@ method and delegate on the generated one:
+\begin{lstlisting}
+@Obj interface Point {  int x(); int y();
+    static Point of(int val){return Point.of(val,val);} }
+\end{lstlisting}
+However, the generated \Q@of@ method would also be present and public.  If a
+future version of Java was to support \emph{static private methods in
+  interfaces} we could extend our code generation to handle also encapsulation.
+  
+However, interfaces as a whole can have public or 
+package private (java default) visibility.
+
+We can add a second annotation \Q!@Exposed!  that leverages on this edge: An
+interface without exposed works as usual, but if any method of a public \mixin
+interface is annotated with \Q!@Exposed!, we can apply a translation where a new
+(package private) interface type is introduced, and the original interface become
+just a facade.  For example:
+\begin{lstlisting}
+@Obj public interface Person{
+  void name(String val);
+  @Exposed default void rename(String newName){ if(/*valid name*/){ this.name(val);}}
+  @Exposed String name();
+  @Exposed static Person from(String val){ if(/*valid name*/){return Person.of(val);}
+    throw /*invalid name*/}  }
+\end{lstlisting}
+becomes
+\begin{lstlisting}
+public interface Person{
+  void rename(String newName)
+  String name();
+  static Person from(String val){ return Person$.from(val);} }
+  
+@Obj interface Person$ extends Person{//will be further expanded by @Obj
+  void name(String val);
+  default void rename(String newName){ if(/*valid name*/){ this.name(val);}}
+  String name();
+  static Person from(String val){ if(/*valid name*/){return Person$.of(val);}
+    throw /*invalid name*/}  }
+\end{lstlisting}
+
+This is not a perfect solution, since
+\Q@Person$@ can still be seen inside the \Q@Person@ package and heirs of
+\Q@Person$@,
+however it is surprising we achieve such of a good result without any language
+support for privacy in interfaces.
+\end{comment}
+
+%\subsection{Qualifiers in Methods} %{Private state
+\paragraph{Qualifiers in Methods} %{Private state
+The biggest limitation of our approach is the inability to model qualifiers
+for class methods (private, protected, synchronized, etc.). For example, the absence
+of support for private/protected methods in Java 8 interfaces forces all
+members of interfaces to be public, including static methods. Since we use
+abstract methods to encode state, our state is always all public. Still, because 
+the state can only be accessed by methods, it 
+is impossible for the user to know if a certain method maps directly to a field
+or if it has a default implementation.  If the user wants a constructor that
+does not directly maps to the fields, (as for secondary constructors in Scala)
+he can simply define its own \Q@of@ method and delegate on the generated one:
+\begin{lstlisting}
+@Obj interface Point {  int x(); int y();
+    static Point of(int val){return Point.of(val,val);} }
+\end{lstlisting}
+However, the generated \Q@of@ method would also be present and public.  If a
+future version of Java was to support \emph{static private methods in
+  interfaces} we could extend our code generation to handle also encapsulation.
+Currently, it is possible to use a public nested class with private static
+methods inside, but this is ugly and cumbersome. One possibility is that the
+annotation processor takes methods with a \Q!@Private! annotation, and turns it into
+static private methods of a nested class. In this extension, also the \Q@of@
+method could be made private following the same pattern.
+
+% \yanlin{future work on state initialization removed for now. Because I think the
+%   other two future works are fine. But this one is still not clear and
+%   controversial. The proposed workaround forces users to make decision: if he
+%   wants state with initialization then he also has to define the setter. Or
+%   else, it is ambiguous: could be interpreted as a state initializer or just
+%   a normal default method.}
+\begin{comment}
+\subsection{State initialization}
+As discussed before, the user can trivially define its own \Q@of@ method, and
+initialize a portion of the state with default values.  However, the
+initialization code would not be reusable, and subinterfaces would have
+to repeat such initialization code.  If a field has no setters, a simple
+alternative is to just define the ``field'' as a default method as in
+\begin{lstlisting}
+@Obj interface Box{ default int val(){return 0;} }
+\end{lstlisting}
+If setters are required, a possible extension of our code expansion could
+recognize a field if the getter is provided and the setter is required, and
+could generate the following code:
+\lstinputlisting[linerange=4-11]{../UseMixinLombok/src/futurework/TestStateInitialization.java}% APPLY:linerange=STATE_INIT
+
+We are unsure about the value of this workaround because of its trickiness. In
+order to define a state with initialization, users have to define a method trusting that it will be overridden later with a behavioral change, but
+such change is visible only after the first time the setter is called. Moreover, this code would cache
+the result instead of re-computing it every time. This can be very tricky in a
+non-functional setting.
+%\bruno{Yanlin please polish text/break long sentences.}
+\end{comment}
+
+\begin{comment}
+\subsection{Class Invariants in ClassLess Java}
+Since objects are created by automatically generated methods, another limitation
+of our current approach is that there is no place where the user can dynamically
+check for class invariants. In Java often we see code like
+\begin{lstlisting}
+class Point{ int x; int y;
+  Point(int x; int y){this.x=x;this.y=y; assert this.checkInvariant();}
+  private boolean checkInvariant(){... x>0,y>0...}
+}
+\end{lstlisting} 
+
+We are considering an extension of our annotation where 
+default methods with the special name \Q@checkInvariant()@ will be called inside the \Q@of@ methods.
+If multiple interfaces are implemented, and more then one offers
+\Q@checkInvariant()@,  a composed implementation could be automatically generated, composing by \Q@&&@ the various competing implementations.
+\end{comment}
+%\bruno{removed the invariants stuff; we need space, I think.}
+
+%\subsection{Clone, toString, equals and hashCode}
+\paragraph{Clone, toString, equals and hashCode}
+Methods originally defined in Java class \Q@Object@, as \Q@clone@ and
+\Q@toString@, can be supported by our approach with special care. If an
+interface annotated with \mixin asks an implementation for \Q@clone@,
+\Q@toString@, \Q@equals@ or \Q@hashCode@ we can easily generate one from the
+fields.\footnote{In particular, for clone we can do automatic return type
+  refinement as we do for \Q@with-@ and fluent setters. Note how this would
+  solve most of the Java ugliness related to \Q@clone@ methods.}  However, if
+the user wishes to provide his own implementation, since the method is also
+implemented in \Q@Object@, a conflict arises. The generated code can resolve the
+conflict inside \Q@of@, by implementing the method and delegating it to the user
+implementation, thus
+
+\begin{lstlisting}
+@Obj interface Point { int x(); int y();
+    default Point clone() { return Point.of(0,0); } } //user defined clone
+\end{lstlisting} 
+would expand into 
+
+\begin{lstlisting}
+interface Point { ...//as before
+    public static Point of(int _x, int _y) {
+        return new Point() {...
+            public Point clone() { return Point.super.clone();}};} }
+\end{lstlisting} 
