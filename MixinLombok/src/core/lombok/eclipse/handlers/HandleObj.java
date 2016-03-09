@@ -1,5 +1,8 @@
 package lombok.eclipse.handlers;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 import org.eclipse.jdt.core.compiler.CharOperation;
@@ -42,11 +45,12 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		p = (long)pS << 32 | pE;
 		me = annotationNode.up();
 		meDecl = (TypeDeclaration) me.get();
+		
 		_ast = annotationNode.get();
 		_src = ast;
 		meAnno = annotationNode;
 		meType = new SingleTypeReference(meDecl.name, p);
-		if (checkValid()) genOfMethod();
+		if (checkValid()) genOfMethod(meDecl.typeParameters);
 		if (errorMsg.length() > 0) meAnno.addError(errorMsg);
 	}
 	
@@ -137,8 +141,13 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		if (!Util.isInterface(decl)) {
 			throwError("In mBody(): isInterface fails");
 			return null;
-		}	
-		ArrayList<Method> allMethods = collectAllMethods(node, true);
+		}
+		String[] typeParams = null;
+		if (decl.typeParameters != null) {
+			typeParams = new String[decl.typeParameters.length];
+			for (int i = 0; i < typeParams.length; i++) typeParams[i] = String.valueOf(decl.typeParameters[i].name);
+		}
+		ArrayList<Method> allMethods = collectAllMethods(node, typeParams, true);
 		if (allMethods == null) return null;
 		return new Type(allMethods.toArray(new Method[allMethods.size()]));
 	}
@@ -165,7 +174,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 	}
 	
 	// Didn't take static methods into consideration.
-	private ArrayList<Method> collectAllMethods(EclipseNode node, boolean root) {
+	private ArrayList<Method> collectAllMethods(EclipseNode node, String[] typeParams, boolean root) {
 		if (!(node.get() instanceof TypeDeclaration)) {
 			throwError("In collectAllMethods(): instanceof_1 fails");
 			return null;
@@ -175,21 +184,41 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 			throwError("In collectAllMethods(): isInterface fails");
 			return null;
 		}
+		HashMap<String, String> paramsMap = new HashMap<String, String>();
+		if (decl.typeParameters != null) {
+			for (int i = 0; i < decl.typeParameters.length; i++)
+				paramsMap.put(String.valueOf(decl.typeParameters[i].name), typeParams[i]);
+		}
 		ArrayList<Method> allMethods = new ArrayList<Method>();		
 		if (decl.superInterfaces != null) {
 			for (int i = 0; i < decl.superInterfaces.length; i++) {
-				if (!(decl.superInterfaces[i] instanceof SingleTypeReference)) {
+				ArrayList<Method> getMethods;
+				if (decl.superInterfaces[i] instanceof ParameterizedSingleTypeReference) {
+					ParameterizedSingleTypeReference tempT = (ParameterizedSingleTypeReference) decl.superInterfaces[i];
+					String[] newTypeParams = new String[tempT.typeArguments.length];
+					for (int k = 0; k < newTypeParams.length; k++) newTypeParams[k] = paramsMap.get(Util.toString(tempT.typeArguments[k]));
+					getMethods = collectAllMethods(getTypeDecl(tempT.token), newTypeParams, false);
+				} else if (decl.superInterfaces[i] instanceof SingleTypeReference) {
+					getMethods = collectAllMethods(getTypeDecl(((SingleTypeReference) decl.superInterfaces[i]).token), null, false);
+				} else {
 					throwError("In collectAllMethods(): instanceof_2 fails");
 					return null;
 				}
-				ArrayList<Method> getMethods = collectAllMethods(getTypeDecl(((SingleTypeReference) decl.superInterfaces[i]).token), false); //todo
 				allMethods.addAll(getMethods);
 			}
 		}
 		if (!root) {
 			for (EclipseNode x : node.down()) {
 				if (!(x.get() instanceof MethodDeclaration)) continue;
-				Method m = new Method((MethodDeclaration) x.get(), new SingleTypeReference(decl.name, p));
+				MethodDeclaration copy = Util.copyMethod((MethodDeclaration) x.get(), p);
+				if (decl.typeParameters != null) {
+					copy.returnType = Util.replaceRef(copy.returnType, paramsMap);
+					if (copy.arguments != null) {
+						for (int i = 0; i < copy.arguments.length; i++)
+							copy.arguments[i].type = Util.replaceRef(copy.arguments[i].type, paramsMap);
+					}
+				}
+				Method m = new Method(copy, new SingleTypeReference(decl.name, p));
 				if (!m.method.isStatic()) allMethods.add(m);
 			}
 			return allMethods;
@@ -200,7 +229,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 			for (EclipseNode x : node.down()) {
 				if (!(x.get() instanceof MethodDeclaration)) continue;
 				Method m = new Method((MethodDeclaration) x.get(), new SingleTypeReference(decl.name, p));
-				if (m.method.isStatic()) continue; // ?
+				if (m.method.isStatic()) continue; // TODO: (1) static or default methods have right types; (2) generic method typing.
 				Method key = null;
 				for (Method temp : map.keySet()) if (temp.equals(m)) {key = temp; break;}
 				if (key == null) res.add(m);
@@ -371,10 +400,17 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		injectMethod(me, mWith);
 	}
 	
-	private void genOfMethod() {
+	private void genOfMethod(TypeParameter[] typeParams) {
 		MethodDeclaration of = newMethod();
 		of.modifiers = ClassFileConstants.AccStatic;
-		of.returnType = copyType(meType);
+		of.typeParameters = copyTypeParams(typeParams, _ast);
+		if (typeParams == null) of.returnType = copyType(meType);
+		else {
+			TypeReference[] refs = new TypeReference[typeParams.length];
+			for (int i = 0; i < refs.length; i++) refs[i] = new SingleTypeReference(typeParams[i].name, p);
+			ParameterizedSingleTypeReference pstr = new ParameterizedSingleTypeReference(meDecl.name, refs, 0, p);
+			of.returnType = pstr;
+		}
 		of.selector = "of".toCharArray();
 		of.arguments = ofArgs.size() == 0 ? null : ofArgs.toArray(new Argument[ofArgs.size()]);		
 		TypeDeclaration anonymous = new TypeDeclaration(meDecl.compilationResult);
@@ -384,13 +420,13 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		anonymous.fields = ofFields.size() == 0 ? null : ofFields.toArray(new FieldDeclaration[ofFields.size()]);
 		anonymous.methods = ofMethods.size() == 0 ? null : ofMethods.toArray(new MethodDeclaration[ofMethods.size()]);		
 		QualifiedAllocationExpression alloc = new QualifiedAllocationExpression(anonymous);
-		alloc.type = copyType(meType);
+		alloc.type = copyType(of.returnType);
 		ReturnStatement returnStmt = new ReturnStatement(alloc, pS, pE);
 		of.statements = new Statement[] { returnStmt };
 		injectMethod(me, of);
 	}
 	
-	private boolean ofAlreadyExists() {
+	@SuppressWarnings("unused") private boolean ofAlreadyExists() {
 		for (EclipseNode x : me.down()) {
 			if (!(x.get() instanceof MethodDeclaration)) continue;
 			MethodDeclaration m = (MethodDeclaration) x.get();
@@ -524,6 +560,40 @@ class Util {
 	}
 	static String toLowerCase(String s) {
 		return s.isEmpty() ? s : s.substring(0, 1).toLowerCase() + s.substring(1, s.length());
+	}
+	static MethodDeclaration copyMethod(MethodDeclaration m, long p) {
+		MethodDeclaration res = new MethodDeclaration(m.compilationResult);
+		if (m.arguments != null) {
+			res.arguments = new Argument[m.arguments.length];
+			for (int i = 0; i < m.arguments.length; i++)
+				res.arguments[i] = new Argument(String.valueOf(m.arguments[i].name).toCharArray(), p, copyType(m.arguments[i].type), m.arguments[i].modifiers);
+		}
+		res.bits = m.bits;
+		res.modifiers = m.modifiers;
+		res.returnType = copyType(m.returnType);
+		res.selector = String.valueOf(m.selector).toCharArray();
+		return res;
+	}
+	static TypeReference replaceRef(TypeReference t, HashMap<String, String> map) {
+		TypeReference res = copyType(t);
+		if (res instanceof ParameterizedSingleTypeReference) {
+			ParameterizedSingleTypeReference res2 = (ParameterizedSingleTypeReference) res;
+			for (int i = 0; i < res2.typeArguments.length; i++)
+				res2.typeArguments[i] = replaceRef(res2.typeArguments[i], map);
+			return res;
+		} else if (res instanceof SingleTypeReference) {
+			SingleTypeReference res2 = (SingleTypeReference) res;
+			String name = String.valueOf(res2.token);
+			if (map.containsKey(name)) res2.token = map.get(name).toCharArray();
+			return res2;
+		} else return t;
+	}
+	static void printLog(String s) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Haoyuan\\Desktop\\log.txt"));
+			bw.write(s);
+			bw.close();
+		} catch (IOException e) {}
 	}
 }
 
