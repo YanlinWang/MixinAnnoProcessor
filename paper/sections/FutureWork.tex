@@ -1,6 +1,6 @@
 \section{Future work}\label{sec:futurework}
 In this section we discuss potential future work.
-\begin{comment}
+%\begin{comment}
 \subsection{Encapsulation}
 The biggest limitation of our approach is the inability to model visibility restrictions. For example, the absence
 of support for private/protected methods in Java 8 interfaces forces all
@@ -55,7 +55,7 @@ This is not a perfect solution, since
 \Q@Person$@,
 however it is surprising we achieve such of a good result without any language
 support for privacy in interfaces.
-\end{comment}
+%\end{comment}
 
 %\subsection{Qualifiers in Methods} %{Private state
 \paragraph{Qualifiers in Methods} %{Private state
@@ -88,7 +88,8 @@ method could be made private following the same pattern.
 %   wants state with initialization then he also has to define the setter. Or
 %   else, it is ambiguous: could be interpreted as a state initializer or just
 %   a normal default method.}
-\begin{comment}
+
+%\begin{comment}
 \subsection{State initialization}
 As discussed before, the user can trivially define its own \Q@of@ method, and
 initialize a portion of the state with default values.  However, the
@@ -109,9 +110,9 @@ such change is visible only after the first time the setter is called. Moreover,
 the result instead of re-computing it every time. This can be very tricky in a
 non-functional setting.
 %\bruno{Yanlin please polish text/break long sentences.}
-\end{comment}
+%\end{comment}
 
-\begin{comment}
+%\begin{comment}
 \subsection{Class Invariants in ClassLess Java}
 Since objects are created by automatically generated methods, another limitation
 of our current approach is that there is no place where the user can dynamically
@@ -127,7 +128,7 @@ We are considering an extension of our annotation where
 default methods with the special name \Q@checkInvariant()@ will be called inside the \Q@of@ methods.
 If multiple interfaces are implemented, and more then one offers
 \Q@checkInvariant()@,  a composed implementation could be automatically generated, composing by \Q@&&@ the various competing implementations.
-\end{comment}
+%\end{comment}
 %\bruno{removed the invariants stuff; we need space, I think.}
 
 %\subsection{Clone, toString, equals and hashCode}
