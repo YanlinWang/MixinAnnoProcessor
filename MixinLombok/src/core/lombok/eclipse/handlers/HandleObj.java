@@ -49,7 +49,12 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		_ast = annotationNode.get();
 		_src = ast;
 		meAnno = annotationNode;
-		meType = new SingleTypeReference(meDecl.name, p);
+		if (meDecl.typeParameters == null) meType = new SingleTypeReference(meDecl.name, p);
+		else {
+			TypeReference[] refs = new TypeReference[meDecl.typeParameters.length];
+			for (int i = 0; i < refs.length; i++) refs[i] = new SingleTypeReference(meDecl.typeParameters[i].name, p);
+			meType = new ParameterizedSingleTypeReference(meDecl.name, refs, 0, p);
+		}
 		if (checkValid()) genOfMethod(meDecl.typeParameters);
 		if (errorMsg.length() > 0) meAnno.addError(errorMsg);
 	}
@@ -92,7 +97,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 			String name = String.valueOf(m.method.selector);
 			TypeReference type = m.method.returnType;
 			Argument[] args = m.method.arguments;
-			if (name.equals("with") && args != null && args.length == 1 && subType(meType, type)) {
+			if (meDecl.typeParameters == null && name.equals("with") && args != null && args.length == 1 && subType(meType, type)) { // with() method doesn't support generics.
 				MethodDeclaration generalWith = genGeneralWith(copyType(args[0].type));
 				if (generalWith == null) {
 					throwError("In checkValid(): type of with method not applicable");
@@ -142,12 +147,12 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 			throwError("In mBody(): isInterface fails");
 			return null;
 		}
-		String[] typeParams = null;
+		TypeReference[] typeArgs = null;
 		if (decl.typeParameters != null) {
-			typeParams = new String[decl.typeParameters.length];
-			for (int i = 0; i < typeParams.length; i++) typeParams[i] = String.valueOf(decl.typeParameters[i].name);
+			typeArgs = new TypeReference[decl.typeParameters.length];
+			for (int i = 0; i < typeArgs.length; i++) typeArgs[i] = new SingleTypeReference(decl.typeParameters[i].name, p);
 		}
-		ArrayList<Method> allMethods = collectAllMethods(node, typeParams, true);
+		ArrayList<Method> allMethods = collectAllMethods(node, typeArgs, true);
 		if (allMethods == null) return null;
 		return new Type(allMethods.toArray(new Method[allMethods.size()]));
 	}
@@ -174,7 +179,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 	}
 	
 	// Didn't take static methods into consideration.
-	private ArrayList<Method> collectAllMethods(EclipseNode node, String[] typeParams, boolean root) {
+	private ArrayList<Method> collectAllMethods(EclipseNode node, TypeReference[] typeParams, boolean root) {
 		if (!(node.get() instanceof TypeDeclaration)) {
 			throwError("In collectAllMethods(): instanceof_1 fails");
 			return null;
@@ -184,7 +189,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 			throwError("In collectAllMethods(): isInterface fails");
 			return null;
 		}
-		HashMap<String, String> paramsMap = new HashMap<String, String>();
+		HashMap<String, TypeReference> paramsMap = new HashMap<String, TypeReference>();
 		if (decl.typeParameters != null) {
 			for (int i = 0; i < decl.typeParameters.length; i++)
 				paramsMap.put(String.valueOf(decl.typeParameters[i].name), typeParams[i]);
@@ -195,9 +200,9 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 				ArrayList<Method> getMethods;
 				if (decl.superInterfaces[i] instanceof ParameterizedSingleTypeReference) {
 					ParameterizedSingleTypeReference tempT = (ParameterizedSingleTypeReference) decl.superInterfaces[i];
-					String[] newTypeParams = new String[tempT.typeArguments.length];
-					for (int k = 0; k < newTypeParams.length; k++) newTypeParams[k] = paramsMap.get(Util.toString(tempT.typeArguments[k]));
-					getMethods = collectAllMethods(getTypeDecl(tempT.token), newTypeParams, false);
+					TypeReference[] newTypeArgs = new TypeReference[tempT.typeArguments.length];
+					for (int k = 0; k < newTypeArgs.length; k++) newTypeArgs[k] = Util.replaceRef(tempT.typeArguments[k], paramsMap);
+					getMethods = collectAllMethods(getTypeDecl(tempT.token), newTypeArgs, false);
 				} else if (decl.superInterfaces[i] instanceof SingleTypeReference) {
 					getMethods = collectAllMethods(getTypeDecl(((SingleTypeReference) decl.superInterfaces[i]).token), null, false);
 				} else {
@@ -404,13 +409,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 		MethodDeclaration of = newMethod();
 		of.modifiers = ClassFileConstants.AccStatic;
 		of.typeParameters = copyTypeParams(typeParams, _ast);
-		if (typeParams == null) of.returnType = copyType(meType);
-		else {
-			TypeReference[] refs = new TypeReference[typeParams.length];
-			for (int i = 0; i < refs.length; i++) refs[i] = new SingleTypeReference(typeParams[i].name, p);
-			ParameterizedSingleTypeReference pstr = new ParameterizedSingleTypeReference(meDecl.name, refs, 0, p);
-			of.returnType = pstr;
-		}
+		of.returnType = copyType(meType);
 		of.selector = "of".toCharArray();
 		of.arguments = ofArgs.size() == 0 ? null : ofArgs.toArray(new Argument[ofArgs.size()]);		
 		TypeDeclaration anonymous = new TypeDeclaration(meDecl.compilationResult);
@@ -458,20 +457,45 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 	}
 
 	/* Auxiliary: subtyping. */
-	private boolean subType(TypeReference t1, TypeReference t2) {
+	private boolean subType(TypeReference t1, TypeReference t2) { // TODO: check.
 		if (!(t1 instanceof SingleTypeReference)) return false;
 		if (!(t2 instanceof SingleTypeReference)) return false;
 		if (Util.sameType(t1, t2)) return true;
-		EclipseNode d1 = getTypeDecl(((SingleTypeReference) t1).token);
+		TypeReference[] t1ps = null;
+		char[] t1name = ((SingleTypeReference) t1).token;
+		if (t1 instanceof ParameterizedSingleTypeReference) t1ps = ((ParameterizedSingleTypeReference) t1).typeArguments;
+		EclipseNode d1 = getTypeDecl(t1name);
 		if (d1 == null) return false;
 		if (!(d1.get() instanceof TypeDeclaration)) return false;
 		TypeDeclaration decl = (TypeDeclaration) d1.get();
-		if (decl.superclass != null & subType(decl.superclass, t2)) return true;
-		if (decl.superInterfaces != null) {
-			for (TypeReference x : ((TypeDeclaration) d1.get()).superInterfaces)
-				if (subType(x, t2)) return true;
+		HashMap<String, TypeReference> tyMap = new HashMap<String, TypeReference>();
+		if (decl.typeParameters != null) {
+			for (int i = 0; i < decl.typeParameters.length; i++)
+				tyMap.put(String.valueOf(decl.typeParameters[i].name), t1ps[i]);
+		}
+		if (decl.superclass != null) {
+			TypeReference temp = copyType(decl.superclass);
+			return temp instanceof ParameterizedSingleTypeReference ? subType(Util.replaceRef(temp, tyMap), t2) : subType(temp, t2);
+		} else if (decl.superInterfaces != null) {
+			for (TypeReference x : decl.superInterfaces) {
+				TypeReference temp = copyType(x);
+				boolean check = temp instanceof ParameterizedSingleTypeReference ? subType(Util.replaceRef(temp, tyMap), t2) : subType(temp, t2);
+				if (check) return true;
+			}
 		}
 		return false;
+//		if (!(t1 instanceof SingleTypeReference)) return false;
+//		if (!(t2 instanceof SingleTypeReference)) return false;
+//		if (Util.sameType(t1, t2)) return true;
+//		EclipseNode d1 = getTypeDecl(((SingleTypeReference) t1).token);
+//		if (d1 == null) return false;
+//		if (!(d1.get() instanceof TypeDeclaration)) return false;
+//		TypeDeclaration decl = (TypeDeclaration) d1.get();
+//		if (decl.superclass != null && subType(decl.superclass, t2)) return true;
+//		if (decl.superInterfaces != null) {
+//			for (TypeReference x : ((TypeDeclaration) d1.get()).superInterfaces)
+//				if (subType(x, t2)) return true;
+//		}
 	}
 	
 	/* Auxiliary: subtyping. */
@@ -522,7 +546,20 @@ class Util {
 	static boolean sameType(TypeReference t1, TypeReference t2) {
 		if (!(t1 instanceof SingleTypeReference)) return false;
 		if (!(t2 instanceof SingleTypeReference)) return false;
-		return Arrays.equals(((SingleTypeReference) t1).token, ((SingleTypeReference) t2).token);
+		String name1 = String.valueOf(((SingleTypeReference) t1).token);
+		String name2 = String.valueOf(((SingleTypeReference) t1).token);
+		if (!name1.equals(name2)) return false;
+		TypeReference[] t1Args = null;
+		TypeReference[] t2Args = null;
+		if (t1 instanceof ParameterizedSingleTypeReference) t1Args = ((ParameterizedSingleTypeReference) t1).typeArguments;
+		if (t1 instanceof ParameterizedSingleTypeReference) t2Args = ((ParameterizedSingleTypeReference) t1).typeArguments;
+		if (t1Args == null && t2Args == null) return true;
+		if (t1Args != null && t2Args != null) {
+			if (t1Args.length != t2Args.length) return false;
+			for (int i = 0; i < t1Args.length; i++) if (!sameType(t1Args[i], t2Args[i])) return false;
+			return true;
+		}
+		return false;
 	}
 	static boolean isInterface(TypeDeclaration t) {
 		return (t.modifiers & ClassFileConstants.AccInterface) != 0;
@@ -574,7 +611,7 @@ class Util {
 		res.selector = String.valueOf(m.selector).toCharArray();
 		return res;
 	}
-	static TypeReference replaceRef(TypeReference t, HashMap<String, String> map) {
+	static TypeReference replaceRef(TypeReference t, HashMap<String, TypeReference> map) {
 		TypeReference res = copyType(t);
 		if (res instanceof ParameterizedSingleTypeReference) {
 			ParameterizedSingleTypeReference res2 = (ParameterizedSingleTypeReference) res;
@@ -584,8 +621,8 @@ class Util {
 		} else if (res instanceof SingleTypeReference) {
 			SingleTypeReference res2 = (SingleTypeReference) res;
 			String name = String.valueOf(res2.token);
-			if (map.containsKey(name)) res2.token = map.get(name).toCharArray();
-			return res2;
+			if (map.containsKey(name)) return copyType(map.get(name));
+			else return res;
 		} else return t;
 	}
 	static void printLog(String s) {
