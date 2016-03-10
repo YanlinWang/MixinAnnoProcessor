@@ -93,7 +93,7 @@ public abstract class SpecialForm extends Node {
 
     protected final MumblerListNode<Node> node;
 
-    private SpecialForm(MumblerListNode<Node> listNode) {
+    public SpecialForm(MumblerListNode<Node> listNode) {
         this.node = listNode;
     }
 

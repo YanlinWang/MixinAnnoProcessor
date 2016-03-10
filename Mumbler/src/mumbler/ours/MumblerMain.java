@@ -5,7 +5,10 @@ import java.io.Console;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class SimpleMumblerMain2 {
+import mumbler.ori.Environment;
+import mumbler.ours.*;
+
+public class MumblerMain {
     public static void main(String[] args) throws IOException {
         assert args.length < 2 : "SimpleMumbler only accepts 1 or 0 files";
         if (args.length == 0) {
@@ -26,12 +29,12 @@ public class SimpleMumblerMain2 {
                 // EOF sent
                 break;
             }
-            MumblerListNode<Eval2> nodes = Reader2.read(new ByteArrayInputStream(data.getBytes()));
+            MumblerListNode<Node> nodes = Reader.read(new ByteArrayInputStream(data.getBytes()));
 
             // EVAL
             Object result = MumblerListNode.EMPTY;
-            for (Eval2 node : nodes) {
-                result = node.eval(topEnv);
+            for (Node node : nodes) {
+//                result = node.eval(topEnv);
             }
 
             // PRINT
@@ -44,9 +47,9 @@ public class SimpleMumblerMain2 {
     static void runMumbler(String filename) throws IOException {
         Environment topEnv = Environment.getBaseEnvironment();
 
-        MumblerListNode<Eval2> nodes = Reader2.read(new FileInputStream(filename));
-        for (Eval2 node : nodes) {
-            node.eval(topEnv);
+        MumblerListNode<Node> nodes = Reader.read(new FileInputStream(filename));
+        for (Node node : nodes) {
+//            node.eval(topEnv);
         }
     }
 }

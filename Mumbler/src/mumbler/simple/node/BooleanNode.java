@@ -7,9 +7,9 @@ public class BooleanNode extends Node {
     public static final BooleanNode TRUE = new BooleanNode(Boolean.TRUE);
     public static final BooleanNode FALSE = new BooleanNode(Boolean.FALSE);
 
-    private final Boolean value;
+    protected final Boolean value;
 
-    private BooleanNode(Boolean value) {
+    protected BooleanNode(Boolean value) {
         this.value = value;
     }
 

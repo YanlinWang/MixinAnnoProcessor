@@ -6,17 +6,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import mumbler.simple.Eval2;
 import mumbler.simple.Function;
 import mumbler.simple.env.Environment;
 
-public class MumblerListNode<T extends Object> extends Node implements Iterable<T> {
+public class MumblerListNode<T extends Object> extends Eval2 implements Iterable<T> {
     public static final MumblerListNode<?> EMPTY =
             new MumblerListNode<>();
 
     public final T car;
     public final MumblerListNode<T> cdr;
 
-    private MumblerListNode() {
+    public MumblerListNode() {
         this.car = null;
         this.cdr = null;
     }
@@ -103,6 +104,22 @@ public class MumblerListNode<T extends Object> extends Node implements Iterable<
 
     @Override
     public String toString() {
+        if (this == EMPTY) {
+            return "()";
+        }
+
+        StringBuilder b = new StringBuilder("(" + this.car);
+        MumblerListNode<T> rest = this.cdr;
+        while (rest != null && rest != EMPTY) {
+            b.append(" ");
+            b.append(rest.car);
+            rest = rest.cdr;
+        }
+        b.append(")");
+        return b.toString();
+    }
+    
+    public String print() {
         if (this == EMPTY) {
             return "()";
         }

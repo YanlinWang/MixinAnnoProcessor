@@ -3,7 +3,7 @@ package mumbler.simple.node;
 import mumbler.simple.env.Environment;
 
 public class NumberNode extends Node {
-    private final long num;
+    public final long num;
 
     public NumberNode(long num) {
         this.num = num;
