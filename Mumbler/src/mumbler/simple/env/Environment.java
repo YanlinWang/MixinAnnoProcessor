@@ -1,4 +1,4 @@
-package mumbler.simple;
+package mumbler.simple.env;
 
 import java.util.HashMap;
 
@@ -31,18 +31,18 @@ public class Environment {
 
     public static Environment getBaseEnvironment() {
         Environment env = new Environment();
-        env.putValue("+", PLUS2.of(""));
-        env.putValue("-", MINUS2.of(""));
-        env.putValue("*", MULT2.of(""));
-        env.putValue("/", DIV2.of(""));
-        env.putValue("=", EQUALS2.of(""));
-        env.putValue("<", LESS_THAN2.of(""));
-        env.putValue(">", GREATER_THAN2.of(""));
-        env.putValue("list", LIST2.of(""));
-        env.putValue("car", CAR2.of(""));
-        env.putValue("cdr", CDR2.of(""));
-        env.putValue("println", PRINTLN2.of(""));
-        env.putValue("now", NOW2.of(""));
+        env.putValue("+", BuiltinFn.PLUS);
+        env.putValue("-", BuiltinFn.MINUS);
+        env.putValue("*", BuiltinFn.MULT);
+        env.putValue("/", BuiltinFn.DIV);
+        env.putValue("=", BuiltinFn.EQUALS);
+        env.putValue("<", BuiltinFn.LESS_THAN);
+        env.putValue(">", BuiltinFn.GREATER_THAN);
+        env.putValue("list", BuiltinFn.LIST);
+        env.putValue("car", BuiltinFn.CAR);
+        env.putValue("cdr", BuiltinFn.CDR);
+        env.putValue("println", BuiltinFn.PRINTLN);
+        env.putValue("now", BuiltinFn.NOW);
         return env;
     }
 }

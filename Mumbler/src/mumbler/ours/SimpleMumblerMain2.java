@@ -1,4 +1,4 @@
-package mumbler.simple;
+package mumbler.ours;
 
 import java.io.ByteArrayInputStream;
 import java.io.Console;

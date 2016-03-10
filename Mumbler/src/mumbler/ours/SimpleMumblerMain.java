@@ -1,13 +1,12 @@
-package mumbler.simple;
+package mumbler.ours;
 
 import java.io.ByteArrayInputStream;
 import java.io.Console;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import mumbler.simple.env.Environment;
-import mumbler.simple.node.Node;
-import mumbler.simple.node.MumblerListNode;
+import mumbler.ori.Environment;
+import mumbler.ours.*;
 
 public class SimpleMumblerMain {
     public static void main(String[] args) throws IOException {
@@ -19,7 +18,7 @@ public class SimpleMumblerMain {
         }
     }
 
-    private static void startREPL() throws IOException {
+    static void startREPL() throws IOException {
         Environment topEnv = Environment.getBaseEnvironment();
 
         Console console = System.console();
@@ -35,7 +34,7 @@ public class SimpleMumblerMain {
             // EVAL
             Object result = MumblerListNode.EMPTY;
             for (Node node : nodes) {
-                result = node.eval(topEnv);
+//                result = node.eval(topEnv);
             }
 
             // PRINT
@@ -45,12 +44,12 @@ public class SimpleMumblerMain {
         }
     }
 
-    private static void runMumbler(String filename) throws IOException {
+    static void runMumbler(String filename) throws IOException {
         Environment topEnv = Environment.getBaseEnvironment();
 
         MumblerListNode<Node> nodes = Reader.read(new FileInputStream(filename));
         for (Node node : nodes) {
-            node.eval(topEnv);
+//            node.eval(topEnv);
         }
     }
 }
