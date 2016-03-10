@@ -1,6 +1,28 @@
 \section{Introduction}\label{sec:intro}
 
+\bruno{Generaly speaking I like the flow of the new introduction!
+I would say that we do need to defend ourselfves against Scala traits, 
+but the differences are probably in three aspects:
 
+\begin{itemize}
+
+\item The abstract state operations and the novel technique to deal with 
+covariant refinement of setters; Scala traits do support state (variables and 
+immutable values), but there's no support for ``with'' (and clone-like) methods for example; and 
+mutable state does not support type-refinement. 
+
+\item Automatic type-refinements (although Scala does also support \emph{manual} type-refinement 
+of immutable fields);
+
+\item We support constructors; whereas Scala traits do not. This is one key reason why classes 
+are still necessary in a lnaguage like Scala.
+
+\end{itemize}
+
+One final point about the introduction is that language tuning is no longer 
+mentioned. I think this is fine, but we have to discuss the strategy.
+
+}
 Object oriented languages always strive to offer great code reuse,
 they aim to couple flexibility and rigour, expressive power and modular reasoning.
 Two main idea have emerged to this end: prototype based (PB) and class based (CB) languages.

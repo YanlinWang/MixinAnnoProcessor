@@ -17,12 +17,14 @@
 This section illustrates how our programming style, supported by the \mixinAnn{} annotation, enable powerful
 idioms similar to multiple inheritance and field type refinement.
 We propose a standard example: \Q@Animal@s with a two-dimensional \Q@Point2D@ representing their \Q@location@.
-Some kinds of animals are \Q@Horse@s and \Q@Bird@s.
+Some kinds of animals are \Q@Horses@ and \Q@Bird@s.
 Birds can \Q@fly@, thus their locations need to be three-dimensional \Q@Point3D@s (field type refinement).
 Finally, we model \Q@Pegasus@ (one of the best-known creatures in Greek
 mythology) as a kind of \Q@Animal@ with the skills
 of both \Q@Horse@s and \Q@Bird@s (multiple inheritance). A simple class diagram illustrating
 the basic system is given on the left side of Figure~\ref{fig:pegasus}.\footnote{Some research argues in favor of using subtyping for modeling taxonomies, other research argues against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
+\bruno{Should we provide a one sentence summary in the abstract of how much code 
+is needed in Java (without Obj) vs the approach with CJ, for the Pegasus example?}
 
 \subsection{Simple Multiple Inheritance with Default
   Methods}\label{sec:simple}
@@ -129,8 +131,8 @@ representing their positions in space. We will use 2D points to keep track of lo
 \paragraph{\Q@Point2D@: simple immutable data with fields}
 Here we will illustrate how points are modelled with
 interfaces. In IB we do not talk about state directly; state is accessed
-using abstract (getter) methods. Note how in   The usual
-approach to model points in Java would be to use a class with fields for the
+using abstract (getter) methods. \bruno{unfinished sentence: Note how in}   The usual
+approach to model points in Java is to use a class with fields for the
 coordinates.
 
 
@@ -466,6 +468,7 @@ perspective the key is the implementation for the setter with the old
 signature (\Q@location(Point2D)@). The key to the setter
 implementation is a new type of \Q@with@ method, called a property updater.
 
+\bruno{At some point we should talk about the point that was discussed in the reviews}
 \paragraph{\Q@Point3D@ and properties updaters}
 The \Q@Point3D@ interface is defined as follows:
 
@@ -524,7 +527,7 @@ test. The idea is that if the parameter is a subtype of the current exact type,
 then we can just return the parameter, as something that is just ``more'' than
 \Q@this@.
 
-\subsection{Advanced Multiple Inheritance with Object Interfaces}
+\subsection{Advanced Multiple Inheritance}
 Finally, defining \texttt{Pegasus} is as simple as we did in the simplified
 (and stateless) version on the right of Figure~\ref{fig:pegasus}.
  Note how even the non-trivial pattern for field type refinement is
@@ -535,7 +538,7 @@ transparently composed, and \texttt{Pegasus} has a \Q@Point3D@
 
 \lstinputlisting[linerange=74-74]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=PEGASUS
 
-\subsection{Abstract state operations}
+\subsection{Abstract state operations}\bruno{Is this something to go into a discussion later on?}
 Defining an convenient list of abstract state operation is not an easy task.
 Of course we need getters.
 Currently we are offering both setters and Fluent setters. May be fluent setters are enough, and we can drop the
