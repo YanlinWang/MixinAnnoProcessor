@@ -34,6 +34,32 @@ Neither the source code is modified nor new Java files are generated.
   Java annotation processors do not support.
 \end{itemize}
 
+\noindent \textcolor{red}{Another big concern of using Lombok in our approach is that, the modularity, code quality and maintainability
+are highly improved in contrast with preprocessors. For the last decades, we have seen a lot of convenience in
+programs using preprocessors; it is easy to learn and use, lightweight in code size, and applicable in various
+languages including C, Java, and so on. Nevertheless, preprocessors are heavily criticized in literature in
+terms of code quality and maintainability being affected and subtle errors being introduced. In [ref], the main
+aspects of criticism are discussed including:}
+
+\begin{itemize}
+\item \textbf{Separation of concerns.} \textcolor{red}{Preprocessors can affect the modularity of implementation code. Whereas in our approach,
+each feature can be realized by a single annotation with its handler, and meanwhile a declared Java class or interface
+can be applied with multiple annotations, which ensures the modularity.}
+\item \textbf{Sensitivity to subtle errors.} \textcolor{red}{Preprocessors like cpp, which introduces the syntax of ``\#ifdef'', are likely to
+bring very simple syntax errors or type errors. In our Lombok-based approach, annotation processing is applied between
+parsing and type-checking, where internal ASTs are modified. Lombok uses an internal AST for Java, with respect to
+Java syntax, hence syntax errors are avoided. On the other hand, possible type errors introduced by Lombok handlers
+can be observed by Java type system from compilation, which brings convenience in practice.}
+\item \textbf{Obfuscated source code.} \textcolor{red}{Implementations with preprocessors obfuscate the source code, making code less readable
+and hard to maintain with further changes. In our case, since modularity is supported, the handler code can be debugged
+and maintained for different features respectively. On the other hand, annotations do not introduce much confusion in
+the source code, while the information of annotated interface from compilation can still be captured in the "Outline" window
+of Eclipse or other IDEs.}
+\item \textbf{Lack of reuse.} \textcolor{red}{Reusability is yet another concern in using preprocessors. In Lombok, implementations of features are
+encapsulated in various annotation handlers, in which case some behaviours are allowed to reuse the code by invoking methods
+in other handlers, where tedious replicated code is avoided.}
+\end{itemize}
+
 \paragraph{Limitations}
 Our prototype implementation using Lombok has certain limitations:
 \begin{itemize}
