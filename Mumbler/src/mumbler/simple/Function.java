@@ -7,13 +7,190 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 interface Evaluatable {
     public Object eval(Environment env);
 }
 
 interface Node extends Evaluatable  {
 }
+
+//============= Added operation (begin) ============//
+interface Print {
+    public String print();
+}
+
+interface BuiltinFnP extends Print {
+    String name();
+    public default String print() { return name(); }
+}
+
+@Obj interface BooleanNodeP extends Print {
+//    public static final BooleanNodeP TRUE = BooleanNode2.of(Boolean.TRUE);
+//    public static final BooleanNodeP FALSE = BooleanNode2.of(Boolean.FALSE);
+    Boolean value();
+    public default String print() {
+        return value().toString();
+    }
+}
+
+@Obj interface NumberNodeP extends Print {
+    long num();
+    void num(long n);
+    public default String print() {
+        return Long.toString(num());
+    }
+}
+
+class MumblerListNodeP<T extends Object> implements Print, Iterable<T> {
+    public static final MumblerListNodeP<?> EMPTY = new MumblerListNodeP<>();
+    public final T car;
+    public final MumblerListNodeP<T> cdr;
+
+    private MumblerListNodeP() {
+        this.car = null;
+        this.cdr = null;
+    }
+
+    private MumblerListNodeP(T car, MumblerListNodeP<T> cdr) {
+        this.car = car;
+        this.cdr = cdr;
+    }
+
+    @SafeVarargs
+    public static <T> MumblerListNodeP<T> list(T... objs) {
+        return list(asList(objs));
+    }
+
+    public static <T> MumblerListNodeP<T> list(List<T> objs) {
+        @SuppressWarnings("unchecked")
+        MumblerListNodeP<T> l = (MumblerListNodeP<T>) EMPTY;
+        for (int i=objs.size()-1; i>=0; i--) {
+            l = l.cons(objs.get(i));
+        }
+        return l;
+    }
+
+    public MumblerListNodeP<T> cons(T node) {
+        return new MumblerListNodeP<T>(node, this);
+    }
+
+    public long length() {
+        if (this == EMPTY) {
+            return 0;
+        }
+        long len = 1;
+        MumblerListNodeP<T> l = this.cdr;
+        while (l != EMPTY) {
+            len++;
+            l = l.cdr;
+        }
+        return len;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private MumblerListNodeP<T> l = MumblerListNodeP.this;
+
+            @Override
+            public boolean hasNext() {
+                return this.l != EMPTY;
+            }
+
+            @Override
+            public T next() {
+                if (this.l == EMPTY) {
+                    throw new IllegalStateException("At end of list");
+                }
+                T car = this.l.car;
+                this.l = this.l.cdr;
+                return car;
+            }
+
+            @Override
+            public void remove() {
+                throw new IllegalStateException("Iterator is immutable");
+            }
+        };
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof MumblerListNodeP)) {
+            return false;
+        }
+        if (this == EMPTY && other == EMPTY) {
+            return true;
+        }
+
+        MumblerListNodeP<?> that = (MumblerListNodeP<?>) other;
+        if (this.cdr == EMPTY && that.cdr != EMPTY) {
+            return false;
+        }
+        return this.car.equals(that.car) && this.cdr.equals(that.cdr);
+    }
+
+    public String print() {
+        if (this == EMPTY) {
+            return "()";
+        }
+        StringBuilder b = new StringBuilder("(" + this.car);
+        MumblerListNodeP<T> rest = this.cdr;
+        while (rest != null && rest != EMPTY) {
+            b.append(" ");
+            b.append(rest.car);
+            rest = rest.cdr;
+        }
+        b.append(")");
+        return b.toString();
+    }
+}
+
+@Obj interface SpecialFormP extends Print {
+    MumblerListNode<Node> node();
+    public default String print() {
+        return node().print();
+    }
+}
+
+@Obj interface SymbolNodeP extends Print {
+    String name();
+
+    public default String print() {
+        return "'" + name();
+    }
+}
+//============= Added operation (end) ============//
+
+
+//class MumblerListNode2<T extends Object> extends MumblerListNode<T> implements Eval2 {
+//    public final T car;
+//    public final MumblerListNode2<T> cdr;
+//    public MumblerListNode2() {
+//        this.car = null;
+//        this.cdr = null;
+//    }
+//    public MumblerListNode2(T car, MumblerListNode2<T> cdr) {
+//        super();
+//        this.car = car;
+//        this.cdr = cdr;
+//    }
+//    public String print() {
+//        if (this == EMPTY) {
+//            return "()";
+//        }
+//
+//        StringBuilder b = new StringBuilder("(" + this.car);
+//        MumblerListNode<T> rest = this.cdr;
+//        while (rest != null && rest != EMPTY) {
+//            b.append(" ");
+//            b.append(rest.car);
+//            rest = rest.cdr;
+//        }
+//        b.append(")");
+//        return b.toString();
+//    }
+//}
 
 public interface Function extends Evaluatable {
     public default Object eval(Environment env) {
@@ -162,29 +339,23 @@ public interface Function extends Evaluatable {
 
 interface BuiltinFn extends Function {
     String name();
-    
     public default String toStr() {
         return "<procedure: " + name();
     }
 }
 
-@Obj
-interface BooleanNode extends Node {
-    public static final BooleanNode TRUE = BooleanNode.of(Boolean.TRUE);
-    public static final BooleanNode FALSE = BooleanNode.of(Boolean.FALSE);
-
+@Obj interface BooleanNode extends Node {
+    public static BooleanNode TRUE() { return BooleanNode.of(Boolean.TRUE); }
+    public static BooleanNode FALSE() { return BooleanNode.of(Boolean.FALSE); }
     Boolean value();
-
     public default Object eval(Environment env) {
         return value();
     }
 }
 
-@Obj
-interface NumberNode extends Node {
+@Obj interface NumberNode extends Node {
     long num();
-    void num(long n);
-    
+    void num(long n);  
     public default String toStr() {
         return Long.toString(num());
     }
@@ -199,20 +370,95 @@ interface NumberNode extends Node {
         return new Long(num());
     }
 }
+//============= Combine operations (begin) ============//
+interface Eval2 extends Node, Print {}
+interface Function2 extends Eval2, Function {}
+//@Obj interface BuiltinFn2 extends Eval2, BuiltinFn, BuiltinFnP {}
+@Obj interface EQUALS2 extends Eval2, EQUALS, BuiltinFnP {}
+@Obj interface LESS_THAN2 extends Eval2, LESS_THAN, BuiltinFnP {}
+@Obj interface GREATER_THAN2 extends Eval2, GREATER_THAN, BuiltinFnP {}
+@Obj interface DIV2 extends Eval2, DIV , BuiltinFnP{
+    public default Object apply(Object... args) {
+        if (args.length == 1) {
+            if ((Long)args[0] == 0) {
+                System.out.println("ERROR: divided by zero at: " + this.print());
+                try {
+                    throw new Exception("ERROR: " + this.print());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }}
+            else return 1 / (Long) args[0];
+        }
+        long quotient = (Long) args[0];
+        for (int i=1; i<args.length; i++) {
+            if ((Long) args[i] == 0) {
+                System.out.println("ERROR: divided by zero at: " + this.print());
+                try {
+                    throw new Exception("ERROR: " + this.print());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } }
+            else quotient /= (Long) args[i];
+        }
+        return quotient;
+    }
+}
+@Obj interface MULT2 extends Eval2, MULT , BuiltinFnP{}
+@Obj interface MINUS2 extends Eval2, MINUS, BuiltinFnP {}
+@Obj interface PLUS2 extends Eval2, PLUS, BuiltinFnP {}
+@Obj interface LIST2 extends Eval2, LIST, BuiltinFnP {}
+@Obj interface CAR2 extends Eval2, CAR, BuiltinFnP {}
+@Obj interface CDR2 extends Eval2, CDR, BuiltinFnP {}
+@Obj interface PRINTLN2 extends Eval2, PRINTLN, BuiltinFnP{}
+@Obj interface NOW2 extends Eval2, NOW, BuiltinFnP {}
+@Obj interface BooleanNode2 extends Eval2, BooleanNode, BooleanNodeP {}
+@Obj interface NumberNode2 extends Eval2, NumberNode, NumberNodeP {}
+@Obj interface SpecialForm2 extends Eval2, SpecialForm, SpecialFormP {
+    MumblerListNode<Node> node();
+    static final SymbolNode DEFINE = SymbolNode.of("define");
+    static final SymbolNode LAMBDA = SymbolNode.of("lambda");
+    static final SymbolNode IF = SymbolNode.of("if");
+    static final SymbolNode QUOTE = SymbolNode.of("quote");
+    public static Eval2 check(MumblerListNode<Node> l) {
+        if (l == MumblerListNode.EMPTY) {
+            return l;
+        } else if (l.car.equals(DEFINE)) {
+            return DefineSpecialForm2.of(l);
+        } else if (l.car.equals(LAMBDA)) {
+            return LambdaSpecialForm2.of(l);
+        } else if (l.car.equals(IF)) {
+            return IfSpecialForm2.of(l);
+        } else if (l.car.equals(QUOTE)) {
+            return QuoteSpecialForm2.of(l);
+        }
+        return l;
+    }
+}
+@Obj interface DefineSpecialForm2 extends Eval2, DefineSpecialForm, SpecialFormP {}
+@Obj interface LambdaSpecialForm2 extends Eval2, LambdaSpecialForm, SpecialFormP {}
+@Obj interface IfSpecialForm2 extends Eval2, IfSpecialForm, SpecialFormP {}
+@Obj interface QuoteSpecialForm2 extends Eval2, QuoteSpecialForm, SpecialFormP {}
+@Obj interface SymbolNode2 extends Eval2, SymbolNode, SymbolNodeP {
+    String name();
+    public default String print() {
+        return "'" + name();
+    }
+}
+//============= Combine operations (end) ============//
 
-class MumblerListNode<T extends Object> implements Node, Iterable<T> {
+class MumblerListNode<T extends Object> implements Node, Iterable<T>, Eval2 {
     public static final MumblerListNode<?> EMPTY =
             new MumblerListNode<>();
 
     public final T car;
     public final MumblerListNode<T> cdr;
 
-    private MumblerListNode() {
+    public MumblerListNode() {
         this.car = null;
         this.cdr = null;
     }
 
-    private MumblerListNode(T car, MumblerListNode<T> cdr) {
+    public MumblerListNode(T car, MumblerListNode<T> cdr) {
         this.car = car;
         this.cdr = cdr;
     }
@@ -292,12 +538,10 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T> {
         return this.car.equals(that.car) && this.cdr.equals(that.cdr);
     }
 
-    @Override
-    public String toString() {
+    public String print() {
         if (this == EMPTY) {
             return "()";
         }
-
         StringBuilder b = new StringBuilder("(" + this.car);
         MumblerListNode<T> rest = this.cdr;
         while (rest != null && rest != EMPTY) {

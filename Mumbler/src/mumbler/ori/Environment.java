@@ -1,6 +1,8 @@
-package mumbler.simple;
+package mumbler.ori;
 
 import java.util.HashMap;
+
+import mumbler.simple.*;
 
 public class Environment {
     private final HashMap<String, Object> env = new HashMap<String, Object>();
@@ -31,18 +33,18 @@ public class Environment {
 
     public static Environment getBaseEnvironment() {
         Environment env = new Environment();
-        env.putValue("+", PLUS2.of(""));
-        env.putValue("-", MINUS2.of(""));
-        env.putValue("*", MULT2.of(""));
-        env.putValue("/", DIV2.of(""));
-        env.putValue("=", EQUALS2.of(""));
-        env.putValue("<", LESS_THAN2.of(""));
-        env.putValue(">", GREATER_THAN2.of(""));
-        env.putValue("list", LIST2.of(""));
-        env.putValue("car", CAR2.of(""));
-        env.putValue("cdr", CDR2.of(""));
-        env.putValue("println", PRINTLN2.of(""));
-        env.putValue("now", NOW2.of(""));
+//        env.putValue("+", PLUS.of(""));
+//        env.putValue("-", MINUS.of(""));
+//        env.putValue("*", MULT.of(""));
+//        env.putValue("/", DIV.of(""));
+//        env.putValue("=", EQUALS.of(""));
+//        env.putValue("<", LESS_THAN.of(""));
+//        env.putValue(">", GREATER_THAN.of(""));
+//        env.putValue("list", LIST.of(""));
+//        env.putValue("car", CAR.of(""));
+//        env.putValue("cdr", CDR.of(""));
+//        env.putValue("println", PRINTLN.of(""));
+//        env.putValue("now", NOW.of(""));
         return env;
     }
 }

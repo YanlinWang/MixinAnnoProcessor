@@ -5,7 +5,7 @@
     <target name="create_run_jar">
         <jar destfile="/Users/yanlinwang/Dropbox/PL_group/MixinAnnoProcessor/Mumbler/mum.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="mumbler.simple.SimpleMumblerMain"/>
+                <attribute name="Main-Class" value="mumbler.simple.SimpleMumblerMain2"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="/Users/yanlinwang/Dropbox/PL_group/MixinAnnoProcessor/Mumbler/bin"/>
