@@ -1,6 +1,27 @@
 \section{Interaction of Interface Methods with Interface Composition}
 \bruno{I don't think this section makes alot of sense in the context 
-of the new paper!}
+of the new paper! I think perhaps some of this could be mentioned 
+in related work.
+
+In my opinion, instead of this section, we could have one section 
+that demonstrates our implementation and its advantages.
+
+\begin{itemize}
+
+\item Show a diagram of how the approach works? 
+
+\item Syntax and type system reuse; (good for error messages, for example)
+\item On-the-fly AST rewriting (means no new files are created, and functionality
+is immediatelly available for IDE's for example); this is better than conventional 
+annotation processors.
+\item Eclipse integration; code completion.
+\item No integration issues in typical pre-processors; (the process is transparent; 
+no need for an external tool that generates code in a first step).
+\item Separate compilation (which relates to the properties?)
+
+\end{itemize}
+
+}
 Before formalizing Classless Java and object interfaces, it is helpful
 to informally discuss the behaviour of Java8
 interfaces, in contrast with conventional trait models.
