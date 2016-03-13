@@ -538,28 +538,6 @@ transparently composed, and \texttt{Pegasus} has a \Q@Point3D@
 
 \lstinputlisting[linerange=74-74]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=PEGASUS
 
-\subsection{Abstract state operations}\bruno{Is this something to go into a discussion later on?}
-Defining an convenient list of abstract state operation is not an easy task.
-Of course we need getters.
-Currently we are offering both setters and Fluent setters. May be fluent setters are enough, and we can drop the
-concept of setters?
-We offer with withers and the with.
-What can be a nice syntax?
-\marco{my coments from now on}
-A language natively supporting Object interfaces may offer the following syntax:
-\begin{lstlisting}
-obj interface Foo{
-  int bar;//just getter
-  var int bar;//also setter(fluent)
-  with int bar;//also wither
-  with var int bar;//getter setter wither
-  with/var int bar=2;//default value, not asked in of
-  invariant{/*stuff that should always hold*/}
-  updater Bar, Beer//multi setter
-  wither Foo, Beer//multi with
-  factory of(...){call generate of}// generated of is now private
-}
-\end{lstlisting}
 
 \begin{comment}
 \subsection{A Running Example: \texttt{Point}}

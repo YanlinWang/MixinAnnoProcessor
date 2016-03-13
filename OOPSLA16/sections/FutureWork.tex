@@ -58,58 +58,76 @@ support for privacy in interfaces.
 \end{comment}
 
 %\subsection{Qualifiers in Methods} %{Private state
-\paragraph{Qualifiers in Methods} %{Private state
-The biggest limitation of our approach is the inability to model qualifiers
-for class methods (private, protected, synchronized, etc.). For example, the absence
-of support for private/protected methods in Java 8 interfaces forces all
-members of interfaces to be public, including static methods. Since we use
-abstract methods to encode state, our state is always all public. Still, because 
-the state can only be accessed by methods, it 
+\paragraph{Encapsulation} %{Private state
+Since we are using Java8 to encode IB, we are unable to directly support qualifies
+like private or protected. In Java 9, where private methods will be allowed in
+interfaces; abstract state operations are, however, abstract methods,
+so they can not be private.
+Still, because the state can only be accessed by methods, it 
 is impossible for the user to know if a certain method maps directly to a field
-or if it has a default implementation.  If the user wants a constructor that
-does not directly maps to the fields, (as for secondary constructors in Scala)
-he can simply define its own \Q@of@ method and delegate on the generated one:
-\begin{lstlisting}
-@Obj interface Point {  int x(); int y();
-    static Point of(int val){return Point.of(val,val);} }
-\end{lstlisting}
-However, the generated \Q@of@ method would also be present and public.  If a
-future version of Java was to support \emph{static private methods in
-  interfaces} we could extend our code generation to handle also encapsulation.
-Currently, it is possible to use a public nested class with private static
-methods inside, but this is ugly and cumbersome. One possibility is that the
-annotation processor takes methods with a \Q!@Private! annotation, and turns it into
-static private methods of a nested class. In this extension, also the \Q@of@
-method could be made private following the same pattern.
+or if it has a default implementation. 
 
-% \yanlin{future work on state initialization removed for now. Because I think the
-%   other two future works are fine. But this one is still not clear and
-%   controversial. The proposed workaround forces users to make decision: if he
-%   wants state with initialization then he also has to define the setter. Or
-%   else, it is ambiguous: could be interpreted as a state initializer or just
-%   a normal default method.}
-\begin{comment}
-\subsection{State initialization}
-As discussed before, the user can trivially define its own \Q@of@ method, and
-initialize a portion of the state with default values.  However, the
-initialization code would not be reusable, and subinterfaces would have
-to repeat such initialization code.  If a field has no setters, a simple
-alternative is to just define the ``field'' as a default method as in
+As shown by Ferruccio in [...] interfaces are enough to support privateness by a
+ variation of the facade pattern:
 \begin{lstlisting}
-@Obj interface Box{ default int val(){return 0;} }
+@Obj interface InternalData implements ExposedData{/*all the methods*/}//package visibility
+public interface ExposedData{
+  /*just the exposed interface*/
+  static ExposedData of(...){return InternalData.of(...);}
+  }
 \end{lstlisting}
-If setters are required, a possible extension of our code expansion could
-recognize a field if the getter is provided and the setter is required, and
-could generate the following code:
-\lstinputlisting[linerange=4-11]{../UseMixinLombok/src/futurework/TestStateInitialization.java}% APPLY:linerange=STATE_INIT
 
-We are unsure about the value of this workaround because of its trickiness. In
-order to define a state with initialization, users have to define a method trusting that it will be overridden later with a behavioral change, but
-such change is visible only after the first time the setter is called. Moreover, this code would cache
-the result instead of re-computing it every time. This can be very tricky in a
-non-functional setting.
-%\bruno{Yanlin please polish text/break long sentences.}
-\end{comment}
+This is a safe and explicit way to list all the public interfaces and to hide all the implementation
+details from outside of the package.\footnote{
+Note how \Q@ExposedData.of@ do not need to map directly to the fields, and can also perform 
+invariant checking.}
+
+Using packages to as a boundary we can make all object interfaces ``with privateness''
+invisible types for the rest of the program.
+This preserve encapsulation, but limits inheritance:
+package protected interfaces can not be seen,
+thus can not be implemented from outside the package.
+
+Using Java9 private interface methods
+\footnote{Or some ugly pattern available today like public static classes with private methods}
+one can define (and inherit) private behaviour; but private state inheritance in IB poses a logical challenge:
+How can the heir produce initialization code for a field whose very existence is secret?
+
+CB get around this problem in two ways: the constructor have to call a super-constructor, and
+some fields can be pre-initialized.
+The first idea would not provide any encapsulation benefit in IB,
+since generated \Q@of@ methods expose all the field information anyway.
+
+Pre-initialized fields could be supported by IB if we support a cache expression,
+that is \Q@cache(e)@ would evaluate the expression a single time for each object, and cache the result
+somewhere.\footnote{
+For example, in a the compiled bytecode for objects
+could have an extra field for each cached expression in its methods.
+Such cache expression would be quite useful for other reasons,
+including replacing involved initialization patterns.}
+
+In this way
+
+\begin{lstlisting}
+@Obj interface MyData{
+  private String f();//assuming Java9
+  private MyData f(String val);
+  }
+\end{lstlisting}
+Would be expanded into 
+\begin{lstlisting}
+@Obj interface MyData{
+  private Box<String> _f(){return cache(Box<String>.of("hello"));}
+  private String f(){return _f().val();}
+  private MyData f(String val){return _f().val(val);}
+  }
+\end{lstlisting}
+
+Where we could have a predefined \Q@Box@ type as\\*
+\Q|@Obj interface Box<T>{ T val(); Box<T> val(T val);}|
+
+
+
 
 \begin{comment}
 \subsection{Class Invariants in ClassLess Java}
@@ -156,3 +174,36 @@ interface Point { ...//as before
         return new Point() {...
             public Point clone() { return Point.super.clone();}};} }
 \end{lstlisting} 
+
+\paragraph{A real IB language}
+In this article we presented the concept of IB as a programming pattern over Java.
+We do not wish to define here a complete IB language, just to show the reader IB as
+a promising way to design a new oo language.
+The first task is to define the set of abstract state operations.
+Of course we need getters; \Q@withX@ methods seams to be pretty convenient, and they enable a
+clean function programming style that would be otherwise too cumbersome.
+
+Currently we are offering both setters and Fluent setters.
+We believe be fluent setters to be sufficient; we could drop the concept of (non fluent)setters.
+
+Manually defining abstract state methods can be verbose, we could offer a convenient syntax to 
+declare get/set/with.
+For example
+\begin{lstlisting}
+obj interface Foo{
+  String bar;//== String bar(); Foo withBar(String val);
+  var String beer;//also fluent setter
+  }
+\end{lstlisting}
+
+We may also want to offer a compact syntax for property updaters and generalized with methods;
+\begin{lstlisting}
+obj interface Foo{
+  updater Bar, Beer//== Foo set(Bar val); Foo set(Beer val);
+  with Foo, Beer//== Foo with(Bar val); Foo with(Beer val);
+  }
+\end{lstlisting}
+Finally, certain methods may have a specific meaning, for example
+if a private method called \Q@init@ is present, it will be called after construction,
+and it may be handled specially during multiple implementations, so that all relevant \Q@init@ methods are
+called in some order.
