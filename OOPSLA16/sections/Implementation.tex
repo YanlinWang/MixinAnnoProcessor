@@ -3,7 +3,11 @@
 \begin{figure*}[t]\label{fig:lombok}
 \centering
 \includegraphics[width=5in]{pdfs/lombok.png}
-\caption{The flow chart of Lombok annotation processing. [Ref: http://notatube.blogspot.hk/2010/12/project-lombok-creating-custom.html]}
+\caption{The flow chart of Lombok annotation processing. [Ref: http://notatube.blogspot.hk/2010/12/project-lombok-creating-custom.html]
+\marco{I'm not sure this helps: It is trying to show the "eclipse" path, that is the one we implemented,
+but there is also the "javac" path, and here we call the graph "Lombok annotation processing".
+May be this should be "obj" processing?
+}}
 \end{figure*}
 
 Our implementation is based on an extension of Lombok. The Lombok
@@ -66,31 +70,36 @@ badly designed Lombok-based rewritings.
 However, the``Outline'' window of Eclipse or other IDEs (and thus their auto-completion facilities)
 will show the result of the rewriting, helping the programmer to use the reinterpreted semantic.
 
-\item \textbf{No reuse of the type system.}
-As we mentioned above, badly designed rewritings can arise from the great power of Lombok. A simple piece of source code
-\begin{lstlisting}
-interface M { int m(); }
-\end{lstlisting}
-can be reinterpreted as
-\begin{lstlisting}
-interface M { void m(String s); }
-\end{lstlisting}
-in which case the type of method \Q@m@ is changed. Our \mixin annotation does not introduce this kind of rewritings,
-and hence the type system is reused. Moreover, Lombok can also modify unbounded types, which is easy to understand,
-for instance, the following code
-\begin{lstlisting}
-interface M { T m(); } // T is unbounded
-\end{lstlisting}
-is transformed into
-\begin{lstlisting}
-interface M { int m(); } // No error message
-\end{lstlisting}
-in which case the user will see the unbounded type in source code, but without error message from the compilation, since
-Lombok has modified the return type of \Q@m@. However, our \mixin annotation can still keep such errors and warnings.
-
-In our annotation, we only enhance code:
+Our annotation reinterpret the syntax for the sole goal of enhance/complete code:
 we satisfy the behaviour of abstract methods, we add methods and we refine return types.
 We consider this to be quite easy to follow, since it is similar to what happens in normal inheritance.
+
+\marco{The section No reuse of the type system
+is controversial.
+We do need to repeat the type checking, plus we aim to make untypable stuff well typed
+(for example anyone using the of method would not be well typed before).}
+%\item \textbf{No reuse of the type system.}
+%As we mentioned above, badly designed rewritings can arise from the great power of Lombok. A simple piece of source code
+%\begin{lstlisting}
+%interface M { int m(); }
+%\end{lstlisting}
+%can be reinterpreted as
+%\begin{lstlisting}
+%interface M { void m(String s); }
+%\end{lstlisting}
+%in which case the type of method \Q@m@ is changed. Our \mixin annotation does not introduce this kind of rewritings,
+%and hence the type system is reused. Moreover, Lombok can also modify unbounded types, which is easy to understand,
+%for instance, the following code
+%\begin{lstlisting}
+%interface M { T m(); } // T is unbounded
+%\end{lstlisting}
+%is transformed into
+%\begin{lstlisting}
+%interface M { int m(); } // No error message
+%\end{lstlisting}
+%in which case the user will see the unbounded type in source code, but without error message from the compilation, since
+%Lombok has modified the return type of \Q@m@. However, our \mixin annotation can still keep such errors and warnings.
+
 
 %\item \textbf{Lack of reuse.}  %not sure here... I think most preprocessors support decent reuse, even the C one
 %Reusability is yet another concern in using preprocessors.
