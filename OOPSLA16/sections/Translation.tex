@@ -137,7 +137,7 @@ The function $\ofMethod$ generates the static method $\QM{of}$, as an object fac
 field methods of $\C_0$, take them as arguments, and in the return statement is an anonymous class which generates getters,
 fluent setters and with-methods in certain cases. Some other features of $\mixinAnn$, including non-fluent setters and the $\QM{with}$ method, however, are not formalized in Classless Java. Appendix~\ref{subsec:otherfeatures} gives an informal explanation of those methods.
 
-\subsection{Guarantees}
+\subsection{Guarantees}\label{subsec:guarantees}
 
 To understand to what extent our approach is correct (and more in general, what it means to say that a language tuning is correct) we identify three types of guarantees:
 \begin{itemize}
@@ -172,7 +172,7 @@ would be correct before translation, but would be ill-typed after the translatio
 \noindent This means that our automatic type refinement
 is a useful and convenient feature, but not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantics and provide the right type while refining methods.
 
-\subsection{Results}
+\subsection{Results}\label{subsec:results}
 
 To formally characterize the behavior of our annotation and the two levels of guarantees that we offer, we provide some notations and two theorems:
 \begin{itemize}

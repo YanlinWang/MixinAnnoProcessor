@@ -1,5 +1,11 @@
 \section{Implementation}
 
+\begin{figure*}[t]\label{fig:lombok}
+\centering
+\includegraphics[width=5in]{pdfs/lombok.png}
+\caption{The flow chart of Lombok annotation processing. [Ref: http://notatube.blogspot.hk/2010/12/project-lombok-creating-custom.html]}
+\end{figure*}
+
 Our implementation is based on an extension of Lombok. The Lombok
 project~\cite{lombok} is a Java library that aims at removing (or
 reducing) Java boilerplate code via
@@ -14,7 +20,8 @@ annotated node and returns a modified AST for analysis and
 generation afterwards. Such a handler can either be a Javac handler or
 an Eclipse handler.
 
-The annotation we created is \mixin. In Eclipse, with an interface annotated by
+The annotation we created is \mixin. Figure~\ref{fig:lombok}\haoyuan{Wrong ref?} illustrates the
+flow of \mixin annotation processing in Lombok. In Eclipse, with an interface annotated by
 \mixin, the automatic annotation processing is performed transparently and the information of
 the interface from compilation is captured in the ``Outline'' window. This includes
 all the methods inside the interface as well as the generated ones.  The custom
@@ -34,31 +41,52 @@ Neither the source code is modified nor new Java files are generated.
   Java annotation processors do not support.
 \end{itemize}
 
-\noindent 
-Lombok offers several advantages over conventional code preprocessors/macros, 
-and our disciplined \mixin annotation offer some more advantages with respect to arbitrary Lombok based
-ast rewriting.
-modularity, code quality and maintainability
+\noindent
+Lombok offers several advantages over conventional code preprocessors/macros,
+and our disciplined \mixin annotation offer some more advantages with respect to arbitrary Lombok-based
+AST rewriting.
 \begin{itemize}
-\item \textbf{Modularity}
-While general preprocessing can act across module boundaries, Lombock act modularly on each class, and it makes
-sense to apply the transformation to one class/interface at a time, and only to annotated classes/interface.
+\item \textbf{Lack of modularity.}
+While general preprocessing can act across module boundaries, Lombok acts modularly on each class, and it makes
+sense to apply the transformation to one class/interface at a time, and only to annotated classes/interfaces.
 This allows library code to be reused without the need of being
 reprocessed and recompiled.
 
-\item \textbf{Syntax and type errors.} 
+\item \textbf{Syntax and type errors.}
 Some preprocessors (like the C one) can produce syntactically invalid code.
 Lombok ensures only syntactically valid code is produced; however, type errors can appear.
-In our annotation, we proven that we do not introduce new errors in clients (see [] for details).
+In our annotation, we prove that we do not introduce new errors in clients (see Section~\ref{subsec:guarantees} and Section~\ref{subsec:results} for details).
 
 \item \textbf{Obfuscated source code.}
-Preprocessors bring great power, that can easily be misused producing 
-code particularly hard to understand.
-Lombok requires to start from Java Syntax, and can re interpret it.
-This is already better, since the syntax is preserved, but the reinterpretation could be surprising for 
-badly designed Lombok based rewritings.
+Preprocessors bring great power, which can easily be misused producing
+code particularly hard to understand. Thus code quality and maintainability are reduced.
+Lombok requires to start from Java syntax, and can reinterpret it.
+This is already better, since the syntax is preserved, but the reinterpretation could be surprising for
+badly designed Lombok-based rewritings.
 However, the``Outline'' window of Eclipse or other IDEs (and thus their auto-completion facilities)
 will show the result of the rewriting, helping the programmer to use the reinterpreted semantic.
+
+\item \textbf{No reuse of the type system.}
+As we mentioned above, badly designed rewritings can arise from the great power of Lombok. A simple piece of source code
+\begin{lstlisting}
+interface M { int m(); }
+\end{lstlisting}
+can be reinterpreted as
+\begin{lstlisting}
+interface M { void m(String s); }
+\end{lstlisting}
+in which case the type of method \Q@m@ is changed. Our \mixin annotation does not introduce this kind of rewritings,
+and hence the type system is reused. Moreover, Lombok can also modify unbounded types, which is easy to understand,
+for instance, the following code
+\begin{lstlisting}
+interface M { T m(); } // T is unbounded
+\end{lstlisting}
+is transformed into
+\begin{lstlisting}
+interface M { int m(); } // No error message
+\end{lstlisting}
+in which case the user will see the unbounded type in source code, but without error message from the compilation, since
+Lombok has modified the return type of \Q@m@. However, our \mixin annotation can still keep such errors and warnings.
 
 In our annotation, we only enhance code:
 we satisfy the behaviour of abstract methods, we add methods and we refine return types.
