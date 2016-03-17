@@ -547,7 +547,7 @@ class Util {
 		if (!(t1 instanceof SingleTypeReference)) return false;
 		if (!(t2 instanceof SingleTypeReference)) return false;
 		String name1 = String.valueOf(((SingleTypeReference) t1).token);
-		String name2 = String.valueOf(((SingleTypeReference) t1).token);
+		String name2 = String.valueOf(((SingleTypeReference) t2).token);
 		if (!name1.equals(name2)) return false;
 		TypeReference[] t1Args = null;
 		TypeReference[] t2Args = null;
@@ -627,8 +627,8 @@ class Util {
 	}
 	static void printLog(String s) {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Haoyuan\\Desktop\\log.txt"));
-			bw.write(s);
+			BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Haoyuan\\Desktop\\log.txt", true));
+			bw.write(s + "\n");
 			bw.close();
 		} catch (IOException e) {}
 	}
