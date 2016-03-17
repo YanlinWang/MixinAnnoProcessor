@@ -1,4 +1,4 @@
-package mumbler.simple;
+package mumbler.ours;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -8,19 +8,12 @@ import java.io.PushbackReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import mumbler.simple.node.BooleanNode;
-import mumbler.simple.node.Node;
-import mumbler.simple.node.NumberNode;
-import mumbler.simple.node.SpecialForm;
-import mumbler.simple.node.SymbolNode;
-import mumbler.simple.node.MumblerListNode;
-
-public class Reader {
+public interface Reader {
     public static MumblerListNode<Node> read(InputStream istream) throws IOException {
         return read(new PushbackReader(new InputStreamReader(istream)));
     }
 
-    private static MumblerListNode<Node> read(PushbackReader pstream)
+    static MumblerListNode<Node> read(PushbackReader pstream)
             throws IOException {
         List<Node> nodes = new ArrayList<Node>();
 
@@ -52,7 +45,7 @@ public class Reader {
         }
     }
 
-    private static void readWhitespace(PushbackReader pstream)
+    static void readWhitespace(PushbackReader pstream)
             throws IOException {
         char c = (char) pstream.read();
         while (Character.isWhitespace(c)) {
@@ -61,7 +54,7 @@ public class Reader {
         pstream.unread(c);
     }
 
-    private static SymbolNode readSymbol(PushbackReader pstream)
+    static SymbolNode readSymbol(PushbackReader pstream)
             throws IOException {
         StringBuilder b = new StringBuilder();
         char c = (char) pstream.read();
@@ -70,10 +63,10 @@ public class Reader {
             c = (char) pstream.read();
         }
         pstream.unread(c);
-        return new SymbolNode(b.toString());
+        return SymbolNode.of(b.toString());
     }
 
-    private static Node readList(PushbackReader pstream) throws IOException {
+    static Node readList(PushbackReader pstream) throws IOException {
         char paren = (char) pstream.read();
         assert paren == '(' : "Reading a list must start with '('";
         List<Node> list = new ArrayList<Node>();
@@ -94,7 +87,7 @@ public class Reader {
         return SpecialForm.check(MumblerListNode.list(list));
     }
 
-    private static NumberNode readNumber(PushbackReader pstream)
+    static NumberNode readNumber(PushbackReader pstream)
             throws IOException {
         StringBuilder b = new StringBuilder();
         char c = (char) pstream.read();
@@ -103,24 +96,24 @@ public class Reader {
             c = (char) pstream.read();
         }
         pstream.unread(c);
-        return new NumberNode(Long.valueOf(b.toString(), 10));
+        return NumberNode.of(Long.valueOf(b.toString(), 10));
     }
 
-    private static final SymbolNode TRUE_SYM = new SymbolNode("t");
-    private static final SymbolNode FALSE_SYM = new SymbolNode("f");
+    static final SymbolNode TRUE_SYM = SymbolNode.of("t");
+    static final SymbolNode FALSE_SYM = SymbolNode.of("f");
 
-    private static BooleanNode readBoolean(PushbackReader pstream)
+    static BooleanNode readBoolean(PushbackReader pstream)
             throws IOException {
         char hash = (char) pstream.read();
         assert hash == '#' : "Reading a boolean must start with '#'";
 
         SymbolNode sym = readSymbol(pstream);
         if (TRUE_SYM.equals(sym)) {
-            return BooleanNode.TRUE;
+            return BooleanNode.TRUE();
         } else if (FALSE_SYM.equals(sym)) {
-            return BooleanNode.FALSE;
+            return BooleanNode.FALSE();
         } else {
-            throw new IllegalArgumentException("Unknown value: #" + sym.name);
+            throw new IllegalArgumentException("Unknown value: #" + sym.name());
         }
     }
 }

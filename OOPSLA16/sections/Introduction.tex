@@ -1,33 +1,21 @@
 \section{Introduction}\label{sec:intro}
 
-\bruno{Generaly speaking I like the flow of the new introduction!
-I would say that we do need to defend ourselfves against Scala traits, 
-but the differences are probably in three aspects:
+\bruno{need to defend ourselfves against Scala traits}
+\marco{I tried to improve a little, also in this sense,
+but I still think is better to defend ourselves mostly in the related work section, some of your text under may end up there}
 
-\begin{itemize}
-
-\item The abstract state operations and the novel technique to deal with 
+\bruno{The abstract state operations and the novel technique to deal with 
 covariant refinement of setters; Scala traits do support state (variables and 
 immutable values), but there's no support for ``with'' (and clone-like) methods for example; and 
-mutable state does not support type-refinement. 
-
-\item Automatic type-refinements (although Scala does also support \emph{manual} type-refinement 
-of immutable fields);
-
-\item We support constructors; whereas Scala traits do not. This is one key reason why classes 
-are still necessary in a lnaguage like Scala.
-
-\end{itemize}
-
-One final point about the introduction is that language tuning is no longer 
-mentioned. I think this is fine, but we have to discuss the strategy.
-
+mutable state does not support type-refinement.
 }
+
 Object oriented languages always strive to offer great code reuse,
 they aim to couple flexibility and rigour, expressive power and modular reasoning.
 Two main idea have emerged to this end: prototype based (PB) and class based (CB) languages.
 In prototype based languages an objects inherits from other objects,
 and thus objects own both behaviour and state (and objects is all you have).
+
 In class based languages an object is instance of a specific class, and classes inherits from other classes.
 Here objects own the state, while classes contains behaviour and the structure of the state.
 
@@ -36,13 +24,14 @@ We present here a third alternative: the concept of
   objects implements interfaces, and they own implementation for the behaviour,
 that is structurally defined in their interface.
   
-  State is just a special kind of behaviour, and is accessed by getter and setter methods.
-  
   The literature provide good examples on how easy and modular can be combining
   multiple sources of pure behaviour (traits[]), and how
   hard it is to modularly combine multiple sources of behaviour \textbf{and} state (multiple inheritance[]).
-  However, our object are the only responsible to define 
-  the ultimate behaviour or a method, and if such method is just a getter/setter.
+
+  In IB, state is just a special kind of behaviour implementation.
+  Object are the only responsible to define 
+  the ultimate behaviour of a method and, for example, if such method is just a setter.
+  Anything related to state is completely contained in the instances and do not leak in the interfaces.
 
 Our idea could be explained by defining a novel language, with new syntax and semantic.
 However, this would have a
@@ -72,6 +61,18 @@ evolution", not "poor man's traits"''~\cite{goetz13default}. As a result,
 they were happy to support the secondary use of interfaces with
 default methods as long as it did not make the implementation and
 language more complex.}
+\marcoT{We could use Scala Traits to encode IB, but the simpler Java8 model is a better starting point.}
+\footnote{
+\marco{may go in related work}
+Scala traits can declare \Q@def, val, var@ and \Q@lazy val@ 
+However, while \Q@def@s can be overridden by \Q@val@/\Q@var@s, 
+\Q@val@/\Q@var@s can not be overridden.\marco{we need to check this}
+A\Q@val@/\Q@var@ member is predestined to be instance state, and this
+is in sharp contrast with our model where the state is only a private detail of instances, and
+do not contaminate interface/trait/classes.}
+\footnote{Scala traits have no constructor, but 
+\Q@var@s and (\Q@lazy@) \Q@val@s can be ``pre-initialized''.}
+
 
 
 
@@ -117,23 +118,33 @@ language more complex.}
 We propose a programming style, where we never use classes\footnote{More precisely, we never use the \Q@class@ keyword.}.
 We call this restricted version of Java \emph{Class-less Java}.
 Our proposed style enables powerful object-oriented idioms, similar to 
-multiple inheritance.
+(stateful) multiple inheritance and field type refinement 
+(allowing a kind of covariant setters refinement).
 
-Since Java was not designed to be used in this way, our style can be verbose, especially about
-object instantiation.
-We will annotate with \Q|@Obj| certain interfaces and rely on
-the Annotation processing to generate boring and repetitive code
-allowing interface instantiation.
-We call such annotated interface \emph{object interfaces};
-they support \emph{abstract state operations}, providing a way
-to use multiple inheritance with state in Java. The abstract state
+
+As for CB, in IB programmers do not define objects directly,but delegate the task to
+\emph{object interfaces}, whose role is similar to non abstract classes in CB.
+
+The idea is that all abstract operations in an Object interface will be
+interpreted as \emph{abstract state operations};  The abstract state
 operations include various common utility methods (such as getters and
 setters, or clone-like methods). In the presence of subtyping, such
 operations often require special care, as their types need to be
 refined. Object interfaces provide support for type-refinement and can
 automatically produce code that deals with type-refinement
-adequately. %With object interfaces, many Java programs can be built
+adequately, while Java (and Scala) require explicit type-refinement.
+
+
+  %With object interfaces, many Java programs can be built
 %without using a single class!
+
+
+The Java annotation processors allows us to stick to pure Java8: by
+annotating with \Q|@Obj| certain interfaces
+we can generate boring and repetitive code
+allowing interface instantiation and type refinement; such code should not be needed in the first place
+in a real IB language.
+%Since Java was not designed to be used in this way, our style can be verbose, especially about object instantiation.
 
 
 %
@@ -186,10 +197,14 @@ to an existing implementation~\cite{bono14} using plain Java 8.
 Noteworthy, all applications are implemented 
 without defining a single class!
 
+We can extend our approach to support encapsulation and privateness;
+various possibilities are discussed in the last part of the paper.
+
+
 In summary, the contributions of this paper are:
 \begin{itemize}
 
-\item {\bf Object Interfaces:} A simple feature that allows various
+\item {\bf IB and Object Interfaces:} a novel take on object orientation, allowing
   powerful multiple-inheritance programming idioms to be expressed
   conveniently in Java. We provide examples, informal and formal description.
 
@@ -206,7 +221,6 @@ to characterize safety properties about our annotations.
   implementation of object interfaces, using Java
   annotations and AST rewriting. Moreover, the usefulness of object interfaces is
   illustrated through various examples and case studies.
-
 
 %\item{\bf Language Tuning:} We identify the concept of language tuning 
 %and describe object interfaces as an example. We also discuss 
