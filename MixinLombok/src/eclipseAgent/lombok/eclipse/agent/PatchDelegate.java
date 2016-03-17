@@ -25,6 +25,7 @@ import static lombok.eclipse.Eclipse.*;
 import static lombok.eclipse.handlers.EclipseHandlerUtil.*;
 import static lombok.eclipse.EclipseAugments.Annotation_applied;
 
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +58,7 @@ import org.eclipse.jdt.internal.compiler.ast.ReturnStatement;
 import org.eclipse.jdt.internal.compiler.ast.SingleNameReference;
 import org.eclipse.jdt.internal.compiler.ast.SingleTypeReference;
 import org.eclipse.jdt.internal.compiler.ast.Statement;
+import org.eclipse.jdt.internal.compiler.ast.StringLiteral;
 import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.TypeParameter;
@@ -118,54 +120,123 @@ public class PatchDelegate {
 	}
 	
 	public static boolean handleDelegateForType(ClassScope scope) {
-		if (TransformEclipseAST.disableLombok) return false;
-		if (!hasDelegateMarkedFieldsOrMethods(scope.referenceContext)) return false;
+//		if (TransformEclipseAST.disableLombok) return false;
+//		if (!hasDelegateMarkedFieldsOrMethods(scope.referenceContext)) return false;
+//		
+//		List<ClassScopeEntry> stack = visited.get();
+//		StringBuilder corrupted = null;
+//		for (ClassScopeEntry entry : stack) {
+//			if (corrupted != null) {
+//				corrupted.append(" -> ").append(nameOfScope(entry.scope));
+//			} else if (entry.scope == scope) {
+//				corrupted = new StringBuilder().append(nameOfScope(scope));
+//			}
+//		}
+//		
+//		if (corrupted != null) {
+//			boolean found = false;
+//			String path = corrupted.toString();
+//			for (ClassScopeEntry entry : stack) {
+//				if (!found && entry.scope == scope) found = true;
+//				if (found) entry.corruptedPath = path;
+//			}
+//		} else {
+//			ClassScopeEntry entry = new ClassScopeEntry(scope);
+//			stack.add(entry);
+//			
+//			try {
+//				TypeDeclaration decl = scope.referenceContext;
+//				if (decl != null) {
+//					CompilationUnitDeclaration cud = scope.compilationUnitScope().referenceContext;
+//					EclipseAST eclipseAst = TransformEclipseAST.getAST(cud, true);
+//					List<BindingTuple> methodsToDelegate = new ArrayList<BindingTuple>();
+//					fillMethodBindingsForFields(cud, scope, methodsToDelegate);
+//					if (entry.corruptedPath != null) {
+//						eclipseAst.get(scope.referenceContext).addError("No @Delegate methods created because there's a loop: " + entry.corruptedPath);
+//					} else {
+//						generateDelegateMethods(eclipseAst.get(decl), methodsToDelegate, DelegateReceiver.FIELD);
+//					}
+//					methodsToDelegate.clear();
+//					fillMethodBindingsForMethods(cud, scope, methodsToDelegate);
+//					if (entry.corruptedPath != null) {
+//						eclipseAst.get(scope.referenceContext).addError("No @Delegate methods created because there's a loop: " + entry.corruptedPath);
+//					} else {
+//						generateDelegateMethods(eclipseAst.get(decl), methodsToDelegate, DelegateReceiver.METHOD);
+//					}
+//				}
+//			} finally {
+//				stack.remove(stack.size() - 1);
+//			}
+//		}
 		
-		List<ClassScopeEntry> stack = visited.get();
-		StringBuilder corrupted = null;
-		for (ClassScopeEntry entry : stack) {
-			if (corrupted != null) {
-				corrupted.append(" -> ").append(nameOfScope(entry.scope));
-			} else if (entry.scope == scope) {
-				corrupted = new StringBuilder().append(nameOfScope(scope));
-			}
-		}
-		
-		if (corrupted != null) {
-			boolean found = false;
-			String path = corrupted.toString();
-			for (ClassScopeEntry entry : stack) {
-				if (!found && entry.scope == scope) found = true;
-				if (found) entry.corruptedPath = path;
-			}
-		} else {
-			ClassScopeEntry entry = new ClassScopeEntry(scope);
-			stack.add(entry);
-			
-			try {
-				TypeDeclaration decl = scope.referenceContext;
-				if (decl != null) {
-					CompilationUnitDeclaration cud = scope.compilationUnitScope().referenceContext;
-					EclipseAST eclipseAst = TransformEclipseAST.getAST(cud, true);
-					List<BindingTuple> methodsToDelegate = new ArrayList<BindingTuple>();
-					fillMethodBindingsForFields(cud, scope, methodsToDelegate);
-					if (entry.corruptedPath != null) {
-						eclipseAst.get(scope.referenceContext).addError("No @Delegate methods created because there's a loop: " + entry.corruptedPath);
-					} else {
-						generateDelegateMethods(eclipseAst.get(decl), methodsToDelegate, DelegateReceiver.FIELD);
-					}
-					methodsToDelegate.clear();
-					fillMethodBindingsForMethods(cud, scope, methodsToDelegate);
-					if (entry.corruptedPath != null) {
-						eclipseAst.get(scope.referenceContext).addError("No @Delegate methods created because there's a loop: " + entry.corruptedPath);
-					} else {
-						generateDelegateMethods(eclipseAst.get(decl), methodsToDelegate, DelegateReceiver.METHOD);
+		// Haoyuan.
+		CompilationUnitDeclaration cud = scope.compilationUnitScope().referenceContext;
+		EclipseAST eclipseAst = TransformEclipseAST.getAST(cud, true);
+		EclipseNode node = eclipseAst.get(scope.referenceContext);
+		TypeDeclaration decl = scope.referenceContext;
+		String str = "";
+		if (!(node.get() instanceof TypeDeclaration)) return false;
+		TypeDeclaration type = (TypeDeclaration) node.get();
+		if (type.annotations == null) return false;
+		Annotation anno = null;
+		for (Annotation ann : type.annotations) {
+			List<ClassLiteralAccess> rawTypes = rawTypes(ann, "types");
+			for (ClassLiteralAccess cla : rawTypes) {
+				TypeBinding binding = cla.type.resolveType(decl.initializerScope);
+				if (binding instanceof ReferenceBinding) {
+					anno = ann;
+					str += "binding.debugName = " + binding.debugName() + "\n";		
+					MethodBinding[] methods = ((ReferenceBinding) binding).methods();
+					for (MethodBinding method : methods) {
+						str += "Method: " + String.valueOf(method.selector) + "\n";
 					}
 				}
-			} finally {
-				stack.remove(stack.size() - 1);
 			}
 		}
+		
+		if (str.isEmpty()) return false;
+		long p = (long)(anno.sourceStart) << 32 | (anno.sourceEnd);
+		
+		EclipseNode astNode = null;
+		for (EclipseNode n : node.down()) {
+			if (n.get() instanceof org.eclipse.jdt.internal.compiler.ast.NormalAnnotation) astNode = n;
+		}
+		ASTNode _ast = astNode.get();
+		MethodDeclaration method = new MethodDeclaration(((TypeDeclaration) eclipseAst.get(type).get()).compilationResult);
+		method.annotations = null;
+		method.modifiers = ClassFileConstants.AccStatic;
+		method.typeParameters = null;
+		method.returnType = new SingleTypeReference(TypeBinding.VOID.simpleName, p);
+		method.selector = "print".toCharArray();
+		method.arguments = null;
+		method.binding = null;
+		method.thrownExceptions = null;
+		method.bits |= ECLIPSE_DO_NOT_TOUCH_FLAG;
+		MessageSend printInfo = new MessageSend();
+		printInfo.arguments = new Expression[] {
+			new StringLiteral("I'm here!".toCharArray(), _ast.sourceStart, _ast.sourceEnd, 0)
+		};
+		printInfo.receiver = createNameReference("System.out", anno);
+		printInfo.selector = "println".toCharArray();
+		method.statements = new Statement[] { printInfo };;
+		method.bodyStart = method.declarationSourceStart = method.sourceStart = _ast.sourceStart;
+		method.bodyEnd = method.declarationSourceEnd = method.sourceEnd = _ast.sourceEnd;
+		
+//		lombok.eclipse.handlers.EclipseHandlerUtil.injectMethod(eclipseAst.get(type), method);
+		lombok.eclipse.handlers.EclipseHandlerUtil.injectMethod(astNode.up(), method);
+
+		str += "anno = " + ((org.eclipse.jdt.internal.compiler.ast.NormalAnnotation) astNode.get()).type.toString() + "\n";
+		str += "node = " + node.get().getClass().toString() + "\n";
+		for (EclipseNode n : node.down()) {
+			str += "node' = " + n.get().getClass().toString() + "\n";
+			if (n.get() instanceof MethodDeclaration) str += "  -> method = " + String.valueOf(((MethodDeclaration) n.get()).selector) + "\n";
+		}
+		
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Haoyuan\\Desktop\\log.txt", true));
+			bw.write(String.valueOf(str) + "\n");
+			bw.close();
+		} catch (IOException e) {}
 		
 		return false;
 	}
