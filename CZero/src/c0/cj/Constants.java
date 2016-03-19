@@ -3,44 +3,44 @@ package c0.cj;
 import java.io.PrintWriter;
 
 public interface Constants {
-    static final int tLPAR = 0;
-    static final int tRPAR = 1;
-    static final int tASSIGN = 2;
-    static final int tSEMI = 3;
-    static final int tCOMMA = 4;
-    static final int tEQ = 5;
-    static final int tNE = 6;
-    static final int tID = 7;
-    static final int tCONST = 8;
-    static final int tCHAR = 9;
-    static final int tADD = 10;
-    static final int tSUB = 11;
-    static final int tMUL = 12;
-    static final int tDIV = 13;
-    static final int tMOD = 14;
-    static final int tLBRACK = 15;
-    static final int tRBRACK = 16;
-    static final int tOR = 17;
-    static final int tAND = 18;
-    static final int tNOT = 19;
-    static final int tLT = 20;
-    static final int tGT = 21;
-    static final int tLEQ = 22;
-    static final int tGEQ = 23;
-    static final int tSHARP = 24;
-    static final int tDOT = 25;
-    static final int tINT = 26;
-    static final int tIF = 27;
-    static final int tELSE = 28;
-    static final int tWHILE = 29;
-    static final int tGETCHAR = 30;
-    static final int tPUTCHAR = 31;
-    static final int tINCLUDE = 32;
-    static final int tRETURN = 33;
-    static final int tMAIN = 34;
-    static final int tEOF = 35;
-    static final int tERROR = 36;
-    static final int tWHITE = 37;
+    default int tLPAR() { return 0; }
+    default int tRPAR() { return 1; }
+    default int tASSIGN() { return 2; }
+    default int tSEMI() { return 3; }
+    default int tCOMMA() { return 4; }
+    default int tEQ() { return 5; }
+    default int tNE() { return 6; }
+    default int tID() { return 7; }
+    default int tCONST() { return 8; }
+    default int tCHAR() { return 9; }
+    default int tADD() { return 10; }
+    default int tSUB() { return 11; }
+    default int tMUL() { return 12; }
+    default int tDIV() { return 13; }
+    default int tMOD() { return 14; }
+    default int tLBRACK() { return 15; }
+    default int tRBRACK() { return 16; }
+    default int tOR() { return 17; }
+    default int tAND() { return 18; }
+    default int tNOT() { return 19; }
+    default int tLT() { return 20; }
+    default int tGT() { return 21; }
+    default int tLEQ() { return 22; }
+    default int tGEQ() { return 23; }
+    default int tSHARP() { return 24; }
+    default int tDOT() { return 25; }
+    default int tINT() { return 26; }
+    default int tIF() { return 27; }
+    default int tELSE() { return 28; }
+    default int tWHILE() { return 29; }
+    default int tGETCHAR() { return 30; }
+    default int tPUTCHAR() { return 31; }
+    default int tINCLUDE() { return 32; }
+    default int tRETURN() { return 33; }
+    default int tMAIN() { return 34; }
+    default int tEOF() { return 35; }
+    default int tERROR() { return 36; }
+    default int tWHITE() { return 37; }
 
     public static void codeLibrary(PrintWriter out) {
         code(".method mul_", out);

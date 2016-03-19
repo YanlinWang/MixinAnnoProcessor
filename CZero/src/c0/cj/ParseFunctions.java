@@ -6,7 +6,7 @@ import java.util.Map;
 public interface ParseFunctions extends MemberFields, BaseOpers, ParseStatements {
     default void parseFunctions(Map<String, Integer> funcs, Map<String, Integer> prototypes) {
         skip();
-        while (tKind()==tINT) {
+        while (tKind()==tINT()) {
             parseFunction(funcs,prototypes);
             skip();
         }
@@ -15,14 +15,14 @@ public interface ParseFunctions extends MemberFields, BaseOpers, ParseStatements
     default void parseFunction(Map<String, Integer> funcs, Map<String, Integer> prototypes) {
         Map<String, Integer> vars = new HashMap<String, Integer>();
         String name;
-        checkToken(tINT);
-        skipToken(tID);
+        checkToken(tINT());
+        skipToken(tID());
         name = tIdValue();
-        skipToken(tLPAR);
+        skipToken(tLPAR());
         int args = parseFormals(vars);
-        skipToken(tRPAR);
+        skipToken(tRPAR());
         skip();
-        if (tKind()==tSEMI) {
+        if (tKind()==tSEMI()) {
             nextToken();
             if (prototypes.containsKey(name)) 
                 compileError("duplicate declaration of "+name);
@@ -47,13 +47,13 @@ public interface ParseFunctions extends MemberFields, BaseOpers, ParseStatements
         int offset = 0;
         boolean more = false;
         skip();
-        while (tKind()==tINT) {
+        while (tKind()==tINT()) {
             nextToken();
-            skipToken(tID);
+            skipToken(tID());
             offset++;
             vars.put(tIdValue(),offset);
             skip();
-            if (tKind()==tCOMMA) {
+            if (tKind()==tCOMMA()) {
                 nextToken();
                 skip();
                 more = true;
@@ -65,29 +65,29 @@ public interface ParseFunctions extends MemberFields, BaseOpers, ParseStatements
     }
 
     default void parseBody(int offset, Map<String, Integer> vars, Map<String, Integer> funcs, Map<String, Integer> prototypes) {
-        skipToken(tLBRACK);
+        skipToken(tLBRACK());
         parseDeclarations(offset,0,vars);
         parseStatements(vars,funcs,prototypes); 
-        skipToken(tRBRACK);
+        skipToken(tRBRACK());
     }
 
     default void parseDeclarations(int offset, int locals, Map<String, Integer> vars) {
         int initValue = 0;
         boolean initialized = false;
         skip();
-        if (tKind()==tINT) {
+        if (tKind()==tINT()) {
             nextToken();
-            skipToken(tID);
+            skipToken(tID());
             offset++;
             vars.put(tIdValue(),offset);
             skip();
-            if (tKind()==tASSIGN) {
+            if (tKind()==tASSIGN()) {
                 nextToken();
-                skipToken(tCONST);
+                skipToken(tCONST());
                 initialized = true;
                 initValue = tIntValue();
             }
-            checkToken(tSEMI);
+            checkToken(tSEMI());
             parseDeclarations(offset,locals+1,vars);
         } else {
             if (locals>0)

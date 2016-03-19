@@ -57,7 +57,7 @@ public interface BaseOpers extends MemberFields, Constants {
                 tKind(tERROR());
                 break; 
             }
-            tKind(tCONST());
+            tKind(tCONST);
             tIntValue(c());
             nextChar();
             if (c()!='\'') {
@@ -69,7 +69,7 @@ public interface BaseOpers extends MemberFields, Constants {
             case '=': nextChar(); 
             if (c()=='=') { 
                 nextChar();
-                tKind(tEQ());
+                tKind(tEQ);
             } else {
                 tKind(tASSIGN());
             }
@@ -79,7 +79,7 @@ public interface BaseOpers extends MemberFields, Constants {
                 nextChar();
                 tKind(tLEQ());
             } else {
-                tKind(tLT());
+                tKind(tLT);
             }
             break;
             case '>': nextChar();
@@ -87,7 +87,7 @@ public interface BaseOpers extends MemberFields, Constants {
                 nextChar();
                 tKind(tGEQ());
             } else {
-                tKind(tGT());
+                tKind(tGT);
             }
             break;
             case '!': nextChar();
@@ -160,43 +160,46 @@ public interface BaseOpers extends MemberFields, Constants {
     }
 
     default void printToken() {
-           if (tKind() == tLPAR()) System.out.print("("); 
-            else if (tKind() == tRPAR()) System.out.print(")"); 
-            else if (tKind() == tASSIGN()) System.out.print("="); 
-            else if (tKind() == tSEMI()) System.out.print(";"); 
-            else if (tKind() == tCOMMA()) System.out.print(","); 
-            else if (tKind() == tEQ()) System.out.print("=="); 
-            else if (tKind() == tNE()) System.out.print("!="); 
-            else if (tKind() == tID()) System.out.print(tIdValue()); 
-            else if (tKind() == tCONST()) System.out.print(tIntValue()); 
-            else if (tKind() == tCHAR()) System.out.print("char"); 
-            else if (tKind() == tADD()) System.out.print("+"); 
-            else if (tKind() == tSUB()) System.out.print("-"); 
-            else if (tKind() == tMUL()) System.out.print("*"); 
-            else if (tKind() == tDIV()) System.out.print("/"); 
-            else if (tKind() == tMOD()) System.out.print("%"); 
-            else if (tKind() == tLBRACK()) System.out.print("{"); 
-            else if (tKind() == tRBRACK()) System.out.print("}"); 
-            else if (tKind() == tOR()) System.out.print("|"); 
-            else if (tKind() == tAND()) System.out.print("&"); 
-            else if (tKind() == tNOT()) System.out.print("!"); 
-            else if (tKind() == tLT()) System.out.print("<"); 
-            else if (tKind() == tGT()) System.out.print(">"); 
-            else if (tKind() == tLEQ()) System.out.print("<="); 
-            else if (tKind() == tGEQ()) System.out.print(">="); 
-            else if (tKind() == tSHARP()) System.out.print("#"); 
-            else if (tKind() == tDOT()) System.out.print("."); 
-            else if (tKind() == tINT()) System.out.print("int"); 
-            else if (tKind() == tIF()) System.out.print("if"); 
-            else if (tKind() == tELSE()) System.out.print("else"); 
-            else if (tKind() == tWHILE()) System.out.print("while"); 
-            else if (tKind() == tGETCHAR()) System.out.print("getchar"); 
-            else if (tKind() == tPUTCHAR()) System.out.print("putchar"); 
-            else if (tKind() == tINCLUDE()) System.out.print("include"); 
-            else if (tKind() == tRETURN()) System.out.print("return"); 
-            else if (tKind() == tMAIN()) System.out.print("main"); 
-            else if (tKind() == tEOF()) System.out.print("eof"); 
-            else if (tKind() == tERROR()) System.out.print("error"); 
-            else if (tKind() == tWHITE()) System.out.print(" "); 
+        switch (tKind()) {
+
+           if (tKind() == tLPAR()) System.out.print("("); break;
+            else if (tKind() == tRPAR()) System.out.print(")"); break;
+            else if (tKind() == tASSIGN()) System.out.print("="); break;
+            else if (tKind() == tSEMI()) System.out.print(";"); break;
+            else if (tKind() == tCOMMA()) System.out.print(","); break;
+            else if (tKind() == tEQ()) System.out.print("=="); break;
+            else if (tKind() == tNE()) System.out.print("!="); break;
+            else if (tKind() == tID()) System.out.print(tIdValue()); break;
+            else if (tKind() == tCONST()) System.out.print(tIntValue()); break;
+            else if (tKind() == tCHAR()) System.out.print("char"); break;
+            else if (tKind() == tADD()) System.out.print("+"); break;
+            else if (tKind() == tSUB()) System.out.print("-"); break;
+            else if (tKind() == tMUL()) System.out.print("*"); break;
+            else if (tKind() == tDIV()) System.out.print("/"); break;
+            else if (tKind() == tMOD()) System.out.print("%"); break;
+            else if (tKind() == tLBRACK()) System.out.print("{"); break;
+            else if (tKind() == tRBRACK()) System.out.print("}"); break;
+            else if (tKind() == tOR()) System.out.print("|"); break;
+            else if (tKind() == tAND()) System.out.print("&"); break;
+            else if (tKind() == tNOT()) System.out.print("!"); break;
+            else if (tKind() == tLT()) System.out.print("<"); break;
+            else if (tKind() == tGT()) System.out.print(">"); break;
+            else if (tKind() == tLEQ()) System.out.print("<="); break;
+            else if (tKind() == tGEQ()) System.out.print(">="); break;
+            else if (tKind() == tSHARP()) System.out.print("#"); break;
+            else if (tKind() == tDOT()) System.out.print("."); break;
+            else if (tKind() == tINT()) System.out.print("int"); break;
+            else if (tKind() == tIF()) System.out.print("if"); break;
+            else if (tKind() == tELSE()) System.out.print("else"); break;
+            else if (tKind() == tWHILE()) System.out.print("while"); break;
+            else if (tKind() == tGETCHAR()) System.out.print("getchar"); break;
+            else if (tKind() == tPUTCHAR()) System.out.print("putchar"); break;
+            else if (tKind() == tINCLUDE()) System.out.print("include"); break;
+            else if (tKind() == tRETURN()) System.out.print("return"); break;
+            else if (tKind() == tMAIN()) System.out.print("main"); break;
+            else if (tKind() == tEOF()) System.out.print("eof"); break;
+            else if (tKind() == tERROR()) System.out.print("error"); break;
+            else if (tKind() == tWHITE()) System.out.print(" "); break;
+        }
     }
 }

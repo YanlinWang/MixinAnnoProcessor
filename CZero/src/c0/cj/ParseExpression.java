@@ -8,30 +8,30 @@ public interface ParseExpression extends MemberFields, BaseOpers {
     }
 
     default void parseExp0(Map<String, Integer> vars, Map<String, Integer> funcs, Map<String, Integer> prototypes) {
-        if (tKind()==tCONST) {
+        if (tKind()==tCONST()) {
             Constants.code("ldc_w "+tIntValue(), out());
             nextToken();
-        } else if (tKind()==tGETCHAR) {
+        } else if (tKind()==tGETCHAR()) {
             nextToken();
-            skipToken(tLPAR);
-            skipToken(tRPAR);
+            skipToken(tLPAR());
+            skipToken(tRPAR());
             Constants.code("bipush 44", out());
             Constants.code("invokevirtual getchar", out());
-        } else if (tKind()==tLPAR) {
+        } else if (tKind()==tLPAR()) {
             nextToken();
             parseExpression(vars,funcs,prototypes);
-            skipToken(tRPAR);
-        } else if (tKind()==tID) {
+            skipToken(tRPAR());
+        } else if (tKind()==tID()) {
             String name = tIdValue();
             nextToken();
             skip();
-            if (tKind()==tLPAR) {
+            if (tKind()==tLPAR()) {
                 nextToken();
                 skip();
                 Constants.code("bipush 44", out());
                 int args = parseActuals(vars,funcs,prototypes);
                 Constants.code("invokevirtual "+name, out());
-                skipToken(tRPAR);
+                skipToken(tRPAR());
                 if (funcs.containsKey(name)) {
                     if (args!=funcs.get(name))
                         compileError("incorrect number of arguments: "+name);
@@ -46,13 +46,13 @@ public interface ParseExpression extends MemberFields, BaseOpers {
                     compileError("undeclared variable: "+name);
                 Constants.code("iload "+vars.get(name), out());
             }
-        } else if (tKind()==tSUB) {
+        } else if (tKind()==tSUB()) {
             nextToken();
             skip();
             Constants.code("bipush 0", out());
             parseExp0(vars,funcs,prototypes);
             Constants.code("isub", out());
-        } else if (tKind()==tNOT) {
+        } else if (tKind()==tNOT()) {
             nextToken();
             skip();
             Constants.code("bipush 44", out());
@@ -64,58 +64,52 @@ public interface ParseExpression extends MemberFields, BaseOpers {
     default void parseExp1(Map<String, Integer> vars, Map<String, Integer> funcs, Map<String, Integer> prototypes) {
         parseExp0(vars,funcs,prototypes);
         skip();
-        while (tKind()==tMUL || tKind()==tDIV || tKind()==tAND || tKind()==tMOD) {
+        while (tKind()==tMUL() || tKind()==tDIV() || tKind()==tAND() || tKind()==tMOD()) {
             int op = tKind();
             nextToken();
             skip();
-            if (op==tMUL || op==tDIV || op==tMOD) {
+            if (op==tMUL() || op==tDIV() || op==tMOD()) {
                 Constants.code("bipush 44", out());
                 Constants.code("swap", out());
             }
             parseExp0(vars,funcs,prototypes);
-            switch (op) {
-                case tMUL: Constants.code("invokevirtual mul_", out()); break;
-                case tDIV: Constants.code("invokevirtual div_", out()); break;
-                case tAND: Constants.code("iand", out()); break;
-                case tMOD: Constants.code("invokevirtual mod_", out()); break;
-            }
+            if (op == tMUL()) Constants.code("invokevirtual mul_", out());
+            else if (op == tDIV()) Constants.code("invokevirtual div_", out());
+            else if (op == tAND()) Constants.code("iand", out());
+            else if (op == tMOD()) Constants.code("invokevirtual mod_", out());
         }
     }
 
     default void parseExp2(Map<String, Integer> vars, Map<String, Integer> funcs, Map<String, Integer> prototypes) {
         parseExp1(vars,funcs,prototypes);
         skip();
-        while (tKind()==tADD || tKind()==tSUB || tKind()==tOR) {
+        while (tKind()==tADD() || tKind()==tSUB() || tKind()==tOR()) {
             int op = tKind();
             nextToken();
             skip();
             parseExp1(vars,funcs,prototypes);
-            switch (op) {
-                case tADD: Constants.code("iadd", out()); break;
-                case tSUB: Constants.code("isub", out()); break;
-                case tOR:  Constants.code("ior", out()); break;
-            }
+            if (op == tADD()) Constants.code("iadd", out());
+            else if (op == tSUB()) Constants.code("isub", out());
+            else if (op == tOR()) Constants.code("ior", out());
         }
     }
 
     default void parseExp3(Map<String, Integer> vars, Map<String, Integer> funcs, Map<String, Integer> prototypes) {
         parseExp2(vars,funcs,prototypes);
         skip();
-        while (tKind()==tEQ || tKind()==tNE || tKind()==tLT || tKind()==tGT || tKind()==tLEQ || tKind()==tGEQ) {
+        while (tKind()==tEQ() || tKind()==tNE() || tKind()==tLT() || tKind()==tGT() || tKind()==tLEQ() || tKind()==tGEQ()) {
             int op = tKind();
             nextToken();
             skip();
             Constants.code("bipush 44", out());
             Constants.code("swap", out());
             parseExp2(vars,funcs,prototypes);
-            switch (op) {
-                case tEQ:  Constants.code("invokevirtual eq_", out()); break;
-                case tNE:  Constants.code("invokevirtual ne_", out()); break;
-                case tLT:  Constants.code("invokevirtual lt_", out()); break;
-                case tGT:  Constants.code("invokevirtual gt_", out()); break;
-                case tLEQ: Constants.code("invokevirtual leq_", out()); break;
-                case tGEQ: Constants.code("invokevirtual geq_", out()); break;
-            }
+            if (op == tEQ()) Constants.code("invokevirtual eq_", out());
+            else if (op == tNE()) Constants.code("invokevirtual ne_", out());
+            else if (op == tLT()) Constants.code("invokevirtual lt_", out());
+            else if (op == tGT()) Constants.code("invokevirtual gt_", out());
+            else if (op == tLEQ()) Constants.code("invokevirtual leq_", out());
+            else if (op == tGEQ()) Constants.code("invokevirtual geq_", out());
         }
     }
     
@@ -123,11 +117,11 @@ public interface ParseExpression extends MemberFields, BaseOpers {
         boolean more = false;
         int args = 0;
         skip();
-        while (tKind()!=tRPAR) {
+        while (tKind()!=tRPAR()) {
             parseExpression(vars,funcs,prototypes);
             args++;
             skip();
-            if (tKind()==tCOMMA) {
+            if (tKind()==tCOMMA()) {
                 nextToken();
                 skip();
                 more = true;

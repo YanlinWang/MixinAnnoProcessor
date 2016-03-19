@@ -50,13 +50,13 @@ public interface Parser extends Constants, MemberFields, BaseOpers, ParseExpress
         //=======YANLIN: end added
         Map<String, Integer> funcs = new HashMap<String, Integer>();
         Map<String, Integer> prototypes = new HashMap<String, Integer>();
-        skipToken(tSHARP);
-        checkToken(tINCLUDE);
-        skipToken(tLT);
+        skipToken(tSHARP());
+        checkToken(tINCLUDE());
+        skipToken(tLT());
         checkToken("stdio");
-        checkToken(tDOT);
+        checkToken(tDOT());
         checkToken("h");
-        checkToken(tGT);
+        checkToken(tGT());
         parseFunctions(funcs,prototypes);
         parseMain(funcs,prototypes);
         Iterator<String> i = prototypes.keySet().iterator();
