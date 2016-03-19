@@ -18,8 +18,11 @@ import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.internal.compiler.ast.*;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+import org.eclipse.jdt.internal.compiler.lookup.MethodBinding;
+import org.eclipse.jdt.internal.compiler.lookup.ReferenceBinding;
 import org.eclipse.jdt.internal.compiler.lookup.TypeBinding;
 import org.eclipse.jdt.internal.compiler.lookup.TypeConstants;
+import org.eclipse.jdt.internal.compiler.lookup.TypeVariableBinding;
 
 public class EclipseObjHandler {
 	
@@ -41,7 +44,7 @@ public class EclipseObjHandler {
 	
 	HashMap<String, TypeDeclaration> infoMap = new HashMap<String, TypeDeclaration>(); // TODO: expand.
 	
-	public EclipseObjHandler(Annotation ast, EclipseNode annotationNode) {
+	public EclipseObjHandler(Annotation ast, EclipseNode annotationNode, ArrayList<ReferenceBinding> superTypes) {
 		pS = ast.sourceStart;
 		pE = ast.sourceEnd;
 		p = (long)pS << 32 | pE;
@@ -52,6 +55,7 @@ public class EclipseObjHandler {
 		_src = ast;
 		meAnno = annotationNode;
 		initializeInfoMap();
+		for (ReferenceBinding rb : superTypes) infoMap.putAll(Util.transform(rb));
 		
 		if (meDecl.typeParameters == null) meType = new SingleTypeReference(meDecl.name, p);
 		else {
@@ -61,6 +65,31 @@ public class EclipseObjHandler {
 		}
 		if (checkValid()) genOfMethod(meDecl.typeParameters);
 		if (errorMsg.length() > 0) meAnno.addError(errorMsg);
+		
+//		for (String s : infoMap.keySet()) {
+//			TypeDeclaration t = infoMap.get(s);
+//			String str = "interface " + String.valueOf(t.name) + " extends ";
+//			if (t.superInterfaces != null) {
+//				for (TypeReference ref : t.superInterfaces) str += Util.toString(ref) + ", ";
+//			}
+//			str += "\n";
+//			if (t.methods != null) {
+//				for (AbstractMethodDeclaration amd : t.methods) {
+//					if (amd instanceof MethodDeclaration) str += "method: " + Util.toString((MethodDeclaration) amd) + "\n";
+//				}
+//			}
+//			Util.printLog(str);			
+//		}
+		
+		
+//		Util.printLog("Inside interface " + String.valueOf(meDecl.name) + " begin.");
+//		HashMap<String, TypeDeclaration> map = new HashMap<String, TypeDeclaration>();
+//		for (ReferenceBinding rb : superTypes)
+//			map.putAll(Util.transform(rb));
+//		for (String s : map.keySet()) {
+//			Util.printLog("map: interface " + s);
+//		}
+//		Util.printLog("Inside interface " + String.valueOf(meDecl.name)  + " end.");
 	}
 	
 	private boolean checkValid() {
@@ -207,33 +236,37 @@ public class EclipseObjHandler {
 			}
 		}
 		if (!root) {
-			for (AbstractMethodDeclaration tempM : decl.methods) {
-				if (!(tempM instanceof MethodDeclaration)) continue;
-				MethodDeclaration copy = Util.copyMethod((MethodDeclaration) tempM, p);
-				if (decl.typeParameters != null) {
-					copy.returnType = Util.replaceRef(copy.returnType, paramsMap);
-					if (copy.arguments != null) {
-						for (int i = 0; i < copy.arguments.length; i++)
-							copy.arguments[i].type = Util.replaceRef(copy.arguments[i].type, paramsMap);
+			if (decl.methods != null) {
+				for (AbstractMethodDeclaration tempM : decl.methods) {
+					if (!(tempM instanceof MethodDeclaration)) continue;
+					MethodDeclaration copy = Util.copyMethod((MethodDeclaration) tempM, p);
+					if (decl.typeParameters != null) {
+						copy.returnType = Util.replaceRef(copy.returnType, paramsMap);
+						if (copy.arguments != null) {
+							for (int i = 0; i < copy.arguments.length; i++)
+								copy.arguments[i].type = Util.replaceRef(copy.arguments[i].type, paramsMap);
+						}
 					}
+					Method m = new Method(copy, new SingleTypeReference(decl.name, p));
+					if (!m.method.isStatic()) allMethods.add(m);
 				}
-				Method m = new Method(copy, new SingleTypeReference(decl.name, p));
-				if (!m.method.isStatic()) allMethods.add(m);
 			}
 			return allMethods;
 		} else {
 			ArrayList<Method> res = new ArrayList<Method>();
 			HashMap<Method, ArrayList<Method>> map = shadow(allMethods);
 			Set<Method> keySet = map.keySet();
-			for (AbstractMethodDeclaration tempM : decl.methods) {
-				if (!(tempM instanceof MethodDeclaration)) continue;
-				Method m = new Method((MethodDeclaration) tempM, new SingleTypeReference(decl.name, p));
-				if (m.method.isStatic()) continue; // TODO: (1) static or default methods have right types; (2) generic method typing.
-				Method key = null;
-				for (Method temp : map.keySet()) if (temp.equals(m)) {key = temp; break;}
-				if (key == null) res.add(m);
-				else if (canOverride(m, map.get(key))) {res.add(m); keySet.remove(key);}
-				else return null;
+			if (decl.methods != null) {
+				for (AbstractMethodDeclaration tempM : decl.methods) {
+					if (!(tempM instanceof MethodDeclaration)) continue;
+					Method m = new Method((MethodDeclaration) tempM, new SingleTypeReference(decl.name, p));
+					if (m.method.isStatic()) continue; // TODO: (1) static or default methods have right types; (2) generic method typing.
+					Method key = null;
+					for (Method temp : map.keySet()) if (temp.equals(m)) {key = temp; break;}
+					if (key == null) res.add(m);
+					else if (canOverride(m, map.get(key))) {res.add(m); keySet.remove(key);}
+					else return null;
+				}
 			}
 			for (Method m : keySet) {
 				if (map.get(m).size() < 1) continue;
@@ -621,6 +654,68 @@ class Util {
 			bw.write(s + "\n");
 			bw.close();
 		} catch (IOException e) {}
+	}
+	static HashMap<String, TypeDeclaration> transform(ReferenceBinding ref) {
+		HashMap<String, TypeDeclaration> res = new HashMap<String, TypeDeclaration>();
+		TypeDeclaration decl = new TypeDeclaration(null);
+		decl.modifiers = ref.modifiers;
+		decl.name = String.valueOf(ref.sourceName()).toCharArray();
+		ArrayList<TypeParameter> list1 = Transform.trans1_array(ref.typeVariables());
+		decl.typeParameters = list1.size() == 0 ? null : list1.toArray(new TypeParameter[list1.size()]);
+		ArrayList<TypeReference> list2 = Transform.trans2_array(ref.superInterfaces());
+		decl.superInterfaces = list2.size() == 0 ? null : list2.toArray(new TypeReference[list2.size()]);
+		ArrayList<AbstractMethodDeclaration> list3 = Transform.trans3_array(ref.methods());
+		decl.methods = list3.size() == 0 ? null : list3.toArray(new AbstractMethodDeclaration[list3.size()]);
+		for (int i = 0; i < ref.superInterfaces().length; i++)
+			res.putAll(transform(ref.superInterfaces()[i]));
+		res.put(String.valueOf(decl.name), decl);
+		return res;
+	}
+	static class Transform {
+		static TypeParameter trans1(TypeVariableBinding tb) {
+			TypeParameter res = new TypeParameter();
+			res.name = String.valueOf(tb.sourceName()).toCharArray();
+			res.type = new SingleTypeReference(res.name, 0);
+			return res;
+		}
+		static ArrayList<TypeParameter> trans1_array(TypeVariableBinding[] tb) {
+			ArrayList<TypeParameter> res = new ArrayList<TypeParameter>();
+			for (int i = 0; i < tb.length; i++) res.add(trans1(tb[i]));
+			return res;
+		}
+		static TypeReference trans2(TypeBinding tb) {
+			if (tb.typeVariables().length == 0) return new SingleTypeReference(tb.debugName().toCharArray(), 0);
+			TypeReference[] tArgs = new TypeReference[tb.typeVariables().length];
+			for (int i = 0; i < tArgs.length; i++) tArgs[i] = trans2(tb.typeVariables()[i]);
+			return new ParameterizedSingleTypeReference(tb.debugName().toCharArray(), tArgs, 0, 0);
+		}
+		static ArrayList<TypeReference> trans2_array(TypeBinding[] tb) {
+			ArrayList<TypeReference> res = new ArrayList<TypeReference>();
+			for (int i = 0; i < tb.length; i++) res.add(trans2(tb[i]));
+			return res;
+		}
+		static MethodDeclaration trans3(MethodBinding mb) {
+			MethodDeclaration res = new MethodDeclaration(null);
+			res.selector = String.valueOf(mb.selector).toCharArray();
+			res.returnType = trans2(mb.returnType);
+			res.modifiers = mb.modifiers;
+			ArrayList<TypeParameter> list1 = trans1_array(mb.typeVariables());
+			res.typeParameters = list1.size() == 0 ? null : list1.toArray(new TypeParameter[list1.size()]);
+			ArrayList<Argument> list2 = trans4_array(mb.parameters);
+			res.arguments = list2.size() == 0 ? null : list2.toArray(new Argument[list2.size()]);
+			return res;
+		}
+		static ArrayList<AbstractMethodDeclaration> trans3_array(MethodBinding[] mb) {
+			ArrayList<AbstractMethodDeclaration> res = new ArrayList<AbstractMethodDeclaration>();
+			for (int i = 0; i < mb.length; i++) res.add(trans3(mb[i]));
+			return res;
+		}
+		static ArrayList<Argument> trans4_array(TypeBinding[] tb) {
+			ArrayList<Argument> res = new ArrayList<Argument>();
+			for (int i = 0; i < tb.length; i++)
+				res.add(new Argument(("arg" + i).toCharArray(), 0, trans2(tb[i]), 0));
+			return res;
+		}
 	}
 }
 

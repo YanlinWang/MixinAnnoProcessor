@@ -30,6 +30,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,7 @@ import lombok.core.AST.Kind;
 import lombok.eclipse.EclipseAST;
 import lombok.eclipse.EclipseNode;
 import lombok.eclipse.TransformEclipseAST;
+import lombok.eclipse.handlers.EclipseObjHandler;
 import lombok.eclipse.handlers.SetGeneratedByVisitor;
 
 import org.eclipse.jdt.internal.compiler.CompilationResult;
@@ -54,6 +56,7 @@ import org.eclipse.jdt.internal.compiler.ast.FieldReference;
 import org.eclipse.jdt.internal.compiler.ast.MemberValuePair;
 import org.eclipse.jdt.internal.compiler.ast.MessageSend;
 import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration;
+import org.eclipse.jdt.internal.compiler.ast.NormalAnnotation;
 import org.eclipse.jdt.internal.compiler.ast.ReturnStatement;
 import org.eclipse.jdt.internal.compiler.ast.SingleNameReference;
 import org.eclipse.jdt.internal.compiler.ast.SingleTypeReference;
@@ -172,71 +175,51 @@ public class PatchDelegate {
 		// Haoyuan.
 		CompilationUnitDeclaration cud = scope.compilationUnitScope().referenceContext;
 		EclipseAST eclipseAst = TransformEclipseAST.getAST(cud, true);
-		EclipseNode node = eclipseAst.get(scope.referenceContext);
 		TypeDeclaration decl = scope.referenceContext;
-		String str = "";
-		if (!(node.get() instanceof TypeDeclaration)) return false;
-		TypeDeclaration type = (TypeDeclaration) node.get();
-		if (type.annotations == null) return false;
-		Annotation anno = null;
-		for (Annotation ann : type.annotations) {
+		EclipseNode node = eclipseAst.get(decl);
+		if (decl.annotations == null) return false;
+		ArrayList<ReferenceBinding> types = new ArrayList<ReferenceBinding>();
+		
+		for (Annotation ann : decl.annotations) {
+			if (!ann.type.toString().equals("Delegate")) continue;
 			List<ClassLiteralAccess> rawTypes = rawTypes(ann, "types");
 			for (ClassLiteralAccess cla : rawTypes) {
 				TypeBinding binding = cla.type.resolveType(decl.initializerScope);
-				if (binding instanceof ReferenceBinding) {
-					anno = ann;
-					str += "binding.debugName = " + binding.debugName() + "\n";		
-					MethodBinding[] methods = ((ReferenceBinding) binding).methods();
-					for (MethodBinding method : methods) {
-						str += "Method: " + String.valueOf(method.selector) + "\n";
-					}
-				}
+				if (binding instanceof ReferenceBinding) { types.add((ReferenceBinding) binding); }
+//					str += "binding.debugName = " + binding.debugName() + "\n";		
+//					MethodBinding[] methods = ((ReferenceBinding) binding).methods();
+//					for (MethodBinding method : methods) {
+//						str += "Method: " + String.valueOf(method.selector) + "\n";
+//					}
+//				}
 			}
+			break;
 		}
 		
-		if (str.isEmpty()) return false;
-		long p = (long)(anno.sourceStart) << 32 | (anno.sourceEnd);
+		EclipseNode annoNode = null;
+		for (EclipseNode n : node.down())
+			if (n.get() instanceof Annotation && ((Annotation) n.get()).type.toString().equals("Delegate")) { annoNode = n; break; }
+		if (annoNode == null) return false;
+		new EclipseObjHandler((Annotation) annoNode.get(), annoNode, types);
 		
-		EclipseNode astNode = null;
-		for (EclipseNode n : node.down()) {
-			if (n.get() instanceof org.eclipse.jdt.internal.compiler.ast.NormalAnnotation) astNode = n;
-		}
-		ASTNode _ast = astNode.get();
-		MethodDeclaration method = new MethodDeclaration(((TypeDeclaration) eclipseAst.get(type).get()).compilationResult);
-		method.annotations = null;
-		method.modifiers = ClassFileConstants.AccStatic;
-		method.typeParameters = null;
-		method.returnType = new SingleTypeReference(TypeBinding.VOID.simpleName, p);
-		method.selector = "print".toCharArray();
-		method.arguments = null;
-		method.binding = null;
-		method.thrownExceptions = null;
-		method.bits |= ECLIPSE_DO_NOT_TOUCH_FLAG;
-		MessageSend printInfo = new MessageSend();
-		printInfo.arguments = new Expression[] {
-			new StringLiteral("I'm here!".toCharArray(), _ast.sourceStart, _ast.sourceEnd, 0)
-		};
-		printInfo.receiver = createNameReference("System.out", anno);
-		printInfo.selector = "println".toCharArray();
-		method.statements = new Statement[] { printInfo };;
-		method.bodyStart = method.declarationSourceStart = method.sourceStart = _ast.sourceStart;
-		method.bodyEnd = method.declarationSourceEnd = method.sourceEnd = _ast.sourceEnd;
-		
-//		lombok.eclipse.handlers.EclipseHandlerUtil.injectMethod(eclipseAst.get(type), method);
-		lombok.eclipse.handlers.EclipseHandlerUtil.injectMethod(astNode.up(), method);
-
-		str += "anno = " + ((org.eclipse.jdt.internal.compiler.ast.NormalAnnotation) astNode.get()).type.toString() + "\n";
-		str += "node = " + node.get().getClass().toString() + "\n";
-		for (EclipseNode n : node.down()) {
-			str += "node' = " + n.get().getClass().toString() + "\n";
-			if (n.get() instanceof MethodDeclaration) str += "  -> method = " + String.valueOf(((MethodDeclaration) n.get()).selector) + "\n";
-		}
-		
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Haoyuan\\Desktop\\log.txt", true));
-			bw.write(String.valueOf(str) + "\n");
-			bw.close();
-		} catch (IOException e) {}
+//		String str = "";
+//		for (ReferenceBinding rb : types) {
+//			str += "For loop starts.\n";
+//			str += "sourceName = " + String.valueOf(rb.sourceName()) + "\n";
+//			for (ReferenceBinding sup : rb.superInterfaces()) {
+//				str += "superInterface = " + String.valueOf(sup.sourceName())+ "\n";
+//				for (MethodBinding m : sup.methods())
+//					str += "method: " + String.valueOf(m.selector) + "\n";
+//			}
+//			for (MethodBinding m : rb.methods())
+//				str += "method: " + String.valueOf(m.selector) + "\n";
+//			str += "For loop ends.\n";
+//		}
+//		try {
+//			BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Haoyuan\\Desktop\\log.txt", true));
+//			bw.write(str + "\n");
+//			bw.close();
+//		} catch (IOException e) {}
 		
 		return false;
 	}

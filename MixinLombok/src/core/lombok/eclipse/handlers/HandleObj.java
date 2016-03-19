@@ -1,6 +1,9 @@
 package lombok.eclipse.handlers;
 
+import java.util.ArrayList;
+
 import org.eclipse.jdt.internal.compiler.ast.*;
+import org.eclipse.jdt.internal.compiler.lookup.ReferenceBinding;
 import org.mangosdk.spi.ProviderFor;
 
 import lombok.Obj;
@@ -13,7 +16,7 @@ public class HandleObj extends EclipseAnnotationHandler<Obj> {
 	
 	@Override public void handle(AnnotationValues<Obj> annotation, Annotation ast, EclipseNode annotationNode) {
 		
-		new EclipseObjHandler(ast, annotationNode);
+		new EclipseObjHandler(ast, annotationNode, new ArrayList<ReferenceBinding>());
 	
 	}
 	
