@@ -27,11 +27,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @deprecated Use {@link lombok.experimental.Delegate} instead.
+ * deprecated Use {@link lombok.experimental.Delegate} instead.
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.SOURCE)
-@Deprecated
+//@Deprecated
 public @interface Delegate {
 	/**
 	 * Normally the type of the field is used as delegate type. However, to choose a different type to delegate, you can list one (or more) types here. Note that types with

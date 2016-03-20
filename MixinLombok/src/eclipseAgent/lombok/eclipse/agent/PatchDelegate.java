@@ -25,10 +25,12 @@ import static lombok.eclipse.Eclipse.*;
 import static lombok.eclipse.handlers.EclipseHandlerUtil.*;
 import static lombok.eclipse.EclipseAugments.Annotation_applied;
 
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +39,7 @@ import lombok.core.AST.Kind;
 import lombok.eclipse.EclipseAST;
 import lombok.eclipse.EclipseNode;
 import lombok.eclipse.TransformEclipseAST;
+import lombok.eclipse.handlers.EclipseObjHandler;
 import lombok.eclipse.handlers.SetGeneratedByVisitor;
 
 import org.eclipse.jdt.internal.compiler.CompilationResult;
@@ -53,10 +56,12 @@ import org.eclipse.jdt.internal.compiler.ast.FieldReference;
 import org.eclipse.jdt.internal.compiler.ast.MemberValuePair;
 import org.eclipse.jdt.internal.compiler.ast.MessageSend;
 import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration;
+import org.eclipse.jdt.internal.compiler.ast.NormalAnnotation;
 import org.eclipse.jdt.internal.compiler.ast.ReturnStatement;
 import org.eclipse.jdt.internal.compiler.ast.SingleNameReference;
 import org.eclipse.jdt.internal.compiler.ast.SingleTypeReference;
 import org.eclipse.jdt.internal.compiler.ast.Statement;
+import org.eclipse.jdt.internal.compiler.ast.StringLiteral;
 import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.TypeParameter;
@@ -118,54 +123,103 @@ public class PatchDelegate {
 	}
 	
 	public static boolean handleDelegateForType(ClassScope scope) {
-		if (TransformEclipseAST.disableLombok) return false;
-		if (!hasDelegateMarkedFieldsOrMethods(scope.referenceContext)) return false;
+//		if (TransformEclipseAST.disableLombok) return false;
+//		if (!hasDelegateMarkedFieldsOrMethods(scope.referenceContext)) return false;
+//		
+//		List<ClassScopeEntry> stack = visited.get();
+//		StringBuilder corrupted = null;
+//		for (ClassScopeEntry entry : stack) {
+//			if (corrupted != null) {
+//				corrupted.append(" -> ").append(nameOfScope(entry.scope));
+//			} else if (entry.scope == scope) {
+//				corrupted = new StringBuilder().append(nameOfScope(scope));
+//			}
+//		}
+//		
+//		if (corrupted != null) {
+//			boolean found = false;
+//			String path = corrupted.toString();
+//			for (ClassScopeEntry entry : stack) {
+//				if (!found && entry.scope == scope) found = true;
+//				if (found) entry.corruptedPath = path;
+//			}
+//		} else {
+//			ClassScopeEntry entry = new ClassScopeEntry(scope);
+//			stack.add(entry);
+//			
+//			try {
+//				TypeDeclaration decl = scope.referenceContext;
+//				if (decl != null) {
+//					CompilationUnitDeclaration cud = scope.compilationUnitScope().referenceContext;
+//					EclipseAST eclipseAst = TransformEclipseAST.getAST(cud, true);
+//					List<BindingTuple> methodsToDelegate = new ArrayList<BindingTuple>();
+//					fillMethodBindingsForFields(cud, scope, methodsToDelegate);
+//					if (entry.corruptedPath != null) {
+//						eclipseAst.get(scope.referenceContext).addError("No @Delegate methods created because there's a loop: " + entry.corruptedPath);
+//					} else {
+//						generateDelegateMethods(eclipseAst.get(decl), methodsToDelegate, DelegateReceiver.FIELD);
+//					}
+//					methodsToDelegate.clear();
+//					fillMethodBindingsForMethods(cud, scope, methodsToDelegate);
+//					if (entry.corruptedPath != null) {
+//						eclipseAst.get(scope.referenceContext).addError("No @Delegate methods created because there's a loop: " + entry.corruptedPath);
+//					} else {
+//						generateDelegateMethods(eclipseAst.get(decl), methodsToDelegate, DelegateReceiver.METHOD);
+//					}
+//				}
+//			} finally {
+//				stack.remove(stack.size() - 1);
+//			}
+//		}
 		
-		List<ClassScopeEntry> stack = visited.get();
-		StringBuilder corrupted = null;
-		for (ClassScopeEntry entry : stack) {
-			if (corrupted != null) {
-				corrupted.append(" -> ").append(nameOfScope(entry.scope));
-			} else if (entry.scope == scope) {
-				corrupted = new StringBuilder().append(nameOfScope(scope));
+		// Haoyuan.
+		CompilationUnitDeclaration cud = scope.compilationUnitScope().referenceContext;
+		EclipseAST eclipseAst = TransformEclipseAST.getAST(cud, true);
+		TypeDeclaration decl = scope.referenceContext;
+		EclipseNode node = eclipseAst.get(decl);
+		if (decl.annotations == null) return false;
+		ArrayList<ReferenceBinding> types = new ArrayList<ReferenceBinding>();
+		
+		for (Annotation ann : decl.annotations) {
+			if (!ann.type.toString().equals("Delegate")) continue;
+			List<ClassLiteralAccess> rawTypes = rawTypes(ann, "types");
+			for (ClassLiteralAccess cla : rawTypes) {
+				TypeBinding binding = cla.type.resolveType(decl.initializerScope);
+				if (binding instanceof ReferenceBinding) { types.add((ReferenceBinding) binding); }
+//					str += "binding.debugName = " + binding.debugName() + "\n";		
+//					MethodBinding[] methods = ((ReferenceBinding) binding).methods();
+//					for (MethodBinding method : methods) {
+//						str += "Method: " + String.valueOf(method.selector) + "\n";
+//					}
+//				}
 			}
+			break;
 		}
 		
-		if (corrupted != null) {
-			boolean found = false;
-			String path = corrupted.toString();
-			for (ClassScopeEntry entry : stack) {
-				if (!found && entry.scope == scope) found = true;
-				if (found) entry.corruptedPath = path;
-			}
-		} else {
-			ClassScopeEntry entry = new ClassScopeEntry(scope);
-			stack.add(entry);
-			
-			try {
-				TypeDeclaration decl = scope.referenceContext;
-				if (decl != null) {
-					CompilationUnitDeclaration cud = scope.compilationUnitScope().referenceContext;
-					EclipseAST eclipseAst = TransformEclipseAST.getAST(cud, true);
-					List<BindingTuple> methodsToDelegate = new ArrayList<BindingTuple>();
-					fillMethodBindingsForFields(cud, scope, methodsToDelegate);
-					if (entry.corruptedPath != null) {
-						eclipseAst.get(scope.referenceContext).addError("No @Delegate methods created because there's a loop: " + entry.corruptedPath);
-					} else {
-						generateDelegateMethods(eclipseAst.get(decl), methodsToDelegate, DelegateReceiver.FIELD);
-					}
-					methodsToDelegate.clear();
-					fillMethodBindingsForMethods(cud, scope, methodsToDelegate);
-					if (entry.corruptedPath != null) {
-						eclipseAst.get(scope.referenceContext).addError("No @Delegate methods created because there's a loop: " + entry.corruptedPath);
-					} else {
-						generateDelegateMethods(eclipseAst.get(decl), methodsToDelegate, DelegateReceiver.METHOD);
-					}
-				}
-			} finally {
-				stack.remove(stack.size() - 1);
-			}
-		}
+		EclipseNode annoNode = null;
+		for (EclipseNode n : node.down())
+			if (n.get() instanceof Annotation && ((Annotation) n.get()).type.toString().equals("Delegate")) { annoNode = n; break; }
+		if (annoNode == null) return false;
+		new EclipseObjHandler((Annotation) annoNode.get(), annoNode, types);
+		
+//		String str = "";
+//		for (ReferenceBinding rb : types) {
+//			str += "For loop starts.\n";
+//			str += "sourceName = " + String.valueOf(rb.sourceName()) + "\n";
+//			for (ReferenceBinding sup : rb.superInterfaces()) {
+//				str += "superInterface = " + String.valueOf(sup.sourceName())+ "\n";
+//				for (MethodBinding m : sup.methods())
+//					str += "method: " + String.valueOf(m.selector) + "\n";
+//			}
+//			for (MethodBinding m : rb.methods())
+//				str += "method: " + String.valueOf(m.selector) + "\n";
+//			str += "For loop ends.\n";
+//		}
+//		try {
+//			BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\Users\\Haoyuan\\Desktop\\log.txt", true));
+//			bw.write(str + "\n");
+//			bw.close();
+//		} catch (IOException e) {}
 		
 		return false;
 	}
