@@ -21,14 +21,21 @@ and classes inherit from other classes.  Here objects own the state,
 while classes contain behaviour and the structure of the state.
 
 We present here a third alternative: the concept of \textbf{Interface
-  based object oriented languages} (IB), where objects implements
+  based object oriented languages} (IB), where objects implement
 interfaces, and they own the implementation for the behaviour, which
-is structurally defined in their interface.
-  
-The literature provide good examples on how easy and modular can be
-combining multiple sources of pure behaviour (traits~\cite{}), and how hard
-it is to modularly combine multiple sources of behaviour \textbf{and}
-state (multiple inheritance~\cite{}).\bruno{needs strenghtning}
+is structurally defined in their interface. In IB programmers do not define objects directly, but
+delegate the task to \emph{object interfaces}, whose role is similar
+to non abstract classes in CB languages. Key motivations for IB
+languages are improved \emph{modularity} and \emph{multiple inheritance}~\bruno{I'm using multiple
+  inheritance in a more abstract way than you Marco.}  The literature
+provides good examples on how easy and modular it is to combine
+multiple sources of pure behaviour, using mechanisms such as
+traits~\cite{scharli03traits}. In Java multiple \emph{interface} inheritance has been
+supported since inception, and in Java8 default methods~\cite{} bring some of
+the advantages of traits into Java. In contrast, the literature~\cite{} is
+also rich on how hard it is to modularly combine multiple sources of
+behaviour \textbf{and} state with multiple \emph{implementation}
+inheritance of classes.
 
 To retain the easiness and modularity of combining multiple sources of
 pure behaviour, in IB state is just a special kind of behaviour
@@ -40,46 +47,19 @@ the instances and do not leak in the interfaces.\bruno{Not sure if
   never defined explicitly, I think. And the behaviour is introduced 
 implicitly.}
 
-Our idea could be explained by defining a novel language, with new
-syntax and semantic.  However, this would have a steep learning curve;
-for the sake of providing a more accessible explanation, we will
-encode \footnote{ In the same sense, you can encode prototype based
-  programming over class based with the strategy pattern, and class
-  based programming with prototypes by creating ``class'' objects.  }
-our ideas over Java, relying on the new features of Java 8; namely
-interface \emph{static methods}, and \emph{default methods}, allowing
-interfaces to have method implementations. While the motivation for
-default methods was to allow interfaces to be extended over time while
-preserving backwards compatibility (\emph{interface evolution}),
-default methods can also emulate \emph{traits}~\cite{scharli03traits}.
-\footnote{The original notion of traits by Scharli et al. prescribes,
-  among other things, that: 1) a trait provides a set of methods that
-  implement behavior; and 2) a trait does not specify any state
-  variables, so the methods provided by traits do not access state
-  variables directly. Java 8 interfaces follow similar principles
-  too. Indeed, a detailed description of how to emulate trait-oriented
-  programming in Java 8 can be found in the work by Bono et
-  al.~\cite{bono14}. The Java 8 team designing default methods, was
-  also fully aware of that secondary use of interfaces, but it was not
-  their objective to model traits: ``The key goal of adding default
-  methods to Java was "interface evolution", not "poor man's
-  traits"''~\cite{goetz13default}. As a result, they were happy to
-  support the secondary use of interfaces with default methods as long
-  as it did not make the implementation and language more complex.}
-\marcoT{We could use Scala Traits to encode IB, but the simpler Java8
-  model is a better starting point.}  \footnote{ \marco{may go in
-    related work} Scala traits can declare \Q@def, val, var@ and
-  \Q@lazy val@ However, while \Q@def@s can be overridden by
-  \Q@val@/\Q@var@s, \Q@val@/\Q@var@s can not be overridden.\marco{we
-    need to check this} A\Q@val@/\Q@var@ member is predestined to be
-  instance state, and this is in sharp contrast with our model where
-  the state is only a private detail of instances, and do not
-  contaminate interface/trait/classes.}  \footnote{Scala traits have
-  no constructor, but \Q@var@s and (\Q@lazy@) \Q@val@s can be
-  ``pre-initialized''.}
+%\footnote{ In the same sense,
+%  you can encode prototype based programming over class based with the
+%  strategy pattern, and class based programming with prototypes by
+%  creating ``class'' objects.}
 
-
-
+IB could be explained by defining a novel language, with new syntax
+and semantics. However, this would have a steep learning curve.  We
+take a different approach instead. For the sake of providing a more
+accessible explanation, we will embed our ideas directly into Java. 
+Our IB embedding relies on the
+new features of Java 8 for interfaces: interface \emph{static methods}; and
+\emph{default methods}, which allow interfaces to have method
+implementations. 
 
 %Still, the design is quite conservative and appears to be quite limited
 % in its current form to model advanced forms of multiple inheritance.
@@ -123,24 +103,23 @@ default methods can also emulate \emph{traits}~\cite{scharli03traits}.
 In the context of Java, what we propose is essentially a programming
 style, where we never use classes\footnote{More precisely, we never
   use the \Q@class@ keyword.}.  We call this restricted version of
-Java \emph{Class-less Java}.  Our proposed style enables powerful
+Java \emph{Classless Java}.  
+Our proposed style enables powerful
 object-oriented idioms, similar to (stateful) multiple inheritance and
 field type refinement (allowing a kind of covariant setters
-refinement).
+refinement). \bruno{needs strenghtening}  
 
-As for CB, in IB programmers do not define objects directly, but
-delegate the task to \emph{object interfaces}, whose role is similar
-to non abstract classes in CB.
 
-To model state, the idea is that all abstract operations in an Object
-interface will be interpreted as \emph{abstract state operations}; The
+A key challenge lies in how to model state, which is fundamental to
+have stateful objects. In IB and Classless Java, the idea is that all abstract operations in an Object
+interface will be interpreted as \emph{abstract state operations}. The
 abstract state operations include various common utility methods (such
 as getters and setters, or clone-like methods). In the presence of
 subtyping, such operations often require special care, as their types
 need to be refined. Object interfaces provide support for
 type-refinement and can automatically produce code that deals with
 type-refinement adequately, while Java (and Scala) require explicit
-type-refinement.
+type-refinement.\bruno{strenghtening needed!}
 
   %With object interfaces, many Java programs can be built
 %without using a single class!
@@ -149,8 +128,18 @@ Using Java annotation processors, we produce an implementation of
 Classless Java, which allow us to stick to pure Java8. By annotating
 with \Q|@Obj| the interfaces that represent object interfaces, we can
 generate boring and repetitive code for interface instantiation and
-type refinement.  Such code should not be needed in the first place in
-a real IB language.
+type refinement. Such code should not be needed in the first place in
+a real IB language, and the annotation processor allows us to
+transparently hide it from Java programmers. 
+The implementation works by performing \emph{on-the-fly} AST
+rewriting, allowing existing Java tools (such as IDEs) to work
+out-of-the-box with our implementation. Moreover, the 
+implementation blends Java's conventional CB style and IB smoothly. 
+As a result, we experiment object interfaces with several interesting Java programs,
+and conduct various case studies. 
+Finally, we also formally define the behaviour of our \Q|Obj| implementation. 
+
+
 
 %Since Java was not designed to be used in this way, our style can be verbose, especially about object instantiation.
 
@@ -169,12 +158,7 @@ a real IB language.
 %pre-existing tools can work transparently on the tuned language.  To
 %exploit the full benefits of language tuning,
 
-We formally define the behaviour of our \Q|Obj| annotation and we provide a
-prototype implementation using Java annotations to do AST
-rewriting, allowing existing Java tools (such as IDEs) to work
-out-of-the-box with our implementation. As a result, we
-experiment object interfaces with several interesting Java programs,
-and conduct various case studies.
+
 
 %To formalize object interfaces, we propose Classless Java (CJ): a
 %FeatherweightJava-style~\cite{Igarashi01FJ} calculus, which captures the essence

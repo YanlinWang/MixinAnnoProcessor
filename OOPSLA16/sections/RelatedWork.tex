@@ -378,6 +378,39 @@ general, as it supports multiple methods with arguments, it supports
 static methods, and features such as multiple inheritance of
 interfaces and reabstraction of default methods are also modeled.
 
+\bruno{next comes some text that may be handy for related work}
+
+While the motivation for default methods was to allow
+interfaces to be extended over time while preserving backwards
+compatibility (\emph{interface evolution}), default methods can also
+emulate \emph{traits}~\cite{scharli03traits}.  \footnote{The original
+  notion of traits by Scharli et al. prescribes, among other things,
+  that: 1) a trait provides a set of methods that implement behavior;
+  and 2) a trait does not specify any state variables, so the methods
+  provided by traits do not access state variables directly. Java 8
+  interfaces follow similar principles too. Indeed, a detailed
+  description of how to emulate trait-oriented programming in Java 8
+  can be found in the work by Bono et al.~\cite{bono14}. The Java 8
+  team designing default methods, was also fully aware of that
+  secondary use of interfaces, but it was not their objective to model
+  traits: ``The key goal of adding default methods to Java was
+  "interface evolution", not "poor man's
+  traits"''~\cite{goetz13default}. As a result, they were happy to
+  support the secondary use of interfaces with default methods as long
+  as it did not make the implementation and language more complex.}
+\marcoT{We could use Scala Traits to encode IB, but the simpler Java8
+  model is a better starting point.}  \footnote{ \marco{may go in
+    related work} Scala traits can declare \Q@def, val, var@ and
+  \Q@lazy val@ However, while \Q@def@s can be overridden by
+  \Q@val@/\Q@var@s, \Q@val@/\Q@var@s can not be overridden.\marco{we
+    need to check this} A\Q@val@/\Q@var@ member is predestined to be
+  instance state, and this is in sharp contrast with our model where
+  the state is only a private detail of instances, and do not
+  contaminate interface/trait/classes.}  \footnote{Scala traits have
+  no constructor, but \Q@var@s and (\Q@lazy@) \Q@val@s can be
+  ``pre-initialized''.}
+
+
 
 \section{Interaction of Interface Methods with Interface Composition}
 \bruno{I don't think this section makes alot of sense in the context 
