@@ -1,4 +1,4 @@
-\section{Bridging between IB and CB in Java}
+\section{Bridging between IB and CB in Java}\label{sec:imp}
 
 
 %\footnote{ Rewriting libraries and
@@ -214,17 +214,6 @@ types breaks heir coherence ``less" than normal library evolution.
 
 In Section~\ref{} we make the claims the guarantees of Classless Java
 more formal.
-
-\paragraph{Type preservation:}\bruno{Move to next section?}
-We preferred to introduce self,client and hair coherence instead of referring to conventional
-type preservation,
-to better model how our approach behave in a object oriented software ecosystem with inheritance,
-where only some units may be translated/expanded.
-Note inheritance crucial influence in hair coherence, and how client coherence allows
-for only some units to be translated/expanded.
-
-This means that even a library designer can decide to start using IB and still
-retain backward compatibility with its clients.
 
 \subsection{Limitations}\marco{ to reorganize with updated limitations}
 Our prototype implementation using Lombok has certain limitations:

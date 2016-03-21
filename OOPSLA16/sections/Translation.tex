@@ -1,6 +1,6 @@
 \section{What  \mixin Generates}\label{sec:translation}
 
-\begin{figure*}[t]\label{figure:translation}
+\begin{figure*}[t]
 \centering
 $\begin{array}{l}
 \InTextDef{16em}{[\![\mixinAnn\ \QM{interface}\ \C_0\ \QM{extends}\ \Cs\ \oC \methods\ \cC ]\!]
@@ -18,9 +18,10 @@ $\begin{array}{l}
 \InTextWith{\valid(\C_0),\QM{of}\notin\dom(\C_0) }
 \end{array}$
 \caption{The translation functions of $\mixinAnn$ and $\weakAnn$.}
+\label{figure:translation}
 \end{figure*}
 
-\begin{figure*}[t]\label{figure:valid}
+\begin{figure*}[t]
 \centering
 \hspace{-.3in}
 \begin{minipage}[b]{0.5\textwidth}
@@ -54,12 +55,19 @@ $\begin{array}{l}
 \ \mand\ \mnot\ \specialName(\m)\\
 \end{array}$
 \end{minipage}
-\caption{The $\otherMethod$ and $\valid$ functions (left) and auxiliary functions (right).}
+\caption{The $\otherMethod$ and $\valid$ functions (left) and
+  auxiliary functions (right).}
+\label{figure:valid}
 \end{figure*}
 
-This section gives an overview of what $\mixinAnn$ generates in Classless Java. We provide a
-formalization of Classless Java in Appendix~\ref{sec:formal}, which models the essence of
-Java interfaces with default methods, including the syntax as well as the typing rules.
+This section gives an overview of what $\mixinAnn$ generates in
+Classless Java, and what properties are guaranteed in the translation. 
+
+We provide a formalization of Classless Java in Appendix~\ref{sec:formal}, which models the essence of
+Java interfaces with default methods, including the syntax as well as
+the typing rules. Classless Java is just a proper subset of Java 8, so
+it is easy to understand the translation presented in this section
+without the syntax and typing rules of Classless Java.
 Since the formalized part of Classless Java does not consider casts or \Q@instanceof@,
 the \Q@with@ method is not included in the
 formal translation. For the same reason \Q@void@ returning setters are
@@ -67,7 +75,7 @@ not included, since they are just a minor variation over the more
 interesting fluent setters, and they would require special handling
 just for the conventional \Q@void@ type.
 
-\begin{figure*}[t]\label{figure:ofmethod}
+\begin{figure*}[t]
 \centering
 \hspace{-.2in}
 \begin{minipage}[b]{0.53\textwidth}
@@ -114,7 +122,9 @@ $\begin{array}{l}
 %&\cloneMethod(\C_0,\es)=\emptyset\mbox{ otherwise}\\
 \end{array}$
 \end{minipage}
-\caption{The generated $\QM{of}$ method (left) and auxiliary functions (right).}
+\caption{The generated $\QM{of}$ method (left) and auxiliary functions
+  (right).}
+\label{figure:ofmethod}
 \end{figure*}
 
 \subsection{Translation}
@@ -130,49 +140,40 @@ Figure~\ref{figure:translation} presents the translation functions. In the first
 injects refined methods to interface $\C_0$, while in the second function, $\weakAnn$ invokes
 $\ofMethod(\C_0)$ and generates the $\QM{of}$
 method for $\C_0$, if such a method does not exist in its domain, and all the abstract methods are
-valid for the annotation. Figure~\ref{figure:valid} and Figure~\ref{figure:ofmethod}\haoyuan{Refs are wrong!?} present more details on the auxiliary
-functions. The formal definition is available in Appendix~\ref{subsec:translation}.
+valid for the annotation. 
 
-The function $\ofMethod$ generates the static method $\QM{of}$, as an object factory. It detects all the
-field methods of $\C_0$, take them as arguments, and in the return statement is an anonymous class which generates getters,
-fluent setters and with-methods in certain cases. Some other features of $\mixinAnn$, including non-fluent setters and the $\QM{with}$ method, however, are not formalized in Classless Java. Appendix~\ref{subsec:otherfeatures} gives an informal explanation of those methods.
+Figure~\ref{figure:valid} and Figure~\ref{figure:ofmethod} present more details on the auxiliary
+functions. \bruno{if the figures are mentioned here, what should
+  follow is the explanation on what is one the figures. Please fix
+  this Haoyuan and makes sure that everything that is on the figures
+  is explained here. }
+The formal definition is available in
+Appendix~\ref{subsec:translation}.\bruno{what formal definition?}
 
-\subsection{Guarantees}\label{subsec:guarantees}
+The function $\ofMethod$ generates the static method $\QM{of}$, as an
+object factory. It detects all the field methods of $\C_0$, take them
+as arguments, and in the return statement is an anonymous class which
+generates getters, fluent setters and with-methods in certain
+cases. Some other features of $\mixinAnn$, including non-fluent
+setters and the $\QM{with}$ method, however, are not formalized in
+Classless Java. Appendix~\ref{subsec:otherfeatures} gives an informal
+explanation of those methods.
 
-To understand to what extent our approach is correct (and more in general, what it means to say that a language tuning is correct) we identify three types of guarantees:
-\begin{itemize}
-\item \textit{Self coherence}: the generated code itself is well-typed; that is,
-  type errors are not present in code the user has not written.
-In our case it means that either \mixin{} produces (in a controlled way) an
-understandable error, or the interface can be successfully annotated and the generated code is well-typed.
-We guarantee \textit{Self coherence}.
-
-\item \textit{Client coherence}: all the client code (for example method calls)
-  that is well-typed before code generation is also well-typed after the generation.
-The annotation just adds more behavior without removing any functionality.
-We guarantee \textit{Client coherence}.
-
-\item \textit{Heir coherence}: interfaces (and in general classes) inheriting the instrumented code are well-typed if they were well-typed without the instrumentation.
-This would forbid adding any (default or abstract) method to the annotated interfaces, including type refinement.
-\mixin  does not guarantee \textit{Heir coherence}.
-Indeed consider the following:
-
-\begin{lstlisting}
-interface A { int x(); A withX(int x); }
-@Obj interface B extends A {}
-interface C extends B { A withX(int x); }
-\end{lstlisting}
-
-\noindent This code is correct before the translation, but \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
-This would break \Q@C@. \\*
-Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@''
-would be correct before translation, but would be ill-typed after the translation.
-\end{itemize}
-
-\noindent This means that our automatic type refinement
-is a useful and convenient feature, but not transparent to the heirs of the annotated interface. They need to be aware of the annotation semantics and provide the right type while refining methods.
+\bruno{I think there is explanation missing in this subsection;
+  probably text which is now in the appendix. Haoyuan, please take
+  care of this.}
 
 \subsection{Results}\label{subsec:results}
+
+Classless Java provides some guarantees regarding the generated
+code. Essentially, Classless Java ensures the \emph{self coherence}
+and \emph{client coherence} properties informally introduced in
+Section~\ref{sec:imp}. Furthermore, we can show that 
+\emph{if there are no type-refinements}, then \emph{heir coherence} also
+holds. The result about heir coherence is possible to prove 
+because the translation is split into two parts. In essence heir
+coherence is a property of the translation of  $\weakAnn$, but not of 
+\mixin.
 
 To formally characterize the behavior of our annotation and the two levels of guarantees that we offer, we provide some notations and two theorems:
 \begin{itemize}
@@ -183,15 +184,16 @@ IT is OK if under such interface table, all interfaces are OK.
 \item IT contains an heir of $\C$ if there is an interface that extends it, or a \Q@new@ that instantiate it.
 \end{itemize}
 
-
-\begin{thm}[@ObjOf tuning]
+\bruno{Do we have good names for the theorems Marco? Cannot be called
+  tunning now!}
+\begin{thm}[@ObjOf]
 If a given interface table $\II$ IT is OK
  where $\II$ has $\weakAnn$,
 $\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$,
 then the interface table $[\![\II]\!]$ IT is OK.
 \end{thm}
 
-\begin{thm}[@Obj tuning]
+\begin{thm}[@Obj]
 If a given interface table $\II$ IT is OK
  where $\II$ has $\mixinAnn$,
 $\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,
@@ -201,16 +203,29 @@ then the interface table $[\![\II]\!]$ IT is OK.
 Informally, the theorems mean that for a client program that
 typechecks before the translation is applied, if the annotated type has
 no subtypes and no objects of that type are created, then type safety
-is guaranteed after the successful translation.
+\bruno{of the generated code?}
+is guaranteed after the successful translation. 
 
 The second
 step of \mixin, namely what $\weakAnn$ does in the formalization, is
-guaranteed to be type-safe for the three kinds of coherence by the $\weakAnn$  tuning theorem.
-\mixin
-tuning is more interesting: since \mixin does not guarantee heir
+guaranteed to be type-safe for the three kinds of coherence by the $\weakAnn$ theorem.
+The \mixin theorem is more interesting: since \mixin does not guarantee heir
 coherence, we explicitly exclude the presence of heirs. In this way
-\mixin tuning guarantees only self and client coherence. The formal
-theorem proofs are available in the supplementary materials.
+the \mixin theorem guarantees only self and client coherence. The formal
+theorem proofs are available in the supplementary
+materials\bruno{point to appendix instead}.
+
+\paragraph{Type preservation:} 
+Note that we preferred to introduce self, client and heir coherence instead of referring to conventional
+type preservation theorems~\cite{}. The reason is 
+to better model how our approach behaves in a object oriented software ecosystem with inheritance,
+where only some units may be translated/expanded.
+Note that inheritance crucial influence in heir coherence, and how client coherence allows
+for only some units to be translated/expanded.\bruno{I don't
+  understand the point of the last sentence? Rephrase?}
+This means that even a library designer can decide to start using IB
+programming and still
+retain backward compatibility with its clients.
 
 %~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
 
