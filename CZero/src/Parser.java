@@ -1,4 +1,4 @@
-package c0.cj;
+
 
 import java.io.*;
 import java.util.*;
@@ -44,10 +44,8 @@ public interface Parser extends Constants, MemberFields, BaseOpers, ParseExpress
     }
 
     default void parseProgram() {
-        //=======YANLIN: begin added
-        nextChar();
-        nextToken();
-        //=======YANLIN: end added
+        nextChar();//=======YANLIN: begin added
+        nextToken();//=======YANLIN: end added
         Map<String, Integer> funcs = new HashMap<String, Integer>();
         Map<String, Integer> prototypes = new HashMap<String, Integer>();
         skipToken(tSHARP());
