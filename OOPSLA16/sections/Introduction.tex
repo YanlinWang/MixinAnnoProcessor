@@ -1,6 +1,6 @@
 \section{Introduction}\label{sec:intro}
 
-Object oriented languages have always strived to offer great code reuse.
+\marcoT{Object oriented languages always strive to offer great code reuse.}
 They aim to couple flexibility and rigour, expressive power and
 modular reasoning.  Two main ideas have emerged to this end: prototype
 based (PB)~\cite{} and class based (CB) languages~\cite{}.  In prototype based
@@ -17,7 +17,8 @@ is structurally defined in their interface. Programmers do not define objects di
 delegate the task to \emph{object interfaces}, whose role is similar
 to non abstract classes in CB languages. Key motivations for IB
 languages are improved \emph{modularity} and \emph{multiple inheritance}~\bruno{I'm using multiple
-  inheritance in a more abstract way than you Marco.}  The literature
+  inheritance in a more abstract way than you Marco.}\marco{Yes, but will the reviewer think in the abstract or in the
+  concrete way about MI?}  The literature
 provides good examples on how easy and modular it is to combine
 multiple sources of pure behaviour, using mechanisms such as
 traits~\cite{scharli03traits}. 
@@ -33,14 +34,21 @@ inheritance of classes.
 
 To retain the easiness and modularity of combining multiple sources of
 pure behaviour, in IB state is just a special kind of behaviour
-implementation. Objects are the only responsibles to define the
+implementation.
+\marco{NO NO!
+the advantage is not just multiple composition 
+(by the way, that is the term you are searching for, not multiple inheritance)
+By not having state reified in the ideal/platonic level, it is not fixed
+what is state and what is not, thus you can (model an encoding of) REMOVE fields and you can refine
+fields.}
+ Objects are the only responsibles to define the
 ultimate behaviour of a method and, for example, if such method is
 just a setter. Anything related to state is completely contained in
 the instances and do not leak in the interfaces.\bruno{Not sure if
   this is totally clear. Implicit here is the fact that objects are
   never defined explicitly, I think. And the behaviour is introduced 
 implicitly.}
-
+\marco{we need to discuss, not clear what you mean}
 %\footnote{ In the same sense,
 %  you can encode prototype based programming over class based with the
 %  strategy pattern, and class based programming with prototypes by
@@ -131,7 +139,9 @@ generate boring and repetitive code for interface instantiation and
 type refinement. Such code should not be needed in the first place in
 a real IB language, and the annotation processor allows us to
 transparently hide it from Java programmers. 
-The implementation works by performing \emph{on-the-fly} AST
+The implementation works by performing \emph{on-the-fly}\marco{False, we
+generate the instrumented bytecode. on the fly ast rewriting is a term that means 
+that you modify the bytecode while you load it} AST
 rewriting, allowing existing Java tools (such as IDEs) to work
 out-of-the-box with our implementation. Moreover, the 
 implementation blends Java's conventional CB style and IB smoothly. 

@@ -5,8 +5,10 @@ import static java.lang.System.out;
 interface Animal {}
 
 //BEGIN_PEGASUS_LOMBOK
-@Obj interface Horse extends Animal { default void run() {out.println("running!");}}
-@Obj interface Bird extends Animal { default void fly() {out.println("flying!");}}
+@Obj interface Horse extends Animal {
+	default void run() {out.println("running!");} }
+@Obj interface Bird extends Animal {
+	default void fly() {out.println("flying!");} }
 @Obj interface Pegasus extends Horse, Bird {}
 //END_PEGASUS_LOMBOK
 
