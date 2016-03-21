@@ -56,6 +56,7 @@ public class EclipseObjHandler {
 		meAnno = annotationNode;
 		initializeInfoMap();
 		for (ReferenceBinding rb : superTypes) infoMap.putAll(Util.transform(rb));
+		updateInfoMap();
 		
 		if (meDecl.typeParameters == null) meType = new SingleTypeReference(meDecl.name, p);
 		else {
@@ -90,6 +91,30 @@ public class EclipseObjHandler {
 //			Util.printLog("map: interface " + s);
 //		}
 //		Util.printLog("Inside interface " + String.valueOf(meDecl.name)  + " end.");
+	}
+	
+	private void updateInfoMap() {
+		for (String s : infoMap.keySet()) {
+			TypeDeclaration t = infoMap.get(s);
+			if (t.superInterfaces != null) {
+				for (int i = 0; i < t.superInterfaces.length; i++)
+					t.superInterfaces[i] = new SingleTypeReference(Util.toSingleType(t.superInterfaces[i]).toCharArray(), p);
+			}
+			if (t.methods != null) {
+				for (int i = 0; i < t.methods.length; i++) {
+					if (t.methods[i] instanceof MethodDeclaration) {
+						MethodDeclaration m = (MethodDeclaration) t.methods[i];
+						m.returnType = Util.toSingleTypeReference(m.returnType, p);
+						if (m.arguments != null) {
+							for (int j = 0; j < m.arguments.length; j++)
+								m.arguments[j].type = Util.toSingleTypeReference(m.arguments[j].type, p);
+						}
+						t.methods[i] = m;
+					}
+				}
+			}
+			// infoMap.put(s, t);
+		}
 	}
 	
 	private boolean checkValid() {
@@ -225,9 +250,9 @@ public class EclipseObjHandler {
 					ParameterizedSingleTypeReference tempT = (ParameterizedSingleTypeReference) decl.superInterfaces[i];
 					TypeReference[] newTypeArgs = new TypeReference[tempT.typeArguments.length];
 					for (int k = 0; k < newTypeArgs.length; k++) newTypeArgs[k] = Util.replaceRef(tempT.typeArguments[k], paramsMap);
-					getMethods = collectAllMethods(infoMap.get(String.valueOf(tempT.token)), newTypeArgs, false);
+					getMethods = collectAllMethods(infoMap.get(Util.toSingleType(tempT)), newTypeArgs, false);
 				} else if (decl.superInterfaces[i] instanceof SingleTypeReference) {
-					getMethods = collectAllMethods(infoMap.get(String.valueOf(((SingleTypeReference) decl.superInterfaces[i]).token)), null, false);
+					getMethods = collectAllMethods(infoMap.get(Util.toSingleType(decl.superInterfaces[i])), null, false);
 				} else {
 					throwError("In collectAllMethods(): instanceof_2 fails");
 					return null;
@@ -390,7 +415,7 @@ public class EclipseObjHandler {
 	
 	private MethodDeclaration genGeneralWith(TypeReference type) {
 		if (!(type instanceof SingleTypeReference)) return null;
-		Type t = mBody(infoMap.get(String.valueOf(((SingleTypeReference) type).token)));
+		Type t = mBody(infoMap.get(Util.toSingleType(type)));
 		if (t == null) return null;
 		HashMap<String, TypeReference> fieldsFromType = new HashMap<String, TypeReference>();
 		for (Method m : t.methods)
@@ -647,6 +672,39 @@ class Util {
 			if (map.containsKey(name)) return copyType(map.get(name));
 			else return res;
 		} else return t;
+	}
+	static String toSingleType(TypeReference t) { // We expect all files in the same package; superInterfaces can be QualifiedTypeReference.
+		if (t instanceof SingleTypeReference) {
+			String res = String.valueOf(((SingleTypeReference) t).token);
+			String[] xs = res.split("\\.");
+			return xs[xs.length - 1];
+		} else if (t instanceof QualifiedTypeReference) {
+			char[][] names = ((QualifiedTypeReference) t).tokens;
+			return String.valueOf(names[names.length - 1]);
+		} else return t.toString();
+	}
+	static SingleTypeReference toSingleTypeReference(TypeReference t, long p) { // Our approach doesn't support QualifiedTypeReference.
+		if (t instanceof SingleTypeReference) {
+			if (t instanceof ParameterizedSingleTypeReference) {
+				ParameterizedSingleTypeReference temp = (ParameterizedSingleTypeReference) t;
+				TypeReference[] args = new TypeReference[temp.typeArguments.length];
+				for (int i = 0; i < args.length; i++) args[i] = toSingleTypeReference(temp.typeArguments[i], p);
+				return new ParameterizedSingleTypeReference(temp.token, args, 0, p);
+			} else {
+				String[] names = String.valueOf(((SingleTypeReference) t).token).split("\\.");
+				return new SingleTypeReference(names[names.length - 1].toCharArray(), p);
+			}
+		} else if (t instanceof QualifiedTypeReference) {
+			if (t instanceof ParameterizedQualifiedTypeReference) {
+				ParameterizedQualifiedTypeReference temp = (ParameterizedQualifiedTypeReference) t;
+				char[] newName = temp.tokens[temp.tokens.length - 1];
+				return toSingleTypeReference(new ParameterizedSingleTypeReference(newName, temp.typeArguments[temp.typeArguments.length - 1], 0, p), p);
+			} else {
+				char[][] names = ((QualifiedTypeReference) t).tokens;
+				return new SingleTypeReference(names[names.length - 1], p);
+			}
+		}
+		return null;
 	}
 	static void printLog(String s) {
 		try {
