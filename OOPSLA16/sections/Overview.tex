@@ -14,19 +14,26 @@
 \caption{The animal system (left: complete structure, right: code for simplified animal system).}\label{fig:pegasus}
 \end{figure*}
 
-This section illustrates how our programming style, supported by the \mixinAnn{} annotation, enable powerful
-idioms similar to multiple inheritance and field type refinement.
-We propose a standard example: \Q@Animal@s with a two-dimensional \Q@Point2D@ representing their \Q@location@.
-Some kinds of animals are \Q@Horses@ and \Q@Bird@s.
-Birds can \Q@fly@, thus their locations need to be three-dimensional \Q@Point3D@s (field type refinement).
-Finally, we model \Q@Pegasus@ (one of the best-known creatures in Greek
-mythology) as a kind of \Q@Animal@ with the skills
-of both \Q@Horse@s and \Q@Bird@s (multiple inheritance). A simple class diagram illustrating
-the basic system is given on the left side of Figure~\ref{fig:pegasus}.\footnote{Some research argues in favor of using subtyping for modeling taxonomies, other research argues against this practice, we do not wish to take sides in this argument, but to provide an engaging example.}
-\bruno{Should we provide a one sentence summary in the abstract of how much code
-is needed in Java (without Obj) vs the approach with CJ, for the Pegasus example?}
-\marco{Not in the abstract. But I think is good to have that number and to put in in the example section.
-I will set up the sentence and someone can compute the number.}
+This section illustrates how our programming style, supported by the
+\mixinAnn{} annotation, enable powerful programming idioms based on multiple
+inheritance and type refinements.  We propose a standard example:
+\Q@Animal@s with a two-dimensional \Q@Point2D@ representing their
+\Q@location@.  Some kinds of animals are \Q@Horses@ and \Q@Bird@s.
+Birds can \Q@fly@, thus their locations need to be three-dimensional
+\Q@Point3D@s (field type refinement).  Finally, we model \Q@Pegasus@
+(one of the best-known creatures in Greek mythology) as a kind of
+\Q@Animal@ with the skills of both \Q@Horse@s and \Q@Bird@s (multiple
+inheritance). A simple class diagram illustrating the basic system is
+given on the left side of Figure~\ref{fig:pegasus}.\footnote{Some
+  research argues in favor of using subtyping for modeling taxonomies,
+  other research argues against this practice, we do not wish to take
+  sides in this argument, but to provide an engaging example.}
+
+%\bruno{Should we provide a one sentence summary in the abstract of how much code
+%is needed in Java (without Obj) vs the approach with CJ, for the Pegasus example?}
+%\marco{Not in the abstract. But I think is good to have that number and to put in in the example section.
+%I will set up the sentence and someone can compute the number.}
+
 \subsection{Simple Multiple Inheritance with Default
   Methods}\label{sec:simple}
 
@@ -93,7 +100,7 @@ needs to do is to add a \mixinAnn{} annotation to the \texttt{Horse},
 \texttt{Bird}, and \texttt{Pegasus} interfaces:
 
 \lstinputlisting[linerange=8-10]{../UseMixinLombok/src/pegasus/simple/lombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
-
+\bruno{I dislike the code formating here.}
 \noindent The effect of the annotations is that a static \emph{factory} method called
 \texttt{of} is automatically added to the interfaces. With the
 \texttt{of} method a \texttt{Pegasus} object is instantiated as follows:
@@ -125,28 +132,28 @@ namespace.
 
 The animal system modeled so far is a simplified version of the
 system presented in the left-side of Figure~\ref{fig:pegasus}.
-Here you still can not appreciate the advantage of IB.
-Lets model now the complete animal system where \Q@Animal@s will include a \Q@location@
-representing their positions in space. We will use 2D points to keep track of locations using coordinates.
+The example is still not sufficient to appreciate the advantages of IB
+programming.
+Lets now model the complete animal system where \Q@Animal@s includes a \Q@location@
+representing their positions in space. We use 2D points to keep track of locations using coordinates.
 
 \paragraph{\Q@Point2D@: simple immutable data with fields}
-Here we will illustrate how points are modelled with
-interfaces. In IB we do not talk about state directly; state is accessed
-using abstract (getter) methods. \bruno{unfinished sentence: Note how in}   The usual
-approach to model points in Java is to use a class with fields for the
-coordinates.
-
+Here we will illustrate how points are modelled with interfaces. In IB
+we do not talk about state directly. Instead state is accessed and
+manipulated using abstract methods.  The usual approach to model
+points in Java is to use a class with fields for the coordinates. 
+In Classless Java interfaces are used instead:
 
 \begin{lstlisting}
 interface Point2D { int x(); int y(); }
 \end{lstlisting}
 
-\noindent Our encoding over Java is now inconvenient: creating a new point object is cumbersome, even
+\noindent The encoding over Java is now inconvenient: creating a new point object is cumbersome, even
 with anonymous classes:
 
 \begin{lstlisting}
 Point2D p = new Point2D() {
-  public int x(){return 4;} public int y(){return 2;}  }
+  int x(){return 4;} public int y(){return 2;}  }
 \end{lstlisting}
 
 \noindent However this cumbersome syntax is not required for every
@@ -164,7 +171,7 @@ interface Point2D { int x(); int y();
 
 \vspace{-5pt}
 \paragraph{\Q@Point2D@ with object interfaces}
-This obvious ``constructor'' code can be automatically generated by our \mixin
+This obvious ``constructor'' code can be automatically generated by the \mixin
 annotation.  By annotating the interface \Q@Point2D@, a variation of the shown
 static method \texttt{of} will be generated, mimicking the functionality of a
 simple-minded constructor. \mixin first looks at the abstract methods and detects
@@ -189,11 +196,12 @@ another point.
 The pattern of creating a new object by reusing most information from an old
 object is very common when programming with immutable
 data-structures. As such, it is
-supported in our code generation as \Q@with-@ methods. For example:
+supported in by \mixin as \Q@with-@ methods. For example:
 \begin{lstlisting}
 @Obj interface Point2D {
     int x();    int y(); // getters
-    Point2D withX(int val);    Point2D withY(int val); //with methods
+     //with methods
+    Point2D withX(int val);    Point2D withY(int val);
 }
 \end{lstlisting}
 
@@ -208,7 +216,7 @@ Point2D p = myPoint.withX(42);
 will save programmers from writing large amounts of tedious code that
 simply copies field values.
 \begin{comment}
-is expanded by our annotation into\footnote{
+is expanded by \mixin into\footnote{
 Note how we actually generate a real field \Q@int x=_x;@.
 This provides a more uniform translation that can work also for mutable data structures, where setters are required.
 }
@@ -370,53 +378,10 @@ method. The implementation of \texttt{run()} further illustrates the convenience
 \texttt{location} methods (all generated automatically) provide a
 basic interface for dealing with animals.
 
-\paragraph{Summary} Dealing with state (mutable or not) in object interfaces
-relies on a notion of abstract state:
-\marcoT{Method bodies can only refer to other methods;
-Objects are (conceptually) closures and the state is 
-composed by captured local variables.}
-Methods interacting with those are called \emph{abstract state operations}.
-
-Object interfaces provide support for four
-different types of abstract state operations \textcolor{red}{together with two types of
-general operations}, which are summarized in
-Figure~\ref{fig:abstractstate}.  The abstract state operations are determined by
-naming conventions and the types of the methods. Fluent setters are a variant of
-conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
-
-\begin{figure*}
-\centering
-\saveSpaceFig
-\begin{tabular}{|l|l|l|l|}
-\hline
-& \textbf{Operation}  & \textbf{Example}                  & \textbf{Description } \\ \hline
-\multirow{4}{*}{State operations} & \textbf{``fields''/getters}        &   \Q@int x()@                  & Retrieves value from field \texttt{x}.          \\ \cline{2-4}
-& {\bf withers}        &   \Q@Point2D withX(int val)@                & Clones
-object; updates field \texttt{x} to \texttt{val}.             \\ \cline{2-4}
-& \textbf{setters}        & \Q@void x(int val)@ & Sets the field
-\texttt{x} to a  new value \texttt{val}.        \\ \cline{2-4}
-& \textbf{fluent setters}        & \Q@Point2D x(int val)@ &Sets the field
-\texttt{x} to \texttt{val} and returns \texttt{\this}.           \\ \hline
-\multirow{3}{*}{Other operations} &
-\textbf{factory methods} & 
-%\begin{tabular}{l}
-\Q@static Point2D of(int _x,int _y)@
-%\end{tabular}
- & Generate factory method for \texttt{Point2D}.        \\
-\cline{2-4}
-& \textbf{functional updaters}        & \Q@Point3D with(Point2D val)@ & Update all fields
-that match fields in \texttt{val}.        \\
-\cline{2-4}
-& \textbf{imperative updaters}        & \Q@Point3D set(Point2D val)@ & Set all fields
-that match fields in \texttt{val}.        \\ \hline
-\end{tabular}
-
-\caption{\textcolor{red}{(edited2)} Abstract state operations for a field \texttt{x}, together with general operations, supported by the \mixin
-  annotation. }
-
-\label{fig:abstractstate}
-
-\end{figure*}
+In summary, dealing with state (mutable or not) in object interfaces
+relies on a notion of abstract state, and state is not directly
+available to programmers. Instead programmers use methods, called
+\emph{abstract state operations}, to interact with state.
 
 % by method
 %\texttt{run()}: method \texttt{withX} returns a new point object with field
@@ -427,7 +392,7 @@ that match fields in \texttt{val}.        \\ \hline
 \Q@Bird@s are \Q@Animal@s, but while \Q@Animal@s only need 2D
 locations, \Q@Bird@s need 3D locations. Therefore when the \texttt{Bird}
 interface extends the \Q@Animal@ interface, the notion of points needs to
-be refined. Such kind of refinement is challenging
+be \emph{refined}. Such kind of refinement is challenging
 in typical class-based approaches. Fortunately, with object interfaces,
 we are able to provide a simple and effective solution.
 
@@ -472,7 +437,7 @@ Object interfaces address the challenge of type-refinement as follows:
 Thus, with object interfaces, the code for the \Q@Bird@ interface is:
 
 \lstinputlisting[linerange=67-70]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=BIRD
-
+\bruno{Don't like the code format here either.}
 %Interface \texttt{Point3D} extends \texttt{Point2D} with a new abstract method
 %\texttt{int z()} (treated as a getter for member field \texttt{z}). Note that
 %the return type of various methods (e.g. with- methods, getters) get refined
@@ -488,8 +453,6 @@ signature (\Q@location(Point2D)@). The key to the setter
 implementation is a new type of \Q@with@ method, called
  a (functional) property updater.
 
-\bruno{At some point we should talk about the point that was discussed in the reviews}
-\marco{you mean the reviewer question on the list.size?}
 \paragraph{\Q@Point3D@ and properties updaters}
 The \Q@Point3D@ interface is defined as follows:
 
@@ -512,6 +475,12 @@ to store. Note how all the information about what fields sit in
 \Q@Point3D@ and \Q@Point2D@ is properly encapsulated in the
 \Q@with@ method, and is transparent to the implementer of \Q@Bird@.
 
+Property updaters never break class invariants, since they
+internally call operations that were already deemed
+safe by the programmer. For example a list object
+would not offer a setter for its \texttt{size} field (which should be kept hidden), thus
+a property updater would not attempt to set it.
+
 % To implement the old setter in a convenient way, \mixin supports one
 % last type of operations: property updater \texttt{with}
 % methods. Unlike the \texttt{withX} (where \texttt{X} stands for a
@@ -523,14 +492,9 @@ to store. Note how all the information about what fields sit in
  we could offer an imperative property updater
  that calls the setters instead of the withers.
  \Q@Point3D set(Point2D val)@.
- }
+ }\bruno{we could or we do? if we could then the table should not
+   contain this operation; if we do the table is ok}
  
- \marcoT{
- Property updaters never break class invariants, since they
- internally call operations that was already deemed
- safe by the programmer. For example a list object
- would not offer a setter for its size field, thus
- a property updater would not attempt to set it.}
  
  
 
@@ -569,6 +533,55 @@ The cast in \Q@with(Point2D)@ is trivially safe because of the \Q@instanceof@
 test. The idea is that if the parameter is a subtype of the current exact type,
 then we can just return the parameter, as something that is just ``more'' than
 \Q@this@.
+
+\paragraph{Summary of operations in Classless Java} 
+%Method bodies can only refer to other methods;
+%Objects are (conceptually) closures and the state is 
+%composed by captured local variables.}
+%Methods interacting with state are called \emph{abstract state operations}.
+Object interfaces provide support for
+different types of abstract state operations: four field-based state
+operations; and  two types of
+general updating operations. Furthermore object interfaces support
+direct object intantiation via \texttt{of} factory methods. 
+Figure~\ref{fig:abstractstate} summarizes the six operations supported 
+by \mixin. The field-based abstract state operations are determined by
+naming conventions and the types of the methods. Fluent setters are a variant of
+conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
+
+\begin{figure*}
+\centering
+\saveSpaceFig
+\begin{tabular}{|l|l|l|l|}
+\hline
+& \textbf{Operation}  & \textbf{Example}                  & \textbf{Description } \\ \hline
+\multirow{4}{*}{\parbox{2.5cm}{State operations (for a field \texttt{x})}} & \textbf{``fields''/getters}        &   \Q@int x()@                  & Retrieves value from field \texttt{x}.          \\ \cline{2-4}
+& {\bf withers}        &   \Q@Point2D withX(int val)@                & Clones
+object; updates field \texttt{x} to \texttt{val}.             \\ \cline{2-4}
+& \textbf{setters}        & \Q@void x(int val)@ & Sets the field
+\texttt{x} to a  new value \texttt{val}.        \\ \cline{2-4}
+& \textbf{fluent setters}        & \Q@Point2D x(int val)@ &Sets the field
+\texttt{x} to \texttt{val} and returns \texttt{\this}.           \\ \hline
+\multirow{3}{*}{Other operations} &
+\textbf{factory methods} & 
+%\begin{tabular}{l}
+\Q@static Point2D of(int _x,int _y)@
+%\end{tabular}
+ & Factory method (generated).        \\
+\cline{2-4}
+& \textbf{functional updaters}        & \Q@Point3D with(Point2D val)@
+& Update all matching fields in \texttt{val}.        \\
+\cline{2-4}
+& \textbf{imperative updaters}        & \Q@Point3D set(Point2D val)@ &
+Set all matching fields in \texttt{val}.        \\ \hline
+\end{tabular}
+
+\caption{Abstract state operations for a field \texttt{x}, together with other operations, supported by the \mixin
+  annotation. }
+
+\label{fig:abstractstate}
+
+\end{figure*}
 
 \subsection{Advanced Multiple Inheritance}
 Finally, defining \texttt{Pegasus} is as simple as we did in the simplified
@@ -614,7 +627,7 @@ implementation for interface \texttt{Point}:
 quite mechanical code. What's worse, the implementation in \texttt{PointImpl}
 may not be reused in a single inheritance language.
 
-\subsection{Our Approach}
+\subsection{The Classless Java Approach}
 Instead of writing a whole another class to provide the implementation for
 \texttt{Point}, we annotate on interface \texttt{Point} directly with \mixin:
 
@@ -626,7 +639,7 @@ it takes arguments same as constructors and return objects similar to
 constructors. It makes use of Java anonymous classes and achieves the same
 implementation as \texttt{PointImpl}.
 
-With our approach, we provide a Java annotation \mixin to provide default
+With \CJ, we provide a Java annotation \mixin to provide default
 implementations for various methods and a mechanism to instantiate
 objects. \mixin annotation helps programmers to write less cumbersome code and
 instantiate interfaces in Java.
@@ -673,3 +686,4 @@ default methods inside interfaces was proposed in ~\cite{}. It enables us to do
 multiple inheritance, which otherwise is hard to do in Java-like languages that
 do not support multiple inheritance, easily.
 \end{comment}
+
