@@ -1,43 +1,40 @@
 \section{Bridging between IB and CB in Java}
 
-\begin{figure}[t]\label{fig:lombok}
-\centering
-\includegraphics[width=3in]{pdfs/lombok2.png}
-\caption{The flow chart of Lombok annotation processing. [Ref: http://notatube.blogspot.hk/2010/12/project-lombok-creating-custom.html]
-\marco{I'm not sure this helps: It is trying to show the "eclipse" path, that is the one we implemented,
-but there is also the "javac" path, and here we call the graph "Lombok annotation processing".
-May be this should be "obj" processing?
-}}\bruno{The figure is blurred and the font size is too
-small. Hoayuan, please improve the figure.}
-\end{figure}
 
-
-Even if convinced of the advantages of IB, the practical convenience
-of using existing libraries points us into building IB support inside
-of an opportune CB language like Java.
 %\footnote{ Rewriting libraries and
 %  application in this language/model would result in more reusable
 %  libraries, but it would be a taunting task.}
-While creating a new language or language extension would also
-illustrate the point of IB (and would be more elegant), it would also
-require significant amounts of engineering to achieve a similar level
-of integration and tool support as Java.
-This section illustrates how we integrate IB directly into Java instead. 
-Disciplined use  
+Creating a new language or language extension would be an
+elegant way to illustrate the point of IB. However, 
+significant amounts of engineering would be needed to build a practical
+language, and to achieve a similar level of integration and tool support
+as Java. To have an approach that can both illustrate IB
+programming and be practical, we have instead implemented Classless Java. 
+This section presents the Classless Java design. 
+Disciplined use of Classless Java (that is avoiding class
+definitions as done in Section~\ref{}), illustrates what \emph{pure} IB is like. 
+However in Classless Java CB and IB programming can be mixed together, and all 
+the practical convenience of using existing Java libraries, the full
+Java language, and IDE's are available in Classless Java. 
+The key to our implementation is the use of compilation agents, which 
+are supported in Java, and allow us to rewrite the Java AST just
+before compilation.
 
 \subsection{Compilation Agents}
-
-Java is a good language for such integration, since it supports compilation agents\cite{compilationagents}.
+Java supports compilation agents\cite{compilationagents}.
 That is, Java libraries can interact with the Java compilation process,
 acting as a man in the middle between the
 generation of the abstract syntax tree and the Java Bytecode.
-\marco{is this correct?}
-This process is facilitated by frameworks like Lombock~\cite{lombok}:
+\marco{is this correct?}\bruno{my impression is that Lombok happens
+  \emph{before} the AST is compiled (not between AST and bytecode generation)}
+This process is facilitated by frameworks like Lombok~\cite{lombok}:
 a Java library that aims at removing (or
 reducing) Java boilerplate code via
-annotations.
+annotations. Classless Java was created using Lombok.
 Figure~\ref{fig:lombok}\haoyuan{Wrong ref?} illustrates the
-flow of \mixin annotation processing in Lombok.
+flow of \mixin annotation processing in Lombok.\bruno{Haoyuan, please
+  explain the diagram.}
+
 %There are a number of annotations provided by the
 %original Lombok, including \Q:@Getter:, \Q:@Setter:,
 %\Q:@ToString: for generating getters, setters and \QM{toString}
@@ -49,62 +46,83 @@ flow of \mixin annotation processing in Lombok.
 %generation afterwards. Such a handler can either be a Javac handler or
 %an Eclipse handler.
 
-Using Lombok we created our \mixin annotation, that supports object
-interfaces as described in the former examples.
+\begin{figure}[t]
+\centering
+\includegraphics[width=3in]{pdfs/lombok2.png}
+\caption{The flow chart of Lombok annotation processing. 
+\marco{I'm not sure this helps: It is trying to show the "eclipse" path, that is the one we implemented,
+but there is also the "javac" path, and here we call the graph "Lombok annotation processing".
+May be this should be "obj" processing?
+}}\bruno{Haoyuan, please remove references to Eclipse in the Figure,
+that way it works both for Eclipse and Javac}
+\label{fig:lombok}
+\end{figure}
 
-Compilation Agents have advantages with respect to
-alternatives like extending the language, using a macro pre processors
-or using the Java Annotation processors.\marco{are we sure that annotation processors are not compilation agents too?}
 
-Our disciplined \mixin annotation offer some more advantages with respect to arbitrary (Compilation agent driven) AST rewriting.
+\paragraph{Advantages of Lombok}
+The Lombok compilation agent has advantages with respect to alternatives like
+pre-processors, or other Java annotation processors. In some sense
+Lombok can be seen as a poor man's macro system~\cite{} for Java. 
+\bruno{Marco, do you agree with calling Lombok a poor man's macro system?}
 
 %this seems like a commercial spot
 %\item Lombok is byte-code based instead of source-code based, which makes client
 %  code concise and easy to maintain. Such code generation is performed at
 %  compile time to modify bytecode.
 
-\paragraph{Auxiliary files/informations do not pollutes the program:}
-Compilation Agents alters the generation process of the class files,
-by directly modifying the AST.
-Neither the source code is modified nor new Java files are generated.
-Moreover, and probably more importantly, Lombok supports generation of
-  code \emph{inside} a class/interface, which conventional
-  Java annotation processors do not support.
+\paragraph{Direct modification of the AST:}
+Lombok alters the generation process of the class files,
+by directly modifying the AST. Neither the source code is modified nor 
+new Java files are generated. Moreover, and probably more importantly, 
+Lombok supports generation of code \emph{inside} a class/interface, 
+which conventional Java annotation processors do not support this. For
+example, the standard \texttt{javax.annotation} processor, which is part of the
+Java platform, only allows generation of \emph{new code}, and the
+new code has to be written in \emph{new files}. Modification and/or
+reinterpretation of existing code is not supported. 
 
 \paragraph{Modularity:}
-While general preprocessing/macros can act across module boundaries,
-Compilation agents act modularly on each class/compilation unit, and it makes
-sense to apply the transformation to one class/interface at a time, and only to annotated classes/interfaces.
-This allows library code to be reused without the need of being
-reprocessed and recompiled, making our approach 100\% compatible with existing Java libraries, than can be used
-and extended normally. Of course, Java libraries can also receive and use instances of object interfaces as normal objects.
+While general preprocessing acts across module boundaries, compilation
+agents act modularly on each class/compilation unit. It makes sense to
+apply the transformations to one class/interface at a time, and only to
+annotated classes/interfaces. This allows library code to be reused
+without the need of being reprocessed and recompiled, making our
+approach 100\% compatible with existing Java libraries, which can be
+used and extended normally. Of course, Java libraries can also receive
+and use instances of object interfaces as normal objects.
 
 \paragraph{Tool support:}
-Features integrate/supported directly in the language are often also supported by (most) tools.
-For example in Eclipse, the processing is performed transparently and the information of
-the interface from compilation is captured in the ``Outline'' window. This includes
-all the methods inside the interface as well as the generated ones.
-This also means that the IDE functionality for content assist and autocomplete
-will work for the newly generated methods.
+Features written in Lombok integrate and are supported directly in the
+language, and are often also supported by (most) tools.  For example in Eclipse, the processing is
+performed transparently and the information of the interface from
+compilation is captured in the ``Outline'' window.\bruno{Haoyuan: show
+and explain figure here.} This includes all
+the methods inside the interface as well as the generated ones.  This
+also means that the IDE functionality for content assist and
+autocomplete will work for the newly generated methods.
 
-
-\paragraph{Clarity against Obfuscation:}
+\paragraph{Clarity against obfuscation:}
 Preprocessors bring great power, which can easily be misused producing
 code particularly hard to understand. Thus code quality and maintainability are reduced.
 Compilation agents start from Java syntax, but they can reinterpret it.
-Preserving the syntax avoid syntactic conflicts, and allows may tools to transparently work.
+Preserving the syntax avoid syntactic conflicts, and allowing many
+tools to work transparently.
 
-The reinterpretation could still be surprising for badly designed rewritings.
-However, ``Outline'' windows/ auto-completion facilities
-will show the result of the rewriting, helping the programmer to use the reinterpreted semantic.
+\subsection{AST Reinterpretation in Classless Java}
 
-Our annotation reinterpret the syntax for the sole goal of enhance/complete code:
-we satisfy the behaviour of abstract methods, we add methods and we refine return types.
-We consider this to be quite easy to follow, since it is similar to what happens in normal inheritance.
+Ofcourse, careless reinterpretation of the AST could still be
+surprising for badly designed rewritings.  Classless Java reinterprets
+the syntax with the sole goal of \emph{enhancing and completing code}:
+we satisfy the behaviour of abstract methods; we add method
+implementations; and we refine return types.  We consider this to be
+quite easy to follow and reason about, since it is similar to what
+happens in normal inheritance.  Refactoring operations like renaming
+and moving should work transparently in conjunction with our
+annotaiton, since they rely on the overall type structure of the
+class, that we do not arbitrarily modify but just complete.
 
-We believe that refactoring operations like rename and move
-should work transparently in conjunction with our annotaiton, since they rely on
-the overall type structure of the class, that we do not arbitrarily modify but just complete.
+Thus, in addition to the advantages of Lombok, Classless Java offers
+some more advantages with respect to arbitrary (Compilation agent driven) AST rewriting.
 
 %\marco{The section No reuse of the type system
 %is controversial.
@@ -142,29 +160,34 @@ the overall type structure of the class, that we do not arbitrarily modify but j
 
 
 
-\paragraph{Syntax and Type errors:}
+\paragraph{Syntax and Type Errors:}
 Some preprocessors (like the C one) can produce syntactically invalid code.
-Lombok ensures only syntactically valid code is produced; however, type errors can appear.
+Lombok ensures only syntactically valid code is produced. %; however, type errors can appear.
+Classless Java additionally guarantees that no type errors are introduced
+in generated code and client code. We discuss these two guarantees in
+more detail next:
 
-Our annotation is guaranteed to not introduce errors in generate code and client code.
-See the following for details, where we identify tree form of types guarantees.
+\begin{itemize}
 
-
-\paragraph{Self coherence}: the generated code itself is well-typed; that is,
+\item{\bf Self coherence}: the generated code itself is well-typed. That is,
   type errors are not present in code the user has not written.
 In our case it means that either \mixin{} produces (in a controlled way) an
 understandable error, or the interface can be successfully annotated and the generated code is well-typed.
-We guarantee \textit{Self coherence}.
 
-\paragraph{Client coherence}: all the client code (for example method calls)
+\item{\bf Client coherence}: all the client code (for example method calls)
   that is well-typed before code generation is also well-typed after the generation.
 The annotation just adds more behaviour without removing any functionality.
-We guarantee \textit{Client coherence}.
 
-\paragraph{Heir coherence}: interfaces (and in general classes) inheriting the instrumented code are well-typed if they were well-typed without the instrumentation.
-This would forbid adding any (default or abstract) method to the annotated interfaces, including type refinement.
-\mixin  does not guarantee \textit{Heir coherence}.
-Indeed consider the following:
+\end{itemize}
+
+\paragraph{Heir coherence:} Another form of guarantee that could be
+useful in AST rewriting would be heir coherence. That is, interfaces
+(and in general classes) inheriting the instrumented code are
+well-typed if they were well-typed without the instrumentation.
+Classless Java \emph{does not} guarantee heir coherence.  The reason
+is that this would forbid adding any (default or abstract) method to
+the annotated interfaces, including type refinement. Indeed consider
+the following:
 
 \begin{lstlisting}
 interface A { int x(); A withX(int x); }
@@ -173,19 +196,26 @@ interface C extends B { A withX(int x); }
 \end{lstlisting}
 
 \noindent This code is correct before the translation, but \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
-This would break \Q@C@. \\*
+This would break \Q@C@. 
 Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@''
 would be correct before translation, but would be ill-typed after the translation.
 
-Our automatic type refinement
-is a useful and convenient feature, but not transparent to the heirs of the annotated interface.
-They need to be aware of the annotation semantics and provide the right type while refining methods.
-Please, note how Java libraries always break heir coherence during evolution
- (is just enough to add any method to any non final class), and still claim backward compatibility
- (false in theory but statistically true in practice).
-We think refining return types breaks heir coherence ``less" than normal library evolution.
+Our automatic type refinement is a useful and convenient feature, but
+not transparent to the heirs of the annotated interface.  They need to
+be aware of the annotation semantics and provide the right type while
+refining methods. To support heir coherence, Classless Java would need 
+to give up automatic type refinement, which is an essential part of IB programming.
+However, the reader should that note that Java libraries almost always break heir
+coherence during evolution and still claim backward compatibility (false in
+theory but statistically true in practice). In practice to break heir
+coherence it is just enough to add any method to any
+non final class of a Java library.  We think refining return
+types breaks heir coherence ``less" than normal library evolution.
 
-\paragraph{Type preservation:}
+In Section~\ref{} we make the claims the guarantees of Classless Java
+more formal.
+
+\paragraph{Type preservation:}\bruno{Move to next section?}
 We preferred to introduce self,client and hair coherence instead of referring to conventional
 type preservation,
 to better model how our approach behave in a object oriented software ecosystem with inheritance,
@@ -196,11 +226,7 @@ for only some units to be translated/expanded.
 This means that even a library designer can decide to start using IB and still
 retain backward compatibility with its clients.
 
-
-
-
-
-\paragraph{Limitations}\marco{ to reorganize with updated limitations}
+\subsection{Limitations}\marco{ to reorganize with updated limitations}
 Our prototype implementation using Lombok has certain limitations:
 \begin{itemize}
 \item The prototype does not support separate compilation yet. Currently all
