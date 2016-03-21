@@ -1,4 +1,4 @@
-\section{A practical bridge between IB and CB}
+\section{Bridging between IB and CB in Java}
 
 \begin{figure}[t]\label{fig:lombok}
 \centering
@@ -7,27 +7,33 @@
 \marco{I'm not sure this helps: It is trying to show the "eclipse" path, that is the one we implemented,
 but there is also the "javac" path, and here we call the graph "Lombok annotation processing".
 May be this should be "obj" processing?
-}}
+}}\bruno{The figure is blurred and the font size is too
+small. Hoayuan, please improve the figure.}
 \end{figure}
 
 
-Even if convinced of the advantages of IB,
-the practical convenience
-of using existing libraries points us into building IB support
-inside of an opportune CB language.\footnote{
-Rewriting libraries and application in this language/model
-would result in more reusable libraries, but it would be a taunting task.}
+Even if convinced of the advantages of IB, the practical convenience
+of using existing libraries points us into building IB support inside
+of an opportune CB language like Java.
+%\footnote{ Rewriting libraries and
+%  application in this language/model would result in more reusable
+%  libraries, but it would be a taunting task.}
+While creating a new language or language extension would also
+illustrate the point of IB (and would be more elegant), it would also
+require significant amounts of engineering to achieve a similar level
+of integration and tool support as Java.
+This section illustrates how we integrate IB directly into Java instead. 
+Disciplined use  
 
+\subsection{Compilation Agents}
 
-We believe Java is a good language for such integration, since it supports compilation agents[citeSomehting].
-
+Java is a good language for such integration, since it supports compilation agents\cite{compilationagents}.
 That is, Java libraries can interact with the Java compilation process,
 acting as a man in the middle between the 
 generation of the abstract syntax tree and the Java Bytecode.
 \marco{is this correct?}
 This process is facilitated by frameworks like Lombock~\cite{lombok}:
 a Java library that aims at removing (or
->>>>>>> 769243b65e4aa45abf264bc79b016c61525e225f
 reducing) Java boilerplate code via
 annotations.
 Figure~\ref{fig:lombok}\haoyuan{Wrong ref?} illustrates the
