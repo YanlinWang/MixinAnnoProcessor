@@ -2,7 +2,7 @@
 
 \begin{figure}[t]\label{fig:lombok}
 \centering
-\includegraphics[width=3in]{pdfs/lombok.png}
+\includegraphics[width=3in]{pdfs/lombok2.png}
 \caption{The flow chart of Lombok annotation processing. [Ref: http://notatube.blogspot.hk/2010/12/project-lombok-creating-custom.html]
 \marco{I'm not sure this helps: It is trying to show the "eclipse" path, that is the one we implemented,
 but there is also the "javac" path, and here we call the graph "Lombok annotation processing".
@@ -22,7 +22,7 @@ would result in more reusable libraries, but it would be a taunting task.}
 We believe Java is a good language for such integration, since it supports compilation agents[citeSomehting].
 
 That is, Java libraries can interact with the Java compilation process,
-acting as a man in the middle between the 
+acting as a man in the middle between the
 generation of the abstract syntax tree and the Java Bytecode.
 \marco{is this correct?}
 This process is facilitated by frameworks like Lombock~\cite{lombok}:
@@ -45,9 +45,9 @@ flow of \mixin annotation processing in Lombok.
 
 Using Lombok we created our \mixin annotation, that supports object
 interfaces as described in the former examples.
- 
+
 Compilation Agents have advantages with respect to
-alternatives like extending the language, using a macro pre processors 
+alternatives like extending the language, using a macro pre processors
 or using the Java Annotation processors.\marco{are we sure that annotation processors are not compilation agents too?}
 
 Our disciplined \mixin annotation offer some more advantages with respect to arbitrary (Compilation agent driven) AST rewriting.
@@ -70,14 +70,14 @@ While general preprocessing/macros can act across module boundaries,
 Compilation agents act modularly on each class/compilation unit, and it makes
 sense to apply the transformation to one class/interface at a time, and only to annotated classes/interfaces.
 This allows library code to be reused without the need of being
-reprocessed and recompiled, making our approach 100\% compatible with existing Java libraries, than can be used 
+reprocessed and recompiled, making our approach 100\% compatible with existing Java libraries, than can be used
 and extended normally. Of course, Java libraries can also receive and use instances of object interfaces as normal objects.
 
 \paragraph{Tool support:}
 Features integrate/supported directly in the language are often also supported by (most) tools.
 For example in Eclipse, the processing is performed transparently and the information of
 the interface from compilation is captured in the ``Outline'' window. This includes
-all the methods inside the interface as well as the generated ones.  
+all the methods inside the interface as well as the generated ones.
 This also means that the IDE functionality for content assist and autocomplete
 will work for the newly generated methods.
 
@@ -89,7 +89,7 @@ Compilation agents start from Java syntax, but they can reinterpret it.
 Preserving the syntax avoid syntactic conflicts, and allows may tools to transparently work.
 
 The reinterpretation could still be surprising for badly designed rewritings.
-However, ``Outline'' windows/ auto-completion facilities 
+However, ``Outline'' windows/ auto-completion facilities
 will show the result of the rewriting, helping the programmer to use the reinterpreted semantic.
 
 Our annotation reinterpret the syntax for the sole goal of enhance/complete code:
@@ -97,7 +97,7 @@ we satisfy the behaviour of abstract methods, we add methods and we refine retur
 We consider this to be quite easy to follow, since it is similar to what happens in normal inheritance.
 
 We believe that refactoring operations like rename and move
-should work transparently in conjunction with our annotaiton, since they rely on 
+should work transparently in conjunction with our annotaiton, since they rely on
 the overall type structure of the class, that we do not arbitrarily modify but just complete.
 
 %\marco{The section No reuse of the type system
@@ -180,14 +180,14 @@ Please, note how Java libraries always break heir coherence during evolution
 We think refining return types breaks heir coherence ``less" than normal library evolution.
 
 \paragraph{Type preservation:}
-We preferred to introduce self,client and hair coherence instead of referring to conventional 
+We preferred to introduce self,client and hair coherence instead of referring to conventional
 type preservation,
 to better model how our approach behave in a object oriented software ecosystem with inheritance,
 where only some units may be translated/expanded.
-Note inheritance crucial influence in hair coherence, and how client coherence allows 
+Note inheritance crucial influence in hair coherence, and how client coherence allows
 for only some units to be translated/expanded.
 
-This means that even a library designer can decide to start using IB and still 
+This means that even a library designer can decide to start using IB and still
 retain backward compatibility with its clients.
 
 
