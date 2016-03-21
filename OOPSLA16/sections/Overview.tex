@@ -99,7 +99,7 @@ To model the animal system with object interfaces all that a user
 needs to do is to add a \mixinAnn{} annotation to the \texttt{Horse},
 \texttt{Bird}, and \texttt{Pegasus} interfaces:
 
-\lstinputlisting[linerange=8-10]{../UseMixinLombok/src/pegasus/simple/lombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
+\lstinputlisting[linerange=8-12]{../UseMixinLombok/src/pegasus/simple/lombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
 \bruno{I dislike the code formating here.}
 \noindent The effect of the annotations is that a static \emph{factory} method called
 \texttt{of} is automatically added to the interfaces. With the
@@ -117,7 +117,7 @@ after the \mixinAnn{} annotation is processed:
 \begin{lstlisting}
 interface Pegasus extends Horse, Bird {
   // generated code not visible to users
-    static Pegasus of() { return new Pegasus() {}; }
+  static Pegasus of() { return new Pegasus() {}; }
 }
 \end{lstlisting}
 
@@ -141,7 +141,7 @@ representing their positions in space. We use 2D points to keep track of locatio
 Here we will illustrate how points are modelled with interfaces. In IB
 we do not talk about state directly. Instead state is accessed and
 manipulated using abstract methods.  The usual approach to model
-points in Java is to use a class with fields for the coordinates. 
+points in Java is to use a class with fields for the coordinates.
 In Classless Java interfaces are used instead:
 
 \begin{lstlisting}
@@ -153,7 +153,9 @@ with anonymous classes:
 
 \begin{lstlisting}
 Point2D p = new Point2D() {
-  int x(){return 4;} public int y(){return 2;}  }
+  int x() {return 4;}
+  public int y() {return 2;}
+}
 \end{lstlisting}
 
 \noindent However this cumbersome syntax is not required for every
@@ -200,8 +202,9 @@ supported in by \mixin as \Q@with-@ methods. For example:
 \begin{lstlisting}
 @Obj interface Point2D {
     int x();    int y(); // getters
-     //with methods
-    Point2D withX(int val);    Point2D withY(int val);
+    // with methods
+    Point2D withX(int val);
+    Point2D withY(int val);
 }
 \end{lstlisting}
 
@@ -360,7 +363,7 @@ mutable state.
 %field''.
 %%Not again, before we used only getters!
 % Again, we model this member field with getter and setter methods:
-\lstinputlisting[linerange=58-58]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=ANIMAL
+\lstinputlisting[linerange=58-60]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=ANIMAL
 
 \noindent Here we declare abstract getter and setter for the mutable ``field''
 \Q@location@.  Without the \mixin annotation, there is no convenient way to
@@ -368,7 +371,7 @@ instantiate \texttt{Animal}.  For \texttt{Horse}, the \mixin annotation is used
 and an implementation of \texttt{run()} is defined using a \Q@default@
 method. The implementation of \texttt{run()} further illustrates the convenience of \texttt{with} methods:
 
-\lstinputlisting[linerange=62-63]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=HORSE
+\lstinputlisting[linerange=64-67]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=HORSE
 
 \noindent Creating and using \texttt{Horse} is quite simple:
 
@@ -436,7 +439,7 @@ Object interfaces address the challenge of type-refinement as follows:
 
 Thus, with object interfaces, the code for the \Q@Bird@ interface is:
 
-\lstinputlisting[linerange=67-70]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=BIRD
+\lstinputlisting[linerange=71-80]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=BIRD
 \bruno{Don't like the code format here either.}
 %Interface \texttt{Point3D} extends \texttt{Point2D} with a new abstract method
 %\texttt{int z()} (treated as a getter for member field \texttt{z}). Note that
@@ -494,16 +497,16 @@ a property updater would not attempt to set it.
  \Q@Point3D set(Point2D val)@.
  }\bruno{we could or we do? if we could then the table should not
    contain this operation; if we do the table is ok}
- 
- 
- 
+
+
+
 
 
 \begin{figure}
 \marco{I can not find the declaration int x();
 also we can change the order of the code to write the non generated stuff first.}
-\saveSpaceFig
-\lstinputlisting[linerange=79-91]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=GENERATED_POINT3D
+%\saveSpaceFig
+\lstinputlisting[linerange=89-115]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=GENERATED_POINT3D
 \caption{Generated boilerplate code.}
 \label{fig:boilerplate}
 \end{figure}
@@ -511,11 +514,11 @@ also we can change the order of the code to write the non generated stuff first.
 \paragraph{Generated boilerplate}
 Just to give a feeling of how much mechanical code \mixin is generating, we show the
 generated code for the \texttt{Point3D} in Figure~\ref{fig:boilerplate}.
-\marcoT{Overall, for the whole 
+\marcoT{Overall, for the whole
 animals-with-locations, an @@@ lines code example,
 the generate/completed code is composed by
 @@@ lines.}
- 
+
    Writing such code by hand is error-prone. For
 example a distracted programmer may swap the arguments of calls to
 \Q@Point3D.of@.  Note how \Q@with-@ methods are automatically refined in their
@@ -534,17 +537,17 @@ test. The idea is that if the parameter is a subtype of the current exact type,
 then we can just return the parameter, as something that is just ``more'' than
 \Q@this@.
 
-\paragraph{Summary of operations in Classless Java} 
+\paragraph{Summary of operations in Classless Java}
 %Method bodies can only refer to other methods;
-%Objects are (conceptually) closures and the state is 
+%Objects are (conceptually) closures and the state is
 %composed by captured local variables.}
 %Methods interacting with state are called \emph{abstract state operations}.
 Object interfaces provide support for
 different types of abstract state operations: four field-based state
 operations; and  two types of
 general updating operations. Furthermore object interfaces support
-direct object intantiation via \texttt{of} factory methods. 
-Figure~\ref{fig:abstractstate} summarizes the six operations supported 
+direct object intantiation via \texttt{of} factory methods.
+Figure~\ref{fig:abstractstate} summarizes the six operations supported
 by \mixin. The field-based abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of
 conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
@@ -563,7 +566,7 @@ object; updates field \texttt{x} to \texttt{val}.             \\ \cline{2-4}
 & \textbf{fluent setters}        & \Q@Point2D x(int val)@ &Sets the field
 \texttt{x} to \texttt{val} and returns \texttt{\this}.           \\ \hline
 \multirow{3}{*}{Other operations} &
-\textbf{factory methods} & 
+\textbf{factory methods} &
 %\begin{tabular}{l}
 \Q@static Point2D of(int _x,int _y)@
 %\end{tabular}
@@ -592,7 +595,7 @@ transparently composed, and \texttt{Pegasus} has a \Q@Point3D@
 % any field type refinement, otherwise we may have to choose/create a
 % common subtype in order for \texttt{Pegasus} to exists.
 
-\lstinputlisting[linerange=74-74]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=PEGASUS
+\lstinputlisting[linerange=84-84]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=PEGASUS
 
 
 \begin{comment}
@@ -658,13 +661,13 @@ restricted form easily.
 
 \lstinputlisting[linerange=52-55]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=POINT3D
 
-\lstinputlisting[linerange=58-58]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=ANIMAL
+\lstinputlisting[linerange=58-60]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=ANIMAL
 
-\lstinputlisting[linerange=62-63]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=HORSE
+\lstinputlisting[linerange=64-67]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=HORSE
 
-\lstinputlisting[linerange=67-70]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=BIRD
+\lstinputlisting[linerange=71-80]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=BIRD
 
-\lstinputlisting[linerange=74-74]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=PEGASUS
+\lstinputlisting[linerange=84-84]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=PEGASUS
 
 Interface \texttt{Point3D} extends \texttt{Point/Point2D} with a new abstract
 method \texttt{int z()} (treated as a getter for member field
