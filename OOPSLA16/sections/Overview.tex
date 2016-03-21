@@ -100,7 +100,7 @@ needs to do is to add a \mixinAnn{} annotation to the \texttt{Horse},
 \texttt{Bird}, and \texttt{Pegasus} interfaces:
 
 \lstinputlisting[linerange=8-12]{../UseMixinLombok/src/pegasus/simple/lombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
-\bruno{I dislike the code formating here.}
+\bruno{I dislike the code formating here.} \haoyuan{fixed}
 \noindent The effect of the annotations is that a static \emph{factory} method called
 \texttt{of} is automatically added to the interfaces. With the
 \texttt{of} method a \texttt{Pegasus} object is instantiated as follows:
@@ -440,7 +440,7 @@ Object interfaces address the challenge of type-refinement as follows:
 Thus, with object interfaces, the code for the \Q@Bird@ interface is:
 
 \lstinputlisting[linerange=71-80]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=BIRD
-\bruno{Don't like the code format here either.}
+\bruno{Don't like the code format here either.} \haoyuan{fixed}
 %Interface \texttt{Point3D} extends \texttt{Point2D} with a new abstract method
 %\texttt{int z()} (treated as a getter for member field \texttt{z}). Note that
 %the return type of various methods (e.g. with- methods, getters) get refined

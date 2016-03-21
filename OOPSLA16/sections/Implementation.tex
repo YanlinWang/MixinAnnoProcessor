@@ -5,18 +5,18 @@
 %  application in this language/model would result in more reusable
 %  libraries, but it would be a taunting task.}
 Creating a new language or language extension would be an
-elegant way to illustrate the point of IB. However, 
+elegant way to illustrate the point of IB. However,
 significant amounts of engineering would be needed to build a practical
 language, and to achieve a similar level of integration and tool support
 as Java. To have an approach that can both illustrate IB
-programming and be practical, we have instead implemented Classless Java. 
-This section presents the Classless Java design. 
+programming and be practical, we have instead implemented Classless Java.
+This section presents the Classless Java design.
 Disciplined use of Classless Java (that is avoiding class
-definitions as done in Section~\ref{}), illustrates what \emph{pure} IB is like. 
-However in Classless Java CB and IB programming can be mixed together, and all 
+definitions as done in Section~\ref{}), illustrates what \emph{pure} IB is like.
+However in Classless Java CB and IB programming can be mixed together, and all
 the practical convenience of using existing Java libraries, the full
-Java language, and IDE's are available in Classless Java. 
-The key to our implementation is the use of compilation agents, which 
+Java language, and IDE's are available in Classless Java.
+The key to our implementation is the use of compilation agents, which
 are supported in Java, and allow us to rewrite the Java AST just
 before compilation. We discuss advantages and limitations of our approach.
 
@@ -34,6 +34,13 @@ annotations. Classless Java was created using Lombok.
 Figure~\ref{fig:lombok}\haoyuan{Wrong ref?} illustrates the
 flow of \mixin annotation processing in Lombok.\bruno{Haoyuan, please
   explain the diagram.}
+\haoyuan{Source code in a Java program is first parsed into its syntactic structure,
+which we call abstract syntax tree (AST). The AST is passed to Lombok, and a corresponding
+AST defined in Lombok is generated for the annotated node. An annotation like \mixin is declared
+inside Lombok, together with an implementation of its (Eclipse or Javac) handler. The handler is
+free to modify the information of the annotated node, or even inject new nodes (like methods, inner classes,
+etc). Finally, Java compiler works on the modified AST to generate bytecode. During the compilation,
+no source code is changed, and no new files are created, bytecode takes the only difference.}
 
 %There are a number of annotations provided by the
 %original Lombok, including \Q:@Getter:, \Q:@Setter:,
@@ -48,13 +55,13 @@ flow of \mixin annotation processing in Lombok.\bruno{Haoyuan, please
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=3in]{pdfs/lombok2.png}
-\caption{The flow chart of Lombok annotation processing. 
+\includegraphics[width=3in]{pdfs/lombok3.png}
+\caption{The flow chart of \mixin annotation processing.
 \marco{I'm not sure this helps: It is trying to show the "eclipse" path, that is the one we implemented,
 but there is also the "javac" path, and here we call the graph "Lombok annotation processing".
 May be this should be "obj" processing?
 }}\bruno{Haoyuan, please remove references to Eclipse in the Figure,
-that way it works both for Eclipse and Javac}
+that way it works both for Eclipse and Javac}\haoyuan{done}
 \label{fig:lombok}
 \end{figure}
 
@@ -62,7 +69,7 @@ that way it works both for Eclipse and Javac}
 \paragraph{Advantages of Lombok}
 The Lombok compilation agent has advantages with respect to alternatives like
 pre-processors, or other Java annotation processors. In some sense
-Lombok can be seen as a poor man's macro system~\cite{} for Java. 
+Lombok can be seen as a poor man's macro system~\cite{} for Java.
 \bruno{Marco, do you agree with calling Lombok a poor man's macro system?}
 
 %this seems like a commercial spot
@@ -72,14 +79,14 @@ Lombok can be seen as a poor man's macro system~\cite{} for Java.
 
 \paragraph{Direct modification of the AST:}
 Lombok alters the generation process of the class files,
-by directly modifying the AST. Neither the source code is modified nor 
-new Java files are generated. Moreover, and probably more importantly, 
-Lombok supports generation of code \emph{inside} a class/interface, 
+by directly modifying the AST. Neither the source code is modified nor
+new Java files are generated. Moreover, and probably more importantly,
+Lombok supports generation of code \emph{inside} a class/interface,
 which conventional Java annotation processors do not support this. For
 example, the standard \texttt{javax.annotation} processor, which is part of the
 Java platform, only allows generation of \emph{new code}, and the
 new code has to be written in \emph{new files}. Modification and/or
-reinterpretation of existing code is not supported. 
+reinterpretation of existing code is not supported.
 
 \paragraph{Modularity:}
 While general preprocessing acts across module boundaries, compilation
@@ -97,9 +104,17 @@ language, and are often also supported by (most) tools.  For example in Eclipse,
 performed transparently and the information of the interface from
 compilation is captured in the ``Outline'' window.\bruno{Haoyuan: show
 and explain figure here.} This includes all
-the methods inside the interface as well as the generated ones.  This
-also means that the IDE functionality for content assist and
+the methods inside the interface as well as the generated ones. \haoyuan{In Figure~\ref{fig:screenshot} (wrong),
+the screenshot presents the Outline window of Eclipse, where the generated methods including \lstinline{Point2D.of}, \lstinline{Point3D.of},
+\lstinline{Point3D.withX} and \lstinline{Point3D.withY} are visible to users, showing their types and modifiers.} 
+This also means that the IDE functionality for content assist and
 autocomplete will work for the newly generated methods.
+
+\begin{figure}[h]\label{fig:screenshot}
+\centering
+\includegraphics[width=3.3in]{pdfs/screenshot2.png}
+\caption{Generated methods shown in the Outline window of Eclipse.}
+\end{figure}
 
 \paragraph{Clarity against obfuscation:}
 Preprocessors bring great power, which can easily be misused producing
@@ -196,14 +211,14 @@ interface C extends B { A withX(int x); }
 \end{lstlisting}
 
 \noindent This code is correct before the translation, but \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
-This would break \Q@C@. 
+This would break \Q@C@.
 Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@''
 would be correct before translation, but would be ill-typed after the translation.
 
 Our automatic type refinement is a useful and convenient feature, but
 not transparent to the heirs of the annotated interface.  They need to
 be aware of the annotation semantics and provide the right type while
-refining methods. To support heir coherence, Classless Java would need 
+refining methods. To support heir coherence, Classless Java would need
 to give up automatic type refinement, which is an essential part of IB programming.
 However, the reader should that note that Java libraries almost always break heir
 coherence during evolution and still claim backward compatibility (false in
