@@ -1,15 +1,5 @@
 \section{Introduction}\label{sec:intro}
 
-\bruno{need to defend ourselfves against Scala traits}
-\marco{I tried to improve a little, also in this sense,
-but I still think is better to defend ourselves mostly in the related work section, some of your text under may end up there}
-
-\bruno{The abstract state operations and the novel technique to deal with 
-covariant refinement of setters; Scala traits do support state (variables and 
-immutable values), but there's no support for ``with'' (and clone-like) methods for example; and 
-mutable state does not support type-refinement.
-}
-
 Object oriented languages have always strived to offer great code reuse.
 They aim to couple flexibility and rigour, expressive power and
 modular reasoning.  Two main ideas have emerged to this end: prototype
@@ -21,21 +11,25 @@ and classes inherit from other classes.  Here objects own the state,
 while classes contain behaviour and the structure of the state.
 
 We present here a third alternative: the concept of \textbf{Interface
-  based object oriented languages} (IB), where objects implement
-interfaces, and they own the implementation for the behaviour, which
-is structurally defined in their interface. In IB programmers do not define objects directly, but
+  based} (IB) object oriented languages, where objects implement
+interfaces directly. In IB interfaces own the implementation for the behaviour, which
+is structurally defined in their interface. Programmers do not define objects directly, but
 delegate the task to \emph{object interfaces}, whose role is similar
 to non abstract classes in CB languages. Key motivations for IB
 languages are improved \emph{modularity} and \emph{multiple inheritance}~\bruno{I'm using multiple
   inheritance in a more abstract way than you Marco.}  The literature
 provides good examples on how easy and modular it is to combine
 multiple sources of pure behaviour, using mechanisms such as
-traits~\cite{scharli03traits}. In Java multiple \emph{interface} inheritance has been
+traits~\cite{scharli03traits}. 
+In Java multiple \emph{interface} inheritance has been
 supported since inception, and in Java8 default methods~\cite{} bring some of
 the advantages of traits into Java. In contrast, the literature~\cite{} is
 also rich on how hard it is to modularly combine multiple sources of
 behaviour \textbf{and} state with multiple \emph{implementation}
-inheritance of classes.
+inheritance of classes. 
+%Traits or Java8 interfaces still assume a CB model: 
+%But traits still require classes, which
+%are responsible for object construction and adding state.
 
 To retain the easiness and modularity of combining multiple sources of
 pure behaviour, in IB state is just a special kind of behaviour
@@ -109,7 +103,6 @@ object-oriented idioms, similar to (stateful) multiple inheritance and
 field type refinement (allowing a kind of covariant setters
 refinement). \bruno{needs strenghtening}  
 
-
 A key challenge lies in how to model state, which is fundamental to
 have stateful objects. In IB and Classless Java, the idea is that all abstract operations in an Object
 interface will be interpreted as \emph{abstract state operations}. The
@@ -120,6 +113,13 @@ need to be refined. Object interfaces provide support for
 type-refinement and can automatically produce code that deals with
 type-refinement adequately, while Java (and Scala) require explicit
 type-refinement.\bruno{strenghtening needed!}
+
+
+\bruno{To be mentioned: 3 features of IB: Interface-based programming with multiple
+  inheritance; automatic type-refinements; a new approach that allows 
+\emph{type-safe} covariant refinement of state.
+}
+
 
   %With object interfaces, many Java programs can be built
 %without using a single class!
@@ -137,7 +137,7 @@ out-of-the-box with our implementation. Moreover, the
 implementation blends Java's conventional CB style and IB smoothly. 
 As a result, we experiment object interfaces with several interesting Java programs,
 and conduct various case studies. 
-Finally, we also formally define the behaviour of our \Q|Obj| implementation. 
+Finally, we also formally define the behaviour of our \Q|Obj| annotation. 
 
 
 
