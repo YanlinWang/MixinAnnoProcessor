@@ -31,7 +31,7 @@ This process is facilitated by frameworks like Lombok~\cite{lombok}:
 a Java library that aims at removing (or
 reducing) Java boilerplate code via
 annotations. Classless Java was created using Lombok.
-Figure~\ref{fig:lombok}\haoyuan{Wrong ref?} illustrates the
+Figure~\ref{fig:lombok} illustrates the
 flow of \mixin annotation processing in Lombok.\bruno{Haoyuan, please
   explain the diagram.}
 \haoyuan{Source code in a Java program is first parsed into its syntactic structure,
@@ -100,16 +100,15 @@ language, and are often also supported by (most) tools.  For example in Eclipse,
 performed transparently and the information of the interface from
 compilation is captured in the ``Outline'' window.\bruno{Haoyuan: show
 and explain figure here.} This includes all
-the methods inside the interface as well as the generated ones. \haoyuan{In Figure~\ref{fig:screenshot} (wrong),
-the screenshot presents the Outline window of Eclipse, where the generated methods including \lstinline{Point2D.of}, \lstinline{Point3D.of},
-\lstinline{Point3D.withX} and \lstinline{Point3D.withY} are visible to users, showing their types and modifiers.}
-This also means that the IDE functionality for content assist and
-autocomplete will work for the newly generated methods.
+the methods inside the interface as well as the generated ones. \haoyuan{In Figure~\ref{fig:screenshot},
+\mixin generates \Q@of@ method in \Q@Point2D@, and \Q@of@, \Q@withX@, \Q@withY@ methods in \Q@Point3D@. These
+methods are also visible to users, showing their types and modifiers in Outline window. Moreover, as a useful IDE feature,
+the auto-completion also works for these newly generated methods.}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=3.3in]{pdfs/screenshot2.png}
-\caption{Generated methods shown in the Outline window of Eclipse.}
+\includegraphics[width=3.3in]{pdfs/screenshot4.png}
+\caption{Generated methods shown in the Outline window of Eclipse and auto-completion.}
 \label{fig:screenshot}
 \end{figure}
 
