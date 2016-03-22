@@ -215,17 +215,18 @@ Finally, we also formally define the behaviour of our \Q|Obj| annotation.
 %Java compiler.
 
 To evaluate the usefulness of object interfaces, we illustrate
-3\bruno{needs updates}
+\numOfCaseStudies \bruno{needs updates}\yanlin{updated} 
 applications. The first application is a simple 
 solution to the Expression Problem~\cite{wadler98expression}, supporting independent 
 extensibility~\cite{zenger05independentlyextensible}, and without boilerplate code. The second
 application shows how embedded DSLs using fluent interfaces~\cite{fowler2005fluentinterface} 
-can be easily defined using object interfaces. The last
-application is a larger case study for a simple Maze game implemented with 
-multiple inheritance. For the last application we show that there is a
+can be easily defined using object interfaces. The third
+application is a case study for a simple Maze game implemented with 
+multiple inheritance. For this application we show that there is a
 significant reduction in the numbers of lines of code when compared 
-to an existing implementation~\cite{bono14} using plain Java 8. 
-Noteworthy, all applications are implemented 
+to an existing implementation~\cite{bono14} using plain Java 8. The last
+application is a larger case study of refactoring of a simple one-pass compiler, showing that our
+approach can scale to real code base. Noteworthy, all applications are implemented 
 without defining a single class!
 
 We can extend our approach to support encapsulation and privateness;

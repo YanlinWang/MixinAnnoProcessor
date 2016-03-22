@@ -1,5 +1,5 @@
 \section{Case Studies}
-In this section we conduct three case studies which reveal various
+In this section we conduct \numOfCaseStudies case studies which reveal various
 advantages of using the \mixin annotation. The first case study provides a
 simple way to solve the Expression Problem while supporting multiple,
 independent extensions in Java.  The second case study shows how to model an
@@ -148,7 +148,7 @@ all the fluent setters return the correct type, and not the old \texttt{Database
 \lstinputlisting[linerange=37-38]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
 
 \subsection{A Maze Game}
-The last case study is a simplified variant of a Maze game, which is often
+This case study is a simplified variant of a Maze game, which is often
 used~\cite{gof,bono14}
 to evaluate code reuse ability related to inheritance and design
 patterns. In the game, there is a player with the goal of collecting
@@ -185,7 +185,7 @@ generation of getters/setters. %\bruno{explain why? we generate code for getters
 To ensure a fair comparison, we used the same coding style as Bono et al.'s.
 
 \subsection{Refactoring a Compiler}
-This case study applies our approach to a slightly larger code base of a simple
+The last case study applies our approach to a slightly larger code base of a simple
 one-pass compiler for \lstinline{C0} (a subset of \lstinline{C}). This compiler
 is a handwritten, monolithic compiler used for educational purposes at Aarhus
 University, Denmark\footnote{Source code available at
