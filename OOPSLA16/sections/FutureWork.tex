@@ -73,8 +73,7 @@ As shown by Ferruccio in [...] interfaces are enough to support privateness by a
 @Obj interface InternalData implements ExposedData{/*all the methods*/}//package visibility
 public interface ExposedData{
   /*just the exposed interface*/
-  static ExposedData of(...){return InternalData.of(...);}
-  }
+  static ExposedData of(...){return InternalData.of(...);}  }
 \end{lstlisting}
 
 This is a safe and explicit way to list all the public interfaces and to hide all the implementation
@@ -177,35 +176,35 @@ interface Point { ...//as before
             public Point clone() { return Point.super.clone();}};} }
 \end{lstlisting} 
 
-\paragraph{A real IB language}
-In this article we presented the concept of IB as a programming pattern over Java.
-We do not wish to define here a complete IB language, just to show the reader IB as
-a promising way to design a new oo language.
-The first task is to define the set of abstract state operations.
-Of course we need getters; \Q@withX@ methods seams to be pretty convenient, and they enable a
-clean function programming style that would be otherwise too cumbersome.
-
-Currently we are offering both setters and Fluent setters.
-We believe be fluent setters to be sufficient; we could drop the concept of (non fluent)setters.
-
-Manually defining abstract state methods can be verbose, we could offer a convenient syntax to 
-declare get/set/with.
-For example
-\begin{lstlisting}
-obj interface Foo{
-  String bar;//== String bar(); Foo withBar(String val);
-  var String beer;//also fluent setter
-  }
-\end{lstlisting}
-
-We may also want to offer a compact syntax for property updaters and generalized with methods;
-\begin{lstlisting}
-obj interface Foo{
-  updater Bar, Beer//== Foo set(Bar val); Foo set(Beer val);
-  with Foo, Beer//== Foo with(Bar val); Foo with(Beer val);
-  }
-\end{lstlisting}
-Finally, certain methods may have a specific meaning, for example
-if a private method called \Q@init@ is present, it will be called after construction,
-and it may be handled specially during multiple implementations, so that all relevant \Q@init@ methods are
-called in some order.
+%\paragraph{A real IB language}
+%In this article we presented the concept of IB as a programming pattern over Java.
+%We do not wish to define here a complete IB language, just to show the reader IB as
+%a promising way to design a new oo language.
+%The first task is to define the set of abstract state operations.
+%Of course we need getters; \Q@withX@ methods seams to be pretty convenient, and they enable a
+%clean function programming style that would be otherwise too cumbersome.
+%
+%Currently we are offering both setters and Fluent setters.
+%We believe be fluent setters to be sufficient; we could drop the concept of (non fluent)setters.
+%
+%Manually defining abstract state methods can be verbose, we could offer a convenient syntax to 
+%declare get/set/with.
+%For example
+%\begin{lstlisting}
+%obj interface Foo{
+%  String bar;//== String bar(); Foo withBar(String val);
+%  var String beer;//also fluent setter
+%  }
+%\end{lstlisting}
+%
+%We may also want to offer a compact syntax for property updaters and generalized with methods;
+%\begin{lstlisting}
+%obj interface Foo{
+%  updater Bar, Beer//== Foo set(Bar val); Foo set(Beer val);
+%  with Foo, Beer//== Foo with(Bar val); Foo with(Beer val);
+%  }
+%\end{lstlisting}
+%Finally, certain methods may have a specific meaning, for example
+%if a private method called \Q@init@ is present, it will be called after construction,
+%and it may be handled specially during multiple implementations, so that all relevant \Q@init@ methods are
+%called in some order.

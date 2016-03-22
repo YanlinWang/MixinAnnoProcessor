@@ -308,6 +308,25 @@ practical applications.
 
 
 \begin{comment}
+
+\paragraph{Comparison with other Lombok annotations}\marco{if we keep it, will go in related work}
+The Lombok project provides a set of predefined annotations, including constructor
+generators similar as ours (e.g., \Q:@NoArgsConstructor:,
+\Q:@RequiredArgsConstructor: and \Q:@AllArgsConstructor:). They
+generate various kinds of constructors for \emph{classes}, with or without
+constructor arguments. This set of annotations is of great use, especially when
+used together with other features provided in Lombok (e.g.,
+\Q:@Data:). Moreover, the implementation of these annotations in Lombok
+gives us hints on how to implement \mixin. However, none of these annotations
+can model what we are doing with \mixin - generating constructor-methods
+(\textbf{of}) for \emph{interfaces}. Apart from constructors, \mixin also
+provides other convenient features (including generating fluent setters, type
+refinement, etc), which the base Lombok project does not provide.
+Finally, while \mixin is formalized, none of Lombok's annotations have been
+studied in a formal way.
+
+
+
 \subsection{Type-Directed Translations/Syntactic Sugar}
 \marco{I'm tring to merge this and the next one}
 Language extensions are often implemented as syntactic sugar of the base
