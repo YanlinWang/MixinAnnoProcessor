@@ -4,6 +4,9 @@ import mumbler.simple.Function;
 import mumbler.simple.env.Environment;
 
 public abstract class SpecialForm extends Node {
+    public String print() {
+        return node.print();
+    }
     private static class DefineSpecialForm extends SpecialForm {
         public DefineSpecialForm(MumblerListNode<Node> listNode) {
             super(listNode);
@@ -93,7 +96,7 @@ public abstract class SpecialForm extends Node {
 
     protected final MumblerListNode<Node> node;
 
-    public SpecialForm(MumblerListNode<Node> listNode) {
+    private SpecialForm(MumblerListNode<Node> listNode) {
         this.node = listNode;
     }
 

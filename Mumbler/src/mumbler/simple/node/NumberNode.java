@@ -3,14 +3,14 @@ package mumbler.simple.node;
 import mumbler.simple.env.Environment;
 
 public class NumberNode extends Node {
-    public final long num;
+    private final long num;
 
     public NumberNode(long num) {
         this.num = num;
     }
 
     @Override
-    public String toString() {
+    public String print() {
         return Long.toString(this.num);
     }
 

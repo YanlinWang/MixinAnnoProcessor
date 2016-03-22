@@ -1,4 +1,4 @@
-package mumbler.ours;
+package mumbler.ours.evalprint;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface Reader2 {
-    public static MumblerListNode<Eval2> read(InputStream istream) throws IOException {
+    public static MumblerListNode<Node2> read(InputStream istream) throws IOException {
         return read(new PushbackReader(new InputStreamReader(istream)));
     }
 
-    static MumblerListNode<Eval2> read(PushbackReader pstream)
+    static MumblerListNode<Node2> read(PushbackReader pstream)
             throws IOException {
-        List<Eval2> nodes = new ArrayList<Eval2>();
+        List<Node2> nodes = new ArrayList<Node2>();
 
         readWhitespace(pstream);
         char c = (char) pstream.read();
@@ -29,7 +29,7 @@ public interface Reader2 {
         return MumblerListNode.list(nodes);
     }
 
-    public static Eval2 readNode(PushbackReader pstream) throws IOException {
+    public static Node2 readNode(PushbackReader pstream) throws IOException {
         char c = (char) pstream.read();
         pstream.unread(c);
         if (c == '(') {
@@ -63,10 +63,14 @@ public interface Reader2 {
             c = (char) pstream.read();
         }
         pstream.unread(c);
+        if (b.toString().equals("define")) return SymbolNode2.DEFINE; 
+        else if (b.toString().equals("if")) return SymbolNode2.IF;
+        else if (b.toString().equals("lambda")) return SymbolNode2.LAMBDA;
+        else if (b.toString().equals("quote")) return SymbolNode2.QUOTE;
         return SymbolNode2.of(b.toString());
     }
 
-    static Eval2 readList(PushbackReader pstream) throws IOException {
+    static Node2 readList(PushbackReader pstream) throws IOException {
         char paren = (char) pstream.read();
         assert paren == '(' : "Reading a list must start with '('";
         List<Node> list = new ArrayList<Node>();

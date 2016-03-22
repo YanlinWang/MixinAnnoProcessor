@@ -4,6 +4,8 @@ import mumbler.simple.Function;
 import mumbler.simple.node.MumblerListNode;
 
 abstract class BuiltinFn extends Function {
+    public String print() { return name; } //Added
+    
     static final Function EQUALS = new BuiltinFn("EQUALS") {
         @Override
         public Object apply(Object... args) {

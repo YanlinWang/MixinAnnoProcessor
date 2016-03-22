@@ -51,6 +51,7 @@ public class SimpleMumblerMain {
         MumblerListNode<Node> nodes = Reader.read(new FileInputStream(filename));
         for (Node node : nodes) {
             node.eval(topEnv);
+            System.out.println(node.print());
         }
     }
 }

@@ -1,14 +1,11 @@
-package mumbler.ours;
+package mumbler.ours.evalprint;
 
 import java.io.ByteArrayInputStream;
 import java.io.Console;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-//import mumbler.ori.Environment;
-import mumbler.ours.*;
-
-public class MumblerMain {
+public class MumblerMain2 {
     public static void main(String[] args) throws IOException {
         assert args.length < 2 : "SimpleMumbler only accepts 1 or 0 files";
         if (args.length == 0) {
@@ -19,7 +16,7 @@ public class MumblerMain {
     }
 
     static void startREPL() throws IOException {
-        Environment<Node> topEnv = Environment.getBaseEnvironment();
+        Environment topEnv = Environment.getBaseEnvironment();
 
         Console console = System.console();
         while (true) {
@@ -29,11 +26,11 @@ public class MumblerMain {
                 // EOF sent
                 break;
             }
-            MumblerListNode<Node> nodes = Reader.read(new ByteArrayInputStream(data.getBytes()));
+            MumblerListNode<Node2> nodes = Reader2.read(new ByteArrayInputStream(data.getBytes()));
 
             // EVAL
             Object result = MumblerListNode.EMPTY;
-            for (Node node : nodes) {
+            for (Node2 node : nodes) {
                 result = node.eval(topEnv);
             }
 
@@ -45,11 +42,12 @@ public class MumblerMain {
     }
 
     static void runMumbler(String filename) throws IOException {
-        Environment<Node> topEnv = Environment.getBaseEnvironment();
+        Environment topEnv = Environment.getBaseEnvironment();
 
-        MumblerListNode<Node> nodes = Reader.read(new FileInputStream(filename));
-        for (Node node : nodes) {
+        MumblerListNode<Node2> nodes = Reader2.read(new FileInputStream(filename));
+        for (Node2 node : nodes) {
             node.eval(topEnv);
+            System.out.println(node.print());
         }
     }
 }

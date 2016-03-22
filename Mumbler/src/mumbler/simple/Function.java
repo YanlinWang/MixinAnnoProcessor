@@ -9,4 +9,8 @@ public abstract class Function implements Evaluatable {
     }
 
     public abstract Object apply(Object... args);
+    
+    public String print() {
+        return "<Function Application>";
+    }
 }
