@@ -2,16 +2,16 @@ package mumbler.ours;
 
 import java.util.HashMap;
 
-public class Environment {
-    private final HashMap<String, Object> env = new HashMap<String, Object>();
+public class Environment<A> {
+    private final HashMap<String, A> env = new HashMap<String, A>();
 
-    private final Environment parent;
+    private final Environment<A> parent;
 
     public Environment() {
         this(null);
     }
 
-    public Environment(Environment parent) {
+    public Environment(Environment<A> parent) {
         this.parent = parent;
     }
 
@@ -25,12 +25,12 @@ public class Environment {
         }
     }
 
-    public void putValue(String name, Object value) {
+    public void putValue(String name, A value) {
         this.env.put(name, value);
     }
 
-    public static Environment getBaseEnvironment() {
-        Environment env = new Environment();
+    public static Environment<Node> getBaseEnvironment() {
+        Environment<Node> env = new Environment<Node>();
         env.putValue("+", PLUS2.of(""));
         env.putValue("-", MINUS2.of(""));
         env.putValue("*", MULT2.of(""));

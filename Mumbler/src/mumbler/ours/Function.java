@@ -7,12 +7,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-interface Evaluatable {
-    public Object eval(Environment env);
+interface Node {
+    public Object eval(Environment<Node> env);
 }
 
-interface Node extends Evaluatable  {
-}
+interface LongNode extends Node {}
 
 //============= Added operation (begin) ============//
 interface Print {
@@ -192,8 +191,8 @@ class MumblerListNodeP<T extends Object> implements Print, Iterable<T> {
 //    }
 //}
 
-public interface Function extends Evaluatable {
-    public default Object eval(Environment env) {
+public interface Function extends Node {
+    public default Object eval(Environment<Node> env) {
         return this;
     }
 
@@ -348,7 +347,7 @@ interface BuiltinFn extends Function {
     public static BooleanNode TRUE() { return BooleanNode.of(Boolean.TRUE); }
     public static BooleanNode FALSE() { return BooleanNode.of(Boolean.FALSE); }
     Boolean value();
-    public default Object eval(Environment env) {
+    public default Object eval(Environment<Node> env) {
         return value();
     }
 }
@@ -366,7 +365,7 @@ interface BuiltinFn extends Function {
     }
 
     @Override
-    public default Object eval(Environment env) {
+    public default Object eval(Environment<Node> env) {
         return new Long(num());
     }
 }
@@ -413,7 +412,7 @@ interface Function2 extends Eval2, Function {}
 @Obj interface NOW2 extends Eval2, NOW, BuiltinFnP {}
 @Obj interface BooleanNode2 extends Eval2, BooleanNode, BooleanNodeP {}
 @Obj interface NumberNode2 extends Eval2, NumberNode, NumberNodeP {}
-@Obj interface SpecialForm2 extends Eval2, SpecialForm, SpecialFormP {
+interface SpecialForm2 extends Eval2, SpecialForm, SpecialFormP {
     MumblerListNode<Node> node();
     static final SymbolNode DEFINE = SymbolNode.of("define");
     static final SymbolNode LAMBDA = SymbolNode.of("lambda");
@@ -447,7 +446,7 @@ interface Function2 extends Eval2, Function {}
 //============= Combine operations (end) ============//
 
 class MumblerListNode<T extends Object> implements Node, Iterable<T>, Eval2 {
-    public static final MumblerListNode<?> EMPTY =
+    public static final MumblerListNode<?> EMPTY = 
             new MumblerListNode<>();
 
     public final T car;
@@ -554,7 +553,7 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T>, Eval2 {
     }
 
     @Override
-    public Object eval(Environment env) {
+    public Object eval(Environment<Node> env) {
         Function function = (Function) ((Node) this.car).eval(env);
 
         @SuppressWarnings("unchecked")
@@ -569,15 +568,15 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T>, Eval2 {
 
 @Obj interface DefineSpecialForm extends SpecialForm {
 
-    public default Object eval(Environment env) {
+    public default Object eval(Environment<Node> env) {
         SymbolNode sym = (SymbolNode) node().cdr.car; // 2nd element
-        env.putValue(sym.name(), ((Node) node().cdr.cdr.car).eval(env)); // 3rd element
+        env.putValue(sym.name(), (Node)((Node) node().cdr.cdr.car).eval(env)); // 3rd element
         return null;
     }
 }
 
 @Obj interface LambdaSpecialForm extends SpecialForm {
-    public default Object eval(final Environment parentEnv) {
+    public default Object eval(final Environment<Node> parentEnv) {
         @SuppressWarnings("unchecked")
         final MumblerListNode<Node> formalParams =
         (MumblerListNode<Node>) node().cdr.car;
@@ -585,7 +584,7 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T>, Eval2 {
         return new Function() {
             @Override
             public Object apply(Object... args) {
-                Environment lambdaEnv = new Environment(parentEnv);
+                Environment<Node> lambdaEnv = new Environment<Node>(parentEnv);
                 if (args.length != formalParams.length()) {
                     throw new RuntimeException(
                             "Wrong number of arguments. Expected: " +
@@ -597,7 +596,7 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T>, Eval2 {
                 int i = 0;
                 for (Node param : formalParams) {
                     SymbolNode paramSymbol = (SymbolNode) param;
-                    lambdaEnv.putValue(paramSymbol.name(), args[i]);
+                    lambdaEnv.putValue(paramSymbol.name(), (Node)args[i]);
                     i++;
                 }
 
@@ -614,9 +613,9 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T>, Eval2 {
 }
 
 @Obj interface IfSpecialForm extends SpecialForm {
-    public default Object eval(Environment env) {
-        Node testNode = (Node) node().cdr.car;
-        Node thenNode = (Node) node().cdr.cdr.car;
+    public default Object eval(Environment<Node> env) {
+        Node testNode = node().cdr.car;
+        Node thenNode = node().cdr.cdr.car;
         Node elseNode = (Node) node().cdr.cdr.cdr.car;
 
         Object result = testNode.eval(env);
@@ -629,7 +628,7 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T>, Eval2 {
 }
 
 @Obj interface QuoteSpecialForm extends SpecialForm {
-    public default Object eval(Environment env) {
+    public default Object eval(Environment<Node> env) {
         return node().cdr.car;
     }
 }
@@ -674,7 +673,7 @@ interface SpecialForm extends Node {
         return name().hashCode();
     }
 
-    public default Object eval(Environment env) {
+    public default Object eval(Environment<Node> env) {
         return env.getValue(name());
     }
 }
