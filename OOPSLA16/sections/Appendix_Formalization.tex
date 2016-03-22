@@ -144,6 +144,223 @@ IT(\C) = \ann\ \QM{interface}\ \C\ \QM{extends}\ \C_1\ldots\C_n \
 \label{ET}
 \end{figure*}
 
+
+
+\section{Expanded related work}\label{sec:ERW}
+
+\paragraph{Meta-Programming Competes with Language Extensions}
+The most obvious solution to adding features to a language is via syntactic
+extensions. Syntactic extensions are often implemented as
+desugarings to the base language. For example,
+the Scala compiler was extended to directly support XML syntax.
+However, when syntactic extensions are independently created it is hard
+to combine multiple extensions into one.
+SugarJ~\cite{erdweg11sugarj} is a Java-based extensible language that
+aims at making the creation and composition of syntactic sugar
+extensions easy, by allowing programmers to extend Java with custom
+features (typically for DSLs). However SugarJ's goals are different
+from language tuning: SugarJ aims at creating and composing new syntax;
+whereas language tuning merely reinterprets existing syntax. It is
+clear that reinterpreting existing syntax only can be limiting
+for some applications. However, when language tuning is possible
+it has the advantage that existing tools for the language work
+out-of-the-box (since the syntax is still the same); and composition
+of independently developed tunings is straightforward.
+
+Scala-Virtualized~\cite{Rompf2012scalavirtualized} is an extension to Scala,
+which allows blending shallow and deep embedding of DSLs. It redefines
+some of Scala's language constructs to method calls,
+which can be overridden by DSL implementer. Thus Scala-Virtualized
+can also reinterpret syntax, and be seen as a form of language tuning.
+However, although many Scala's language constructs are supported,
+not all language constructs can be virtualized.
+
+%These extensions are admittedly useful, however they are essentially
+%creating a fork of the language, and rarely the new fork gains enough
+%traction to become the main language release. % On this
+% topic we mention
+
+
+When the base language has a flexible enough syntax and a fast and
+powerful enough reflection mechanism, we may just need to play with
+operator overloading and other language tricks to discover that the
+language feature we need can be expressed as a simple library in our
+language. An example of this is SQLAlchemy~\cite{bayer2012sqlalchemy} in
+Python, which uses operator overloading to dynamically turn normal python expressions into database queries
+without requiring any syntactic extensions to Python.
+Java-like languages tend to sit in the middle of two extremes:
+libraries can not influence the type system, so many solutions valid
+in Python or other dynamic languages are not applicable, or have the
+cost of losing type-safety.
+
+In Java-like languages compile time code generation comes at the rescue: if, for a certain feature
+(\mixin in our case), it is possible to use the original language syntax to
+\emph{express/describe} any specific instantiation of such feature (annotating a
+class and providing getters), then we can insert in the compilation process a tool
+that examines and enriches the code before compilation. No need to modify the
+original source (for example we can work on temporary files).
+Java is a particular
+good candidate for this kind of manipulation since it already provide ways to
+define and integrate such tools in its own compilation process via annotation
+processing. In this way
+there is no need of temporary files, and there is a well-defined way of putting
+multiple extensions together.
+
+Other languages offer even stronger support for safe code manipulation:
+Template Haskell~\cite{sheard2002template}, F\# (type providers)~\footnote{http://research.microsoft.com/fsharp/} and MetaFjig (Active Libraries)~\cite{servetto2010metafjig}
+all allow to execute code at compile time. They generate code that is
+transparently integrated in the program that is being
+generated/processed/compiled. In particular, MetaFjig offers a property called
+\emph{meta-level-soundness}, ensuring by construction that library code (even if wrong or unreasonable) never generates ill-typed code. This is roughly equivalent to
+\textit{Self coherence}, that we have to manually prove.
+Since MetaFjig is not working on annotated classes, there is not a ``semantic with/without annotations''. Our \mixin tuning theorem does not make sense in such context.
+
+\paragraph{Formalization of Java 8}
+We provide a simple formalization for a subset of Java including
+default/static interface methods and object initialization literals
+(often called anonymous local inner classes).  A similar formalization
+was drafted by Goetz and Field~\cite{goetz12fdefenders} to formalize
+defender (default) methods in Java. In their formalization, classes
+and interfaces can have only one method \Q@m()@ without arguments, so
+as to simplify method overloading and renaming. Classless Java is more
+general, as it supports multiple methods with arguments, it supports
+static methods, and features such as multiple inheritance of
+interfaces and reabstraction of default methods are also modeled.
+
+
+
+\section{Interaction of Interface Methods with Interface Composition}
+\bruno{I don't think this section makes alot of sense in the context 
+of the new paper! I think perhaps some of this could be mentioned 
+in related work.
+
+In my opinion, instead of this section, we could have one section 
+that demonstrates our implementation and its advantages.
+
+\begin{itemize}
+
+\item Show a diagram of how the approach works? 
+
+\item Syntax and type system reuse; (good for error messages, for example)
+\item On-the-fly AST rewriting (means no new files are created, and functionality
+is immediatelly available for IDE's for example); this is better than conventional 
+annotation processors.
+\item Eclipse integration; code completion.
+\item No integration issues in typical pre-processors; (the process is transparent; 
+no need for an external tool that generates code in a first step).
+\item Separate compilation (which relates to the properties?)
+
+\end{itemize}
+
+}
+Before formalizing Classless Java and object interfaces, it is helpful
+to informally discuss the behaviour of Java8
+interfaces, in contrast with conventional trait models.
+
+%We show several interesting cases
+%and summarize compilation result of method composition into 3 categories:
+%conflict error, accepted (both abstract) and conservative error. Meanwhile we
+%also show different composition handling mechanism among traits, javac and ECJ.
+
+\subsection{Methods in Java 8 Interfaces}
+In Java 8 interfaces there are three types of methods: abstract, default, and static methods. Default and static methods were not allowed in interfaces in previous versions of Java.
+
+\paragraph{Static methods} are handled in a very clean way: they are visible only in
+  the interface in which they are explicitly defined. This means the following code
+  is ill-typed.
+\begin{lstlisting}
+interface A0 { static int m(){return 1;} }
+interface B0 extends A0 {}
+... B0.m()//ill typed
+\end{lstlisting}
+This is different from the way static methods are handled in classes. Here
+static methods have simply no interaction with interface
+composition (\Q@extends@ or \Q@implements@).
+
+\paragraph{Abstract method} composition is accepted when there exists a most specific one.
+  For example, here method \texttt{Integer m()} from \texttt{B1} is visible in \Q@C1@.
+\begin{lstlisting}
+interface A1 { Object m(); }
+interface B1 { Integer m();}
+interface C1 extends A1,B1 {} //accepted
+\end{lstlisting}
+
+\paragraph{Default methods} conflict with any other default or abstract method. For
+  example the following code is rejected due to method conflicts.
+\begin{lstlisting}
+interface A2 { default int m() {return 1;}}
+interface B2 { int m(); }
+interface C2 { default int m() {return 2;}}
+interface D2 extends A2,B2 {} //rejected due to conflicting methods
+interface E2 extends A2,C2 {} //rejected due to conflicting methods
+\end{lstlisting}
+Note how this is different from what happens in most trait models, where \Q@D2@
+would be accepted, and the implementation in \Q@A2@ would be part of the
+behavior of \Q@D2@.
+
+\paragraph{Resolving conflicts:}
+A method in the current interface wins over any method in its
+super-interfaces, provided that the method
+is the most specific one. This method also overrides conflict due to
+inheritance. For example, the following code is accepted, but would be rejected
+(see before) if the method \Q@m@ was not redefined in \texttt{D3} and
+\texttt{E3}.
+\begin{lstlisting}
+interface D3 extends A2,B2 { int m(); } //accepted
+interface E3 extends A2,C2 { default int m(){return 42;} } //accepted
+\end{lstlisting}
+
+\subsection{Classifying Outcomes of Interface Composition}
+%When interfaces are composed and methods with the same name (and
+%signature) exist, there are 3 possible outcomes.
+%
+We now try to classify possible outcomes for composition of methods with the same name (and
+signature).
+We will use the following (correct) declarations:
+\begin{lstlisting}
+interface A1 { T m(); }
+interface A2 extends A1 { default T m(){ ... } }
+interface A3 extends A2 { T m(); }
+
+interface B1 { default T m(){ ... } }
+interface B2 extends B1 { T m(); }
+interface B3 extends B2 { default T m(){ ... } }
+\end{lstlisting}
+
+\noindent
+What happens if a new interface \Q@M@ extends one \Q@A@${}_i$ and one
+\Q@B@${}_j$?
+% Nine representative cases are shown next:\\*
+\begin{figure*}[htbp]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{M extends} & \textbf{A1}                  & \textbf{A2} & \textbf{A3} \\ \hline
+\textbf{B1}        & conservative error                     & conflict error      & conservative error       \\ \hline
+\textbf{B2}        & both abstract (accepted)     & conservative error       & both abstract (accepted)       \\ \hline
+\textbf{B3}        & \textbf{conservative error} &conflict  error       & conservative error      \\ \hline
+\end{tabular}
+\end{figure*}
+%We try to classify the results in the table:
+\begin{itemize}
+\item \textbf{conflict error} happens when the methods from both interfaces are implemented, which is also an error in most trait models.
+\item \textbf{both abstract (accepted)} happens when the methods from both interfaces are abstract, which is also considered correct in all
+  trait models.
+\item \textbf{conservative error} happens when only one method is implemented
+  (leaving another one abstract), which is different from what we would expect in
+  a trait model, but is coherent with the conservative idea that a method
+  defined in an interface should not silently satisfy a method in another one.
+\end{itemize}
+
+\paragraph{A bug:} During our experimentation, we found a bug in ECJ (Eclipse compiler for Java):
+the case \textbf{M} extending \textbf{B3} and \textbf{A1} is accepted by
+ECJ4.5.1 and rejected by javac.  By email communication with Brian Goetz
+(leading Java 8 designer) we have confirmed that the expected behavior is
+rejection, hence this is a bug in ECJ. This bug was also reported by
+  others and is fixed in the ECJ developer branch, but not released as a stable
+  version yet.
+
+
 \section{Formal Semantics}\label{sec:formal}
 
 This section presents a formalization of Classless Java, \delete{a minimal
