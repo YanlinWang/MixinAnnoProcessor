@@ -184,7 +184,8 @@ To formally characterize the behavior of our annotation and the two levels of gu
 \begin{itemize}
 \item We denote with $\C^{\II}$ the name of an interface.
 \item An interface table
-IT is OK if under such interface table, all interfaces are OK.
+IT is OK if under such interface table, all interfaces are OK,
+\marcoT{that is, well typed}.
 \item Since interface tables are just represented as sequences of interfaces we write IT = $\II$ IT' to select a specific interface in a table.
 \item IT contains an heir of $\C$ if there is an interface that extends it, or a \Q@new@ that instantiate it.
 \end{itemize}
@@ -208,7 +209,7 @@ then the interface table $[\![\II]\!]$ IT is OK.
 Informally, the theorems mean that for a client program that
 typechecks before the translation is applied, if the annotated type has
 no subtypes and no objects of that type are created, then type safety
-\bruno{of the generated code?}
+\marcoT{of the generated code}
 is guaranteed after the successful translation. 
 
 The second
@@ -225,12 +226,14 @@ Note that we preferred to introduce self, client and heir coherence instead of r
 type preservation theorems~\cite{}. The reason is 
 to better model how our approach behaves in a object oriented software ecosystem with inheritance,
 where only some units may be translated/expanded.
-Note that inheritance crucial influence in heir coherence, and how client coherence allows
-for only some units to be translated/expanded.\bruno{I don't
+Note inheritance crucial influence in heir coherence, and how client coherence allows
+for only some units to be translated/expanded.
+\bruno{I don't
   understand the point of the last sentence? Rephrase?}
-This means that even a library designer can decide to start using IB
-programming and still
-retain backward compatibility with its clients.
+  \marco{ok I tried to rephase the next sentence, how is now?}
+This means that developers and designers of Java libraries and frameworks
+can start using IB (and our \mixin annotation) in the evolution of their products
+and still retain backward compatibility with their clients.
 
 %~\ref{subsec:lemma1},~\ref{subsec:lemma2} and~\ref{subsec:theorem}.\\
 

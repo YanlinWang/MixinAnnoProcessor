@@ -60,8 +60,8 @@ support for privacy in interfaces.
 %\subsection{Qualifiers in Methods} %{Private state
 \paragraph{Encapsulation} %{Private state
 Since we are using Java8 to encode IB, we are unable to directly support qualifies
-like private or protected. In Java 9, where private methods will be allowed in
-interfaces; abstract state operations are, however, abstract methods,
+like private or protected. In Java 9 private methods will be allowed in
+interfaces. Abstract state operations are, however, abstract methods,
 so they can not be private.
 Still, because the state can only be accessed by methods, it 
 is impossible for the user to know if a certain method maps directly to a field
@@ -82,13 +82,13 @@ details from outside of the package.\footnote{
 Note how \Q@ExposedData.of@ do not need to map directly to the fields, and can also perform 
 invariant checking.}
 
-Using packages to as a boundary we can make all object interfaces ``with privateness''
+Using packages as a boundary we can make all object interfaces ``with privateness''
 invisible types for the rest of the program.
 This preserve encapsulation, but limits inheritance:
 package protected interfaces can not be seen,
 thus can not be implemented from outside the package.
 
-Using Java9 private interface methods
+Using Java9 private interface methods%
 \footnote{Or some ugly pattern available today like public static classes with private methods}
 one can define (and inherit) private behaviour; but private state inheritance in IB poses a logical challenge:
 How can the heir produce initialization code for a field whose very existence is secret?
@@ -107,19 +107,21 @@ Such cache expression would be quite useful for other reasons,
 including replacing involved initialization patterns.}
 
 In this way
-
+\marco{I fixed the code down, was wrong, there was no mention of hello in the original source}
 \begin{lstlisting}
-@Obj interface MyData{
-  private String f();//assuming Java9
-  private MyData f(String val);
+@Obj interface Text{
+  private String msg();//assuming Java9
+  private Text msg(String val);{f("hello");}
   }
 \end{lstlisting}
 Would be expanded into 
 \begin{lstlisting}
-@Obj interface MyData{
-  private Box<String> _f(){return cache(Box<String>.of("hello"));}
-  private String f(){return _f().val();}
-  private MyData f(String val){return _f().val(val);}
+@Obj interface Text{
+  private Box<String> _msg(){
+    return cache(Box<String>.of("hello"));}
+  private String msg(){return _msg().val();}
+  private Text msg(String val){
+    return _msg().val(val);}
   }
 \end{lstlisting}
 
