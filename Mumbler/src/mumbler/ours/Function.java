@@ -11,7 +11,11 @@ interface Node {
     public Object eval(Environment<Node> env);
 }
 
-interface LongNode extends Node {}
+class LongNode implements Node {
+    Long value;
+    LongNode(Long value) { this.value = value; }
+    public Long eval(Environment<Node> env) { return value; }
+}
 
 //============= Added operation (begin) ============//
 interface Print {
@@ -366,7 +370,7 @@ interface BuiltinFn extends Function {
 
     @Override
     public default Object eval(Environment<Node> env) {
-        return new Long(num());
+        return new LongNode(num());
     }
 }
 //============= Combine operations (begin) ============//
@@ -636,21 +640,21 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T>, Eval2 {
 interface SpecialForm extends Node {
     MumblerListNode<Node> node();
 
-    static final SymbolNode DEFINE = SymbolNode.of("define");
-    static final SymbolNode LAMBDA = SymbolNode.of("lambda");
-    static final SymbolNode IF = SymbolNode.of("if");
-    static final SymbolNode QUOTE = SymbolNode.of("quote");
+//    static final SymbolNode DEFINE = SymbolNode.of("define");
+//    static final SymbolNode LAMBDA = SymbolNode.of("lambda");
+//    static final SymbolNode IF = SymbolNode.of("if");
+//    static final SymbolNode QUOTE = SymbolNode.of("quote");
 
     public static Node check(MumblerListNode<Node> l) {
         if (l == MumblerListNode.EMPTY) {
             return l;
-        } else if (l.car.equals(DEFINE)) {
+        } else if (l.car.equals(SymbolNode.DEFINE)) {
             return DefineSpecialForm.of(l);
-        } else if (l.car.equals(LAMBDA)) {
+        } else if (l.car.equals(SymbolNode.LAMBDA)) {
             return LambdaSpecialForm.of(l);
-        } else if (l.car.equals(IF)) {
+        } else if (l.car.equals(SymbolNode.IF)) {
             return IfSpecialForm.of(l);
-        } else if (l.car.equals(QUOTE)) {
+        } else if (l.car.equals(SymbolNode.QUOTE)) {
             return QuoteSpecialForm.of(l);
         }
         return l;
@@ -659,7 +663,7 @@ interface SpecialForm extends Node {
 
 @Obj interface SymbolNode extends Node {
     String name();
-
+    
     public default String toStr() {
         return "'" + name();
     }
@@ -676,4 +680,12 @@ interface SpecialForm extends Node {
     public default Object eval(Environment<Node> env) {
         return env.getValue(name());
     }
+    static SymbolNode DEFINE = SymbolNode.of("define");
+    static SymbolNode LAMBDA = SymbolNode.of("lambda");
+    static SymbolNode IF = SymbolNode.of("if");
+    static SymbolNode QUOTE = SymbolNode.of("quote");
+//    static SymbolNode DEFINE() { return SymbolNode.of("define"); } 
+//    static SymbolNode LAMBDA() { return SymbolNode.of("lambda"); }
+//    static SymbolNode IF() { return SymbolNode.of("if"); }
+//    static SymbolNode QUOTE() { return SymbolNode.of("quote"); }
 }

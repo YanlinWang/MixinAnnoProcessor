@@ -5,7 +5,7 @@ import java.io.Console;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import mumbler.ori.Environment;
+//import mumbler.ori.Environment;
 import mumbler.ours.*;
 
 public class MumblerMain {
@@ -19,7 +19,7 @@ public class MumblerMain {
     }
 
     static void startREPL() throws IOException {
-        Environment topEnv = Environment.getBaseEnvironment();
+        Environment<Node> topEnv = Environment.getBaseEnvironment();
 
         Console console = System.console();
         while (true) {
@@ -34,7 +34,7 @@ public class MumblerMain {
             // EVAL
             Object result = MumblerListNode.EMPTY;
             for (Node node : nodes) {
-//                result = node.eval(topEnv);
+                result = node.eval(topEnv);
             }
 
             // PRINT
@@ -45,11 +45,11 @@ public class MumblerMain {
     }
 
     static void runMumbler(String filename) throws IOException {
-        Environment topEnv = Environment.getBaseEnvironment();
+        Environment<Node> topEnv = Environment.getBaseEnvironment();
 
         MumblerListNode<Node> nodes = Reader.read(new FileInputStream(filename));
         for (Node node : nodes) {
-//            node.eval(topEnv);
+            node.eval(topEnv);
         }
     }
 }

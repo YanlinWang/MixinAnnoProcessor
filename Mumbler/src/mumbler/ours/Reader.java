@@ -63,6 +63,10 @@ public interface Reader {
             c = (char) pstream.read();
         }
         pstream.unread(c);
+        if (b.toString().equals("define")) return SymbolNode.DEFINE; 
+        else if (b.toString().equals("if")) return SymbolNode.IF;
+        else if (b.toString().equals("lambda")) return SymbolNode.LAMBDA;
+        else if (b.toString().equals("quote")) return SymbolNode.QUOTE;
         return SymbolNode.of(b.toString());
     }
 
