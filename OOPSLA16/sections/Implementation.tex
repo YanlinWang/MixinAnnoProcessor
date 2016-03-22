@@ -57,11 +57,7 @@ no source code is changed, and no new files are created, bytecode takes the only
 \centering
 \includegraphics[width=3in]{pdfs/lombok3.png}
 \caption{The flow chart of \mixin annotation processing.
-\marco{I'm not sure this helps: It is trying to show the "eclipse" path, that is the one we implemented,
-but there is also the "javac" path, and here we call the graph "Lombok annotation processing".
-May be this should be "obj" processing?
-}}\bruno{Haoyuan, please remove references to Eclipse in the Figure,
-that way it works both for Eclipse and Javac}\haoyuan{done}
+}
 \label{fig:lombok}
 \end{figure}
 
@@ -71,7 +67,7 @@ The Lombok compilation agent has advantages with respect to alternatives like
 pre-processors, or other Java annotation processors. In some sense
 Lombok can be seen as a poor man's macro system~\cite{} for Java.
 \bruno{Marco, do you agree with calling Lombok a poor man's macro system?}
-
+\marco{No, it is as powerful as lisp macros, and have a bigger (may be even  a better) design.}
 %this seems like a commercial spot
 %\item Lombok is byte-code based instead of source-code based, which makes client
 %  code concise and easy to maintain. Such code generation is performed at
@@ -120,7 +116,7 @@ autocomplete will work for the newly generated methods.
 Preprocessors bring great power, which can easily be misused producing
 code particularly hard to understand. Thus code quality and maintainability are reduced.
 Compilation agents start from Java syntax, but they can reinterpret it.
-Preserving the syntax avoid syntactic conflicts, and allowing many
+Preserving the syntax avoid syntactic conflicts, and \marcoT{allows} many
 tools to work transparently.
 
 \subsection{AST Reinterpretation in Classless Java}
@@ -220,15 +216,15 @@ not transparent to the heirs of the annotated interface.  They need to
 be aware of the annotation semantics and provide the right type while
 refining methods. To support heir coherence, Classless Java would need
 to give up automatic type refinement, which is an essential part of IB programming.
-However, the reader should that note that Java libraries almost always break heir
+However, the reader should note that Java libraries almost always break heir
 coherence during evolution and still claim backward compatibility (false in
 theory but statistically true in practice). In practice to break heir
 coherence it is just enough to add any method to any
 non final class of a Java library.  We think refining return
 types breaks heir coherence ``less" than normal library evolution.
 
-In Section~\ref{} we make the claims the guarantees of Classless Java
-more formal.
+In Section~\ref{} \marcoT{we provide a formal definition for our
+safety claims.}
 
 \subsection{Limitations}\marco{ to reorganize with updated limitations}
 Our prototype implementation using Lombok has certain limitations:

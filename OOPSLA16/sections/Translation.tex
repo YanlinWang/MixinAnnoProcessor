@@ -63,9 +63,12 @@ $\begin{array}{l}
 This section gives an overview of what $\mixinAnn$ generates in
 Classless Java, and what properties are guaranteed in the translation. 
 
-We provide a formalization of Classless Java in Appendix~\ref{sec:formal}, which models the essence of
-Java interfaces with default methods, including the syntax as well as
-the typing rules. Classless Java is just a proper subset of Java 8, so
+\marcoT{We formalize syntax and typing for 
+ Classless Java} in Appendix~\ref{sec:formal}, which models the essence of
+Java interfaces with default methods.
+%, including the syntax as well as
+%the typing rules.
+ Classless Java is just a proper subset of Java 8, so
 it is easy to understand the translation presented in this section
 without the syntax and typing rules of Classless Java.
 Since the formalized part of Classless Java does not consider casts or \Q@instanceof@,
@@ -75,6 +78,8 @@ not included, since they are just a minor variation over the more
 interesting fluent setters, and they would require special handling
 just for the conventional \Q@void@ type.
 
+\marcoT{Since our properties are about preserving typing,
+we do not need to formalize Classless Java semantic to proof our statements.}
 \begin{figure*}[t]
 \centering
 \hspace{-.2in}
