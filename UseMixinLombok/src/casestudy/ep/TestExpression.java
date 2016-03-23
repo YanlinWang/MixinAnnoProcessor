@@ -21,23 +21,34 @@ public class TestExpression {
         res += e7.print() + " = " + e7.eval() + "\n"; // (3 + 4) = 7
         return res;
     }
+    public static void testMutability() {
+        System.out.println(">>>>>>>> Testing Mutability");
+        AddP e1 = AddP.of(LitP.of(3), LitP.of(4));
+        e1.e2(LitP.of(5));
+        System.out.println(e1.print());
+        
+        AddPC e2 = AddPC.of(LitPC.of(3), LitPC.of(4));
+        e2.e2(LitPC.of(7));
+        System.out.println(e2.print());
+    }
     public static void main(String[] args) {
         System.out.println(runTest());
-
+        testMutability();
         //independent extensibility
+        System.out.println(">>>>>>>> Testing Independent Extensibility");
         ExpPC e8 = AddPC.of(LitPC.of(3), LitPC.of(4));
         System.out.println(e8.print() + " = " + e8.eval() + " Literals: " + e8.collectLit().toString());
     }
 }
 
 //BEGIN_EXPRESSION_INIT
-interface Exp { int eval(); }
+interface Exp { int eval(); Exp with(Exp val);}
 @Obj interface Lit extends Exp {
-    int x();
+    int x(); void x(int val);
     default int eval() {return x();}
 }
 @Obj interface Add extends Exp {
-    Exp e1(); Exp e2();
+    Exp e1(); Exp e2(); void e1(Exp val); void e2(Exp val);
     default int eval() {
         return e1().eval() + e2().eval();
     }
@@ -60,6 +71,9 @@ interface ExpP extends Exp {String print();}
     default String print() {
         return "(" + e1().print() + " + " 
                 + e2().print() + ")";}
+    void e1(ExpP val); void e2(ExpP val);
+    default void e1(Exp val) { e1(e1().with(val)); }
+    default void e2(Exp val) { e2(e2().with(val)); }
 }
 //END_EXPRESSION_PRINT
 
@@ -80,11 +94,26 @@ interface ExpC extends Exp { List<Integer> collectLit(); }
         list.addAll(e2().collectLit());
         return list;
     }
+    void e1(ExpC val); void e2(ExpC val);
+    default void e1(Exp val) { e1(e1().with(val)); }
+    default void e2(Exp val) { e2(e2().with(val)); }
 }
 //END_EXPRESSION_COLLECTLIT
 
 //BEGIN_INDEPENDENT_EXTENSIBILITY
-interface ExpPC extends ExpP, ExpC {}
-@Obj interface LitPC extends ExpPC, LitP, LitC {}
-@Obj interface AddPC extends ExpPC, AddP, AddC { ExpPC e1(); ExpPC e2(); }
+interface ExpPC extends ExpP, ExpC {
+    ExpPC with(Exp val);
+}
+@Obj interface LitPC extends ExpPC, LitP, LitC { LitPC with(Exp val); }
+@Obj interface AddPC extends ExpPC, AddP, AddC { ExpPC e1(); ExpPC e2();
+    AddPC with(Exp val);
+    void e1(ExpPC val);
+    void e2(ExpPC val); 
+    default void e1(Exp val) { e1(e1().with(val)); }
+    default void e2(Exp val) { e2(e2().with(val)); }
+    default void e1(ExpP val) { e1(e1().with(val)); }
+    default void e1(ExpC val) { e1(e1().with(val)); }
+    default void e2(ExpP val) { e2(e2().with(val)); }
+    default void e2(ExpC val) { e2(e2().with(val)); }
+}
 //END_INDEPENDENT_EXTENSIBILITY
