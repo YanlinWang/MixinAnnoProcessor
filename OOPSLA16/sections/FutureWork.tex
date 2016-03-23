@@ -1,5 +1,4 @@
 \section{Future work}\label{sec:futurework}
-In this section we discuss potential future work.
 \begin{comment}
 \subsection{Encapsulation}
 The biggest limitation of our approach is the inability to model visibility restrictions. For example, the absence
@@ -59,15 +58,16 @@ support for privacy in interfaces.
 
 %\subsection{Qualifiers in Methods} %{Private state
 \paragraph{Encapsulation} %{Private state
-Since we are using Java8 to encode IB, we are unable to directly support qualifies
-like private or protected. In Java 9 private methods will be allowed in
-interfaces. Abstract state operations are, however, abstract methods,
-so they can not be private.
-Still, because the state can only be accessed by methods, it
-is impossible for the user to know if a certain method maps directly to a field
-or if it has a default implementation.
+%Encapsulation 
+%Since we are using Java8 to encode IB, we are unable to directly support qualifies
+%like private or protected. In Java 9 private methods will be allowed in
+%interfaces. Abstract state operations are, however, abstract methods,
+%so they can not be private.
+%Still, because the state can only be accessed by methods, it
+%is impossible for the user to know if a certain method maps directly to a field
+%or if it has a default implementation.
 
-As shown by Ferruccio in [...] interfaces are enough to support privateness by a
+As shown in~\cite{BettiniDSS13} interfaces are enough to support encapsulation/privateness by a
  variation of the facade pattern:
 \begin{lstlisting}
 @Obj interface InternalData implements ExposedData {
@@ -83,52 +83,64 @@ details from outside of the package.\footnote{
 Note how \Q@ExposedData.of@ do not need to map directly to the fields, and can also perform
 invariant checking.}
 
-Using packages as a boundary we can make all object interfaces ``with privateness''
-invisible types for the rest of the program.
+Using packages as a boundary we can make all object interfaces \emph{where some form of privateness is desirable}
+as invisible types for the rest of the program.
 This preserve encapsulation, but limits inheritance:
 package protected interfaces can not be seen,
 thus can not be implemented from outside the package.
 
-Using Java9 private interface methods%
-\footnote{Or some ugly pattern available today like public static classes with private methods}
-one can define (and inherit) private behaviour; but private state inheritance in IB poses a logical challenge:
-How can the heir produce initialization code for a field whose very existence is secret?
+This can raise questions: keeping fields private is a staple of CB object oriented programming;
+by forcing the user/heir to rely only on methods, we avoid (a part)
+of the fragile base class problem and we obtain representation independence.
 
-CB get around this problem in two ways: the constructor have to call a super-constructor, and
-some fields can be pre-initialized.
-The first idea would not provide any encapsulation benefit in IB,
-since generated \Q@of@ methods expose all the field information anyway.
+In IB fields do not exists; abstract state methods like getters and setters are abstract:
+it does not make sense to make them private; however, since they are methods,
+the base interface may be able to evolve freely. 
+To understand if a fragile base interface problem exists in IB, we need more research.
 
-Pre-initialized fields could be supported by IB if we support a cache expression,
-that is \Q@cache(e)@ would evaluate the expression a single time for each object, and cache the result
-somewhere.\footnote{
-For example, in a the compiled bytecode for objects
-could have an extra field for each cached expression in its methods.
-Such cache expression would be quite useful for other reasons,
-including replacing involved initialization patterns.}
 
-In this way
-\marco{I fixed the code down, was wrong, there was no mention of hello in the original source}
-\begin{lstlisting}
-@Obj interface Text{
-  private String msg();//assuming Java9
-  private Text msg(String val);{f("hello");}
-  }
-\end{lstlisting}
-Would be expanded into
-\begin{lstlisting}
-@Obj interface Text{
-  private Box<String> _msg(){
-    return cache(Box<String>.of("hello"));}
-  private String msg(){return _msg().val();}
-  private Text msg(String val){
-    return _msg().val(val);}
-  }
-\end{lstlisting}
 
-Where we could have a predefined \Q@Box@ type as\\*
-\Q|@Obj interface Box<T>{ T val(); Box<T> val(T val);}|
-
+%
+%Using Java9 private interface methods%
+%\footnote{Or some ugly pattern available today like public static classes with private methods}
+%one can define (and inherit) private behaviour; but private state inheritance in IB poses a logical challenge:
+%How can the heir produce initialization code for a field whose very existence is secret?
+%
+%CB get around this problem in two ways: the constructor have to call a super-constructor, and
+%some fields can be pre-initialized.
+%The first idea would not provide any encapsulation benefit in IB,
+%since generated \Q@of@ methods expose all the field information anyway.
+%
+%Pre-initialized fields could be supported by IB if we support a cache expression,
+%that is \Q@cache(e)@ would evaluate the expression a single time for each object, and cache the result
+%somewhere.\footnote{
+%For example, in a the compiled bytecode for objects
+%could have an extra field for each cached expression in its methods.
+%Such cache expression would be quite useful for other reasons,
+%including replacing involved initialization patterns.}
+%
+%In this way
+%\marco{I fixed the code down, was wrong, there was no mention of hello in the original source}
+%\begin{lstlisting}
+%@Obj interface Text{
+%  private String msg();//assuming Java9
+%  private Text msg(String val);{f("hello");}
+%  }
+%\end{lstlisting}
+%Would be expanded into
+%\begin{lstlisting}
+%@Obj interface Text{
+%  private Box<String> _msg(){
+%    return cache(Box<String>.of("hello"));}
+%  private String msg(){return _msg().val();}
+%  private Text msg(String val){
+%    return _msg().val(val);}
+%  }
+%\end{lstlisting}
+%
+%Where we could have a predefined \Q@Box@ type as\\*
+%\Q|@Obj interface Box<T>{ T val(); Box<T> val(T val);}|
+%
 
 
 
@@ -179,35 +191,60 @@ interface Point { ...//as before
                 return Point.super.clone();}};} }
 \end{lstlisting}
 
-%\paragraph{A real IB language}
-%In this article we presented the concept of IB as a programming pattern over Java.
-%We do not wish to define here a complete IB language, just to show the reader IB as
-%a promising way to design a new oo language.
-%The first task is to define the set of abstract state operations.
-%Of course we need getters; \Q@withX@ methods seams to be pretty convenient, and they enable a
-%clean function programming style that would be otherwise too cumbersome.
-%
-%Currently we are offering both setters and Fluent setters.
-%We believe be fluent setters to be sufficient; we could drop the concept of (non fluent)setters.
-%
-%Manually defining abstract state methods can be verbose, we could offer a convenient syntax to
-%declare get/set/with.
-%For example
-%\begin{lstlisting}
-%obj interface Foo{
-%  String bar;//== String bar(); Foo withBar(String val);
-%  var String beer;//also fluent setter
-%  }
-%\end{lstlisting}
-%
-%We may also want to offer a compact syntax for property updaters and generalized with methods;
-%\begin{lstlisting}
-%obj interface Foo{
-%  updater Bar, Beer//== Foo set(Bar val); Foo set(Beer val);
-%  with Foo, Beer//== Foo with(Bar val); Foo with(Beer val);
-%  }
-%\end{lstlisting}
-%Finally, certain methods may have a specific meaning, for example
-%if a private method called \Q@init@ is present, it will be called after construction,
-%and it may be handled specially during multiple implementations, so that all relevant \Q@init@ methods are
-%called in some order.
+\paragraph{A real IB language}
+In this article we presented the concept of IB as a programming pattern over Java.
+An alternative would be to have a language providing IB as its only paradigm.
+We do not wish to define here a complete IB language, just to show the reader IB as
+a promising way to design a new oo language.
+To define such language, the first task is to define the set of abstract state operations.
+Of course we need getters; \Q@withX@ methods seams to be pretty convenient, and they enable a
+clean function programming style that would be otherwise too cumbersome.
+
+Currently we are offering both setters and fluent setters.
+We believe be fluent setters to be sufficient; we could drop the concept of (non fluent)setters.
+
+Manually defining abstract state methods can be verbose, we could offer a convenient syntax to
+declare in a compact way get/set/with.
+For example
+\begin{lstlisting}
+obj interface Foo{
+  String bar;// exapanded as getter and with:
+  //String bar(); Foo withBar(String val);
+  var String beer;//as before plus fluent setter
+  }
+\end{lstlisting}
+
+It could be possible to offer pre initialized abstract state, for example
+\begin{lstlisting}
+obj interface Foo{
+  var String bar="hello";
+  }
+\end{lstlisting}
+
+could be a short hand for writing
+
+\begin{lstlisting}
+obj interface Foo{
+  String bar();
+  Foo withBar(String val);
+  Foo bar(String val);
+  String initBar(){return "hello";}
+  }
+\end{lstlisting}
+and the automatically generated \Q@of@ method will use \Q@initX@ methods to initialize fields
+instead of generating the corresponding parameter.
+
+
+We may also want to offer a compact syntax for property updaters and generalized with methods;
+\begin{lstlisting}
+obj interface Foo{
+  updater Bar, Beer//declares imperative updaters:
+  //Foo set(Bar val); Foo set(Beer val);
+  with Foo, Beer//declared functional updaters:
+  //Foo with(Bar val); Foo with(Beer val);
+  }
+\end{lstlisting}
+Finally, certain methods may have a specific meaning, for example
+if a method called \Q@postInit@ is present, it will be called after construction,
+and it may be handled specially during multiple implementations, so that all relevant \Q@postInit@ methods are
+called in some order.
