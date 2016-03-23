@@ -61,9 +61,9 @@ $\begin{array}{l}
 \end{figure*}
 
 This section gives an overview of what $\mixinAnn$ generates in
-Classless Java, and what properties are guaranteed in the translation. 
+Classless Java, and what properties are guaranteed in the translation.
 
-\marcoT{We formalize syntax and typing for 
+\marcoT{We formalize syntax and typing for
  Classless Java} in Appendix~\ref{sec:formal}, which models the essence of
 Java interfaces with default methods.
 %, including the syntax as well as
@@ -145,17 +145,30 @@ Figure~\ref{figure:translation} presents the translation functions. In the first
 injects refined methods to interface $\C_0$, while in the second function, $\weakAnn$ invokes
 $\ofMethod(\C_0)$ and generates the $\QM{of}$
 method for $\C_0$, if such a method does not exist in its domain, and all the abstract methods are
-valid for the annotation. 
+valid for the annotation.
 
 Figure~\ref{figure:valid} and Figure~\ref{figure:ofmethod} present more details on the auxiliary
 functions. \bruno{if the figures are mentioned here, what should
   follow is the explanation on what is one the figures. Please fix
   this Haoyuan and makes sure that everything that is on the figures
   is explained here. }
-The formal definition is available in
-Appendix~\ref{subsec:translation}.\bruno{what formal definition?}
+\haoyuan{In Figure~\ref{figure:valid}, the $\otherMethod$ function is defined in the first two
+equations. This function generates unimplemented \Q@with-@ and fluent setters in the interface.
+They are generated as abstract methods because the return types need to be refined.
+To determine whether the methods need to be generated,
+we check if such \Q@with-@ or setter methods
+are required by $\C_0$, but not declared directly in $\C_0$. The third equation gives the definition
+of $\valid$. To generate the \Q@of@ method, it is necessary for $\weakAnn$ to explicitly check if all
+abstract methods are valid. That is, we can categorize them in a pattern that we
+know how to implement: it is either a field getter, a with method or a setter. Auxiliary checkers are
+defined on the right side. Note that we write $\QM{with#}\m$ to append $\m$ to
+\QM{with}, following the camelCase rule. The first letter of $\m$
+must be lower-case and is changed to upper-case upon appending. For
+example \QM{with#foo}=\QM{withFoo}.  Special names $\specialName(\m)$
+are \QM{with} and all identifiers of the form $\QM{with#}\m$.
+}
 
-The function $\ofMethod$ generates the static method $\QM{of}$, as an
+In Figure~\ref{figure:ofmethod}, the function $\ofMethod$ generates the static method $\QM{of}$, as an
 object factory. It detects all the field methods of $\C_0$, take them
 as arguments, and in the return statement is an anonymous class which
 generates getters, fluent setters and with-methods in certain
@@ -166,18 +179,18 @@ explanation of those methods.
 
 \bruno{I think there is explanation missing in this subsection;
   probably text which is now in the appendix. Haoyuan, please take
-  care of this.}
+  care of this.}\haoyuan{fixed}
 
 \subsection{Results}\label{subsec:results}
 
 Classless Java provides some guarantees regarding the generated
 code. Essentially, Classless Java ensures the \emph{self coherence}
 and \emph{client coherence} properties informally introduced in
-Section~\ref{sec:imp}. Furthermore, we can show that 
+Section~\ref{sec:imp}. Furthermore, we can show that
 \emph{if there are no type-refinements}, then \emph{heir coherence} also
-holds. The result about heir coherence is possible to prove 
+holds. The result about heir coherence is possible to prove
 because the translation is split into two parts. In essence heir
-coherence is a property of the translation of  $\weakAnn$, but not of 
+coherence is a property of the translation of  $\weakAnn$, but not of
 \mixin.
 
 To formally characterize the behavior of our annotation and the two levels of guarantees that we offer, we provide some notations and two theorems:
@@ -210,7 +223,7 @@ Informally, the theorems mean that for a client program that
 typechecks before the translation is applied, if the annotated type has
 no subtypes and no objects of that type are created, then type safety
 \marcoT{of the generated code}
-is guaranteed after the successful translation. 
+is guaranteed after the successful translation.
 
 The second
 step of \mixin, namely what $\weakAnn$ does in the formalization, is
@@ -221,9 +234,9 @@ the \mixin theorem guarantees only self and client coherence. The formal
 theorem proofs are available in the supplementary
 materials\bruno{point to appendix instead}.
 
-\paragraph{Type preservation:} 
+\paragraph{Type preservation:}
 Note that we preferred to introduce self, client and heir coherence instead of referring to conventional
-type preservation theorems~\cite{}. The reason is 
+type preservation theorems~\cite{}. The reason is
 to better model how our approach behaves in a object oriented software ecosystem with inheritance,
 where only some units may be translated/expanded.
 Note inheritance crucial influence in heir coherence, and how client coherence allows

@@ -12,8 +12,10 @@ import lombok.Obj;
 
 //BEGIN_FLUENT_DATABASE_EXT
 @Obj interface ExtendedDatabase extends Database {
-    String orderBy(); ExtendedDatabase orderBy(String orderBy);
-    static ExtendedDatabase of() {return of("", "", "","");} }
+	String orderBy();
+	ExtendedDatabase orderBy(String orderBy);
+	static ExtendedDatabase of() {
+		return of("", "", "","");} }
 //END_FLUENT_DATABASE_EXT
 
 public interface DatabaseTest {
@@ -34,8 +36,7 @@ Database query1 = Database.of().select("a, b").from("Table").where("c > 10");
     }
     static ExtendedDatabase runTest2() {
 //BEGIN_FLUENT_QUERY2
-ExtendedDatabase query2 = ExtendedDatabase.of().select("a, b").from("Table")
-                                               .where("c > 10").orderBy("b");
+ExtendedDatabase query2 = ExtendedDatabase.of().select("a, b").from("Table").where("c > 10").orderBy("b");
 //END_FLUENT_QUERY2
         return query2;
     }

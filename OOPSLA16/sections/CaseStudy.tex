@@ -37,7 +37,7 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 \begin{tabular}{l|l}
 \lstinputlisting[linerange=34-44]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
 &
-\lstinputlisting[linerange=53-63]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\lstinputlisting[linerange=55-65]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
 \end{tabular}
 \caption{The Expression Problem (left: initial system, right: code for adding
   print operation).}\label{fig:ep}
@@ -48,7 +48,7 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 In the OO paradigm, it is easy to add new types of expressions. For example, the
 following code shows how to add subtraction.
 
-\lstinputlisting[linerange=48-49]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
+\lstinputlisting[linerange=48-51]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
 %\marco{text under need to be improved}
 \paragraph{Adding a New Operation} The difficulty of the EP in OO
@@ -73,15 +73,17 @@ literal components in an expression. For space reasons,
 we omit the definitions of the methods:
 
 \begin{lstlisting}[]
-interface ExpC extends Exp { List<Integer> collectLit(); }
+interface ExpC extends Exp {
+    List<Integer> collectLit(); }
 @Obj interface LitC extends Lit, ExpC {...}
-@Obj interface AddC extends Add, ExpC {ExpC e1(); ExpC e2(); ...}
+@Obj interface AddC extends Add, ExpC {
+    ExpC e1(); ExpC e2(); ...}
 \end{lstlisting}
 
 \noindent Now we combine the two extensions (\texttt{print} and
 \texttt{collectLit}) together:
 
-\lstinputlisting[linerange=87-89]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
+\lstinputlisting[linerange=89-91]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
 
 
 \noindent \texttt{ExpPC} is the new expression interface supporting
@@ -131,7 +133,7 @@ The first query language \texttt{Database}  models
 \noindent The main benefit that fluent methods give
 us is the convenience of method chaining:
 
-\lstinputlisting[linerange=31-31]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY1
+\lstinputlisting[linerange=33-33]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY1
 
 \noindent Note how all the logic for the fluent setters is automatically provided by the \mixin annotation.
 
@@ -140,12 +142,12 @@ us is the convenience of method chaining:
 specify. With \mixin programmers just need to extend the interface \texttt{Database} with new
 features, and the return type of fluent setters in
 \texttt{Database} is automatically refined to \texttt{ExtendedDatabase}:
-\lstinputlisting[linerange=14-16]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
+\lstinputlisting[linerange=14-18]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
 In this way, when a query created using \texttt{ExtendedDatabase},
 all the fluent setters return the correct type, and not the old \texttt{Database} type, which would prevent calling
 \texttt{orderBy}.
 
-\lstinputlisting[linerange=37-38]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
+\lstinputlisting[linerange=39-39]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
 
 \subsection{A Maze Game}
 This case study is a simplified variant of a Maze game, which is often

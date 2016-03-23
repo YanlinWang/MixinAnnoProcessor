@@ -56,8 +56,10 @@ interface Exp { int eval(); Exp with(Exp val);}
 //END_EXPRESSION_INIT
 
 //BEGIN_EXPRESSION_SUB
-@Obj interface Sub extends Exp { Exp e1(); Exp e2();
-    default int eval() {return e1().eval() - e2().eval();} }
+@Obj interface Sub extends Exp {
+	Exp e1(); Exp e2();
+	default int eval() {
+		return e1().eval() - e2().eval();} }
 //END_EXPRESSION_SUB
 
 //BEGIN_EXPRESSION_PRINT
