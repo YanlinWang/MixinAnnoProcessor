@@ -109,7 +109,7 @@ and semantics. However, this would have a steep learning curve.  We
 take a different approach instead. For the sake of providing a more
 accessible explanation, we will embed our ideas directly into Java. 
 Our IB embedding relies on the
-new features of Java 8 for interfaces: interface \emph{static methods} and
+new features of Java 8 for interfaces: interface \emph{static methods}; and
 \emph{default methods}, which allow interfaces to have method
 implementations. In the context of Java, what we propose is a programming
 style, where we never use classes\footnote{More precisely, we never
@@ -223,7 +223,7 @@ multiple inheritance. For this application we show that there is a
 significant reduction in the number of lines of code when compared 
 to an existing implementation~\cite{bono14} using plain Java 8. The last
 application is a relatively larger case study of refactoring of a simple interpreter, showing that our
-approach can benefit modularity and scale to real code base. Noteworthy is the fact that the first three applications are implemented 
+approach can benefit modularity and scale to real code base. Noteworthy, the first three applications are implemented 
 without defining a single class! The last one contains several classes that cannot be 
 converted to interfaces due to the limitation of our implementation of \mixin.
 
