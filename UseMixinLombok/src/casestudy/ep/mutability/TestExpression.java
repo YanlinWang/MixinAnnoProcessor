@@ -41,7 +41,7 @@ public class TestExpression {
     }
 }
 
-//BEGIN_EXPRESSION_INIT
+//BEGIN_EXPRESSION_INIT-
 interface Exp { int eval(); Exp with(Exp val);}
 @Obj interface Lit extends Exp {
     int x(); void x(int val);
@@ -53,16 +53,16 @@ interface Exp { int eval(); Exp with(Exp val);}
         return e1().eval() + e2().eval();
     }
 }
-//END_EXPRESSION_INIT
+//END_EXPRESSION_INIT-
 
-//BEGIN_EXPRESSION_SUB
+//BEGIN_EXPRESSION_SUB-
 @Obj interface Sub extends Exp {
 	Exp e1(); Exp e2();
 	default int eval() {
 		return e1().eval() - e2().eval();} }
-//END_EXPRESSION_SUB
+//END_EXPRESSION_SUB-
 
-//BEGIN_EXPRESSION_PRINT
+//BEGIN_EXPRESSION_PRINT-
 interface ExpP extends Exp {String print();}
 @Obj interface LitP extends Lit, ExpP {
     default String print() {return "" + x();}
@@ -77,9 +77,9 @@ interface ExpP extends Exp {String print();}
     default void e1(Exp val) { e1(e1().with(val)); }
     default void e2(Exp val) { e2(e2().with(val)); }
 }
-//END_EXPRESSION_PRINT
+//END_EXPRESSION_PRINT-
 
-//BEGIN_EXPRESSION_COLLECTLIT
+//BEGIN_EXPRESSION_COLLECTLIT-
 interface ExpC extends Exp { List<Integer> collectLit(); }
 @Obj interface LitC extends Lit, ExpC {
     default List<Integer> collectLit() {
@@ -100,9 +100,9 @@ interface ExpC extends Exp { List<Integer> collectLit(); }
     default void e1(Exp val) { e1(e1().with(val)); }
     default void e2(Exp val) { e2(e2().with(val)); }
 }
-//END_EXPRESSION_COLLECTLIT
+//END_EXPRESSION_COLLECTLIT-
 
-//BEGIN_INDEPENDENT_EXTENSIBILITY
+//BEGIN_INDEPENDENT_EXTENSIBILITY-
 interface ExpPC extends ExpP, ExpC {
     ExpPC with(Exp val);
 }
@@ -118,4 +118,4 @@ interface ExpPC extends ExpP, ExpC {
     default void e2(ExpP val) { e2(e2().with(val)); }
     default void e2(ExpC val) { e2(e2().with(val)); }
 }
-//END_INDEPENDENT_EXTENSIBILITY
+//END_INDEPENDENT_EXTENSIBILITY-
