@@ -150,18 +150,18 @@ valid for the annotation.
 Figure~\ref{figure:valid} and Figure~\ref{figure:ofmethod} present more details on the auxiliary
 functions. 
 The first two points of Figure~\ref{figure:valid}
-defines function $\otherMethod$;
+define function $\otherMethod$;
  This function generates unimplemented
  \Q@with-@ and fluent setters in the interface, where the 
 return types has been refined.
 
-To determine whether a method need to be generated,
+To determine whether a method needs to be generated,
 we check if such \Q@with-@ or setter methods
 require an implementation in $\C_0$, but not declared directly in $\C_0$.
 
 The third point gives the definition
 of $\valid$:
-It is valid to annotate an interface if 
+it is valid to annotate an interface if 
 %To generate the \Q@of@ method, it is necessary for $\weakAnn$ to explicitly check if
 all abstract methods (that is, all those
 requiring an implementation) are valid.
@@ -177,16 +177,16 @@ example \QM{with#foo}=\QM{withFoo}.  Special names $\specialName(\m)$
 are \QM{with} and all identifiers of the form $\QM{with#}\m$.
 
 
-Figure~\ref{figure:ofmethod},
+Figure~\ref{figure:ofmethod} 
 defines the $\ofMethod$  function, that generates the static method $\QM{of}$ as an
 object factory.
 It detects all the field methods of $\C_0$ and use them to synthesize
 its arguments.
-The return statement instantiate an anonymous class which
+The return statement instantiates an anonymous class which
 generates the needed getters, fluent setters and with-methods.
 
-The right column first point collect the getter methods,
-the second and third point generate implementations for with methods
+The right column first point collects the getter methods,
+the second and third point generate implementations for \texttt{with-} methods
 if needed; similarly, the fourth and fifth point generate fluent setters if needed.
 
 Some other features of $\mixinAnn$, including non-fluent
@@ -214,7 +214,7 @@ To formally characterize the behavior of our annotation and the two levels of gu
 IT is OK if under such interface table, all interfaces are OK,
 \marcoT{that is, well typed}.
 \item Since interface tables are just represented as sequences of interfaces we write IT = $\II$ IT' to select a specific interface in a table.
-\item IT contains an heir of $\C$ if there is an interface that extends it, or a \Q@new@ that instantiate it.
+\item IT contains an heir of $\C$ if there is an interface that extends it, or a \Q@new@ that instantiates it.
 \end{itemize}
 
 \begin{thm}[@ObjOf]
@@ -232,7 +232,7 @@ then the interface table $[\![\II]\!]$ IT is OK.
 \end{thm}
 
 Informally, the theorems mean that for a client program that
-typechecks before the translation is applied, if the annotated type has
+type-checks before the translation is applied, if the annotated type has
 no subtypes and no objects of that type are created, then type safety
 \marcoT{of the generated code}
 is guaranteed after the successful translation.
