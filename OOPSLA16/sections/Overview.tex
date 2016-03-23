@@ -15,7 +15,7 @@
 \end{figure*}
 
 This section illustrates how our programming style, supported by the
-\mixinAnn{} annotation, enable powerful programming idioms based on multiple
+\mixinAnn{} annotation, enables powerful programming idioms based on multiple
 inheritance and type refinements.  We propose a standard example:
 \Q@Animal@s with a two-dimensional \Q@Point2D@ representing their
 \Q@location@.  Some kinds of animals are \Q@Horses@ and \Q@Bird@s.
@@ -100,7 +100,6 @@ needs to do is to add a \mixinAnn{} annotation to the \texttt{Horse},
 \texttt{Bird}, and \texttt{Pegasus} interfaces:
 
 \lstinputlisting[linerange=8-12]{../UseMixinLombok/src/pegasus/simple/lombok/Main.java}% APPLY:linerange=PEGASUS_LOMBOK
-\bruno{I dislike the code formating here.} \haoyuan{fixed}
 \noindent The effect of the annotations is that a static \emph{factory} method called
 \texttt{of} is automatically added to the interfaces. With the
 \texttt{of} method a \texttt{Pegasus} object is instantiated as follows:
@@ -262,7 +261,7 @@ interface Point2D {
 \noindent Only code for methods needing implementation is generated. Thus,
 programmers can easily customize the behaviour for their special needs.
 Also, since \mixin interfaces offer the \Q@of@ factory method, only interfaces where all the abstract methods
-can be synthesized can be \mixin. A non \mixin interface is like an abstract class in Java.
+can be synthesized can be object interfaces. A non \mixin interface is like an abstract class in Java.
 %\end{comment}
 
 %Firstly, to model \texttt{Point2D} that has x-coordinate and y-coordinate by an
@@ -365,7 +364,7 @@ mutable state.
 % Again, we model this member field with getter and setter methods:
 \lstinputlisting[linerange=58-60]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=ANIMAL
 
-\noindent Here we declare abstract getter and setter for the mutable ``field''
+\noindent Here we declare an abstract getter and setter for the mutable ``field''
 \Q@location@.  Without the \mixin annotation, there is no convenient way to
 instantiate \texttt{Animal}.  For \texttt{Horse}, the \mixin annotation is used
 and an implementation of \texttt{run()} is defined using a \Q@default@
@@ -440,7 +439,6 @@ Object interfaces address the challenge of type-refinement as follows:
 Thus, with object interfaces, the code for the \Q@Bird@ interface is:
 
 \lstinputlisting[linerange=71-80]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=BIRD
-\bruno{Don't like the code format here either.} \haoyuan{fixed}
 %Interface \texttt{Point3D} extends \texttt{Point2D} with a new abstract method
 %\texttt{int z()} (treated as a getter for member field \texttt{z}). Note that
 %the return type of various methods (e.g. with- methods, getters) get refined
@@ -491,20 +489,11 @@ a property updater would not attempt to set it.
 % fields at once, contained in an interface, and copy those fields into
 % fields of another interface.
 
- \marcoT{Symmetrically,
- we could offer an imperative property updater
- that calls the setters instead of the withers.
- \Q@Point3D set(Point2D val)@.
- }\bruno{we could or we do? if we could then the table should not
-   contain this operation; if we do the table is ok}
-
-
-
-
+%Symmetrically, we could offer an imperative property updater that
+%calls the setters instead of the withers.  \Q@Point3D set(Point2D
+%val)@.
 
 \begin{figure}
-\marco{I can not find the declaration int x();
-also we can change the order of the code to write the non generated stuff first.}
 %\saveSpaceFig
 \lstinputlisting[linerange=89-115]{../UseMixinLombok/src/pegasus/TestAnimal.java}% APPLY:linerange=GENERATED_POINT3D
 \caption{Generated boilerplate code.}
@@ -514,12 +503,11 @@ also we can change the order of the code to write the non generated stuff first.
 \paragraph{Generated boilerplate}
 Just to give a feeling of how much mechanical code \mixin is generating, we show the
 generated code for the \texttt{Point3D} in Figure~\ref{fig:boilerplate}.
-\marcoT{Overall, for the whole
-animals-with-locations, an @@@ lines code example,
-the generate/completed code is composed by
-@@@ lines.}
-
-   Writing such code by hand is error-prone. For
+%\marcoT{Overall, for the whole
+%animals-with-locations, an @@@ lines code example,
+%the generate/completed code is composed by
+%@@@ lines.}
+Writing such code by hand is error-prone. For
 example a distracted programmer may swap the arguments of calls to
 \Q@Point3D.of@.  Note how \Q@with-@ methods are automatically refined in their
 return type, so that code like:
@@ -537,20 +525,6 @@ test. The idea is that if the parameter is a subtype of the current exact type,
 then we can just return the parameter, as something that is just ``more'' than
 \Q@this@.
 
-\paragraph{Summary of operations in Classless Java}
-%Method bodies can only refer to other methods;
-%Objects are (conceptually) closures and the state is
-%composed by captured local variables.}
-%Methods interacting with state are called \emph{abstract state operations}.
-Object interfaces provide support for
-different types of abstract state operations: four field-based state
-operations; and  two types of
-general updating operations. Furthermore object interfaces support
-direct object intantiation via \texttt{of} factory methods.
-Figure~\ref{fig:abstractstate} summarizes the six operations supported
-by \mixin. The field-based abstract state operations are determined by
-naming conventions and the types of the methods. Fluent setters are a variant of
-conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
 
 \begin{figure*}
 \centering
@@ -573,10 +547,10 @@ object; updates field \texttt{x} to \texttt{val}.             \\ \cline{2-4}
  & Factory method (generated).        \\
 \cline{2-4}
 & \textbf{functional updaters}        & \Q@Point3D with(Point2D val)@
-& Update all matching fields in \texttt{val}.        \\
-\cline{2-4}
-& \textbf{imperative updaters}        & \Q@Point3D set(Point2D val)@ &
-Set all matching fields in \texttt{val}.        \\ \hline
+& Update all matching fields in \texttt{val}.        \\ \hline
+%\cline{2-4}
+%& \textbf{imperative updaters}        & \Q@Point3D set(Point2D val)@ &
+%Set all matching fields in \texttt{val}.        \\ \hline
 \end{tabular}
 
 \caption{Abstract state operations for a field \texttt{x}, together with other operations, supported by the \mixin
@@ -585,6 +559,20 @@ Set all matching fields in \texttt{val}.        \\ \hline
 \label{fig:abstractstate}
 
 \end{figure*}
+
+\paragraph{Summary of operations in Classless Java}
+%Method bodies can only refer to other methods;
+%Objects are (conceptually) closures and the state is
+%composed by captured local variables.}
+%Methods interacting with state are called \emph{abstract state operations}.
+In summary, object interfaces provide support for
+different types of abstract state operations: four field-based state
+operations; and functional updaters. Furthermore object interfaces support
+direct object intantiation via \texttt{of} factory methods.
+Figure~\ref{fig:abstractstate} summarizes the six operations supported
+by \mixin. The field-based abstract state operations are determined by
+naming conventions and the types of the methods. Fluent setters are a variant of
+conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
 
 \subsection{Advanced Multiple Inheritance}
 Finally, defining \texttt{Pegasus} is as simple as we did in the simplified
