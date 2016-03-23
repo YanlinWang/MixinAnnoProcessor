@@ -60,8 +60,8 @@ $\begin{array}{l}
 \label{figure:valid}
 \end{figure*}
 
-This section gives an overview of what $\mixinAnn$ generates in
-Classless Java, and what properties are guaranteed in the translation.
+This section gives an overview of what $\mixinAnn$ generates,
+ and what formal properties are guaranteed in the translation.
 
 \marcoT{We formalize syntax and typing for
  Classless Java} in Appendix~\ref{sec:formal}, which models the essence of
@@ -148,38 +148,52 @@ method for $\C_0$, if such a method does not exist in its domain, and all the ab
 valid for the annotation.
 
 Figure~\ref{figure:valid} and Figure~\ref{figure:ofmethod} present more details on the auxiliary
-functions. \bruno{if the figures are mentioned here, what should
-  follow is the explanation on what is one the figures. Please fix
-  this Haoyuan and makes sure that everything that is on the figures
-  is explained here. }
-\haoyuan{In Figure~\ref{figure:valid}, the $\otherMethod$ function is defined in the first two
-equations. This function generates unimplemented \Q@with-@ and fluent setters in the interface.
-They are generated as abstract methods because the return types need to be refined.
-To determine whether the methods need to be generated,
+functions. 
+The first two points of Figure~\ref{figure:valid}
+defines function $\otherMethod$;
+ This function generates unimplemented
+ \Q@with-@ and fluent setters in the interface, where the 
+return types has been refined.
+
+To determine whether a method need to be generated,
 we check if such \Q@with-@ or setter methods
-are required by $\C_0$, but not declared directly in $\C_0$. The third equation gives the definition
-of $\valid$. To generate the \Q@of@ method, it is necessary for $\weakAnn$ to explicitly check if all
-abstract methods are valid. That is, we can categorize them in a pattern that we
-know how to implement: it is either a field getter, a with method or a setter. Auxiliary checkers are
-defined on the right side. Note that we write $\QM{with#}\m$ to append $\m$ to
+require an implementation in $\C_0$, but not declared directly in $\C_0$.
+
+The third point gives the definition
+of $\valid$:
+It is valid to annotate an interface if 
+%To generate the \Q@of@ method, it is necessary for $\weakAnn$ to explicitly check if
+all abstract methods (that is, all those
+requiring an implementation) are valid.
+That is, we can categorize them in a pattern that we
+know how to implement (right column):
+it is either a field getter (first point),
+a with method (second point) or a setter (third point).
+
+Note that we write $\QM{with#}\m$ to append $\m$ to
 \QM{with}, following the camelCase rule. The first letter of $\m$
 must be lower-case and is changed to upper-case upon appending. For
 example \QM{with#foo}=\QM{withFoo}.  Special names $\specialName(\m)$
 are \QM{with} and all identifiers of the form $\QM{with#}\m$.
-}
 
-In Figure~\ref{figure:ofmethod}, the function $\ofMethod$ generates the static method $\QM{of}$, as an
-object factory. It detects all the field methods of $\C_0$, take them
-as arguments, and in the return statement is an anonymous class which
-generates getters, fluent setters and with-methods in certain
-cases. Some other features of $\mixinAnn$, including non-fluent
-setters and the $\QM{with}$ method, however, are not formalized in
-Classless Java. Appendix~\ref{subsec:otherfeatures} gives an informal
-explanation of those methods.
 
-\bruno{I think there is explanation missing in this subsection;
-  probably text which is now in the appendix. Haoyuan, please take
-  care of this.}\haoyuan{fixed}
+Figure~\ref{figure:ofmethod},
+defines the $\ofMethod$  function, that generates the static method $\QM{of}$ as an
+object factory.
+It detects all the field methods of $\C_0$ and use them to synthesize
+its arguments.
+The return statement instantiate an anonymous class which
+generates the needed getters, fluent setters and with-methods.
+
+The right column first point collect the getter methods,
+the second and third point generate implementations for with methods
+if needed; similarly, the fourth and fifth point generate fluent setters if needed.
+
+Some other features of $\mixinAnn$, including non-fluent
+setters and the $\QM{with}$ method are not formalized here.
+Appendix~\ref{subsec:otherfeatures} gives an detailed but 
+informal explanation of generation for those methods.
+
 
 \subsection{Results}\label{subsec:results}
 
@@ -195,7 +209,7 @@ coherence is a property of the translation of  $\weakAnn$, but not of
 
 To formally characterize the behavior of our annotation and the two levels of guarantees that we offer, we provide some notations and two theorems:
 \begin{itemize}
-\item We denote with $\C^{\II}$ the name of an interface.
+\item We denote with $\C^{\II}$ and $m^\method$ the name of an interface and of a method.
 \item An interface table
 IT is OK if under such interface table, all interfaces are OK,
 \marcoT{that is, well typed}.
@@ -203,8 +217,6 @@ IT is OK if under such interface table, all interfaces are OK,
 \item IT contains an heir of $\C$ if there is an interface that extends it, or a \Q@new@ that instantiate it.
 \end{itemize}
 
-\bruno{Do we have good names for the theorems Marco? Cannot be called
-  tunning now!}
 \begin{thm}[@ObjOf]
 If a given interface table $\II$ IT is OK
  where $\II$ has $\weakAnn$,
