@@ -1,5 +1,5 @@
 \section{Related Work}\label{sec:related}
-In this section we discuss related work and how it compares to Classless Java.
+%In this section we discuss related work and how it compares to Classless Java.
 
 %\yanlin{need to discuss: whether the comments for FTJ is fair.}
 
@@ -16,10 +16,35 @@ In this section we discuss related work and how it compares to Classless Java.
 %typechecking efficiency (one trait will be potentially checked multiple times if
 %it is used in multiple classes).
 
+\paragraph{Models of Object-Oriented Programming}
+There are traditionally two big styles of OOP: class-based and
+prototype-based. The class-based tradition started with Simula~\cite{Dahl66simula}, 
+and is the dominant style of OOP today. Major languages such 
+as Java, C\#, C++ or Scala favour a class based OOP style. Very often
+class-based languages are statically typed and they have interfaces or
+some other similar mechanisms such as traits. However, in contrast to IB
+programming, interfaces or traits in CB programming are not meant to
+replace classes, but rather, they complement classes. Normally
+interfaces or traits define the signatures of the methods and
+\emph{may} have some behaviour (such as in Java8 interfaces or Scala
+traits). However classes are still responsible for object
+instantiation and handling state. Prototype-based languages started
+with Self~\cite{Ungar87self}, and are still widely used today via languages like
+JavaScript. Frequentely prototype-based languages are dynamically 
+typed. IB programming is clearly closer to CB programming. However the
+key difference is that classes are not needed in IB
+programming. Object interfaces recover the responsability of object
+instantiation, and abstract state operations provide a way to deal
+with state. A primary motivation of IB programming is to improve 
+modularity and flexibility. Central to these goals are the 
+more expressive and automated forms of type-refinement, and support 
+for multiple interface inheritance.   
+
 \paragraph{Multiple Inheritance in Object Oriented Languages}
-Many authors have argued in favor or against multiple inheritance.  Multiple
+Many authors have argued in favor or against multiple inheritance.
+Multiple \emph{implementation}
 inheritance is very expressive, but difficult to model and implement, and can
-cause difficulty (including the famous diamond (fork-join)
+cause difficulties (including the famous diamond (fork-join)
 problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning about
 programs. To conciliate the need for expressive power and simplicity, many
 models have been proposed, including C++ virtual inheritance,
@@ -43,7 +68,7 @@ methods are also allowed: if users are not satisfied with the default
 generated \texttt{of} method, they can implement their own.
 
 %\paragraph{Mixins.}
-Mixins are a more restricted model than the C++ approach. Mixins allow to name
+Mixins are more restricted than the C++ approach. Mixins allow naming
 components that can be applied to various classes as reusable functionality
 units. However, % they suffer from linearization: the order of mixin application
 % is relevant in often subtle and undesired ways. This hinders their usability
@@ -56,7 +81,7 @@ raises the complexity, especially when constructors and fields
 are considered~\cite{marco09FJigsaw}. Scala traits are in fact more like linearized mixins.
 Scala avoids the object initialization
 problem by disallowing constructor parameters, causing no ambiguity in cases
-such as diamond problem. However this approach has limited expressiveness, and
+such as the diamond problem. However this approach has limited expressiveness, and
 suffers from all the problems of linearized mixin composition. % Other languages, such as
 % Python, also use linearized mixins.
 \begin{comment}
@@ -83,7 +108,7 @@ inheritance can be transformed to one without diamonds. Moreover,
 fields and multiple inheritance can coexist. However untangling
 inheritance also untangles the class structure. In CZ, not only the
 number of classes, but also the class hierarchy complexity
-increases. \mixin does not complicate the class structure, and state
+increases. IB programming does not complicate the hierarchical structure, and state
 can also coexist with multiple inheritance.
 
 %\paragraph{Traits and Java's default methods}
@@ -97,7 +122,10 @@ keyword) inside interfaces. The introduction of default methods opens the gate
 for various flavors of multiple inheritance in Java. Traits offer an algebra
 of composition operations like sum, alias and exclusion, providing explicit conflict
 resolution. Former work~\cite{bono14} provides details on mimicking the trait
-algebra through Java 8 interfaces.  We briefly recall the main points of their
+algebra through Java 8 interfaces.  
+
+\begin{comment}
+We briefly recall the main points of their
 encoding; however we propose a different representation of \textbf{exclusion}.
 The first author of~\cite{bono14} agreed (via personal communication) that
 our revised version for exclusion is cleaner, typesafe and more direct.
@@ -133,6 +161,7 @@ our revised version for exclusion is cleaner, typesafe and more direct.
     \end{lstlisting}
 \shortItem
 \end{itemize}
+\end{comment}
 
 There are also proposals for extending Java with traits. For
 example, FeatherTrait Java (FTJ)~\cite{Liquori08ftj} extends
@@ -193,6 +222,8 @@ such as Scala's traits/mixins.\footnote{Scala traits have
 %  traits"''~\cite{goetz13default}. As a result, they were happy to
 %  support the secondary use of interfaces with default methods as long
 %  as it did not make the implementation and language more complex.}
+
+\begin{comment}
 \marcoT{We could use Scala Traits to encode IB, but the simpler Java8
   model is a better starting point: scala traits can declare \Q@def, val, var@ and
   \Q@lazy val@ However, while \Q@def@s can be overridden by
@@ -202,7 +233,7 @@ such as Scala's traits/mixins.\footnote{Scala traits have
   the state is only a private detail of instances, and do not
   contaminate interface/trait/classes.
   }
-
+\end{comment}
 
 
 
@@ -281,8 +312,8 @@ Furthermore, we do automatic return type refinement for this kind of methods. Th
 
 \paragraph{ThisType and MyType}
 %\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namely it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolishes most advantages of interfaces.}
-In certain situations, object interfaces allow automatic refinement for \emph{return
-types}. This is part of a bigger topic in class-based languages: expressing and
+Object interfaces support automatic type-refinement.
+Type refinement is part of a bigger topic in class-based languages: expressing and
 preserving type recursion and (nominal/structural) subtyping at the same time.
 
 One famous attempt in this direction is provided by
@@ -301,11 +332,14 @@ capture the ``exact type'' of an object even in a class-less
 environment.
 Admittedly, MyType greatly enhances the expressiveness and extensibility of
 object-oriented programming languages. Object interfaces use covariant-return types to
-simulate some uses of MyType. But our approach only works for refining
+simulate some uses of MyType. But this approach only works for refining
 return types, whereas MyType is more general, as it also works for
-parameter types. Nevertheless, as illustrated with our examples and
+parameter types. Our approach to covariantly refine state can recover
+some of the additional expressiveness of MyType. As illustrated with our examples and
 case studies, object interfaces are still very useful in many
-practical applications.
+practical applications, yet they do not require additional 
+complexity from the type system.
+
 % The addition of MyType to a language will allow easy definition of
 %binary methods, methods with recursive types (i.e., the same type of the
 %receiver appears in the argument or return positions of methods), etc.
