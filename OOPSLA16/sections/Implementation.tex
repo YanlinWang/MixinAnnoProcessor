@@ -4,15 +4,15 @@
 %\footnote{ Rewriting libraries and
 %  application in this language/model would result in more reusable
 %  libraries, but it would be a taunting task.}
-Creating a new language or language extension would be an
+Creating a new language or a language extension would be an
 elegant way to illustrate the point of IB. However,
 significant amounts of engineering would be needed to build a practical
 language, and to achieve a similar level of integration and tool support
 as Java. To have an approach that can both illustrate IB
 programming and be practical, we have instead implemented 
-\mixin as an annotation over Java8, and a \emph{compilation agent}.
+\mixin as an annotation over Java 8, and a \emph{compilation agent}.
 That is, the Classless Java style of programming
-is supported by a Java8 library.
+is supported by a Java 8 library.
 
 Disciplined use of Classless Java (that is avoiding class
 declarations as done in Section~\ref{sec:ep}), illustrates what \emph{pure} IB is like.
@@ -20,14 +20,13 @@ However, using \mixin, CB and IB programming can be mixed together,
 harvesting the practical convenience of using existing Java libraries, the full
 Java language, and IDE's support.
 The key to our implementation is the use of compilation agents, which
-are supported in Java, and allow us to rewrite the Java AST just
+ allows us to rewrite the Java AST just
 before compilation. We discuss advantages and limitations of our approach.
 
 \subsection{Compilation Agents}
-Java supports compilation agents.
-That is, Java libraries can interact with the Java compilation process,
+Java supports compilation agents, where Java libraries can interact with the Java compilation process,
 acting as a man in the middle between the
-generation of the abstract syntax tree and the Java Bytecode.
+generation of the abstract syntax tree and the Java bytecode.
 
 This process is facilitated by frameworks like Lombok~\cite{lombok}:
 a Java library that aims at removing (or
@@ -124,13 +123,13 @@ tools to work transparently.
 Of course, careless reinterpretation of the AST could still be
 surprising for badly designed rewritings.  \mixin reinterprets
 the syntax with the sole goal of \emph{enhancing and completing code}:
-we satisfy the behaviour of abstract methods; we add method
-implementations; and we refine return types.  We consider this to be
+we satisfy the behaviour of abstract methods; add method
+implementations; and refine return types.  We consider this to be
 quite easy to follow and reason about, since it is similar to what
 happens in normal inheritance.  Refactoring operations like renaming
 and moving should work transparently in conjunction with our
 annotation, since they rely on the overall type structure of the
-class, that we do not arbitrarily modify but just complete.
+class, which we do not arbitrarily modify but just complete.
 
 Thus, in addition to the advantages of Lombok, Classless Java offers
 some more advantages with respect to arbitrary (Compilation agent driven) AST rewriting.
@@ -171,7 +170,7 @@ some more advantages with respect to arbitrary (Compilation agent driven) AST re
 
 
 
-\paragraph{Syntax and Type Errors:}
+\paragraph{Syntax and type errors}:
 Some preprocessors (like the C one) can produce syntactically invalid code.
 Lombok ensures only syntactically valid code is produced. %; however, type errors can appear.
 Classless Java additionally guarantees that no type errors are introduced
@@ -180,19 +179,19 @@ more detail next:
 
 \begin{itemize}
 
-\item{\bf Self coherence}: the generated code itself is well-typed. That is,
+\item{\bf Self coherence}: The generated code itself is well-typed. That is,
   type errors are not present in code the user has not written (for
   example \texttt{of} methods in Figure~\ref{fig:screenshot}).
 In our case it means that either \mixin{} produces (in a controlled way) an
 understandable error, or the interface can be successfully annotated and the generated code is well-typed.
 
-\item{\bf Client coherence}: all the client code (for example method calls)
+\item{\bf Client coherence}: All the client code (for example method calls)
   that is well-typed before code generation is also well-typed after the generation.
 The annotation just adds more behaviour without removing any functionality.
 
 \end{itemize}
 
-\paragraph{Heir coherence:} Another form of guarantee that could be
+\paragraph{Heir coherence}: Another form of guarantee that could be
 useful in AST rewriting is heir coherence. That is, interfaces
 (and in general classes) inheriting the instrumented code are
 well-typed if they were well-typed without the instrumentation.
@@ -210,7 +209,7 @@ interface C extends B { A withX(int x); }
 \noindent This code is correct before the translation, but \mixin would  generate in \Q@B@  a method ``\Q@B withX(int x);@''.
 This would break \Q@C@.
 Similarly, an expression of the form ``\Q@new B(){.. A withX(int x){..}}@''
-would be correct before translation, but would be ill-typed after the translation.
+would be correct before translation, but ill-typed after the translation.
 
 Our automatic type refinement is a useful and convenient feature, but
 not transparent to the heirs of the annotated interface.  They need to
@@ -219,10 +218,9 @@ refining methods. To support heir coherence, we would need
 to give up automatic type refinement, which is an essential part of IB programming.
 However, the reader should note that Java libraries almost always break heir
 coherence during evolution and still claim backward compatibility (false in
-theory but statistically true in practice). In practice to break heir
-coherence it is just enough to add any method to any
-non final class of a Java library.  We think refining return
-types breaks heir coherence ``less" than normal library evolution, and
+theory but statistically true in practice). In practice, adding any method to any
+non final class of a Java library is enough to break heir
+coherence.  We think return type refinement breaks heir coherence ``less" than normal library evolution, and
 if no automatic type-refinements are needed, then \mixin can claim a
 form of heir coherence.
 
@@ -233,7 +231,7 @@ safety claims.
 Our prototype implementation has certain limitations:
 \begin{itemize}
 \item Eclipse has its own compiler (ejc), alternative to javac.
-  Lombok allows writing handlers for either javac of ejc.
+  Lombok allows writing handlers for either javac or ejc.
   At this stage our implementation only realizes the Eclipse handler and our
   experiments are all conducted in Eclipse. The implementation for
   the \texttt{javac} handler is still missing.
