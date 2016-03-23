@@ -39,6 +39,8 @@
 
 \setlist[itemize]{noitemsep,nolistsep}
 \setlist[enumerate]{noitemsep,nolistsep}
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\vspace{-3pt}\oldparagraph{#1}}
 
 \input{predef/def.tex}
 \input{predef/java.tex}
@@ -113,7 +115,7 @@
 
 \begin{abstract}
 
-  This paper presents Interface Based (IB) object-oriented (OO)
+  This paper introduces Interface Based (IB) object-oriented (OO)
   programming. Unlike class based OO programming, in IB programming there
   is no need for classes. To support state, IB programming does not
   use fields directly. Instead it uses \emph{abstract state
@@ -125,7 +127,7 @@
   powerful idioms using multiple inheritance and state.  To introduce
   IB to programmers we created Classless Java: an embeding of IB
   directly into Java. Classless Java uses annotation processing for
-  code generation, and relies on the new features of Java 8 for
+  code generation, and relies on new features of Java 8 for
   interfaces. We illustrate the usefulness of IB through various
   examples and case studies.
 
