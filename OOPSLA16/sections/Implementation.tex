@@ -9,13 +9,16 @@ elegant way to illustrate the point of IB. However,
 significant amounts of engineering would be needed to build a practical
 language, and to achieve a similar level of integration and tool support
 as Java. To have an approach that can both illustrate IB
-programming and be practical, we have instead implemented Classless Java.
-This section presents the Classless Java design.
+programming and be practical, we have instead implemented 
+\mixin as an annotation over Java8, and a \emph{compilation agent}.
+That is, the Classless Java style of programming
+is supported by a Java8 library.
+
 Disciplined use of Classless Java (that is avoiding class
 definitions as done in Section~\ref{}), illustrates what \emph{pure} IB is like.
-However in Classless Java CB and IB programming can be mixed together, and all
-the practical convenience of using existing Java libraries, the full
-Java language, and IDE's are available in Classless Java.
+However, using \mixin, CB and IB programming can be mixed together, 
+harvesting the practical convenience of using existing Java libraries, the full
+Java language, and IDE's support.
 The key to our implementation is the use of compilation agents, which
 are supported in Java, and allow us to rewrite the Java AST just
 before compilation. We discuss advantages and limitations of our approach.
@@ -25,23 +28,22 @@ Java supports compilation agents\cite{compilationagents}.
 That is, Java libraries can interact with the Java compilation process,
 acting as a man in the middle between the
 generation of the abstract syntax tree and the Java Bytecode.
-\marco{is this correct?}\bruno{my impression is that Lombok happens
-  \emph{before} the AST is compiled (not between AST and bytecode generation)}
+
 This process is facilitated by frameworks like Lombok~\cite{lombok}:
 a Java library that aims at removing (or
 reducing) Java boilerplate code via
-annotations. Classless Java was created using Lombok.
-Figure~\ref{fig:lombok}~\cite{neildo2011blog} illustrates the
-flow of \mixin annotation processing in Lombok.\bruno{Haoyuan, please
-  explain the diagram.}
-\haoyuan{Source code in a Java program is first parsed into its syntactic structure,
-which we call abstract syntax tree (AST). The AST is passed to Lombok, and a corresponding
-AST defined in Lombok is generated for the annotated node. An annotation like \mixin is declared
-inside Lombok, together with an implementation of its (Eclipse or Javac) handler. The handler is
+annotations. \mixin was created using Lombok.
+As you can see explained in Figure~\ref{fig:lombok}~\cite{neildo2011blog},
+first java source code is parsed into an abstract syntax tree (AST).
+The AST is then captured by Lombok:
+each annotated node is passed to
+the corresponding (Eclipse or Javac) handler. The handler is
 free to modify the information of the annotated node, or even inject new nodes (like methods, inner classes,
-etc). Finally, Java compiler works on the modified AST to generate bytecode. During the compilation,
-no source code is changed, and no new files are created, bytecode takes the only difference.}
+etc). Finally, the Java compiler works on the modified AST to generate bytecode.
+%Note how during the compilation,
+%no source code is changed, and no new source/temporary files are created.
 
+ 
 %There are a number of annotations provided by the
 %original Lombok, including \Q:@Getter:, \Q:@Setter:,
 %\Q:@ToString: for generating getters, setters and \QM{toString}
@@ -64,14 +66,10 @@ no source code is changed, and no new files are created, bytecode takes the only
 
 \paragraph{Advantages of Lombok}
 The Lombok compilation agent has advantages with respect to alternatives like
-pre-processors, or other Java annotation processors. In some sense
-Lombok can be seen as a poor man's macro system~\cite{} for Java.
-\bruno{Marco, do you agree with calling Lombok a poor man's macro system?}
-\marco{No, it is as powerful as lisp macros, and have a bigger (may be even  a better) design.}
-%this seems like a commercial spot
-%\item Lombok is byte-code based instead of source-code based, which makes client
-%  code concise and easy to maintain. Such code generation is performed at
-%  compile time to modify bytecode.
+pre-processors, or other Java annotation processors.
+Lombok offers in Java an expressive power similar to that of Scala/Lisp macros;
+except of course, for the syntactic convenience of quote/unquote templating.
+
 
 \paragraph{Direct modification of the AST:}
 Lombok alters the generation process of the class files,
@@ -98,12 +96,13 @@ and use instances of object interfaces as normal objects.
 Features written in Lombok integrate and are supported directly in the
 language, and are often also supported by (most) tools.  For example in Eclipse, the processing is
 performed transparently and the information of the interface from
-compilation is captured in the ``Outline'' window.\bruno{Haoyuan: show
-and explain figure here.} This includes all
-the methods inside the interface as well as the generated ones. \haoyuan{In Figure~\ref{fig:screenshot},
-\mixin generates \Q@of@ method in \Q@Point2D@, and \Q@of@, \Q@withX@, \Q@withY@ methods in \Q@Point3D@. These
-methods are also visible to users, showing their types and modifiers in Outline window. Moreover, as a useful IDE feature,
-the auto-completion also works for these newly generated methods.}
+compilation is captured in the ``Outline'' window.
+This includes all
+the methods inside the interface as well as the generated ones.
+In Figure~\ref{fig:screenshot},
+\mixin generates \Q@of@ method in \Q@Point2D@, and \Q@of@, \Q@withX@, \Q@withY@ methods in \Q@Point3D@.
+These methods are also visible to users, showing their types and modifiers in Outline window.
+Moreover, as a useful IDE feature, the auto-completion also works for these newly generated methods.
 
 \begin{figure}[h]
 \centering
@@ -119,17 +118,17 @@ Compilation agents start from Java syntax, but they can reinterpret it.
 Preserving the syntax avoid syntactic conflicts, and \marcoT{allows} many
 tools to work transparently.
 
-\subsection{AST Reinterpretation in Classless Java}
+\subsection{\mixin AST Reinterpretation}
 
-Ofcourse, careless reinterpretation of the AST could still be
-surprising for badly designed rewritings.  Classless Java reinterprets
+Of course, careless reinterpretation of the AST could still be
+surprising for badly designed rewritings.  \mixin reinterprets
 the syntax with the sole goal of \emph{enhancing and completing code}:
 we satisfy the behaviour of abstract methods; we add method
 implementations; and we refine return types.  We consider this to be
 quite easy to follow and reason about, since it is similar to what
 happens in normal inheritance.  Refactoring operations like renaming
 and moving should work transparently in conjunction with our
-annotaiton, since they rely on the overall type structure of the
+annotation, since they rely on the overall type structure of the
 class, that we do not arbitrarily modify but just complete.
 
 Thus, in addition to the advantages of Lombok, Classless Java offers
@@ -195,7 +194,7 @@ The annotation just adds more behaviour without removing any functionality.
 useful in AST rewriting would be heir coherence. That is, interfaces
 (and in general classes) inheriting the instrumented code are
 well-typed if they were well-typed without the instrumentation.
-Classless Java \emph{does not} guarantee heir coherence.  The reason
+Our rewriting \emph{does not} guarantee heir coherence.  The reason
 is that this would forbid adding any (default or abstract) method to
 the annotated interfaces, including type refinement. Indeed consider
 the following:
@@ -214,7 +213,7 @@ would be correct before translation, but would be ill-typed after the translatio
 Our automatic type refinement is a useful and convenient feature, but
 not transparent to the heirs of the annotated interface.  They need to
 be aware of the annotation semantics and provide the right type while
-refining methods. To support heir coherence, Classless Java would need
+refining methods. To support heir coherence, we would need
 to give up automatic type refinement, which is an essential part of IB programming.
 However, the reader should note that Java libraries almost always break heir
 coherence during evolution and still claim backward compatibility (false in
@@ -226,23 +225,31 @@ types breaks heir coherence ``less" than normal library evolution.
 In Section~\ref{} \marcoT{we provide a formal definition for our
 safety claims.}
 
-\subsection{Limitations}\marco{ to reorganize with updated limitations}
-\haoyuan{Should we only present the separate compilation and simple generics features in this (limitation) section?}
+\subsection{Limitations}
 Our prototype implementation using Lombok has certain limitations:
 \begin{itemize}
-\item \haoyuan{The annotation \mixin does not support separate compilation yet. Using \mixin, all
-  related interfaces have to appear in a single Java file. Therefore, changes to
-  a single interface would require re-compiling the whole file. Nevertheless, to support separate compilation we
-  studied an existing yet experimental feature \lstinline{@Delegate}, reused the name and modified its behavior.
+\item Eclipse has its own compiler (ejc), alternative to javac.
+  Lombok allows to write handlers for either javac of ejc.
+  At this stage our implementation only realizes the Eclipse handler and our
+  experiments are all conducted in Eclipse. The implementation for
+  the \texttt{javac} handler is still missing.
+\item The current implementation supports generics in a simplified manner: 
+type parameters can be used but the generic
+method typing is neither formalized in this paper nor explicitly checked by our 
+implementation, but simply  delegated to the Java compiler.
+
+\item 
+Lombok offers only limited/experimental support for separate compilation, that is
+to access information of code defined in different files.
+In the same spirit, we have a mature \mixin annotation, that
+does not support separate compilation yet: it requires that all
+  related interfaces have to appear in a single Java file.
+We also offer a less polished annotation, 
+that trying to reuse the (yet experimental) Lombock annotation \lstinline{@Delegate}, reused the name and modified its behavior.
   Now files in the same package can be compiled and \lstinline{@Delegate} has the same behavior as \mixin. A limitation is
   that users need to put references to the super types of the annotated type together with the annotation, for instance,
   \lstinline{@Delegate(types = Point2D.class)}. Another limitation is the methods generated by \lstinline{@Delegate} will
-  not be visible in the Outline window, but they can still be auto-completed in Eclipse.}
-\item At this stage our implementation only realizes the Eclipse handler and our
-  experiments are all conducted in Eclipse. The implementation for
-  \texttt{javac} is missing.
-\item \haoyuan{The current implementation only supports simple generics, which means type parameters can be used, however, the generic
-method typing is neither formalized in this paper nor implemented, but delegated to the Java compiler.}
+  not be visible in the Outline window, but they can still be auto-completed in Eclipse.
 \end{itemize}
 
 
