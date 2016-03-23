@@ -251,11 +251,10 @@ Note that we preferred to introduce self, client and heir coherence instead of r
 type preservation theorems~\cite{}. The reason is
 to better model how our approach behaves in a object oriented software ecosystem with inheritance,
 where only some units may be translated/expanded.
-Note inheritance crucial influence in heir coherence, and how client coherence allows
-for only some units to be translated/expanded.
-\bruno{I don't
-  understand the point of the last sentence? Rephrase?}
-  \marco{ok I tried to rephase the next sentence, how is now?}
+Note inheritance crucial influence in heir coherence, and 
+our formulation of client coherence allows to discuss about intermediate
+stages where only some code units are translated/expanded, while conventional 
+type preservation refers only to the completely translated program.
 This means that developers and designers of Java libraries and frameworks
 can start using IB (and our \mixin annotation) in the evolution of their products
 and still retain backward compatibility with their clients.
