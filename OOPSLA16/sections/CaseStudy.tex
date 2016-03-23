@@ -3,9 +3,11 @@ In this section we conduct \numOfCaseStudies case studies which reveal various
 advantages of using the \mixin annotation. The first case study provides a
 simple way to solve the Expression Problem while supporting multiple,
 independent extensions in Java.  The second case study shows how to model an
-embedded DSL for SQL languages with fluent interfaces. Finally, the third
+embedded DSL for SQL languages with fluent interfaces. The third
 case study models a simple game, and compares our implementation with an
 existing one, showing that the amount of code is reduced significantly using \mixin.
+Finally, the fourth one refactors an interpreter, showing that our approach  
+benefits modularity and scales to larger and real code base.
 
 \subsection{A Trivial Solution to the Expression Problem with Object Interfaces}
 
@@ -35,9 +37,9 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 \centering
 \saveSpaceFig
 \begin{tabular}{l|l}
-\lstinputlisting[linerange=34-44]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
+\lstinputlisting[linerange=33-43]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
 &
-\lstinputlisting[linerange=55-65]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\lstinputlisting[linerange=54-64]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
 \end{tabular}
 \caption{The Expression Problem (left: initial system, right: code for adding
   print operation).}\label{fig:ep}
@@ -48,7 +50,7 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 In the OO paradigm, it is easy to add new types of expressions. For example, the
 following code shows how to add subtraction.
 
-\lstinputlisting[linerange=48-51]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
+\lstinputlisting[linerange=47-50]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
 %\marco{text under need to be improved}
 \paragraph{Adding a New Operation} The difficulty of the EP in OO
@@ -83,7 +85,7 @@ interface ExpC extends Exp {
 \noindent Now we combine the two extensions (\texttt{print} and
 \texttt{collectLit}) together:
 
-\lstinputlisting[linerange=89-91]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
+\lstinputlisting[linerange=88-]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
 
 
 \noindent \texttt{ExpPC} is the new expression interface supporting

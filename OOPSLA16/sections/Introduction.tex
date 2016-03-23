@@ -222,9 +222,10 @@ application is a case study for a simple Maze game implemented with
 multiple inheritance. For this application we show that there is a
 significant reduction in the numbers of lines of code when compared 
 to an existing implementation~\cite{bono14} using plain Java 8. The last
-application is a larger case study of refactoring of a simple one-pass compiler, showing that our
-approach can scale to real code base. Noteworthy, all applications are implemented 
-without defining a single class!
+application is a relatively larger case study of refactoring of a simple interpreter, showing that our
+approach can benefit modularity and scale to real code base. Noteworthy, the first three applications are implemented 
+without defining a single class! The last one contains several classes that cannot be 
+converted to interfaces due to the limitation of our implementation of \mixin.
 
 While the Java embedding has obvious advantages from the practical
 point-of-view, it also imposes some limitations that a new IB language
