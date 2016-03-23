@@ -6,8 +6,8 @@ modular reasoning.  Two main ideas have emerged to this end: prototype
 based (PB)~\cite{Ungar87self} and class based (CB) languages such as
 Java or Scala.  In prototype based
 languages objects inherit from other objects, and thus objects own
-both behaviour and state (and objects is all you have).
-In class based languages an object is instance of a specific class,
+both behaviour and state (and objects are all you have).
+In class based languages an object is an instance of a specific class,
 and classes inherit from other classes.  Here objects own the state,
 while classes contain behaviour and the structure of the state.
 
@@ -16,8 +16,8 @@ This paper presents a third alternative: the concept of
 implement interfaces directly. In IB interfaces own the implementation
 for the behaviour, which is structurally defined in their
 interface. Programmers do not define objects directly, but delegate
-the task to \emph{object interfaces}, whose role is similar to non
-abstract classes in CB languages. Instantiation of objects is
+the task to \emph{object interfaces}, whose role is similar to non-abstract 
+classes in CB languages. Instantiation of objects is
 done using static factory methods in object interfaces.
 
 A key challenge in IB programming lies in how to model state, which is
@@ -25,13 +25,13 @@ fundamental to have stateful objects. All abstract operations in an
 object interface are interpreted as \emph{abstract state
   operations}. The abstract state operations include various common
 utility methods (such as getters and setters, or clone-like
-methods). Objects are the only responsible to define the ultimate
-behaviour of a method and, for example, if such method is just a
+methods). Objects are only responsible to define the ultimate
+behaviour of a method and, for example, if such a method is just a
 setter. Anything related to state is completely contained in the
 instances and does not leak into the inheritance logic.  In CB
 programming, the structure of the state is fixed and can be only grown
 by inheritance.  In contrast, in IB programming the state is never
-fixed, and methods that ``looks like'' abstract setters and getters
+fixed, and methods that look like abstract setters and getters
 can always receive an explicit implementation down in the inheritance
 chain, improving \textbf{modularity and flexibility}.  That is, the
 concept of abstract state is more fluid.
@@ -77,7 +77,7 @@ multiple inheritance. The literature provides good examples on how
 easy and modular it is to combine multiple sources of pure behaviour,
 using mechanisms such as traits~\cite{scharli03traits}. In Java
 multiple \emph{interface} inheritance has been supported since
-inception, and in Java8 default methods~\cite{goetz12fdefenders} bring some of the
+inception, and in Java 8 default methods~\cite{goetz12fdefenders} bring some of the
 advantages of traits into Java. In contrast, the literature~\cite{Sak89dis,bracha90mixin,malayeri2009cz}
 is also rich on how hard it is to modularly combine multiple sources
 of behaviour \textbf{and} state with multiple \emph{implementation}
@@ -109,7 +109,7 @@ and semantics. However, this would have a steep learning curve.  We
 take a different approach instead. For the sake of providing a more
 accessible explanation, we will embed our ideas directly into Java. 
 Our IB embedding relies on the
-new features of Java 8 for interfaces: interface \emph{static methods}; and
+new features of Java 8 for interfaces: interface \emph{static methods} and
 \emph{default methods}, which allow interfaces to have method
 implementations. In the context of Java, what we propose is a programming
 style, where we never use classes\footnote{More precisely, we never
@@ -163,7 +163,7 @@ Java \emph{Classless Java}.
 %without using a single class!
 
 Using Java annotation processors, we produce an implementation of
-Classless Java, which allow us to stick to pure Java8. By annotating
+Classless Java, which allow us to stick to pure Java 8. By annotating
 with \Q|@Obj| the interfaces that represent object interfaces, we can
 generate boring and repetitive code for interface instantiation and
 type refinement. Such code should not be needed in the first place in
@@ -174,7 +174,7 @@ IDEs) to work out-of-the-box with our implementation. Moreover, the
 implementation blends Java's conventional CB style and IB smoothly.
 As a result, we experiment object interfaces with several interesting
 Java programs, and conduct various case studies.  Finally, we also
-formally define the behaviour of our \Q|Obj| annotation and discuss
+formally define the behaviour of our \mixin annotation and discuss
 its properties.
 
 %Since Java was not designed to be used in this way, our style can be verbose, especially about object instantiation.
@@ -220,10 +220,10 @@ application shows how embedded DSLs using fluent interfaces~\cite{fowler2005flue
 can be easily defined using object interfaces. The third
 application is a case study for a simple Maze game implemented with 
 multiple inheritance. For this application we show that there is a
-significant reduction in the numbers of lines of code when compared 
+significant reduction in the number of lines of code when compared 
 to an existing implementation~\cite{bono14} using plain Java 8. The last
 application is a relatively larger case study of refactoring of a simple interpreter, showing that our
-approach can benefit modularity and scale to real code base. Noteworthy, the first three applications are implemented 
+approach can benefit modularity and scale to real code base. Noteworthy is the fact that the first three applications are implemented 
 without defining a single class! The last one contains several classes that cannot be 
 converted to interfaces due to the limitation of our implementation of \mixin.
 
