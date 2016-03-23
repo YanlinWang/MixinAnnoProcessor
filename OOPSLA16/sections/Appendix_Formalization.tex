@@ -144,8 +144,8 @@ IT(\C) = \ann\ \QM{interface}\ \C\ \QM{extends}\ \C_1\ldots\C_n \
 \label{ET}
 \end{figure*}
 
-
-
+%% Appendices A & B commented
+\begin{comment}
 \section{Expanded related work}\label{sec:ERW}
 
 \paragraph{Meta-Programming Competes with Language Extensions}
@@ -230,23 +230,23 @@ interfaces and reabstraction of default methods are also modeled.
 
 
 \section{Interaction of Interface Methods with Interface Composition}
-\bruno{I don't think this section makes alot of sense in the context 
-of the new paper! I think perhaps some of this could be mentioned 
+\bruno{I don't think this section makes alot of sense in the context
+of the new paper! I think perhaps some of this could be mentioned
 in related work.
 
-In my opinion, instead of this section, we could have one section 
+In my opinion, instead of this section, we could have one section
 that demonstrates our implementation and its advantages.
 
 \begin{itemize}
 
-\item Show a diagram of how the approach works? 
+\item Show a diagram of how the approach works?
 
 \item Syntax and type system reuse; (good for error messages, for example)
 \item On-the-fly AST rewriting (means no new files are created, and functionality
-is immediatelly available for IDE's for example); this is better than conventional 
+is immediatelly available for IDE's for example); this is better than conventional
 annotation processors.
 \item Eclipse integration; code completion.
-\item No integration issues in typical pre-processors; (the process is transparent; 
+\item No integration issues in typical pre-processors; (the process is transparent;
 no need for an external tool that generates code in a first step).
 \item Separate compilation (which relates to the properties?)
 
@@ -360,13 +360,12 @@ rejection, hence this is a bug in ECJ. This bug was also reported by
   others and is fixed in the ECJ developer branch, but not released as a stable
   version yet.
 
+\end{comment}
 
 \section{Formal Semantics}\label{sec:formal}
 
-This section presents a formalization of Classless Java, \delete{a minimal
-FeatherweightJava-like calculus} which models the essence of Java
-interfaces with default methods. This formalization is used \delete{in
-Section~\ref{sec:translation}} to define the semantics of object interfaces.
+This section presents a formalization of Classless Java, which models the essence of Java
+interfaces with default methods. This formalization is used to define the semantics of object interfaces.
 
 \subsection{Syntax}
 
