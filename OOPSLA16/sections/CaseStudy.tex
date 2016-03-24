@@ -179,7 +179,7 @@ the number of lines of code and classes/interfaces in each implementation:
 
 \vspace{5pt}
 \begin{tabular}{ccc}
-\hline
+\hline \rowcolor[HTML]{C0C0C0}
             & SLOC   & \# of classes/interfaces \\ \hline
 Bono et al. & 335    & 14                       \\
 Ours        & 199    & 11                       \\
@@ -220,6 +220,33 @@ where the number of lines grown quite a while?}
 \end{comment}
 
 \subsection{Refactoring an Interpreter}\label{subsec:int}
+\begin{comment}
+The last case study refactors the code from an interpreter for
+a Lisp-like language
+\lstinline{Mumbler}\footnote{https://github.com/cesquivias/mumbler/tree/master/simple},
+which is created as a tutorial for the Truffle
+Framework~\cite{wurthinger2013one}.  Keeping a balance between
+simplicity and useful features, \lstinline{Mumbler} contains numbers,
+booleans, lists (encoding function calls and special forms such as
+if-expression, lambdas, etc). In the original code base, which
+consists of 626 SLOC of Java, only one operation \texttt{eval} is
+supported. Extending Mumbler to support one more operation, such as a
+pretty printer (making it 661 SLOC), would normally require changing the existing code base
+directly.
+
+Our refactoring applies the pattern presented in
+Section~\ref{subsec:ep} to the existing Mumbler code base to improve
+its modularity and extensibility. Using the refactored code base (560 SLOC) it is 
+becomes possible to add new operations modularly, and to support
+independent extensibility (677 SLOC). We add one more
+operation \texttt{print} to both the original and the refactored code
+base. In the original code base the pretty printer is added
+non-modularly by modifying the existing code. In the refactored code
+base the pretty printer is added modularly. 
+Although the code in the refactored version is slightly increased (by 2.4\% SLOC), the
+modularity is greatly increased, allowing for improved reusability and maintainability.
+\end{comment}
+
 The last case study refactors the code from an interpreter for
 a Lisp-like language
 \lstinline{Mumbler}\footnote{https://github.com/cesquivias/mumbler/tree/master/simple},
@@ -241,17 +268,18 @@ independent extensibility. We add one more
 operation \texttt{print} to both the original and the refactored code
 base. In the original code base the pretty printer is added
 non-modularly by modifying the existing code. In the refactored code
-base the pretty printer is added modularly. We list the result in the following
-table:
+base the pretty printer is added modularly. 
+Although the code in the refactored version is slightly increased (by 2.4\% SLOC), the
+modularity is greatly increased, allowing for improved reusability and maintainability.
+We list the results in the following table:
 
-\begin{tabular}{|l|l|l|l|}
+\begin{tabular}{llll}
 \hline
 \rowcolor[HTML]{C0C0C0} 
 Code               & SLOC & Code               & SLOC \\ \hline
-old (eval)         & 626  & new (eval)         & 560  \\ \hline
+old (eval)         & 626  & new (eval)         & 560  \\ 
+\rowcolor[HTML]{C0C0C0}
 old (eval + print) & 661  & new (eval + print) & 677  \\ \hline
 \end{tabular}
-\noindent Although the code in the refactored version is slightly increased (by 2.4\% SLOC), the
-modularity is greatly increased, allowing for improved reusability and maintainability.
 
 
