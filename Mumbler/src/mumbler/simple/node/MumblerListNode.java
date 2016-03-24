@@ -117,7 +117,22 @@ public class MumblerListNode<T extends Object> extends Node implements Iterable<
         b.append(")");
         return b.toString();
     }
+    @Override
+    public String toString() {
+        if (this == EMPTY) {
+            return "()";
+        }
 
+        StringBuilder b = new StringBuilder("(" + this.car);
+        MumblerListNode<T> rest = this.cdr;
+        while (rest != null && rest != EMPTY) {
+            b.append(" ");
+            b.append(rest.car);
+            rest = rest.cdr;
+        }
+        b.append(")");
+        return b.toString();
+    }
     @Override
     public Object eval(Environment env) {
         Function function = (Function) ((Node) this.car).eval(env);

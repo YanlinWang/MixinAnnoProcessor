@@ -165,9 +165,9 @@ public interface Function extends Node {
 
 interface BuiltinFn extends Function {
     String name();
-//    public default String toStr() {
-//        return "<procedure: " + name();
-//    }
+   public default String toStr() {
+       return "<procedure: " + name();
+   }
 }
 
 @Obj interface BooleanNode extends Node {
@@ -182,9 +182,9 @@ interface BuiltinFn extends Function {
 @Obj interface NumberNode extends Node {
     long num();
     void num(long n);  
-//    public default String toStr() {
-//        return Long.toString(num());
-//    }
+    public default String toStr() {
+        return Long.toString(num());
+    }
 
     public default boolean equal(Object other) {
         return other instanceof NumberNode &&
@@ -289,10 +289,12 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T> {
         return this.car.equals(that.car) && this.cdr.equals(that.cdr);
     }
 
-    public String print() {
+    @Override
+    public String toString() {
         if (this == EMPTY) {
             return "()";
         }
+
         StringBuilder b = new StringBuilder("(" + this.car);
         MumblerListNode<T> rest = this.cdr;
         while (rest != null && rest != EMPTY) {
@@ -303,7 +305,7 @@ class MumblerListNode<T extends Object> implements Node, Iterable<T> {
         b.append(")");
         return b.toString();
     }
-
+        
     @Override
     public Object eval(Environment<Node> env) {
         Function function = (Function) ((Node) this.car).eval(env);
@@ -407,9 +409,9 @@ interface SpecialForm extends Node {
 @Obj interface SymbolNode extends Node {
     String name();
     
-//    public default String toStr() {
-//        return "'" + name();
-//    }
+    public default String toStr() {
+        return "'" + name();
+    }
 
     public default boolean equal(Object other) {
         return other instanceof SymbolNode &&

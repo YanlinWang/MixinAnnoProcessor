@@ -13,7 +13,10 @@ public class NumberNode extends Node {
     public String print() {
         return Long.toString(this.num);
     }
-
+    @Override
+    public String toString() {
+        return Long.toString(this.num);
+    }
     @Override
     public boolean equals(Object other) {
         return other instanceof NumberNode &&

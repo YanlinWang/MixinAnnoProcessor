@@ -2,6 +2,8 @@ package mumbler.ours.evalprint;
 
 import java.util.HashMap;
 
+import mumbler.simple.node.Node;
+
 public class Environment<A> {
     private final HashMap<String, A> env = new HashMap<String, A>();
 
@@ -29,8 +31,8 @@ public class Environment<A> {
         this.env.put(name, value);
     }
 
-    public static Environment<Node> getBaseEnvironment() {
-        Environment<Node> env = new Environment<Node>();
+    public static Environment<Node2> getBaseEnvironment() {
+        Environment<Node2> env = new Environment<Node2>();
         env.putValue("+", PLUS2.of(""));
         env.putValue("-", MINUS2.of(""));
         env.putValue("*", MULT2.of(""));

@@ -10,6 +10,10 @@ public class SymbolNode extends Node {
     }
 
     @Override
+    public String toString() {
+        return "'" + this.name;
+    }
+    @Override
     public String print() {
         return "'" + this.name;
     }
