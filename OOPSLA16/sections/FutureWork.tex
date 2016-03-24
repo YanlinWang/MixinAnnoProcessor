@@ -1,7 +1,7 @@
 \section{Future work}\label{sec:futurework}
 
-This section discusses some possible future work, including native
-language support for IB.
+%This section discusses some possible future work, including native
+%language support for IB.
 
 \begin{comment}
 
@@ -77,7 +77,7 @@ A limitation of our approach, inherited from Java, is the lack of some
 support for encapsulation: in Java interfaces all methods are public.
 However, it is possible to workaround the
 limitations of interfaces by a
- variation of the facade pattern~\cite{BettiniDSS13}:
+ variation of the facade pattern (as suggested by~\cite{BettiniDSS13}):
 \begin{lstlisting}
 @Obj interface InternalData implements ExposedData {
     /*all the methods*/} //package visibility
@@ -239,7 +239,7 @@ instead of generating the corresponding parameter.
 
 
 We may also want to offer a compact syntax for property updaters and generalized with methods;
-\begin{lstlisting}
+\begin{lstlisting}[morekeywords={with}]
 obj interface Foo{
   updater Bar, Beer;//declares imperative updaters:
   //Foo set(Bar val); Foo set(Beer val);
