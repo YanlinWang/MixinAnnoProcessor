@@ -34,7 +34,7 @@ reducing) Java boilerplate code via
 annotations. \mixin was created using Lombok.
 Figure~\ref{fig:lombok}~\cite{neildo2011blog} illustrates the flow of
 the \mixin annotation.
-First java source code is parsed into an abstract syntax tree (AST).
+First Java source code is parsed into an abstract syntax tree (AST).
 The AST is then captured by Lombok:
 each annotated node is passed to
 the corresponding (Eclipse or Javac) handler. The handler is
@@ -82,7 +82,7 @@ which conventional Java annotation processors do not support. For
 example, the standard \texttt{javax.annotation} processor, which is part of the
 Java platform, only allows generation of \emph{new code}, and the
 new code has to be written in \emph{new files}. Modification and/or
-reinterpretation of existing code is not supported.
+reinterpretation of existing code are not supported.
 
 \paragraph{Modularity}
 While general preprocessing acts across module boundaries, compilation
@@ -187,8 +187,8 @@ more detail next:
 \item{\bf Self coherence}: the generated code itself is well-typed. That is,
   type errors are not present in code the user has not written (for
   example \texttt{of} methods in Figure~\ref{fig:screenshot}).
-In our case it means that either \mixin{} produces (in a controlled way) an
-understandable error, or the interface can be successfully annotated and the generated code is well-typed.
+In our case, it means that either \mixin{} produces (in a controlled way) an
+understandable error or the interface can be successfully annotated and the generated code is well-typed.
 
 \item{\bf Client coherence}: all the client code (for example method calls)
   that is well-typed before code generation is also well-typed after the generation.

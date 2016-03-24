@@ -77,7 +77,7 @@ Since the formalized part of Classless Java does not consider casts or \Q@instan
 the \Q@with@ method is not included in the
 formal translation. For the same reason \Q@void@ returning setters are
 not included, since they are just a minor variation over the more
-interesting fluent setters, and they would require special handling
+interesting fluent setters and they would require special handling
 just for the conventional \Q@void@ type.
 Since our properties are about preserving typing,
 we do not need to formalize Classless Java semantics to prove our statements.
@@ -249,7 +249,7 @@ type preservation theorems. The reason is
 to better model how our approach behaves in a \objectoriented software ecosystem with inheritance,
 where only some units may be translated/expanded.
 Note inheritance's crucial influence in heir coherence.
-Our formulation of client coherence allows us to discuss about intermediate
+Our formulation of client coherence allows us to discuss intermediate
 stages where only some code units are translated/expanded. Conventional
 type preservation refers only to completely translated program.
 Our coherence guarantees mean that developers and designers of Java libraries and frameworks
