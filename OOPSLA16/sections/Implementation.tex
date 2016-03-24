@@ -73,7 +73,7 @@ Lombok offers in Java an expressive power similar to that of Scala/Lisp macros;
 except of course, for the syntactic convenience of quote/unquote templating.
 
 
-\paragraph{Direct modification of the AST:}
+\paragraph{Direct modification of the AST}
 Lombok alters the generation process of the class files,
 by directly modifying the AST. Neither the source code is modified nor
 new Java files are generated. Moreover, and probably more importantly,
@@ -116,7 +116,7 @@ In Figure~\ref{fig:screenshot},
 These methods are also visible to users, showing their types and modifiers in Outline window.
 Moreover, as a useful IDE feature, the auto-completion also works for these newly generated methods.
 
-\paragraph{Clarity against obfuscation:}
+\paragraph{Clarity against obfuscation}
 Preprocessors bring great power, which can easily be misused producing
 code particularly hard to understand. Thus code quality and maintainability are reduced.
 Compilation agents start from Java syntax, but they can reinterpret it.
@@ -175,7 +175,7 @@ some more advantages with respect to arbitrary (Compilation agent driven) AST re
 
 
 
-\paragraph{Syntax and type errors}:
+\paragraph{Syntax and type errors}
 Some preprocessors (like the C one) can produce syntactically invalid code.
 Lombok ensures only syntactically valid code is produced. %; however, type errors can appear.
 Classless Java additionally guarantees that no type errors are introduced
@@ -184,19 +184,19 @@ more detail next:
 
 \begin{itemize}
 
-\item{\bf Self coherence}: The generated code itself is well-typed. That is,
+\item{\bf Self coherence}: the generated code itself is well-typed. That is,
   type errors are not present in code the user has not written (for
   example \texttt{of} methods in Figure~\ref{fig:screenshot}).
 In our case it means that either \mixin{} produces (in a controlled way) an
 understandable error, or the interface can be successfully annotated and the generated code is well-typed.
 
-\item{\bf Client coherence}: All the client code (for example method calls)
+\item{\bf Client coherence}: all the client code (for example method calls)
   that is well-typed before code generation is also well-typed after the generation.
 The annotation just adds more behaviour without removing any functionality.
 
 \end{itemize}
 
-\paragraph{Heir coherence}: Another form of guarantee that could be
+\paragraph{Heir coherence} Another form of guarantee that could be
 useful in AST rewriting is heir coherence. That is, interfaces
 (and in general classes) inheriting the instrumented code are
 well-typed if they were well-typed without the instrumentation.
