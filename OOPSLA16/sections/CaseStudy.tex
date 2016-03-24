@@ -10,7 +10,7 @@ case study shows a significant reduction in code size, while the
 second case study maintains the same amount of code, but improves
 modularity.
 
-\subsection{The Expression Problem with Object Interfaces}
+\subsection{The Expression Problem with Object Interfaces}\label{subsec:ep}
 
 As a first application for Classless Java, we illustrate a useful
 programming pattern that improves modularity and extensibility of
@@ -198,7 +198,7 @@ To ensure a fair comparison, we used the same coding style as Bono et al.'s.
 
 \begin{comment}
 \subsection{Refactoring a Compiler}
-The last case study applies our approach to a slightly larger code base of a simple
+The last case study applies our approach to a larger code base of a simple
 one-pass compiler for \lstinline{C0} (a subset of \lstinline{C}). This compiler
 is a handwritten, monolithic compiler used for educational purposes at Aarhus
 University, Denmark\footnote{Source code available at
@@ -219,17 +219,29 @@ where the number of lines grown quite a while?}
 \end{comment}
 
 \subsection{Refactoring an Interpreter}\label{subsec:int}
-The last case study applies our approach to a slightly larger code base of an
-interpreter for a Lisp-like language
+The last case study applies refactors the code from an interpreter for
+a Lisp-like language
 \lstinline{Mumbler}\footnote{https://github.com/cesquivias/mumbler/tree/master/simple},
-which is created for tutorial purpose of Truffle~\cite{wurthinger2013one}. Keeping a balance between
-simplicity and useful features, \lstinline{Mumbler} contains numbers, booleans,
-lists (encoding function calls and special forms such as if-expression, lambdas,
-etc). In the original code base, only one operation \texttt{eval} is
-supported. We add one more operation \texttt{print} to the code base. Then we
-modularize the code using our techniques to convert as many classes into
-interfaces, separate out \texttt{eval} and \texttt{print} operations then combine
-them. Although the code size is slightly increased (by 2.2\% SLOC), the
-modularity is greatly increased.
+which is created as a tutorial for the Truffle
+Framework~\cite{wurthinger2013one}.  Keeping a balance between
+simplicity and useful features, \lstinline{Mumbler} contains numbers,
+booleans, lists (encoding function calls and special forms such as
+if-expression, lambdas, etc). In the original code base, which
+consists of 626 SLOC of Java, only one operation \texttt{eval} is
+supported. Extending Mumbler to support one more operation, such as a
+pretty printer, would normally require changing the existing code base
+directly.
+
+Our refactoring applies the pattern presented in
+Section~\ref{subsec:ep} to the existing Mumbler code base to improve
+its modularity and extensibility. Using the refactored code base it is 
+becomes possible to add new operations modularly, and to support
+independent extensibility. We add one more
+operation \texttt{print} to both the original and the refactored code
+base. In the original code base the pretty printer is added
+non-modularly by modifying the existing code. In the refactored code
+base the pretty printer is added modularly.
+Although the code in the refactored version is slightly increased (by 2.2\% SLOC), the
+modularity is greatly increased, allowing for improved reusability and maintainability.
 
 
