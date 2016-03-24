@@ -1,15 +1,16 @@
-\section{Case Studies}
-In this section we conduct \numOfCaseStudies case studies which reveal various
-advantages of using the \mixin annotation. The first case study provides a
-simple way to solve the Expression Problem while supporting multiple,
-independent extensions in Java.  The second case study shows how to model an
-embedded DSL for SQL languages with fluent interfaces. The third
-case study models a simple game, and compares our implementation with an
-existing one, showing that the amount of code is reduced significantly using \mixin.
-Finally, the fourth one refactors an interpreter, showing that our approach  
-benefits modularity and scales to larger and real code base.
+\section{Applications and Case Studies}
 
-\subsection{A Trivial Solution to the Expression Problem with Object Interfaces}
+This section illustrates applications and larger case studies for
+Classless Java. The first application shows how a useful pattern,
+using multiple inheritance and type-refinement, can be conviniently
+encoded in Classless Java. The second application. shows how to model an
+embedded DSL based on fluent APIs. The two larger case studies, take 
+existing projects and refactor them into Classless Java. The first
+case study shows a significant reduction in code size, while the
+second case study maintains the same amount of code, but increases 
+modularity.
+
+\subsection{The Expression Problem with Object Interfaces}
 
 The \emph{Expression Problem} (EP)~\cite{wadler98expression} is a well-known
 problem about modular extensibility issues in software evolution. Recently, a
