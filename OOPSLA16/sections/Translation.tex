@@ -65,8 +65,8 @@ $\begin{array}{l}
 This section gives an overview of what $\mixinAnn$ generates,
  and what formal properties are guaranteed in the translation.
 
-\marcoT{We formalize syntax and typing for
- Classless Java} in Appendix~\ref{sec:formal}, which models the essence of
+We formalize syntax and typing for
+ Classless Java in Appendix~\ref{sec:formal}, which models the essence of
 Java interfaces with default methods.
 %, including the syntax as well as
 %the typing rules.
@@ -79,9 +79,8 @@ formal translation. For the same reason \Q@void@ returning setters are
 not included, since they are just a minor variation over the more
 interesting fluent setters, and they would require special handling
 just for the conventional \Q@void@ type.
-
-\marcoT{Since our properties are about preserving typing,
-we do not need to formalize Classless Java semantic to proof our statements.}
+Since our properties are about preserving typing,
+we do not need to formalize Classless Java semantics to prove our statements.
 \begin{figure*}[t]
 \centering
 \hspace{-.2in}
@@ -144,24 +143,23 @@ not part of the Classless Java language.  $\weakAnn$ generates the
 constructor method $\QM{of}$, while \mixin automatically refines the
 return types and calls $\weakAnn$.
 
-Figure~\ref{figure:translation} presents the translation functions. In the first function, $\mixinAnn$
-injects refined methods to interface $\C_0$, while in the second function, $\weakAnn$ invokes
+Figure~\ref{figure:translation} presents the translation. In
+the first function, $\mixinAnn$
+injects refined methods to interface $\C_0$. The second function, $\weakAnn$ invokes
 $\ofMethod(\C_0)$ and generates the $\QM{of}$
 method for $\C_0$, if such a method does not exist in its domain, and all the abstract methods are
 valid for the annotation.
 
-Figure~\ref{figure:valid} and Figure~\ref{figure:ofmethod} present more details on the auxiliary
+Figure~\ref{figure:valid} presents more details on the auxiliary
 functions. 
 The first two points of Figure~\ref{figure:valid}
-define function $\otherMethod$;
+define function $\otherMethod$.
  This function generates unimplemented
  \Q@with-@ and fluent setters in the interface, where the 
-return types has been refined.
-
+return types have been refined.
 To determine whether a method needs to be generated,
 we check if such \Q@with-@ or setter methods
-require an implementation in $\C_0$, but not declared directly in $\C_0$.
-
+require an implementation in $\C_0$, but are not declared directly in $\C_0$.
 The third point gives the definition
 of $\valid$:
 it is valid to annotate an interface if 
@@ -172,7 +170,6 @@ That is, we can categorize them in a pattern that we
 know how to implement (right column):
 it is either a field getter (first point),
 a with method (second point) or a setter (third point).
-
 Note that we write $\QM{with#}\m$ to append $\m$ to
 \QM{with}, following the camelCase rule. The first letter of $\m$
 must be lower-case and is changed to upper-case upon appending. For
@@ -187,7 +184,6 @@ It detects all the field methods of $\C_0$ and use them to synthesize
 its arguments.
 The return statement instantiates an anonymous class which
 generates the needed getters, fluent setters and with-methods.
-
 The right column first point collects the getter methods,
 the second and third point generate implementations for \texttt{with-} methods
 if needed; similarly, the fourth and fifth point generate fluent setters if needed.
@@ -215,7 +211,7 @@ To formally characterize the behavior of our annotation and the two levels of gu
 \item We denote with $\C^{\II}$ and $m^\method$ the name of an interface and of a method.
 \item An interface table
 IT is OK if under such interface table, all interfaces are OK,
-\marcoT{that is, well typed}.
+that is, well typed.
 \item Since interface tables are just represented as sequences of interfaces we write IT = $\II$ IT' to select a specific interface in a table.
 \item IT contains an heir of $\C$ if there is an interface that extends it, or a \Q@new@ that instantiates it.
 \end{itemize}
@@ -237,8 +233,7 @@ then the interface table $[\![\II]\!]$ IT is OK.
 Informally, the theorems mean that for a client program that
 type-checks before the translation is applied, if the annotated type has
 no subtypes and no objects of that type are created, then type safety
-\marcoT{of the generated code}
-is guaranteed after the successful translation.
+of the generated code is guaranteed after the successful translation.
 
 The second
 step of \mixin, namely what $\weakAnn$ does in the formalization, is
@@ -246,19 +241,18 @@ guaranteed to be type-safe for the three kinds of coherence by the $\weakAnn$ th
 The \mixin theorem is more interesting: since \mixin does not guarantee heir
 coherence, we explicitly exclude the presence of heirs. In this way
 the \mixin theorem guarantees only self and client coherence. The formal
-theorem proofs are available in the supplementary
-materials\bruno{point to appendix instead}.
+theorem proofs are available in Appendix~\ref{sec:appendix}.
 
 \paragraph{Type preservation:}
 Note that we preferred to introduce self, client and heir coherence instead of referring to conventional
-type preservation theorems~\cite{}. The reason is
+type preservation theorems. The reason is
 to better model how our approach behaves in a object oriented software ecosystem with inheritance,
 where only some units may be translated/expanded.
-Note inheritance crucial influence in heir coherence, and 
-our formulation of client coherence allows to discuss about intermediate
-stages where only some code units are translated/expanded, while conventional 
-type preservation refers only to the completely translated program.
-This means that developers and designers of Java libraries and frameworks
+Note inheritance's crucial influence in heir coherence.
+Our formulation of client coherence allows us to discuss about intermediate
+stages where only some code units are translated/expanded. Conventional 
+type preservation refers only to completely translated program.
+Our coherence guarantees mean that developers and designers of Java libraries and frameworks
 can start using IB (and our \mixin annotation) in the evolution of their products
 and still retain backward compatibility with their clients.
 
