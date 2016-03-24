@@ -99,7 +99,7 @@ thus cannot be implemented from outside the package.
 This can raise questions: keeping fields private is a staple of CB.
 By forcing the user/heir to rely only on methods, we avoid (a part)
 of the fragile base class problem and we obtain representation independence.
-In IB fields do not exists; abstract state methods like getters and
+In IB fields do not exist; abstract state methods like getters and
 setters are abstract: it does not make sense to make them private;
 however, since they are methods, the base interface may be able to
 evolve freely.  To understand if a fragile base interface problem
@@ -208,7 +208,7 @@ To define such language, the first task is to define the set of abstract state o
 Of course we need getters; \Q@withX@ methods are also convenient, and they enable a
 clean functional programming style that would be otherwise too cumbersome.
 Currently we are offering both setters and fluent setters.
-We believe fluent setters to be sufficient; we could drop the concept of (non fluent)setters.
+We believe fluent setters to be sufficient; we could drop the concept of (non-fluent) setters.
 Manually defining abstract state methods can be verbose, we could offer a convenient syntax to
 declare in a compact way get/set/with.
 For example:
