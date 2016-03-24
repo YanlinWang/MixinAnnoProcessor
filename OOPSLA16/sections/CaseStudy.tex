@@ -3,16 +3,19 @@
 This section illustrates applications and larger case studies for
 Classless Java. The first application shows how a useful pattern,
 using multiple inheritance and type-refinement, can be conviniently
-encoded in Classless Java. The second application. shows how to model an
-embedded DSL based on fluent APIs. The two larger case studies, take
+encoded in Classless Java. The second application shows how to model
+embedded DSLs based on fluent APIs. The two larger case studies, take
 existing projects and refactor them into Classless Java. The first
 case study shows a significant reduction in code size, while the
-second case study maintains the same amount of code, but increases
+second case study maintains the same amount of code, but improves
 modularity.
 
 \subsection{The Expression Problem with Object Interfaces}
 
-The \emph{Expression Problem} (EP)~\cite{wadler98expression} is a well-known
+As a first application for Classless Java, we illustrate a useful
+programming pattern that improves modularity and extensibility of
+programs. This useful pattern is based on an existing solution to 
+the \emph{Expression Problem} (EP)~\cite{wadler98expression}, which is a well-known
 problem about modular extensibility issues in software evolution. Recently, a
 new solution~\cite{eptrivially} using only covariant type refinement was
 proposed. When this solution is modeled with interfaces and default methods, it
@@ -20,7 +23,10 @@ can even provide independent extensibility~\cite{zenger05independentlyextensible
 from multiple, independently developed extensions. Unfortunately, the
 required instantiation code makes a plain Java solution verbose and cumbersome
 to use. The \mixin annotation is enough to remove the boilerplate code, making
-the presented approach very appealing.
+the presented approach very appealing. Our last case study, presented
+in Section~\ref{subsec:int}, is essentially a (much larger) application of this
+pattern to an existing program. Here we illustrate the pattern in the
+much smaller Expression Problem.
 
 \paragraph{Initial System}
 In the formulation of the EP, there is an initial system that models
@@ -212,7 +218,7 @@ code becomes more modular without the sacrifice of code amount/simplicity.
 where the number of lines grown quite a while?}
 \end{comment}
 
-\subsection{Refactoring an Interpreter}
+\subsection{Refactoring an Interpreter}\label{subsec:int}
 The last case study applies our approach to a slightly larger code base of an
 interpreter for a Lisp-like language
 \lstinline{Mumbler}\footnote{https://github.com/cesquivias/mumbler/tree/master/simple},
