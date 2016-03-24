@@ -1,6 +1,12 @@
 \section{Future work}\label{sec:futurework}
+
+This section discusses some possible future work, including native
+language support for IB.
+
 \begin{comment}
+
 \subsection{Encapsulation}
+
 The biggest limitation of our approach is the inability to model visibility restrictions. For example, the absence
 of support for private/protected methods in Java 8 interfaces forces all
 members of interfaces to be public, including static methods. Since we use
@@ -67,8 +73,11 @@ support for privacy in interfaces.
 %is impossible for the user to know if a certain method maps directly to a field
 %or if it has a default implementation.
 
-As shown in~\cite{BettiniDSS13} interfaces are enough to support encapsulation/privateness by a
- variation of the facade pattern:
+A limitation of our approach, inherited from Java, is the lack of some
+support for encapsulation: in Java interfaces all methods are public.
+However, it is possible to workaround the
+limitations of interfaces by a
+ variation of the facade pattern~\cite{BettiniDSS13}:
 \begin{lstlisting}
 @Obj interface InternalData implements ExposedData {
     /*all the methods*/} //package visibility
@@ -78,27 +87,23 @@ public interface ExposedData {
     return InternalData.of(...);}  }
 \end{lstlisting}
 
-This is a safe and explicit way to list all the public interfaces and to hide all the implementation
+\noindent This is a safe and explicit way to list all the public interfaces and to hide all the implementation
 details from outside of the package.\footnote{
-Note how \Q@ExposedData.of@ do not need to map directly to the fields, and can also perform
+Note how \Q@ExposedData.of@ does not need to map directly to the fields, and can also perform
 invariant checking.}
-
 Using packages as a boundary we can make all object interfaces \emph{where some form of privateness is desirable}
 as invisible types for the rest of the program.
 This preserves encapsulation, but limits inheritance:
 package protected interfaces cannot be seen,
 thus cannot be implemented from outside the package.
-
-This can raise questions: keeping fields private is a staple of CB \objectoriented programming;
-by forcing the user/heir to rely only on methods, we avoid (a part)
+This can raise questions: keeping fields private is a staple of CB.
+By forcing the user/heir to rely only on methods, we avoid (a part)
 of the fragile base class problem and we obtain representation independence.
-
-In IB fields do not exists; abstract state methods like getters and setters are abstract:
-it does not make sense to make them private; however, since they are methods,
-the base interface may be able to evolve freely.
-To understand if a fragile base interface problem exists in IB, we need more research.
-
-
+In IB fields do not exists; abstract state methods like getters and
+setters are abstract: it does not make sense to make them private;
+however, since they are methods, the base interface may be able to
+evolve freely.  To understand if a fragile base interface problem
+exists in IB, we need more research.
 
 %
 %Using Java9 private interface methods%
@@ -164,6 +169,8 @@ If multiple interfaces are implemented, and more then one offers
 %\bruno{removed the invariants stuff; we need space, I think.}
 
 %\subsection{Clone, toString, equals and hashCode}
+
+\begin{comment}
 \paragraph{Clone, toString, equals and hashCode}
 Methods originally defined in Java class \Q@Object@, such as \Q@clone@ and
 \Q@toString@, can be supported by our approach with special care. If an
@@ -190,38 +197,34 @@ interface Point { ...//as before
             public Point clone() {
                 return Point.super.clone();}};} }
 \end{lstlisting}
+\end{comment}
 
 \paragraph{A real IB language}
-In this article we presented the concept of IB as a programming pattern over Java.
+In this paper we presented the concept of IB as a programming pattern over Java.
 An alternative would be to have a language providing IB as its only paradigm.
 We do not wish to define here a complete IB language, just to show the reader IB as
 a promising way to design a new OO language.
 To define such language, the first task is to define the set of abstract state operations.
-Of course we need getters; \Q@withX@ methods seams to be pretty convenient, and they enable a
-clean function programming style that would be otherwise too cumbersome.
-
+Of course we need getters; \Q@withX@ methods are also convenient, and they enable a
+clean functional programming style that would be otherwise too cumbersome.
 Currently we are offering both setters and fluent setters.
-We believe be fluent setters to be sufficient; we could drop the concept of (non fluent)setters.
-
+We believe fluent setters to be sufficient; we could drop the concept of (non fluent)setters.
 Manually defining abstract state methods can be verbose, we could offer a convenient syntax to
 declare in a compact way get/set/with.
-For example
+For example:
 \begin{lstlisting}
 obj interface Foo{
-  String bar;// exapanded as getter and with:
+  String bar;// expanded as getter and with:
   //String bar(); Foo withBar(String val);
   var String beer;//as before plus fluent setter
-  }
+}
 \end{lstlisting}
 
-It could be possible to offer pre initialized abstract state, for example
+\noindent It should be possible to offer pre initialized abstract state, for example
 \begin{lstlisting}
-obj interface Foo{
-  var String bar="hello";
-  }
+obj interface Foo{ var String bar="hello"; }
 \end{lstlisting}
-
-could be a short hand for writing
+\noindent could be a short hand for writing
 
 \begin{lstlisting}
 obj interface Foo{
@@ -229,7 +232,7 @@ obj interface Foo{
   Foo withBar(String val);
   Foo bar(String val);
   String initBar(){return "hello";}
-  }
+}
 \end{lstlisting}
 and the automatically generated \Q@of@ method will use \Q@initX@ methods to initialize fields
 instead of generating the corresponding parameter.
@@ -238,13 +241,13 @@ instead of generating the corresponding parameter.
 We may also want to offer a compact syntax for property updaters and generalized with methods;
 \begin{lstlisting}
 obj interface Foo{
-  updater Bar, Beer//declares imperative updaters:
+  updater Bar, Beer;//declares imperative updaters:
   //Foo set(Bar val); Foo set(Beer val);
-  with Foo, Beer//declared functional updaters:
+  with Foo, Beer;//declared functional updaters:
   //Foo with(Bar val); Foo with(Beer val);
-  }
+}
 \end{lstlisting}
-Finally, certain methods may have a specific meaning, for example
-if a method called \Q@postInit@ is present, it will be called after construction,
-and it may be handled specially during multiple implementations, so that all relevant \Q@postInit@ methods are
+Finally, certain methods may have a specific meaning. For example
+if a method called \Q@postInit@ is present, it will be called after construction.
+It may be handled specially during multiple implementations, so that all relevant \Q@postInit@ methods are
 called in some order.
