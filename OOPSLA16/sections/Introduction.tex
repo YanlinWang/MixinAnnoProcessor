@@ -25,7 +25,7 @@ fundamental to have stateful objects. All abstract operations in an
 object interface are interpreted as \emph{abstract state
   operations}. The abstract state operations include various common
 utility methods (such as getters and setters, or clone-like
-methods). Objects are only responsible to define the ultimate
+methods). Objects are the only responsible to define the ultimate
 behaviour of a method and, for example, if such a method is just a
 setter. Anything related to state is completely contained in the
 instances and does not leak into the inheritance logic.  In CB, the structure of the state is fixed and can be only grown
@@ -246,6 +246,9 @@ In summary, the contributions of this paper are:
   allowing most tools to work transparently with our approach. 
   We provide examples, informal and formal descriptions of Classless
   Java.
+  Existing Java projects can use our approach and still be
+  backward compatible with their client, in a way that is formally specified
+  by our safety properties.
 
 \item {\bf Type-safe covariant mutable state:} we show how the 
  combination of abstract state operations and type-refinement enables 
