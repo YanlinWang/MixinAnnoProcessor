@@ -16,21 +16,21 @@
 %typechecking efficiency (one trait will be potentially checked multiple times if
 %it is used in multiple classes).
 
-\paragraph{Models of Object-Oriented programming}
-There are traditionally two big styles of OOP: class-based and
-prototype-based. The class-based tradition started with Simula~\cite{Dahl66simula},
+\paragraph{Models of \objectoriented programming}
+There are traditionally two big styles of OOP: \classbased and
+\prototypebased. The \classbased tradition started with Simula~\cite{Dahl66simula},
 and is the dominant style of OOP today. Major languages such
-as Java, C\#, C++ or Scala favour a class based OOP style. Very often
-class-based languages are statically typed and they have interfaces or
+as Java, C\#, C++ or Scala favour a \classbased OOP style. Very often
+\classbased languages are statically typed and they have interfaces or
 some other similar mechanisms such as traits. However, in contrast to IB
 programming, interfaces or traits in CB programming are not meant to
 replace classes, but rather, they complement classes. Normally
 interfaces or traits define the signatures of the methods and
 \emph{may} have some behaviour (such as in Java 8 interfaces or Scala
 traits). However classes are still responsible for object
-instantiation and handling state. Prototype-based languages started
+instantiation and handling state. \Prototypebased languages started
 with Self~\cite{Ungar87self}, and are still widely used today via languages like
-JavaScript. Frequently prototype-based languages are dynamically
+JavaScript. Frequently \prototypebased languages are dynamically
 typed. IB programming is clearly closer to CB programming. However the
 key difference is that classes are not needed in IB
 programming. Object interfaces recover the responsibility of object
@@ -40,7 +40,7 @@ modularity and flexibility. Central to these goals are the
 more expressive and automated forms of type-refinement, and support
 for multiple interface inheritance.
 
-\paragraph{Multiple inheritance in Object-Oriented languages}
+\paragraph{Multiple inheritance in \objectoriented languages}
 Many authors have argued in favor or against multiple inheritance.
 Multiple \emph{implementation}
 inheritance is very expressive, but difficult to model and implement, and can
@@ -313,15 +313,15 @@ Furthermore, we do automatic return type refinement for this kind of methods. Th
 \paragraph{ThisType and MyType}
 %\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namely it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolishes most advantages of interfaces.}
 Object interfaces support automatic type-refinement.
-Type refinement is part of a bigger topic in class-based languages: expressing and
+Type refinement is part of a bigger topic in \classbased languages: expressing and
 preserving type recursion and (nominal/structural) subtyping at the same time.
 
 One famous attempt in this direction is provided by
 \emph{MyType}~\cite{bruce1994paradigmatic}, representing the type of
 \textbf{this}, changing its meaning along with inheritance. However when
 invoking a method with MyType in a parameter position, the exact type of the
-receiver must be known.  This is a big limitation in class based object oriented
-programming, and is exasperated by the interface-based programming we propose: no
+receiver must be known.  This is a big limitation in \classbased \objectoriented
+programming, and is exasperated by the \interfacebased programming we propose: no
 type is ever going to be exact since classes are not explicitly used. A recent
 article~\cite{Saito2013933} lights up this topic, proposing two
 new features: exact statements and nonheritable methods. Both are
@@ -331,7 +331,7 @@ statements (a form of wild-card capture on the exact run-time type) could
 capture the ``exact type'' of an object even in a class-less
 environment.
 Admittedly, MyType greatly enhances the expressiveness and extensibility of
-object-oriented programming languages. Object interfaces use covariant-return types to
+\objectoriented programming languages. Object interfaces use covariant-return types to
 simulate some uses of MyType. But this approach only works for refining
 return types, whereas MyType is more general, as it also works for
 parameter types. Our approach to covariantly refine state can recover
