@@ -22,8 +22,8 @@ There are traditionally two big styles of OOP: \classbased and
 and is the dominant style of OOP today. Major languages such
 as Java, C\#, C++ or Scala favour a \classbased OOP style. Very often
 \classbased languages are statically typed and they have interfaces or
-some other similar mechanisms such as traits. However, in contrast to IB
-programming, interfaces or traits in CB programming are not meant to
+some other similar mechanisms such as traits. However, in contrast to
+IB, interfaces or traits in CB are not meant to
 replace classes, but rather, they complement classes. Normally
 interfaces or traits define the signatures of the methods and
 \emph{may} have some behaviour (such as in Java 8 interfaces or Scala
@@ -31,11 +31,10 @@ traits). However classes are still responsible for object
 instantiation and handling state. \Prototypebased languages started
 with Self~\cite{Ungar87self}, and are still widely used today via languages like
 JavaScript. Frequently \prototypebased languages are dynamically
-typed. IB programming is clearly closer to CB programming. However the
-key difference is that classes are not needed in IB
-programming. Object interfaces recover the responsibility of object
+typed. IB is clearly closer to CB. However the
+key difference is that classes are not needed in IB. Object interfaces recover the responsibility of object
 instantiation, and abstract state operations provide a way to deal
-with state. A primary motivation of IB programming is to improve
+with state. A primary motivation of IB is to improve
 modularity and flexibility. Central to these goals are the
 more expressive and automated forms of type-refinement, and support
 for multiple interface inheritance.
@@ -78,7 +77,7 @@ mixin inheritance cannot provide a satisfactory resolution in some cases and
 restricts the flexibility of mixin composition. To fight this limitation, an
 algebra of mixin operators is introduced~\cite{ancona2002calculus}, but this
 raises the complexity, especially when constructors and fields
-are considered~\cite{marco09FJigsaw}. Scala traits are in fact more like linearized mixins.
+are considered~\cite{marco09FJigsaw}. Scala traits~\cite{scala-overview} are in fact more like linearized mixins.
 Scala avoids the object initialization
 problem by disallowing constructor parameters, causing no ambiguity in cases
 such as the diamond problem. However this approach has limited expressiveness, and
@@ -108,7 +107,7 @@ inheritance can be transformed to one without diamonds. Moreover,
 fields and multiple inheritance can coexist. However untangling
 inheritance also untangles the class structure. In CZ, not only the
 number of classes, but also the class hierarchy complexity
-increases. IB programming does not complicate the hierarchical structure, and state
+increases. IB does not complicate the hierarchical structure, and state
 can also coexist with multiple inheritance.
 
 %\paragraph{Traits and Java's default methods}
