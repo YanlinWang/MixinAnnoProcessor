@@ -4,7 +4,7 @@
 They aim to couple flexibility and rigour, expressive power and
 modular reasoning.  Two main ideas emerged to this end: 
 \prototypebased (PB)~\cite{Ungar87self} and \classbased (CB) languages such as
-Java or Scala.  In \prototypebased
+Java, C\# or Scala.  In \prototypebased
 languages objects inherit from other objects. Thus objects own
 both behaviour and state (and objects are all you have).
 In \classbased languages an object is an instance of a specific class,
@@ -12,7 +12,7 @@ and classes inherit from other classes.  Here objects own the state,
 while classes contain behaviour and the structure of the state.
 
 This paper presents a third alternative: the concept of
-\textbf{\interfacebased} (IB) \objectoriented languages, where objects 
+\textbf{\interfacebased} \objectoriented programming languages (in short IB), where objects 
 implement interfaces directly. In IB interfaces own the implementation
 for the behaviour, which is structurally defined in their
 interface. Programmers do not define objects directly, but delegate
@@ -20,7 +20,7 @@ the task to \emph{object interfaces}, whose role is similar to non-abstract
 classes in CB languages. Instantiation of objects is
 done using static factory methods in object interfaces.
 
-A key challenge in IB programming lies in how to model state, which is
+A key challenge in IB lies in how to model state, which is
 fundamental to have stateful objects. All abstract operations in an
 object interface are interpreted as \emph{abstract state
   operations}. The abstract state operations include various common
@@ -30,7 +30,7 @@ behaviour of a method and, for example, if such a method is just a
 setter. Anything related to state is completely contained in the
 instances and does not leak into the inheritance logic.  In CB
 programming, the structure of the state is fixed and can be only grown
-by inheritance.  In contrast, in IB programming the state is never
+by inheritance.  In contrast, in IB the state is never
 fixed, and methods that look like abstract setters and getters
 can always receive an explicit implementation down in the inheritance
 chain, improving \textbf{modularity and flexibility}.  That is, the
@@ -48,13 +48,13 @@ solution~\cite{eptrivially} to the Expression
 Problem~\cite{wadler98expression} in Java-like languages, shows how easy it is to solve
 the problem using only type-refinement. However it took nearly 20
 years since the formulation of the problem for that
-solution to be presented in the literature. In IB programming, due to
+solution to be presented in the literature. In IB, due to
 its emphasis on type-refinement, that solution should have been much
 more obvious.
 
 One important advantage of the use of abstract state operations and
 type-refinement is that it allows a new approach to
-\emph{type-safe covariant mutable state}. That is, in IB programming,
+\emph{type-safe covariant mutable state}. That is, in IB,
 it is possible to type-refine \emph{mutable} ``fields'' in subtypes. This is
 typically forbidden in CB programming languages (including Java and
 Scala), since it is widely known that \emph{naive} type-refinement of
@@ -72,7 +72,7 @@ In this paper we show how to support type-safe
 and \textbf{multiple inheritance}.}
 \end{comment}
 
-Finally, another advantage of IB programming is its support for
+Finally, another advantage of IB is its support for
 multiple inheritance. The literature provides good examples on how
 easy and modular it is to combine multiple sources of pure behaviour,
 using mechanisms such as traits~\cite{scharli03traits}. In Java
@@ -81,9 +81,9 @@ inception, and in Java 8 default methods~\cite{goetz12fdefenders} bring some of 
 advantages of traits into Java. In contrast, the literature~\cite{Sak89dis,bracha90mixin,malayeri2009cz}
 is also rich on how hard it is to modularly combine multiple sources
 of behaviour \textbf{and} state with multiple \emph{implementation}
-inheritance of classes. In IB programming there is only multiple
+inheritance of classes. In IB there is only multiple
 interface inheritance, yet programmers can still use state via the
-abstract state operations. IB programming enables powerful 
+abstract state operations. IB enables powerful 
 idioms using multiple inheritance and state.
 
 %Traits or Java8 interfaces still assume a CB model: 
