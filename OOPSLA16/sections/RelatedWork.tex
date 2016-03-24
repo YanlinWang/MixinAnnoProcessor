@@ -55,12 +55,12 @@ restrictions; and the trait model is the most restricted one (excluding
 state, instantiation, etc).
 
 %\paragraph{C++ Approach.}
-C++ tries to provide a general solution to multiple inheritance by
+C++ has a general solution to multiple inheritance by
 virtual inheritance, dealing with the diamond problem by keeping only
 one copy of the base class~\cite{ellis1990annotated}. However C++
 suffers from the object initialization problem~\cite{malayeri2009cz}.
-It bypasses all constructor calls to virtual superclasses, which can
-potentially cause serious semantic errors. In our approach, the \mixin
+It bypasses constructor calls to virtual superclasses, which can
+cause serious semantic errors. In our approach, the \mixin
 annotation has full control over object initialization,
 and the mechanism is transparent to users. Moreover, customized factory
 methods are also allowed: if users are not satisfied with the default
@@ -99,16 +99,16 @@ interfaces is unordered and symmetric.
 
 %\paragraph{CZ.}
 Malayeri and Aldrich proposed a model CZ~\cite{malayeri2009cz} which
-aims to do multiple inheritance without the diamond problem. They
-divide inheritance into two separate concepts: inheritance dependency
+aims to do multiple inheritance without the diamond problem. 
+Inheritance is divided into two concepts: inheritance dependency
 and implementation inheritance. Using a combination of
 \texttt{requires} and \texttt{extends}, a program with diamond
-inheritance can be transformed to one without diamonds. Moreover,
+inheritance is transformed to one without diamonds. Moreover,
 fields and multiple inheritance can coexist. However untangling
 inheritance also untangles the class structure. In CZ, not only the
 number of classes, but also the class hierarchy complexity
 increases. IB does not complicate the hierarchical structure, and state
-can also coexist with multiple inheritance.
+also coexists with multiple inheritance.
 
 %\paragraph{Traits and Java's default methods}
 Simplifying the mixins approach, traits~\cite{scharli03traits} draw a strong
@@ -192,9 +192,10 @@ limiting when multiple inheritance with state is required.  Abstract state
 operations avoid the key difficulties associated with multiple inheritance and
 state, while still being quite expressive.  Moreover the ability to support
 constructors adds expressivity, which is not available in approaches
-such as Scala's traits/mixins.\footnote{Scala traits have
-  no constructor, but \Q@var@s and (\Q@lazy@) \Q@val@s can be
-  ``pre-initialized''.}
+such as Scala's traits/mixins.
+%\footnote{Scala traits have
+%  no constructor, but \Q@var@s and (\Q@lazy@) \Q@val@s can be
+%  ``pre-initialized''.}
 
 %Nevertheless, we
 %believe that in other languages the separation can be more practical
@@ -314,7 +315,6 @@ Furthermore, we do automatic return type refinement for this kind of methods. Th
 Object interfaces support automatic type-refinement.
 Type refinement is part of a bigger topic in \classbased languages: expressing and
 preserving type recursion and (nominal/structural) subtyping at the same time.
-
 One famous attempt in this direction is provided by
 \emph{MyType}~\cite{bruce1994paradigmatic}, representing the type of
 \textbf{this}, changing its meaning along with inheritance. However when
