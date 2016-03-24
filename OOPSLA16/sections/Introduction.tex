@@ -2,10 +2,10 @@
 
 Object oriented languages strive to offer great code reuse.
 They aim to couple flexibility and rigour, expressive power and
-modular reasoning.  Two main ideas have emerged to this end: prototype
+modular reasoning.  Two main ideas emerged to this end: prototype
 based (PB)~\cite{Ungar87self} and class based (CB) languages such as
 Java or Scala.  In prototype based
-languages objects inherit from other objects, and thus objects own
+languages objects inherit from other objects. Thus objects own
 both behaviour and state (and objects are all you have).
 In class based languages an object is an instance of a specific class,
 and classes inherit from other classes.  Here objects own the state,
@@ -53,9 +53,9 @@ its emphasis on type-refinement, that solution should have been much
 more obvious.
 
 One important advantage of the use of abstract state operations and
-automatic type-refinement is that it offers a new form of
+type-refinement is that it allows a new approach to
 \emph{type-safe covariant mutable state}. That is, in IB programming,
-it is possible to refine \emph{mutable} ``fields'' in subtypes. This is
+it is possible to type-refine \emph{mutable} ``fields'' in subtypes. This is
 typically forbidden in CB programming languages (including Java and
 Scala), since it is widely known that \emph{naive} type-refinement of
 mutable fields is not type-safe. While covariant refinement of mutable
@@ -165,7 +165,7 @@ Java \emph{Classless Java}.
 Using Java annotation processors, we produce an implementation of
 Classless Java, which allow us to stick to pure Java 8. By annotating
 with \Q|@Obj| the interfaces that represent object interfaces, we can
-generate boring and repetitive code for interface instantiation and
+automatically generate code for interface instantiation and
 type refinement. Such code should not be needed in the first place in
 a real IB language, and the annotation processor allows us to
 transparently hide it from Java programmers.  The implementation works
@@ -211,6 +211,7 @@ its properties.
 %bug, ECJ behaves differently from both our formalization and Oracle's 
 %Java compiler.
 
+\begin{comment}
 To evaluate the usefulness of object interfaces, we illustrate
 \numOfCaseStudies \bruno{needs updates}\yanlin{updated} 
 applications. The first application is a simple 
@@ -226,6 +227,7 @@ application is a relatively larger case study of refactoring of a simple interpr
 approach can benefit modularity and scale to real code base. Noteworthy, the first three applications are implemented 
 without defining a single class! The last one contains several classes that cannot be 
 converted to interfaces due to the limitation of our implementation of \mixin.
+\end{comment}
 
 While the Java embedding has obvious advantages from the practical
 point-of-view, it also imposes some limitations that a new IB language
@@ -248,7 +250,7 @@ In summary, the contributions of this paper are:
 
 \item {\bf Type-Safe Covariant Mutable State:} We show how the 
  combination of abstract state operations and type-refinement enables 
- a form of mutable fields that can be covariantly refined in a type-safe way.
+ a form of mutable state that can be covariantly refined in a type-safe way.
 
 %\item{\bf Type preservation guarantees:}\bruno{needs rephrasing}
 %We discuss our formalization of a subset of Java8 type system and how we use this
@@ -259,7 +261,7 @@ In summary, the contributions of this paper are:
 %We prove several properties of the translation\footnote{Proofs and prototype implementation are available in
 %  the supplementary materials.}.
 
-\item {\bf Case Studies:} We illustrate the usefulness of IB
+\item {\bf Applications and Case Studies:} We illustrate the usefulness of IB
   through various examples and case studies.
 
 %\item{\bf Language Tuning:} We identify the concept of language tuning 
