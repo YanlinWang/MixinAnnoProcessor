@@ -138,7 +138,7 @@ representing its position in space. We use 2D points to keep track of locations 
 
 \paragraph{\Q@Point2D@: simple immutable data with fields}
 Here we will illustrate how points are modelled with interfaces. In IB
-we do not talk about state directly. Instead state is accessed and
+we do not talk about state directly. Instead, state is accessed and
 manipulated using abstract methods.  The usual approach to model
 points in Java is to use a class with fields for the coordinates.
 In Classless Java interfaces are used instead:
@@ -353,7 +353,7 @@ can be synthesized can be object interfaces. A non \mixin interface is like an a
 %\lstinputlisting[linerange=-]{} % APPLY:linerange=POINT_OF
 
 \paragraph{\Q@Animal@ and \Q@Horse@: simple mutable data with fields}
-2D points are mathematical entities, thus we choose immutable data structure to
+2D points are mathematical entities, thus we choose an immutable data structure to
 model them. However animals are real world entities, and when an animal moves,
 it is the \emph{same} animal with a different location. We model this with
 mutable state.
@@ -568,7 +568,7 @@ object; updates field \texttt{x} to \texttt{val}.             \\ \cline{2-4}
 In summary, object interfaces provide support for
 different types of abstract state operations: four field-based state
 operations; and functional updaters. Furthermore object interfaces support
-direct object intantiation via \texttt{of} factory methods.
+direct object instantiation via \texttt{of} factory methods.
 Figure~\ref{fig:abstractstate} summarizes the six operations supported
 by \mixin. The field-based abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of

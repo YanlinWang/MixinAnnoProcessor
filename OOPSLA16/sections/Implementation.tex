@@ -137,7 +137,7 @@ annotation, since they rely on the overall type structure of the
 class, which we do not arbitrarily modify but just complete.
 
 Thus, in addition to the advantages of Lombok, Classless Java offers
-some more advantages with respect to arbitrary (Compilation agent driven) AST rewriting.
+some more advantages with respect to arbitrary (compilation agent driven) AST rewriting.
 
 %\marco{The section No reuse of the type system
 %is controversial.
@@ -224,7 +224,7 @@ to give up automatic type refinement, which is an essential part of IB programmi
 However, the reader should note that Java libraries almost always break heir
 coherence during evolution and still claim backward compatibility (false in
 theory but statistically true in practice). In practice, adding any method to any
-non final class of a Java library is enough to break heir
+non-final class of a Java library is enough to break heir
 coherence.  We think return type refinement breaks heir coherence ``less" than normal library evolution, and
 if no automatic type-refinements are needed, then \mixin can claim a
 form of heir coherence.
