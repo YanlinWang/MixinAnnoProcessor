@@ -257,7 +257,7 @@ booleans, lists (encoding function calls and special forms such as
 if-expression, lambdas, etc). In the original code base, which
 consists of 626 SLOC of Java, only one operation \texttt{eval} is
 supported. Extending Mumbler to support one more operation, such as a
-pretty printer, would normally require changing the existing code base
+pretty printer \texttt{print}, would normally require changing the existing code base
 directly.
 
 Our refactoring applies the pattern presented in
@@ -273,13 +273,14 @@ Although the code in the refactored version is slightly increased (by 2.4\% SLOC
 modularity is greatly increased, allowing for improved reusability and maintainability.
 We list the results in the following table:
 
+\vspace{0.5em}
 \begin{tabular}{llll}
 \hline
 \rowcolor[HTML]{C0C0C0} 
 Code               & SLOC & Code               & SLOC \\ \hline
-old (eval)         & 626  & new (eval)         & 560  \\ 
+old (\texttt{eval})         & 626  & new (\texttt{eval})         & 560  \\ 
 \rowcolor[HTML]{C0C0C0}
-old (eval + print) & 661  & new (eval + print) & 677  \\ \hline
+old (\texttt{eval} + \texttt{print}) & 661  & new (\texttt{eval} + \texttt{print}) & 677  \\ \hline
 \end{tabular}
 
 
