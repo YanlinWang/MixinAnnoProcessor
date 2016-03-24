@@ -58,7 +58,7 @@ support for privacy in interfaces.
 
 %\subsection{Qualifiers in Methods} %{Private state
 \paragraph{Encapsulation} %{Private state
-%Encapsulation 
+%Encapsulation
 %Since we are using Java8 to encode IB, we are unable to directly support qualifies
 %like private or protected. In Java 9 private methods will be allowed in
 %interfaces. Abstract state operations are, however, abstract methods,
@@ -85,9 +85,9 @@ invariant checking.}
 
 Using packages as a boundary we can make all object interfaces \emph{where some form of privateness is desirable}
 as invisible types for the rest of the program.
-This preserve encapsulation, but limits inheritance:
-package protected interfaces can not be seen,
-thus can not be implemented from outside the package.
+This preserves encapsulation, but limits inheritance:
+package protected interfaces cannot be seen,
+thus cannot be implemented from outside the package.
 
 This can raise questions: keeping fields private is a staple of CB object oriented programming;
 by forcing the user/heir to rely only on methods, we avoid (a part)
@@ -95,7 +95,7 @@ of the fragile base class problem and we obtain representation independence.
 
 In IB fields do not exists; abstract state methods like getters and setters are abstract:
 it does not make sense to make them private; however, since they are methods,
-the base interface may be able to evolve freely. 
+the base interface may be able to evolve freely.
 To understand if a fragile base interface problem exists in IB, we need more research.
 
 
@@ -165,7 +165,7 @@ If multiple interfaces are implemented, and more then one offers
 
 %\subsection{Clone, toString, equals and hashCode}
 \paragraph{Clone, toString, equals and hashCode}
-Methods originally defined in Java class \Q@Object@, as \Q@clone@ and
+Methods originally defined in Java class \Q@Object@, such as \Q@clone@ and
 \Q@toString@, can be supported by our approach with special care. If an
 interface annotated with \mixin asks an implementation for \Q@clone@,
 \Q@toString@, \Q@equals@ or \Q@hashCode@ we can easily generate one from the
@@ -195,7 +195,7 @@ interface Point { ...//as before
 In this article we presented the concept of IB as a programming pattern over Java.
 An alternative would be to have a language providing IB as its only paradigm.
 We do not wish to define here a complete IB language, just to show the reader IB as
-a promising way to design a new oo language.
+a promising way to design a new OO language.
 To define such language, the first task is to define the set of abstract state operations.
 Of course we need getters; \Q@withX@ methods seams to be pretty convenient, and they enable a
 clean function programming style that would be otherwise too cumbersome.

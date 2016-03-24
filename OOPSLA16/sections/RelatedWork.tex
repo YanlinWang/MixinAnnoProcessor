@@ -18,27 +18,27 @@
 
 \paragraph{Models of Object-Oriented programming}
 There are traditionally two big styles of OOP: class-based and
-prototype-based. The class-based tradition started with Simula~\cite{Dahl66simula}, 
-and is the dominant style of OOP today. Major languages such 
+prototype-based. The class-based tradition started with Simula~\cite{Dahl66simula},
+and is the dominant style of OOP today. Major languages such
 as Java, C\#, C++ or Scala favour a class based OOP style. Very often
 class-based languages are statically typed and they have interfaces or
 some other similar mechanisms such as traits. However, in contrast to IB
 programming, interfaces or traits in CB programming are not meant to
 replace classes, but rather, they complement classes. Normally
 interfaces or traits define the signatures of the methods and
-\emph{may} have some behaviour (such as in Java8 interfaces or Scala
+\emph{may} have some behaviour (such as in Java 8 interfaces or Scala
 traits). However classes are still responsible for object
 instantiation and handling state. Prototype-based languages started
 with Self~\cite{Ungar87self}, and are still widely used today via languages like
-JavaScript. Frequentely prototype-based languages are dynamically 
+JavaScript. Frequently prototype-based languages are dynamically
 typed. IB programming is clearly closer to CB programming. However the
 key difference is that classes are not needed in IB
-programming. Object interfaces recover the responsability of object
+programming. Object interfaces recover the responsibility of object
 instantiation, and abstract state operations provide a way to deal
-with state. A primary motivation of IB programming is to improve 
-modularity and flexibility. Central to these goals are the 
-more expressive and automated forms of type-refinement, and support 
-for multiple interface inheritance.   
+with state. A primary motivation of IB programming is to improve
+modularity and flexibility. Central to these goals are the
+more expressive and automated forms of type-refinement, and support
+for multiple interface inheritance.
 
 \paragraph{Multiple inheritance in Object-Oriented languages}
 Many authors have argued in favor or against multiple inheritance.
@@ -122,7 +122,7 @@ keyword) inside interfaces. The introduction of default methods opens the gate
 for various flavors of multiple inheritance in Java. Traits offer an algebra
 of composition operations like sum, alias and exclusion, providing explicit conflict
 resolution. Former work~\cite{bono14} provides details on mimicking the trait
-algebra through Java 8 interfaces.  
+algebra through Java 8 interfaces.
 
 \begin{comment}
 We briefly recall the main points of their
@@ -325,7 +325,7 @@ programming, and is exasperated by the interface-based programming we propose: n
 type is ever going to be exact since classes are not explicitly used. A recent
 article~\cite{Saito2013933} lights up this topic, proposing two
 new features: exact statements and nonheritable methods. Both are
-related to our work: 1) any method generated inside of the \Q@of@ method is indeed
+related to our work: 1) any method generated inside the \Q@of@ method is indeed
 non-inheritable since there is no class name to extend from; 2) exact
 statements (a form of wild-card capture on the exact run-time type) could
 capture the ``exact type'' of an object even in a class-less
@@ -337,7 +337,7 @@ return types, whereas MyType is more general, as it also works for
 parameter types. Our approach to covariantly refine state can recover
 some of the additional expressiveness of MyType. As illustrated with our examples and
 case studies, object interfaces are still very useful in many
-practical applications, yet they do not require additional 
+practical applications, yet they do not require additional
 complexity from the type system.
 
 % The addition of MyType to a language will allow easy definition of

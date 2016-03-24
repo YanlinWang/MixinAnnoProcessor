@@ -4,10 +4,10 @@ This section illustrates applications and larger case studies for
 Classless Java. The first application shows how a useful pattern,
 using multiple inheritance and type-refinement, can be conviniently
 encoded in Classless Java. The second application. shows how to model an
-embedded DSL based on fluent APIs. The two larger case studies, take 
+embedded DSL based on fluent APIs. The two larger case studies, take
 existing projects and refactor them into Classless Java. The first
 case study shows a significant reduction in code size, while the
-second case study maintains the same amount of code, but increases 
+second case study maintains the same amount of code, but increases
 modularity.
 
 \subsection{The Expression Problem with Object Interfaces}
@@ -120,7 +120,7 @@ over method chaining by using Java annotations. However methods that returns
 The \mixin annotation can also be used to create fluent interfaces.  When
 creating fluent interfaces with \mixin, there are two main advantages:
 \begin{enumerate}
-\item Instead of forcing programmers to hand write code using \textbf{return
+\item Instead of forcing programmers to hand-write code using \textbf{return
     this}, our approach with \mixin annotation removes this verbosity and
   automatically generates fluent setters.
 \item The approach supports extensibility: the return types of fluent setters are
@@ -147,7 +147,7 @@ specify. With \mixin programmers just need to extend the interface \texttt{Datab
 features, and the return type of fluent setters in
 \texttt{Database} is automatically refined to \texttt{ExtendedDatabase}:
 \lstinputlisting[linerange=14-18]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
-In this way, when a query created using \texttt{ExtendedDatabase},
+In this way, when a query is created using \texttt{ExtendedDatabase},
 all the fluent setters return the correct type, and not the old \texttt{Database} type, which would prevent calling
 \texttt{orderBy}.
 
@@ -222,7 +222,7 @@ lists (encoding function calls and special forms such as if-expression, lambdas,
 etc). In the original code base, only one operation \texttt{eval} is
 supported. We add one more operation \texttt{print} to the code base. Then we
 modularize the code using our techniques to convert as many classes into
-interfaces, separate out \texttt{eval} and \texttt{print} operation then combine
+interfaces, separate out \texttt{eval} and \texttt{print} operations then combine
 them. Although the code size is slightly increased (by 2.2\% SLOC), the
 modularity is greatly increased.
 

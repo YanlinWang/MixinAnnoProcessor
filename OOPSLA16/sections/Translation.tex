@@ -151,18 +151,18 @@ method for $\C_0$, if such a method does not exist in its domain, and all the ab
 valid for the annotation.
 
 Figure~\ref{figure:valid} presents more details on the auxiliary
-functions. 
+functions.
 The first two points of Figure~\ref{figure:valid}
 define function $\otherMethod$.
  This function generates unimplemented
- \Q@with-@ and fluent setters in the interface, where the 
+ \Q@with-@ and fluent setters in the interface, where the
 return types have been refined.
 To determine whether a method needs to be generated,
 we check if such \Q@with-@ or setter methods
 require an implementation in $\C_0$, but are not declared directly in $\C_0$.
 The third point gives the definition
 of $\valid$:
-it is valid to annotate an interface if 
+it is valid to annotate an interface if
 %To generate the \Q@of@ method, it is necessary for $\weakAnn$ to explicitly check if
 all abstract methods (that is, all those
 requiring an implementation) are valid.
@@ -177,8 +177,8 @@ example \QM{with#foo}=\QM{withFoo}.  Special names $\specialName(\m)$
 are \QM{with} and all identifiers of the form $\QM{with#}\m$.
 
 
-Figure~\ref{figure:ofmethod} 
-defines the $\ofMethod$  function, that generates the static method $\QM{of}$ as an
+Figure~\ref{figure:ofmethod}
+defines the $\ofMethod$  function, which generates the static method $\QM{of}$ as an
 object factory.
 It detects all the field methods of $\C_0$ and use them to synthesize
 its arguments.
@@ -190,7 +190,7 @@ if needed; similarly, the fourth and fifth point generate fluent setters if need
 
 Some other features of $\mixinAnn$, including non-fluent
 setters and the $\QM{with}$ method are not formalized here.
-Appendix~\ref{subsec:otherfeatures} gives an detailed but 
+Appendix~\ref{subsec:otherfeatures} gives an detailed but
 informal explanation of generation for those methods.
 
 
@@ -250,7 +250,7 @@ to better model how our approach behaves in a object oriented software ecosystem
 where only some units may be translated/expanded.
 Note inheritance's crucial influence in heir coherence.
 Our formulation of client coherence allows us to discuss about intermediate
-stages where only some code units are translated/expanded. Conventional 
+stages where only some code units are translated/expanded. Conventional
 type preservation refers only to completely translated program.
 Our coherence guarantees mean that developers and designers of Java libraries and frameworks
 can start using IB (and our \mixin annotation) in the evolution of their products

@@ -9,14 +9,14 @@ elegant way to illustrate the point of IB. However,
 significant amounts of engineering would be needed to build a practical
 language, and to achieve a similar level of integration and tool support
 as Java. To have an approach that can both illustrate IB
-programming and be practical, we have instead implemented 
+programming and be practical, we have instead implemented
 \mixin as an annotation over Java 8, and a \emph{compilation agent}.
 That is, the Classless Java style of programming
 is supported by a Java 8 library.
 
 Disciplined use of Classless Java (that is avoiding class
 declarations as done in Section~\ref{sec:ep}), illustrates what \emph{pure} IB is like.
-However, using \mixin, CB and IB programming can be mixed together, 
+However, using \mixin, CB and IB programming can be mixed together,
 harvesting the practical convenience of using existing Java libraries, the full
 Java language, and IDE's support.
 The key to our implementation is the use of compilation agents, which
@@ -43,7 +43,7 @@ etc). Finally, the Java compiler works on the modified AST to generate bytecode.
 %Note how during the compilation,
 %no source code is changed, and no new source/temporary files are created.
 
- 
+
 %There are a number of annotations provided by the
 %original Lombok, including \Q:@Getter:, \Q:@Setter:,
 %\Q:@ToString: for generating getters, setters and \QM{toString}
@@ -240,14 +240,14 @@ Our prototype implementation has certain limitations:
   At this stage our implementation only realizes the Eclipse handler and our
   experiments are all conducted in Eclipse. The implementation for
   the \texttt{javac} handler is still missing.
-\item The current implementation supports generics in a simplified manner: 
+\item The current implementation supports generics in a simplified manner:
 type parameters can be used but the generic
-method typing is neither formalized in this paper nor explicitly checked by our 
+method typing is neither formalized in this paper nor explicitly checked by our
 implementation, but simply  delegated to the Java compiler.
-\item 
+\item
 Lombok offers only limited/experimental support for separate compilation, that is
 to access information of code defined in different files.
-In the same spirit, we have a mature \mixin annotation, that
+In the same spirit, we have a mature \mixin annotation, which
 does not support separate compilation yet: it requires that all
   related interfaces have to appear in a single Java file.
 Reusing the logic inside the yet experimental Lombok annotation \lstinline{@Delegate},
