@@ -157,6 +157,20 @@ of with- does not need to be related to the self type.
 TODO: MARCO: Discuss performance
 
 TODO: Say something about debugging.
+[Yanlin&Haoyuan:
+From the perspective of the users of our system:
+
+Users can debug client code normally, however cannot step into 
+the generated code because there is no source code generated. When 
+the user tries to step into the generated code, it will basically 
+stay at the position of "@Obj" annotation. However the generated code
+is always type-safe and logic of the code is very simple, so our practical
+experience is that we never have the need to debug the generated code.
+
+From the perspective of the developer:
+In Lombok the developer can simply use toString() to pretty-print the
+AST to see the generated code.
+]
 
 IDEs: We discuss the IDE support in Section 3. Figure 5 shows an
 example of Classless Java running on Eclipse. As the reader can see,
