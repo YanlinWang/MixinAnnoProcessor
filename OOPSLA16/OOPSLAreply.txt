@@ -26,18 +26,17 @@ approach differs with respect to object construction. This is really
 your only possible contribution [..] your interfaces are rebranded mixins.
 
 It would be more correct to say that our interfaces are rebranded
-traits, in the same way traits are rebranded mixins.  Traits are a
-restricted model of mixins, they purposly introduce limitations to
-provide an 'associative and commutative' composition semantics.
-Our work generalize traits but keep the same improvements on the semantics.
-Moreover, for the best of our knowledge, 'mixins models with fields'
-treat fields specially while our view unify fields and methods.
+traits, in the same way that traits are rebranded mixins. Traits are a
+restricted model of mixins, they purposely introduce limitations to
+provide an 'associative and commutative' composition semantics. Our
+work generalizes traits but keeps the same improvements on the
+semantics.  Moreover, to the best of our knowledge, 'mixins models
+with fields' treat fields specially while our view unifies fields and
+methods.
 
 Our related work section has extensive discussions on how 
 Object interfaces are similar and/or differ from traits 
 and mixins, both from a technical and conceptual point-of-view.
-
-
 
 -What happens if my object stores data that is not in direct
   correspondence with the abstract state?
@@ -55,26 +54,28 @@ and a polar point
 Now "Point myPoint=PolarPoint.of(myRadius,myAngle)"
 will encode an object storing data that is not in direct correspondence with
 the abstract stat exposed by its static type.
+(BRUNO: Add: This is one area where having native language
+support would be helpful?)
 
 - Your generated code may be type incorrect (due to lack of what you
   call "heir coherence"). Is this reported to the programmer in any
   way?
 
-The generated code (code that the programmer do not write:
+The generated code (code that the programmer does not write:
 the content of the 'of' method and refined methods) is type correct.
 
 Heir coherence causes type errors, *but these errors are not in the
 generated code*. What happens is that the generated code will make
 client code incorrect. Such errors are reported, as normal, as an error
 in user client code. The discussion in Section 3.2, illustrates what 
-would happens. For the code:
+would happen. For the code:
 
 interface A { int x(); A withX(int x); } 
 @Obj interface B extends A {} // no error here!
 interface C extends B { A withX(int x); } // **error is here**!
 
-the error would be in interface C, which is client code, and is untouched by our
-mechanism.
+the error would be in interface C, which is client code, and is
+untouched by our mechanism.
 
 - What happens with debugging?
 
@@ -95,9 +96,9 @@ to write for getting the four possible operations on a field called "x".
 
 Yes, in the case you propose, @Obj would generate
 of(Object first, LinkedList next, int size, boolean isEmpty)
-but this is not the way to write a LinkedList in CLJ, you should write
+but this is not the way to write a LinkedList in CLJ. You should write:
 
-interface LinkedList {//a plain interface with *abtract* methods in Java
+interface LinkedList {//a plain interface with *abstract* methods in Java
  Object first();  LinkedList next();  int size();  boolean isEmpty();
 }
 
@@ -118,7 +119,7 @@ implementation you can use @Obj. For example:
 
 Note how this is much shorter than the equivalent Java version.  
 
-By accepting the terrible hack of null, then 
+By accepting the terrible hack of null,
 another possible implementation of LinkedList would be:
 
 @Obj interface LinkedList {
@@ -137,8 +138,8 @@ Here "first" and "next" are fields, and size a concrete method.
 
 Property updaters are generated *only* when users ask for them, that
 is, they declare an abstract 'MyInterfaceName with(AnotherType)' method.
-where AnotherType do not need to be in the hierarchy of
-MyInterfaceName.  In the example you proposed, *if* the user was to
+where AnotherType does not need to be in the hierarchy of
+MyInterfaceName. In the example you proposed, *if* the user was to
 ask for
 
 Point3D with(Point2D); 
@@ -147,7 +148,7 @@ Point3D with(Point);
 
 Those methods would be all implemented by looking what fields have the
 same name and compatible types inside of Point3D and, respectively,
-Point2D, ColoredPoint, Point.  In general, an updators is just
+Point2D, ColoredPoint, Point. In general, an updater is just
 performing the equivalent of a sequence of with-'s. 
 
 - It seems one would have to know at compile time all the
@@ -155,48 +156,43 @@ ways Point2D might be used in the hierarchy,
 
 As a follow up from the previous reply, there's no need to know
 compile time all the ways Point2D might be used in the hierarchy,
-since users have to explicitly asks for an updater, and the argument 
+since users have to explicitly ask for an updater, and the argument 
 of with- does not need to be related to the self type.
 
 #192C
 
 - What are the implications for performance? Debugging? IDEs?
 
-Performance in this prototype implementation depends on the performance of
-dynamic method call on Java, especially on the JIT.
-We do not expect any major performance issue, however
-Java and its JIT are highly optimized to support getter,
-setters on class types, but less optimized when it comes to
-interface methods. However, interfaces are intensively used in Java already,
-and while less efficient then classes, they are not considered a performance
-bottleneck.   
+Performance: 
 
-TODO: Say something about debugging.
-[Yanlin&Haoyuan:
-From the perspective of the users of our system:
+Performance in this prototype implementation depends on the
+performance of dynamic method call on Java, especially on the JIT.  We
+do not expect any major performance issue. Java and its JIT
+are highly optimized to support getter, setters on class types, but
+less optimized when it comes to interface methods. However, interfaces
+are intensively used in Java already, and while less efficient then
+classes, they are not considered a performance bottleneck.
 
-Users can debug client code normally, however cannot step into 
+Debugging:
+
+Users can debug client code normally, however they cannot step into 
 the generated code because there is no source code generated. When 
 the user tries to step into the generated code, it will basically 
-stay at the position of "@Obj" annotation. However the generated code
+stay at the position of the @Obj annotation. However the generated code
 is always type-safe and logic of the code is very simple, so our practical
 experience is that we never have the need to debug the generated code.
 
-From the perspective of the developer:
-In Lombok the developer can simply use toString() to pretty-print the
-AST to see the generated code.
-]
+IDEs: 
 
-IDEs: We discuss the IDE support in Section 3. Figure 5 shows an
-example of Classless Java running on Eclipse. As the reader can see,
-features like auto-completion and the outline view work
-out-of-the-box.  Also, Java errors are reported in the IDE (see the
-error in line 13, and the underlined code in Point3D).
+We discuss IDE support in Section 3. Figure 5 shows an example of
+Classless Java running on Eclipse. As the reader can see, features
+like auto-completion and the outline view work out-of-the-box. Also,
+Java errors are reported in the IDE (see the error in line 13, and the
+underlined code in Point3D).
 
-What *could* be problematic are errors in the *generated code* (i.e. the
-implementations of setters, getters, of,...). There would be no way to
-present those errors to users.
-This is a reason why we took care to ensure that
-code generation always generates type-correct code; or else an error 
-message describing why code cannot be generated is reported to the 
-user.
+What *could* be problematic are errors in the *generated code*
+(i.e. the implementations of setters, getters, of,...). There would be
+no way to present those errors to users. This is a reason why we took
+care to ensure that code generation always generates type-correct
+code; or else an error message describing why code cannot be generated
+is reported to the user.
