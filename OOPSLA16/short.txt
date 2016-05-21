@@ -1,25 +1,26 @@
 #192A
 
-- Automatically defined getters and setters are of course a very old
-idea...
+- Automatically defined getters and setters [..] very old idea...
 
 We do the opposite, we "generate" the idea of the field starting from
-getters and setters signatures. But we agree that related work should
-discuss how we relate to the idea of automatically generating
-setters/getters.
+getters and setters signatures. We agree that related work should
+discuss how we relate to automatic generation of setters/getters.
 
 - Compared to a language with mixins and getters/setters, your
 approach differs with respect to object construction. This is really
 your only possible contribution [..] your interfaces are rebranded mixins.
 
 It would be more correct to say that our interfaces are rebranded
-traits, in the same way that traits are rebranded mixins. Traits are a
-restricted model of mixins, they purposely introduce limitations to
-provide an 'associative and commutative' composition semantics. Our
-work generalizes traits but keeps the same improvements on the
-semantics.  Moreover, to the best of our knowledge, 'mixins models
-with fields' treat fields specially while our view unifies fields and
-methods.
+traits, in the same way that traits are rebranded mixins.
+
+Traits are a restricted model of mixins:
+ they purposely introduce limitations to provide an
+ 'associative and commutative' composition semantics.
+Our work generalizes traits but keeps the same semantics improvements.
+
+Moreover, to the best of our knowledge, 
+'mixins models with fields' treat fields specially
+while our view unifies fields and methods.
 
 Our related work section has extensive discussions on how 
 Object interfaces are similar and/or differ from traits 
@@ -28,32 +29,40 @@ and mixins, both from a technical and conceptual point-of-view.
 -What happens if my object stores data that is not in direct
   correspondence with the abstract state?
 
-This is one point of weakness in our *Java* approach.
-We discussed in Section 6 how the facade pattern can help.
-For example you can have a cartesian point
-
-@Obj interface Point{ double x(); double y();}
-
-and a polar point
-
-@Obj interface PolarPoint extends Point{
-  double radius();  double angle();
-  default double x(){/*use radius() and angle()*/}
-  default double y(){/*use radius() and angle()*/}
+We believe the following java example capture the review concern:
+------
+class Point{ //a
+  private double radius;   private double angle;  //b
+  public Point(int x, int y){ //c
+    this.radius=/*computeRadius*/;   this.angle=/*computeAngle*/; //d
+  } 
+  double x(){/*..*/}  double y(){/*..*/}//e
+}
+----
+In order to obtain the same effect in ClassLess Java, we need
+to explicitly declare an of method, as the reviewer suggested.
+In order to encode the privateness of the state,
+we can use the facade pattern (section6)
+--------
+interface Point{ double  x(); double y();  //a
+  static Point of(double x, double y){//c
+    return PolarPoint.of(/*computeRadius*/,/*computeAngle*/);//d
+    }
   }
+@Obj interface PolarPoint extends Point{ double radius(); double angle(); //b
+     double x(){/*..*/}   double y(){/*..*/} //e
+   }
+------
+Note how the labels in the java code correspond to labels in our code; in
+particular, the non trivial constructor (c,d) is rewrote as an of method.
 
-Now "Point myPoint=PolarPoint.of(myRadius,myAngle)" will encode an
-object storing data that is not in direct correspondence with the
-abstract stat exposed by its static type. (BRUNO: Add: This is one
-area where having native language support would be helpful? Would 
-a protected keyword help?)
 
-- Your generated code may be type incorrect (due to lack of what you
-  call "heir coherence"). Is this reported to the programmer in any
-  way?
+- Your generated code may be type incorrect [.."heir coherence"..].
+  Is this reported to the programmer in any way?
 
-The generated code (code that the programmer does not write:
-the content of the 'of' method and refined methods) is type correct.
+The generated code (code that the programmer does not write):
+  the content of the 'of' method and refined methods
+is type correct.
 
 Heir coherence causes type errors, *but these errors are not in the
 generated code*. What happens is that the generated code will make
@@ -86,7 +95,7 @@ for getting the four possible operations on a field called "x".
   generated not very usable?
 
 Yes, in the case you propose, @Obj would generate of(Object first,
-LinkedList next, int size, boolean isEmpty) but this is not the way to
+LinkedList next, int size, boolean isEmpty); but this is not the way to
 write a LinkedList in CLJ. You should write:
 
 interface LinkedList {//a plain interface with *abstract* methods in Java
@@ -124,7 +133,7 @@ another possible implementation of LinkedList would be:
  //boolean isEmpty();//makes no sense since the empty list is null
 }
 
-Here "first" and "next" are fields, and size a concrete method.
+Here "first" and "next" are fields, and size is a concrete method.
 
 - Generating with(...) methods for non-trivial inheritance hierarchies.
 
@@ -167,12 +176,13 @@ classes, they are not considered a performance bottleneck.
 
 Debugging:
 
-Users can debug client code normally, however they cannot step into 
-the generated code because there is no source code generated. When 
-the user tries to step into the generated code, it will basically 
-stay at the position of the @Obj annotation. However the generated code
-is always type-safe and logic of the code is very simple, so our practical
-experience is that we never need (or should!) debug the generated code.
+Users can debug client code normally, however when 
+the user tries to step into the generated code, the debugger will
+just show the position of the @Obj annotation;
+similarly to what happens in pure Java when stepping in the 
+language-generated default constructor.
+The logic of the generated code is very simple; our practical
+experience is that we never felt the need of stepping into the generated code.
 
 IDEs: 
 
