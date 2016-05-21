@@ -1,7 +1,7 @@
 #192A
 
 - Automatically defined getters and setters [..] very old idea...
-
+ 
 We do the opposite, we "generate" the idea of the field starting from
 getters and setters signatures. We agree that related work should
 discuss how we relate to automatic generation of setters/getters.
