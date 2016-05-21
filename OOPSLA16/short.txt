@@ -44,7 +44,7 @@ and a polar point
 
 Now "Point myPoint=PolarPoint.of(myRadius,myAngle)" will encode an
 object storing data that is not in direct correspondence with the
-abstract stat exposed by its static type. (BRUNO: Add: This is one
+abstract state exposed by its static type. (BRUNO: Add: This is one
 area where having native language support would be helpful? Would 
 a protected keyword help?)
 
