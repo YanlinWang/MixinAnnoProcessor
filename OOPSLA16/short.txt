@@ -1,5 +1,5 @@
 Thanks to all reviewers for all their thoughtful comments.
-We apoligise in advance for the long response: there were
+We apoligise in advance for the longer response: there were
 many questions that required us to write long code snippets.
 
 #192A
@@ -20,7 +20,7 @@ It would be more correct to say that our interfaces are rebranded
 traits, in the same way that traits are rebranded mixins.
 Traits are a restricted model of mixins: they purposely introduce
 limitations to provide an 'associative and commutative' composition
-semantics. Our work generalizes traits but keeps the same semantics
+semantics. Our work generalizes traits but keeps the same semantic
 improvements.
 
 Moreover, to the best of our knowledge, 'mixins models with fields'
@@ -64,7 +64,7 @@ interface Point{ double  x(); double y();  //a
 ------
 
 Note how the labels in the java code correspond to labels in our code; in
-particular, the non trivial constructor (c,d) is rewrote as an of method.
+particular, the non trivial constructor (c,d) is rewrote as an "of" method.
 
 In a native IB language dealing with privateness of state could be
 done more directly. As discussed in Section 6, this is one area where
@@ -207,4 +207,4 @@ We discuss IDE support in Section 3. Figure 5 shows an example of
 Classless Java running on Eclipse. As the reader can see, features
 like auto-completion and the outline view work out-of-the-box. Also,
 Java errors are reported in the IDE (see the error in line 13, and the
-underlined code in Point3D).
+underlined code in Point3D). Many other features work as expected.
