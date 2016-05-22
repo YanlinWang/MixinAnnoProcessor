@@ -1,5 +1,5 @@
 Thanks to all reviewers for all their thoughtful comments.
-We apoligise in advance for the longer response: there were
+We apologize in advance for the longer response: there were
 many questions that required us to write long code snippets.
 
 #192A
@@ -39,10 +39,10 @@ points via polar coordinates, captures the review concern:
 
 ------
 class Point{ //a
-  private double radius;   private double angle;  //b
-  public Point(int x, int y){ //c
-    this.radius=/*computeRadius*/;   this.angle=/*computeAngle*/; //d
-  } 
+  public Point(int x, int y){ //b
+    this.radius=/*computeRadius*/;   this.angle=/*computeAngle*/; //c
+  }
+  private double radius;   private double angle;  //d
   double x(){/*..*/}  double y(){/*..*/}//e
 }
 ----
@@ -54,11 +54,11 @@ we can use the facade pattern (see Section6).
 
 --------
 interface Point{ double  x(); double y();  //a
-  static Point of(double x, double y){//c
-    return PolarPoint.of(/*computeRadius*/,/*computeAngle*/);//d
+  static Point of(double x, double y){//b
+    return PolarPoint.of(/*computeRadius*/,/*computeAngle*/);//c
     }
   }
-@Obj interface PolarPoint extends Point{ double radius(); double angle(); //b
+@Obj interface PolarPoint extends Point{ double radius(); double angle(); //d
      double x(){/*..*/}   double y(){/*..*/} //e
    }
 ------
@@ -174,7 +174,7 @@ performing the equivalent of a sequence of with-'s.
 ways Point2D might be used in the hierarchy...
 
 As a follow up from the previous reply, there's no need to know
-compile time all the ways Point2D might be used in the hierarchy,
+all the ways Point2D might be used in the hierarchy,
 since users have to explicitly ask for an updater, and the argument 
 of with- does not need to be related to the self type.
 
