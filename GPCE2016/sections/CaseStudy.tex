@@ -1,0 +1,286 @@
+\section{Applications and Case Studies}
+
+This section illustrates applications and larger case studies for
+Classless Java. The first application shows how a useful pattern,
+using multiple inheritance and type-refinement, can be conveniently
+encoded in Classless Java. The second application shows how to model
+embedded DSLs based on fluent APIs. The two larger case studies, take
+existing projects and refactor them into Classless Java. The first
+case study shows a significant reduction in code size, while the
+second case study maintains the same amount of code, but improves
+modularity.
+
+\subsection{The Expression Problem with Object Interfaces}\label{subsec:ep}
+
+As the first application for Classless Java, we illustrate a useful
+programming pattern that improves modularity and extensibility of
+programs. This useful pattern is based on an existing solution to
+the \emph{Expression Problem} (EP)~\cite{wadler98expression}, which is a well-known
+problem about modular extensibility issues in software evolution. Recently, a
+new solution~\cite{eptrivially} using only covariant type refinement was
+proposed. When this solution is modeled with interfaces and default methods, it
+can even provide independent extensibility~\cite{zenger05independentlyextensible}: the ability to assemble a system
+from multiple, independently developed extensions. Unfortunately, the
+required instantiation code makes a plain Java solution verbose and cumbersome
+to use. The \mixin annotation is enough to remove the boilerplate code, making
+the presented approach very appealing. Our last case study, presented
+in Section~\ref{subsec:int}, is essentially a (much larger) application of this
+pattern to an existing program. Here we illustrate the pattern in the
+much smaller Expression Problem.
+
+\paragraph{Initial System}
+In the formulation of the EP, there is an initial system that models
+arithmetic expressions with only literals and addition, and an initial
+operation \texttt{eval} for expression evaluation.
+As shown in Figure~\ref{fig:ep}, \texttt{Exp} is the common
+super-interface with operation \texttt{eval()}
+inside. Sub-interfaces \texttt{Lit} and \texttt{Add} extend interface
+\texttt{Exp} with default implementations for the \texttt{eval} operation. The
+number field \texttt{x} of a literal is represented as a getter method
+\texttt{x()} and expression fields (\texttt{e1} and \texttt{e2}) of an addition
+as getter methods \texttt{e1()} and \texttt{e2()}.
+
+\begin{figure*}
+\centering
+\saveSpaceFig
+\begin{tabular}{l|l}
+\lstinputlisting[linerange=33-43]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_INIT
+&
+\lstinputlisting[linerange=54-64]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_PRINT
+\end{tabular}
+\caption{The Expression Problem (left: initial system, right: code for adding
+  print operation).}\label{fig:ep}
+\saveSpaceFig
+\end{figure*}% \bruno{Yanlin: code is overflowing the margins. Note that
+  % there are 2 spare lines that can be used on the right!}
+
+\paragraph{Adding a New Type of Expressions}
+In the OO paradigm, it is easy to add new types of expressions. For example, the
+following code shows how to add subtraction.
+
+\lstinputlisting[linerange=47-50]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
+
+%\marco{text under need to be improved}
+\paragraph{Adding a New Operation} The difficulty of the EP in OO
+languages arises from adding new operations. For example, adding a pretty printing
+operation would typically change all existing code. However, a solution
+%to the EP forbids this and it also forbids using casts. In other words, it should be possible
+should add operations in a type-safe and modular way. This
+turns out to be easily achieved with the assistance of \mixin.  The code in
+Figure~\ref{fig:ep} (on the right) shows how to add the new operation \texttt{print}.
+Interface \texttt{ExpP} extends \texttt{Exp} with the extra method
+\texttt{print()}. Interfaces \texttt{LitP} and \texttt{AddP} are defined with
+default implementations of \texttt{print()}, extending base interfaces
+\texttt{Lit} and \texttt{Add}, respectively. Importantly, note that in
+\texttt{AddP}, the types of ``\emph{fields}'' (i.e. the getter methods)
+\texttt{e1} and \texttt{e2} are refined. If the types were not refined then
+the \texttt{print()} method in \texttt{AddP} would fail to type-check.
+
+\paragraph{Independent Extensibility}
+To show that our approach supports independent extensibility, we first define a
+new operation \texttt{collectLit}, which collects all
+literal components in an expression. For space reasons,
+we omit the definitions of the methods:
+
+\begin{lstlisting}[]
+interface ExpC extends Exp {
+    List<Integer> collectLit(); }
+@Obj interface LitC extends Lit, ExpC {...}
+@Obj interface AddC extends Add, ExpC {
+    ExpC e1(); ExpC e2(); ...}
+\end{lstlisting}
+
+\noindent Now we combine the two extensions (\texttt{print} and
+\texttt{collectLit}) together:
+
+\lstinputlisting[linerange=88-]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=INDEPENDENT_EXTENSIBILITY
+
+
+\noindent \texttt{ExpPC} is the new expression interface supporting
+\texttt{print} and \texttt{collectLit} operations; \texttt{LitPC} and
+\texttt{AddPC} are the extended variants. Notice that except for the routine of
+\textbf{extends} clauses, no glue code is required. Return types of
+\texttt{e1,e2} must be refined to \texttt{ExpPC}.
+
+Note that the code for instantiation is automatically generated by \mixin.
+Creating a simple expression of type \texttt{ExpPC} is
+as simple as:
+\begin{lstlisting}
+ExpPC e8 = AddPC.of(LitPC.of(3), LitPC.of(4));
+\end{lstlisting}
+\noindent Without our approach, tedious instantiation code would need
+to be defined manually.
+
+\subsection{Embedded DSLs with Fluent Interfaces}\label{sec:dsls}
+Since the style of fluent interfaces was invented in Smalltalk as method
+cascading, more and more languages came to support fluent interfaces, including
+JavaScript, Java, C++, D, Ruby, Scala, etc. In most languages, to create fluent
+interfaces, programmers have to either hand-write everything or create a wrapper
+around the original non-fluent interfaces using \textbf{this}. In Java, there
+are several libraries (including jOOQ, op4j, fluflu, JaQue, etc) providing useful
+fluent APIs. However most of them only provide a fixed set of predefined fluent
+interfaces. Fluflu enables the creation of a fluent API and implements control
+over method chaining by using Java annotations. However methods that returns
+\textbf{this} are still hand-written.
+
+The \mixin annotation can also be used to create fluent interfaces.  When
+creating fluent interfaces with \mixin, there are two main advantages:
+\begin{enumerate}
+\item Instead of forcing programmers to hand-write code using \textbf{return
+    this}, our approach with \mixin annotation removes this verbosity and
+  automatically generates fluent setters.
+\item The approach supports extensibility: the return types of fluent setters are
+  automatically refined.
+\end{enumerate}
+
+\noindent We use embedded DSLs of two simple SQL query languages to illustrate.
+The first query language \texttt{Database}  models
+\texttt{select}, \texttt{from} and \texttt{where} clauses:
+\lstinputlisting[linerange=6-10]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE
+% \bruno{Wouldn't it be better to have a static method create() that calls of("","","")) and initializes all the fields? It seems awkward
+% to have to use the of explicitly to initialized all fields.}
+
+\noindent The main benefit that fluent methods give
+us is the convenience of method chaining:
+
+\lstinputlisting[linerange=33-33]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY1
+
+\noindent Note how all the logic for the fluent setters is automatically provided by the \mixin annotation.
+
+\paragraph{Extending the Query Language} The previous query language can be extended with a new feature
+\texttt{orderBy} which orders the result records by a field that users
+specify. With \mixin programmers just need to extend the interface \texttt{Database} with new
+features, and the return type of fluent setters in
+\texttt{Database} is automatically refined to \texttt{ExtendedDatabase}:
+\lstinputlisting[linerange=14-18]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
+In this way, when a query is created using \texttt{ExtendedDatabase},
+all the fluent setters return the correct type, and not the old \texttt{Database} type, which would prevent calling
+\texttt{orderBy}.
+
+\lstinputlisting[linerange=39-39]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
+
+\subsection{A Maze Game}
+This case study is a simplified variant of a Maze game, which is often
+used~\cite{gof,bono14}
+to evaluate code reuse ability related to inheritance and design
+patterns. In the game, there is a player with the goal of collecting
+as many coins as possible. She may enter a room with several doors to
+be chosen among. This is a good example because it involves code reuse
+(different kinds of doors inherit a common type, with different
+features and behavior), multiple inheritance (a special kind of door
+may require features from two other door types) and it also shows how
+to model operations \texttt{symmetric sum}, \texttt{override} and
+\texttt{alias} from trait-oriented programming. The game has been
+implemented using plain Java 8 and default methods by Bono
+et. al~\cite{bono14}, and the code for that implementation is
+available online. We reimplemented the game using \mixin. Due to space
+constraints, we omit the code here. The following table summarizes
+the number of lines of code and classes/interfaces in each implementation:
+
+\vspace{5pt}
+\begin{tabular}{ccc}
+\hline \rowcolor[HTML]{C0C0C0}
+            & SLOC   & \# of classes/interfaces \\ \hline
+Bono et al. & 335    & 14                       \\
+Ours        & 199    & 11                       \\
+\rowcolor[HTML]{C0C0C0}
+Reduced by  & 40.6\% & 21.4\%                   \\ \hline
+\end{tabular}
+\vspace{5pt}
+
+\noindent The \mixin annotation allowed us to reduce the interfaces/classes used
+in Bono et al.'s implementation by 21.4\% (from 14 to 11). The
+reductions were due to the replacement of instantiation classes with
+generated \texttt{of} methods. The number of source lines of code 
+(SLOC\footnote{Only Java code is counted, excluding comments and blank lines. })
+was reduced by 40\% due to both the removal of instantiation overhead and
+generation of getters/setters. %\bruno{explain why? we generate code for getters/setters?}.
+To ensure a fair comparison, we used the same coding style as Bono et al.'s.
+
+\begin{comment}
+\subsection{Refactoring a Compiler}
+The last case study applies our approach to a larger code base of a simple
+one-pass compiler for \lstinline{C0} (a subset of \lstinline{C}). This compiler
+is a handwritten, monolithic compiler used for educational purposes at Aarhus
+University, Denmark\footnote{Source code available at
+  http://cs.au.dk/~mis/dOvs/Czero.java}. \lstinline{C0} is restricted to
+integers, several control structures and function declaration/definition and
+basic I/O statements. All the code (including parsing, code generation for
+various structures, error handling) is entangled in one big file. Following our
+approach with \mixin, we refactored the code to several smaller interfaces
+(including \lstinline{Constants}, \lstinline{MemberFields}, interfaces for
+parsing different structures, etc). After the refactoring, the new code does not
+reduce code as previous case studies. SLOC for original code without comments
+and blank lines is 828, while ours is 830 (for fair comparison, we put all
+interfaces into one file when calculating SLOC). However, the case study shows
+two things: Classless Java can be applied to real code base such as compilers;
+code becomes more modular without the sacrifice of code amount/simplicity.
+\marco{Why we do not cite the result of the former study? the one with object algebraes
+where the number of lines grown quite a while?}
+\end{comment}
+
+\subsection{Refactoring an Interpreter}\label{subsec:int}
+\begin{comment}
+The last case study refactors the code from an interpreter for
+a Lisp-like language
+\lstinline{Mumbler}\footnote{https://github.com/cesquivias/mumbler/tree/master/simple},
+which is created as a tutorial for the Truffle
+Framework~\cite{wurthinger2013one}.  Keeping a balance between
+simplicity and useful features, \lstinline{Mumbler} contains numbers,
+booleans, lists (encoding function calls and special forms such as
+if-expression, lambdas, etc). In the original code base, which
+consists of 626 SLOC of Java, only one operation \texttt{eval} is
+supported. Extending Mumbler to support one more operation, such as a
+pretty printer (making it 661 SLOC), would normally require changing the existing code base
+directly.
+
+Our refactoring applies the pattern presented in
+Section~\ref{subsec:ep} to the existing Mumbler code base to improve
+its modularity and extensibility. Using the refactored code base (560 SLOC) it  
+becomes possible to add new operations modularly, and to support
+independent extensibility (677 SLOC). We add one more
+operation \texttt{print} to both the original and the refactored code
+base. In the original code base the pretty printer is added
+non-modularly by modifying the existing code. In the refactored code
+base the pretty printer is added modularly. 
+Although the code in the refactored version is slightly increased (by 2.4\% SLOC), the
+modularity is greatly increased, allowing for improved reusability and maintainability.
+\end{comment}
+
+The last case study refactors the code from an interpreter for
+a Lisp-like language
+\lstinline{Mumbler}\footnote{https://github.com/cesquivias/mumbler/tree/master/simple},
+which is created as a tutorial for the Truffle
+Framework~\cite{wurthinger2013one}.  Keeping a balance between
+simplicity and useful features, \lstinline{Mumbler} contains numbers,
+booleans, lists (encoding function calls and special forms such as
+if-expression, lambdas, etc). In the original code base, which
+consists of 626 SLOC of Java, only one operation \texttt{eval} is
+supported. Extending Mumbler to support one more operation, such as a
+pretty printer \texttt{print}, would normally require changing the existing code base
+directly.
+
+Our refactoring applies the pattern presented in
+Section~\ref{subsec:ep} to the existing Mumbler code base to improve
+its modularity and extensibility. Using the refactored code base it
+becomes possible to add new operations modularly, and to support
+independent extensibility. We add one more
+operation \texttt{print} to both the original and the refactored code
+base. In the original code base the pretty printer is added
+non-modularly by modifying the existing code. In the refactored code
+base the pretty printer is added modularly. 
+Although the code in the refactored version is slightly increased (by 2.4\% SLOC), the
+modularity is greatly increased, allowing for improved reusability and maintainability.
+We list the results in the following table:
+
+\vspace{0.5em}
+{\small
+\begin{tabular}{llll}
+\hline
+\rowcolor[HTML]{C0C0C0} 
+Code               & SLOC & Code               & SLOC \\ \hline
+original (\texttt{eval})         & 626  & original (\texttt{eval}+\texttt{print}) & 661  \\ 
+refactored (\texttt{eval})         & 560  & refactored (\texttt{eval}+\texttt{print}) & 677  \\ \hline
+\end{tabular}
+}
+

@@ -1,0 +1,135 @@
+\section{Lemmas and Theorems}\label{sec:appendix}
+
+\subsection{LEMMA 1 and Proof}\label{subsec:lemma1}
+
+\begin{lem}[a]\label{lemma1a}
+For any expression $e$ under an interface table $\II$ IT where $\Gamma\vdash e\in\C^\II$, $\II$ has $\weakAnn$ annotation and $[\![\II]\!] = \II'$, then under the interface table $\II'$ IT, $\Gamma\vdash e\in\C^\II$.
+\end{lem}
+\begin{proof}
+By induction on the typing rules: by the grammar shown in Figure~\ref{Grammar}, there are 6 cases for an arbitrary expression $e$:
+\begin{itemize}
+\item Variables are typed in the same exact way.
+\item Field update. The type preservation is ensured by induction.
+\item A method call (normal, static or super). The corresponding method declaration won't be ``removed'' by the translation, also the types remain unchanged. The only work $\weakAnn$ does is adding a static method $\QM{of}$ to the interface, however, a pre-condition of the translation is $\QM{of}\notin\dom(\C^\II)$, so adding $\QM{of}$ method has no way to affect any formerly well typed method call.
+\item An object creation. Adding the $\QM{of}$ method doesn't introduce unimplemented methods to an interface, moreover, the static method is not inheritable, hence after translation such an object creation still type checks and has the right type by induction.
+\end{itemize}
+\end{proof}
+\begin{lem2}[b]\label{lemma1b}
+For any expression $e$ under an interface table $\II$ IT where there is no heir of $\C^\II$,  $\Gamma\vdash e\in\C^\II$, $\II$ has \mixin annotation and $[\![\II]\!] = \II'$, then under the interface table $\II'$ IT, $\Gamma\vdash e\in\_<:\C^\II$.
+\end{lem2}
+\begin{proof}
+The proof follows the same scheme of Lemma~\ref{lemma1a} (a), but for the case of method call the return type may be refined with a subtype. This is still ok since we require $\_<:\C^\II$. On the other side, this weaker result still allows the application on the method call typing rules, since in the premises the types of the actual parameter are required to be a subtype of the formal one.
+\end{proof}
+\subsection{LEMMA 2 and Proof}\label{subsec:lemma2}
+
+\begin{lem}[a]\label{lemma2a}
+If $\II$ has $\weakAnn$ annotation and $\C^{\II}$ OK in $\II$ IT, then $[\![\II]\!]$ OK in $[\![\II]\!]$ IT.
+\end{lem}
+\begin{proof}
+
+By the rule \rn{t-Intf} in Figure~\ref{ET}, we divide the proof into two parts.
+
+\noindent\textbf{Part I.} For each default or static method in the domain of $[\![\C^\II]\!]$, the type of the return value is compatible with the method's return type.
+
+Since $\II$ OK, and by Lemma~\ref{lemma1a} (a), all the existing default and static methods are well typed in $[\![\II]\!]$, except for the new method \QM{of}. It suffices to prove that it still holds for $\ofMethod(\C)$.
+
+
+By the definition of $\ofMethod(\C)$, the return value is an object $$\QM{return new}\ \C^\II \oR\cR\ \QM{\{}...\ \QM{\}}$$
+To prove it is of type $\C^\II$, we use the typing rule \rn{t-Obj}.
+
+\begin{itemize}
+\item All field initializations are type correct. By the definition of $\ofMethod(\C^\II)$ in Appendix~\ref{subsec:ofmethod}, the fields $m_1,\ldots,m_n$ are initialized by $\QM{of}$'s arguments, and types are compatible.
+\item All method bodies are well-typed.
+    \begin{itemize}
+    \item Typing of the $i$-th getter $m_i$. \[\Gamma, m_i:\C_i, \QM{this}:\C^\II \vdash m_i\in \C_i\]
+        We know that $\C_i=\C^{\mh_i}$ since the $i$-th getter has its return type the same as the corresponding field $m_i$.
+    \item Typing of the \QM{with-} method of an arbitrary field $m_i$. By Appendix~\ref{subsec:ofmethod}, if the \QM{with-} method of $m_i$ is well-defined, it has the form \[\C^\II\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{}\QM{return}\ \C^\II\QM{.of(}\es_i\QM{);\}}\]
+        $\es_i$ is obtained by replacing $m_i$ with $\QM{_val}$ in the list of fields, and since they have the same type $\C_i$, the arguments $\es_i$ are compatible with $\C^\II.\QM{of}$ method. Hence \[\Gamma, m_1:\C_1\ldots m_n:\C_n, \QM{this}:\C^\II,\ \QM{_val} : \C_i \vdash \C^\II\QM{.of}\oR\es_i\cR\in \C^\II\]
+        We know that $\C^\II=\C^{\mh_i}$ by the return type of $\QM{with#}\m_i$ shown as above.
+    \item Typing of the $i$-th setter \QM_$m_i$. If the \QM_$m_i$ method is well-defined, it has the form
+        \[\C^\II\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{} \m_i\QM{= _val;return this;\}}\]
+        By \rn{t-Update}, the assignment ``$\m_i\QM{= _val;}$'' is correct since $\m_i$ and $\QM{_val}$ have the same type $I_i$, and the return type is decided by \QM{this}. \[\Gamma, \QM{this}:\C^\II,\ \QM{_val} : \C_i \vdash\QM{this}\in \C^\II\]
+        We know that $\C^\II=\C^{\mh_i}$ by the return type of $\QM_\m_i$ shown as above.
+    \end{itemize}
+\item All method headers are valid with respect to the domain of $\C^\II$. Namely $$\sigvalid(\mh_1\ldots\mh_n,I)$$
+    For convenience, we use ``$\method$ in $\ofMethod(\C^\II)$'' to denote that $\method$ is one of the implemented methods in the return expression of $\ofMethod(\C^\II)$, namely \Q@new@ $\C^\II$\Q@(){...}@.
+    \begin{itemize}
+    \item For the $i$-th getter $m_i$,
+        \begin{align*}
+        &\C_i\ \m_i\oR\cR\ \QM{\{...\}}\mbox{ in }\ofMethod(\C^\II)\\
+        \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; \in \fieldsFunc(\C^\II)\\
+        \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; = \mBody(m_i,\C^\II)\\
+        \mimply\hspace{.2in}& \C_i\ \m_i\oR\cR\QM; <: \mBody(m_i,\C^\II)
+        \end{align*}
+    \item For the $\QM{with#}\m_i$ method,
+        \begin{align*}
+        &\C^\II\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{...\}}\mbox{ in }\ofMethod(\C^\II)\\
+        \mimply\hspace{.2in}& \mBody(\QM{with#}\m_i,\C^\II) \mbox{ is of form }\mh\QM;\\
+        \mbox{with}\hspace{.2in}& \valid(\C^\II)\\
+        \mimply\hspace{.2in}& \isWith(\mBody(\QM{with#}\m_i,\C^\II),\C^\II)\\
+        \mimply\hspace{.2in}& \C^\II\ \QM{with#}\m_i\oR \C_i\ \QM{_val}\cR\QM; <: \mBody(\QM{with#}\m_i,\C^\II)
+        \end{align*}
+    \item For the $i$-th setter $\QM_\m_i$,
+        \begin{align*}
+        &\C^\II\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\ \QM{\{...\}}\mbox{ in }\ofMethod(\C^\II)\\
+        \mimply\hspace{.2in}& \mBody(\QM_\m_i,\C^\II) \mbox{ is of form }\mh\QM;\\
+        \mbox{with}\hspace{.2in}& \valid(\C^\II)\\
+        \mimply\hspace{.2in}& \isSetter(\mBody(\QM_\m_i,\C^\II),\C^\II)\\
+        \mimply\hspace{.2in}& \C^\II\ \QM_\m_i\oR \C_i\ \QM{_val}\cR\QM; <: \mBody(\QM_\m_i,\C^\II)
+        \end{align*}
+    \end{itemize}
+\item All abstract methods in the domain of $\C^\II$ have been implemented. Namely $$\alldefined(\mh_1\ldots\mh_n,I)$$
+    Here we simply refer to $\valid(\C^\II)$, since it guarantees each abstract method to satisfy $\isField$, $\isWith$ or $\isSetter$. But that object includes all implementations for those cases. A getter $m_i$ is generated if it satisfies $\isField$; a \Q@with-@ method is generated for the case $\isWith$, by the definition of $\withMethod$; a setter for $\isSetter$, similarly, by the definition of $\setterMethod$. Hence it is of type $\C^\II$ by \rn{t-Obj}.
+\end{itemize}
+
+\noindent\textbf{Part II.} Next we check that in $[\![\II]\!]$, $$\dom([\![\II]\!])=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)\cup\dom(\method')$$
+
+Since $\II$ OK, we have $\dom(\II)=\dom(\C_1)\cup\ldots\cup\dom(\C_n)\cup\dom(\methods)$, and hence it is equivalent to prove $$\dom([\![\II]\!])=\dom(\C^\II)\cup\dom(\method')$$
+This is obvious since a pre-condition of the translation is $\QM{of}\notin\dom(\C^\II)$, so $\method'$ doesn't overlap with $\dom(\C^\II)$. The definition of $\dom$ is based on $\mBody$, and here the new domain $\dom([\![\II]\!])$ is only an extension to $\dom(\C)$ with the \QM{of} method, namely $\method'$. Also note that after translation, there are still no methods with conflicted names, since the \QM{of} method was previously not in the domain, hence $[\![\II]\!]$ is well-formed, which finishes our proof.
+\end{proof}
+
+\begin{lem2}[b]\label{lemma2b}
+If $\II$ has \mixin annotation $\C^{\II}$ OK in $\II$ IT
+and there is no heir of $\C^\II$, then $[\![\II]\!]$ OK in $[\![\II]\!]$ IT.
+\end{lem2}
+\begin{proof}
+\noindent\textbf{Part I.} Similarly to what already argued for Lemma~\ref{lemma2a} (a),
+since $\II$ OK, and by Lemma~\ref{lemma1b} (b), all the existing default and static methods are well typed in $[\![\II]\!]$ IT.
+The translation function delegates its work to $\weakAnn$ in such way that we can refer to
+Lemma~\ref{lemma2a} (a) to complete this part. Note that all the methods added (directly) by \mixin are abstract, and thus there is no body to typecheck.
+
+
+\noindent\textbf{Part II.}
+Similar to what we already argued for Lemma~\ref{lemma2a} (a), but we need to notice that the newly added methods are valid refinements for already present methods in $\dom(\C^\II)$ before the translation.
+Thus by the last clause of the definition of $\override(\_)$, $\mBody(\_)$ is defined on the same method names.
+\end{proof}
+
+
+\subsection{THEOREM and Proof}\label{subsec:theorem}
+
+\begin{thm2}[@ObjOf tuning]\label{theorem1}
+If a given interface table $\II$ IT is OK
+ where $\II$ has $\weakAnn$,
+$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$,
+then the interface table $[\![\II]\!]$ IT is OK.
+\end{thm2}
+
+\begin{proof}
+Lemma~\ref{lemma2a} (a) already proves that $[\![\II]\!]$ is OK. On the other hand, for any $\II'\in $ IT$\setminus\II$, by Lemma~\ref{lemma1a} (a), we know that all its methods
+are still well-typed, and the generated code in translation of $\weakAnn$ is only a static method \QM{of}, which has no way to affect the domain
+of $\II'$, so after translation rule \rn{t-Intf} can still be applied, which finishes our proof.
+\end{proof}
+
+\begin{thm2}[@Obj tuning]\label{theorem2}
+If a given interface table $\II$ IT is OK
+ where $\II$ has $\mixinAnn$,
+$\valid(\C^{\II})$  and $\QM{of}\notin\dom(\C^{\II})$, and there is no heir of $\C^{\II}$,
+then the interface table $[\![\II]\!]$ IT is OK.
+\end{thm2}
+
+\begin{proof}
+Similar to what already argued for Theorem~\ref{theorem1},
+we can apply Lemma~\ref{lemma2b} (b) and Lemma~\ref{lemma1b} (b). Then we finish by Theorem~\ref{theorem1}.
+\end{proof}
+
+

@@ -1,0 +1,9 @@
+paper.pdf
+paper.bbl
+paper.synctex*
+*.aux
+*.toc
+*.log
+*.blg
+*.bak
+*.tex-old

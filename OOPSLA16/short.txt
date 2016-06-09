@@ -21,7 +21,7 @@ traits, in the same way that traits are rebranded mixins.
 Traits are a restricted model of mixins: they purposely introduce
 limitations to provide an 'associative and commutative' composition
 semantics. Our work generalizes traits but keeps the same semantic
-improvements.
+improvemen
 
 Moreover, to the best of our knowledge, 'mixins models with fields'
 treat fields specially while our view unifies fields and methods.
@@ -37,7 +37,7 @@ a technical and conceptual point-of-view.
 We believe the following Java example, representing cartesian
 points via polar coordinates, captures the review concern:
 
-------
+```
 class Point{ //a
   public Point(int x, int y){ //b
     this.radius=/*computeRadius*/;   this.angle=/*computeAngle*/; //c
@@ -45,14 +45,14 @@ class Point{ //a
   private double radius;   private double angle;  //d
   double x(){/*..*/}  double y(){/*..*/}//e
 }
-----
+```
 
 In order to obtain the same effect in ClassLess Java, we need
 to explicitly declare an of method, as the reviewer suggested.
 In order to encode the privateness of the state,
 we can use the facade pattern (see Section6).
 
---------
+```
 interface Point{ double  x(); double y();  //a
   static Point of(double x, double y){//b
     return PolarPoint.of(/*computeRadius*/,/*computeAngle*/);//c
@@ -61,7 +61,7 @@ interface Point{ double  x(); double y();  //a
 @Obj interface PolarPoint extends Point{ double radius(); double angle(); //d
      double x(){/*..*/}   double y(){/*..*/} //e
    }
-------
+```
 
 Note how the labels in the java code correspond to labels in our code; in
 particular, the non trivial constructor (c,d) is rewrote as an "of" method.
@@ -83,9 +83,11 @@ client code incorrect. Such errors are reported, as normal, as an error
 in user client code. The discussion in Section 3.2, illustrates what 
 would happen. For the code:
 
+```
 interface A { int x(); A withX(int x); } 
 @Obj interface B extends A {} // no error here!
 interface C extends B { A withX(int x); } // **error is here**!
+```
 
 the error would be in interface C, which is client code, and is
 untouched by our mechanism.
@@ -114,14 +116,17 @@ Yes, in the case you propose, @Obj would generate of(Object first,
 LinkedList next, int size, boolean isEmpty); but this is not the way to
 write a LinkedList in CLJ. You should write:
 
+```
 interface LinkedList {//a plain interface with *abstract* methods in Java
  Object first();  LinkedList next();  int size();  boolean isEmpty();
 }
+```
 
 In Classless Java interfaces with "real" abstract methods are just
 plain old Java interfaces. Later, when you want to create a concrete
 implementation you can use @Obj. For example:
 
+```
 @Obj interface EmptyList extends LinkedList{
  default Object first(){/*error*/}
  LinkedList next(){/*error*/}
@@ -133,12 +138,14 @@ implementation you can use @Obj. For example:
  default int size(){return this.next().size()+1;}
  default boolean isEmpty(){return false;}
 }
+```
 
 Note how this is much shorter than the equivalent Java version.  
 
 By accepting the terrible hack of null,
 another possible implementation of LinkedList would be:
 
+```
 @Obj interface LinkedList {
  Object first();
  LinkedList next();
@@ -148,6 +155,7 @@ another possible implementation of LinkedList would be:
  }
  //boolean isEmpty();//makes no sense since the empty list is null
 }
+```
 
 Here "first" and "next" are fields, and size is a concrete method.
 
@@ -160,9 +168,11 @@ where AnotherType does not need to be in the hierarchy of
 MyInterfaceName. In the example you proposed, *if* the user was to
 ask for
 
+```
 Point3D with(Point2D); 
 Point3D with(ColoredPoint); 
 Point3D with(Point);
+```
 
 Those methods would be all implemented by looking what fields have the
 same name and compatible types inside of Point3D and, respectively,
