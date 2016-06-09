@@ -115,24 +115,23 @@
 \maketitle
 
 \begin{abstract}
-
   This paper introduces \interfacebased \objectoriented
-  programming (in short IB). Unlike \classbased OO programming, in IB there
-  is no need for classes. To support state, IB does not
-  use fields directly. Instead it uses \emph{abstract state
+  programming (IB). Unlike \classbased OO programming (CB), in IB there
+  is no need for classes. To support state, IB uses \emph{abstract state
     operations}, such as getters, setters or clone-like methods. This
   new way to deal with state allows flexibility not typically
   available in CB.  In IB state (including mutable state)
   can be type-refined in subtypes. The combination of a
   purely IB style of programming and type-refinement enables
-  powerful idioms using multiple inheritance and state.  To introduce
+  powerful idioms using multiple inheritance and state. To introduce
   IB to programmers we created Classless Java: an embedding of IB
   directly into Java. Classless Java uses annotation processing for
   code generation, and relies on new features of Java 8 for
-  interfaces. We illustrate the usefulness of IB through various
+  interfaces. The code generation techniques used in Classless Java
+  have interesting properties, including guarantees that no type
+  errors occur in generated code and good integration with IDE's. 
+  We illustrate the usefulness of IB and Classless Java through various
   examples and case studies.
-
-
 \end{abstract}
 
 \begin{comment}
