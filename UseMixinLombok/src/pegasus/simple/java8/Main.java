@@ -5,14 +5,10 @@ import static java.lang.System.out;
 //BEGIN_PEGASUS_JAVA
 interface Animal {} // no points yet!
 interface Horse extends Animal {
-    default void run() {
-        out.println("running!");
-    }
+    default void run(){out.println("run!");}
 }
 interface Bird extends Animal {
-    default void fly() {
-        out.println("flying!");
-    }
+    default void fly(){out.println("fly!");}
 }
 interface Pegasus extends Horse, Bird {}
 //END_PEGASUS_JAVA
