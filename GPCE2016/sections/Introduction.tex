@@ -26,12 +26,12 @@ fundamental to have stateful objects. All abstract operations in an
 object interface are interpreted as \emph{abstract state
   operations}. The abstract state operations include various common
 utility methods (such as getters and setters, or clone-like
-methods). Objects are the only responsible to define the ultimate
-behaviour of a method and, for example, if such a method is just a
-setter. Anything related to state is completely contained in the
+methods). Objects are only responsible to define the ultimate
+behaviour of a method. % and, for example, if such a method is just a setter. 
+Anything related to state is completely contained in the
 instances and does not leak into the inheritance logic.  In CB, the structure of the state is fixed and can be only grown
 by inheritance.  In contrast, in IB the state is never
-fixed, and methods that look like abstract setters and getters
+fixed, and methods such as abstract setters and getters
 can always receive an explicit implementation down in the inheritance
 chain, improving \textbf{modularity and flexibility}.  That is, the
 concept of abstract state is more fluid.
@@ -109,7 +109,7 @@ and semantics. However, this would have a steep learning curve.  We
 take a different approach instead. For the sake of providing a more
 accessible explanation, we will embed our ideas directly into Java.
 Our IB embedding relies on the
-new features of Java 8 for interfaces: interface \emph{static methods}; and
+new features of Java 8: interface \emph{static methods} and
 \emph{default methods}, which allow interfaces to have method
 implementations. In the context of Java, what we propose is a programming
 style, where we never use classes (more precisely, we never
@@ -164,11 +164,10 @@ Java \emph{Classless Java}.
 
 Using Java annotation processors, we produce an implementation of
 Classless Java, which allows us to stick to pure Java 8. By annotating
-with \Q|@Obj| the interfaces that represent object interfaces, we can
-automatically generate code for interface instantiation and
-type refinement. Such code should not be needed in the first place in
+ the interfaces that represent object interfaces with \mixin, code for interface instantiation and
+type refinement can be automatically generated. Such code should not be needed in the first place in
 a real IB language, and the annotation processor allows us to
-transparently hide it from Java programmers.  The implementation works
+transparently hide it from Java programmers. The implementation works
 by performing AST rewriting, allowing most existing Java tools (such as
 IDEs) to work out-of-the-box with our implementation. Moreover, the
 implementation blends Java's conventional CB style and IB smoothly.
@@ -252,7 +251,8 @@ In summary, the contributions of this paper are:
 
 \item {\bf Classless Java:} a practical realization of IB in
   Java. Classless Java is implemented using annotation processing,
-  allowing most tools to work transparently with our approach.
+  allowing most tools to work transparently with our approach. 
+  We provide the formal semantics here~\footnote{See url?? Formal semantics for Classless Java is provided in Section A}.
   Existing Java projects can use our approach and still be
   backward compatible with their clients, in a way that is specified
   by our safety properties.

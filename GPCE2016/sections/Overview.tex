@@ -18,9 +18,9 @@ This section illustrates how our programming style, supported by
 \mixinAnn{}, enables powerful programming idioms based on multiple
 inheritance and type refinements.  We propose a standard example:
 \Q@Animal@s with a 2-dimensional \Q@Point2D@ representing their
-\Q@location@.  Some kinds of animals are \Q@Horses@ and \Q@Bird@s.
+\Q@location@, subtypes \Q@Horses@, \Q@Bird@s, and \Q@Pegasus@.
 Birds can \Q@fly@, thus their locations need to be 3-dimensional
-\Q@Point3D@s (field type refinement). Finally, we model \Q@Pegasus@
+\Q@Point3D@s (field type refinement). We model \Q@Pegasus@
 (a well-known creature in Greek mythology) as a kind of
 \Q@Animal@ with the skills of both \Q@Horse@s and \Q@Bird@s (multiple
 inheritance). A simple class diagram illustrating the basic system is
