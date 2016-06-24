@@ -36,12 +36,13 @@ can always receive an explicit implementation down in the inheritance
 chain, improving \textbf{modularity and flexibility}.  That is, the
 concept of abstract state is more fluid.
 
-In the presence of subtyping, abstract state operations often require
-special care, as their types need to be refined. Object interfaces
-provide support for type-refinement and can automatically produce code
-that deals with type-refinement adequately. In contrast,
- verbose explicit type-refinement
- is typically required in CB.
+
+Object interfaces
+provide support for automatic type-refinement.
+In contrast, in CB 
+special care and verbose explicit type-refinement is be required to
+produce code that deals with subtyping adequately.
+
   We believe that such verbosity hindered and slowed
 down the discovery of useful programming patterns involving
 type-refinement. A recently discovered

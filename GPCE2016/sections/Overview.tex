@@ -137,8 +137,9 @@ Now we model the complete animal system where an \Q@Animal@ includes a \Q@locati
 representing its position in space. We use 2D points to keep track of locations using coordinates.
 
 \paragraph{\Q@Point2D@: simple immutable data with fields}
-Here we will illustrate how points are modelled with interfaces. In IB
-we do not talk about state directly. Instead, state is accessed and
+Here we will illustrate how points are modelled with interfaces.
+ In IB
+ state is accessed and
 manipulated using abstract methods.  The usual approach to model
 points in Java is to use a class with fields for the coordinates.
 In Classless Java interfaces are used instead:
@@ -147,7 +148,7 @@ In Classless Java interfaces are used instead:
 interface Point2D { int x(); int y(); }
 \end{lstlisting}
 
-\noindent The encoding over Java is now inconvenient: creating a new point object is cumbersome, even
+\noindent The encoding over pure Java is now inconvenient: creating a new point object is cumbersome, even
 with anonymous classes:
 
 \begin{lstlisting}
@@ -184,8 +185,10 @@ of them. That is, we can just write
 \end{lstlisting}
 
 \noindent More precisely, a field or factory parameter is generated for every
-abstract method that takes no parameters (except for methods with special
-names). An example of using \Q@Point2D@ is:
+abstract method that takes no parameters.
+%(except for methods with special
+%names).
+ An example of using \Q@Point2D@ is:
 \begin{lstlisting}
 Point2D p = Point2D.of(42,myPoint.y());
 \end{lstlisting}
@@ -234,13 +237,13 @@ interface Point2D { int x(); int y();
   Point2D withX(int val);    Point2D withY(int val); }
 \end{lstlisting}
 \end{comment}
-Moreover, if the programmer wants a different implementation, he may
+Moreover, if the programmer wants a different implementation, they may
 provide an alternative implementation using \Q@default@ methods. For example:
 \begin{lstlisting}
 @Obj interface Point2D {
     int x(); int y();
     default Point2D withX(int val){ /*myCode*/ }
-    default Point2D withY(int val){ /*myCode*/ } }
+    Point2D withY(int val); }
 \end{lstlisting}
 
 %\begin{comment}
@@ -250,12 +253,14 @@ provide an alternative implementation using \Q@default@ methods. For example:
 interface Point2D {
     int x(); int y();
     default Point2D withX(int val){ /*myCode*/ }
-    default Point2D withY(int val){ /*myCode*/ }
+    Point2D withY(int val);
     static Point2D of(int _x, int _y){
       return new Point2D(){
         int x=_x;    int y=_y;
         public int x(){return x;}
-        public int y(){return y;} }; } }
+        public int y(){return y;} 
+        public Point2D withY(int val){
+          return of(x(),val);}  }; } }
 \end{lstlisting}
 
 \noindent Only code for methods needing implementation is generated. Thus,
@@ -574,6 +579,24 @@ Figure~\ref{fig:abstractstate} summarizes the six operations supported
 by \mixin. The field-based abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of
 conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
+
+\paragraph{Property updater as Injections}
+
+By declaring fields in Newspeak and other languages,
+the programmers specifies field signatures and (critically) the intention of storing such information. Then the language generate getter and setter.
+Once state is abstracted away,
+it is well known that is possible to replace state
+access with computation, but the type of the field stays the same.
+
+Our fluid approach to state is specular:
+the intention of storing the information is not expressed by the programmer and set in stone, 
+but can vary by inheritance:
+We generate the idea of the field
+just starting from getters and setters signatures.
+
+In this case, we leverage on our fluid state to changing the underling type of the field,
+ and our \Q@with@ is providing
+the right injection from the old type to the new one.
 
 \subsection{Advanced Multiple Inheritance}
 Finally, defining \texttt{Pegasus} is as simple as we did in the simplified
