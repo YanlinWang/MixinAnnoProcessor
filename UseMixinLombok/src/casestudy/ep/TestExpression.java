@@ -88,3 +88,4 @@ interface ExpC extends Exp { List<Integer> collectLit(); }
 interface ExpPC extends ExpP, ExpC {}
 @Obj interface LitPC extends ExpPC, LitP, LitC {}
 @Obj interface AddPC extends ExpPC, AddP, AddC { ExpPC e1(); ExpPC e2(); }
+//END_INDEPENDENT_EXTENSIBILITY
