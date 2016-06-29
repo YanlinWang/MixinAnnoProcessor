@@ -45,7 +45,7 @@ for multiple interface inheritance.
 Many authors have argued in favor or against multiple inheritance.
 Multiple \emph{implementation}
 inheritance is very expressive, but difficult to model and implement, and can
-cause difficulties (including the famous diamond (fork-join)
+cause difficulties (including the famous diamond %(fork-join)
 problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning about
 programs. To conciliate the need for expressive power and simplicity, many
 models have been proposed, including C++ virtual inheritance,
@@ -59,14 +59,13 @@ state, instantiation, etc).
 %\paragraph{C++ Approach.}
 C++ has a general solution to multiple inheritance by
 virtual inheritance, dealing with the diamond problem by keeping only
-one copy of the base class~\cite{ellis1990annotated}. However C++
-suffers from the object initialization problem~\cite{malayeri2009cz}.
+one copy of the base class~\cite{ellis1990annotated}. However it 
+suffers from object initialization problem~\cite{malayeri2009cz}.
 It bypasses constructor calls to virtual superclasses, which can
 cause serious semantic errors. In our approach, the \mixin
 annotation has full control over object initialization,
-and the mechanism is transparent to users. Moreover, customized factory
-methods are also allowed: if users are not satisfied with the default
-generated \texttt{of} method, they can implement their own.
+and the mechanism is transparent to users. Moreover, if users are not satisfied with the default
+ \texttt{of} method, they can provide customized factory methods.
 
 %\paragraph{Mixins.}
 Mixins are more restricted than the C++ approach. Mixins allow naming
