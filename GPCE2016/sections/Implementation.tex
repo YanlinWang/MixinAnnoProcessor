@@ -111,7 +111,7 @@ tools to work transparently.
 \saveSpaceFig
 \saveSpaceFig
 \centering
-\includegraphics[width=4.5in]{pdfs/screenshot4.png}
+\includegraphics[width=5in]{pdfs/screenshot4.png}
 \caption{Generated methods shown in the Outline window of Eclipse and auto-completion.}
 \label{fig:screenshot}
 \saveSpaceFig
@@ -255,7 +255,7 @@ would be correct before translation, but ill-typed after the translation.
 Our automatic type refinement is a useful and convenient feature, but
 not transparent to the heirs of the annotated interface.  They need to
 be aware of the annotation semantics and provide the right type while
-refining methods. To support heir coherence, we would need
+refining methods. To support heir coherence, we need
 to give up automatic type refinement, which is an essential part of IB programming.
 However, Java libraries almost always break heir
 coherence during evolution and still claim backward compatibility. In practice, adding any method to any
@@ -264,7 +264,7 @@ coherence.  We think return type refinement breaks heir coherence ``less" than n
 if no automatic type-refinements are needed, then \mixin can claim a
 form of heir coherence.
 %Section~\ref{sec:translation} 
-Formal definition/proofs for our safety claims are found in the
+Formal definition/proofs for our safety claims are in the
 technical report.
 
 \subsection{Limitations}
