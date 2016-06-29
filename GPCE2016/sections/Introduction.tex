@@ -37,22 +37,17 @@ chain, improving \textbf{modularity and flexibility}.  That is, the
 concept of abstract state is more fluid.
 
 
-Object interfaces
-provide support for automatic type-refinement.
-In contrast, in CB 
-special care and verbose explicit type-refinement is be required to
-produce code that deals with subtyping adequately.
-
-  We believe that such verbosity hindered and slowed
-down the discovery of useful programming patterns involving
-type-refinement. A recently discovered
-solution~\cite{eptrivially} to the Expression
-Problem~\cite{wadler98expression} in Java-like languages, shows how easy it is to solve
-the problem using only type-refinement. However it took nearly 20
-years since the formulation of the problem for that
-solution to be presented in the literature. In IB, due to
-its emphasis on type-refinement, that solution should have been much
-more obvious.
+Object interfaces provide support for automatic type-refinement.  In
+contrast, in CB special care and verbose explicit type-refinement is
+required to produce code that deals with subtyping adequately. We
+believe that such verbosity hindered and slowed down the discovery of
+useful programming patterns involving type-refinement. A recently
+discovered solution~\cite{eptrivially} to the Expression
+Problem~\cite{wadler98expression} in Java-like languages, shows how
+easy it is to solve the problem using only type-refinement. However it
+took nearly 20 years since the formulation of the problem for that
+solution to be presented in the literature. In IB, due to its emphasis
+on type-refinement, that solution should have been more obvious.
 
 One advantage of abstract state operations and
 type-refinement is that it allows a new approach to
@@ -73,14 +68,14 @@ In this paper we show how to support type-safe
 and \textbf{multiple inheritance}.}
 \end{comment}
 
-Another advantage of IB is its support for
+Another advantage of IB is support for
 multiple inheritance. The literature is rich on how
 easy it is to combine multiple sources of pure behaviour,
 using mechanisms such as traits~\cite{scharli03traits}. In Java
 multiple \emph{interface} inheritance has been supported since
-inception, and in Java 8 default methods~\cite{goetz12fdefenders} bring some of the
-advantages of traits into Java. In contrast, the literature~\cite{Sak89dis,bracha90mixin,malayeri2009cz}
-is also rich on how hard it is to modularly combine multiple sources
+inception, and Java 8 default methods~\cite{goetz12fdefenders} bring some of the
+advantages of traits to Java. The literature~\cite{Sak89dis,bracha90mixin,malayeri2009cz}
+is also rich on how hard it is to combine multiple sources
 of behaviour \textbf{and} state with multiple \emph{implementation}
 inheritance of classes. In IB there is only multiple
 interface inheritance, yet programmers can still use state via 
