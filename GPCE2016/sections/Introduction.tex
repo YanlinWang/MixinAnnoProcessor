@@ -68,9 +68,9 @@ and \textbf{multiple inheritance}.}
 \end{comment}
 
 Another advantage of IB is support for
-multiple inheritance. The literature is rich on how
+multiple inheritance. The literature shows how
 easy it is to combine multiple sources of pure behaviour,
-using mechanisms such as traits~\cite{scharli03traits}. In Java
+using traits~\cite{scharli03traits}. In Java
 multiple \emph{interface} inheritance has been supported since
 inception, and Java 8 default methods~\cite{goetz12fdefenders} bring some of the
 advantages of traits to Java. The literature~\cite{Sak89dis,bracha90mixin,malayeri2009cz}
@@ -231,8 +231,7 @@ in Java interfaces the visibility of all methods is public. Thus
 modelling private state is difficult in current Java 8. However,
  using existing design patterns~\cite{BettiniDSS13} we can emulate hiding
 methods from interfaces. Furthermore Java 9 will allow private methods
-on interfaces~\cite{srikanth16private}, greatly improving the support for
-encapsulation.
+on interfaces~\cite{srikanth16private}.
 
 %We discuss
 %these limitations, possible workarounds, and native language support in Section~\ref{sec:futurework}.
@@ -249,7 +248,7 @@ In summary, the contributions of this paper are:
   allowing most tools to work transparently with our approach. 
   Existing Java projects can use our approach and still be
   backward compatible with their clients, in a way that is specified
-  by our safety properties. A formal semantics is available in an extended report~\footnote{url}.
+  by our safety properties. A formal translation to Java is available in an extended report\footnote{url}.
 
 \item {\bf Type-safe covariant mutable state:} we show how the
  combination of abstract state operations and type-refinement enables

@@ -103,8 +103,9 @@
 % \preprintfooter{short description of paper}   % 'preprint' option specified.
 
 \title{Classless Java}
-\subtitle{\InterfaceBased Programming for the Masses}
+%\subtitle{\InterfaceBased Programming for the Masses}
 
+\vspace{-20pt}
 \authorinfo{Yanlin Wang\and Haoyuan Zhang \\ Bruno C. d. S. Oliveira}
            {The University of Hong Kong}
            {\{ylwang,hyzhang,bruno\}@cs.hku.hk}
@@ -113,14 +114,15 @@
           {marco.servetto@ecs.vuw.ac.nz}
 
 \maketitle
+\vspace{-20pt}
 
 \begin{abstract}
   This paper presents an OO style without classes, which we call \interfacebased \objectoriented
   programming (IB). This style is a natural extension of closely
-  related ideas such as traits, but where classes are avoided.
+  related ideas such as traits.
   To support state, IB uses \emph{abstract state
-    operations}, such as getters, setters or clone-like methods. This
-  new way to deal with state allows flexibility not typically
+    operations}. This
+  new way to deal with state allows flexibility not 
   available in CB.  In IB state (including mutable state)
   can be type-refined in subtypes. The combination of a
   purely IB style and type-refinement enables
@@ -129,9 +131,9 @@
   directly into Java. Classless Java uses annotation processing for
   code generation, and relies on new features of Java 8 for
   interfaces. The code generation techniques used in Classless Java
-  have interesting properties, including guarantees that no type
-  errors occur in generated code and good integration with IDE's. 
-  Usefulness of IB and Classless Java is shoen with various
+  have interesting properties, including guarantees that 
+  the generated code is type-safe and good integration with IDE's. 
+  Usefulness of IB and Classless Java is shown with 
   examples and case studies.
 \end{abstract}
 
@@ -147,6 +149,7 @@ term1, term2
 keyword1, keyword2
 \end{comment}
 
+\vspace{-10pt}
 \input{sections/Introduction.tex}
 
 \input{sections/Overview.tex}
