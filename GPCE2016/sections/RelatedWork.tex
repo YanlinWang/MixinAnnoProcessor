@@ -45,7 +45,7 @@ for multiple interface inheritance.
 Many authors have argued in favor or against multiple inheritance.
 Multiple \emph{implementation}
 inheritance is very expressive, but difficult to model and implement. It can
-cause difficulties (including the famous diamond (fork-join)
+cause difficulties (including the famous diamond
 problem~\cite{bracha90mixin,Sak89dis}, conflicting methods, etc.) in reasoning about
 programs. To allow for expressive power and simplicity, many
 models have been proposed, including C++ virtual inheritance,
@@ -59,14 +59,13 @@ state, instantiation, etc).
 %\paragraph{C++ Approach.}
 C++ has a general solution to multiple inheritance by
 virtual inheritance, dealing with the diamond problem by keeping only
-one copy of the base class~\cite{ellis1990annotated}. However C++
-suffers from the object initialization problem~\cite{malayeri2009cz}.
+one copy of the base class~\cite{ellis1990annotated}. However it 
+suffers from object initialization problem~\cite{malayeri2009cz}.
 It bypasses constructor calls to virtual superclasses, which can
 cause serious semantic errors. In our approach, the \mixin
 annotation has full control over object initialization,
-and the mechanism is transparent to users. Moreover, customized factory
-methods are also allowed: if users are not satisfied with the default
-generated \texttt{of} method, they can implement their own.
+and the mechanism is transparent to users. If users are not satisfied with the default
+ \texttt{of} method, customized factory methods can be provided.
 
 %\paragraph{Mixins.}
 Mixins are more restricted than the C++ approach. Mixins allow naming
@@ -124,7 +123,6 @@ for various flavors of multiple inheritance in Java. Traits offer an algebra
 of composition operations like sum, alias, and exclusion, providing explicit conflict
 resolution. Former work~\cite{bono14} provides details on mimicking the trait
 algebra through Java 8 interfaces.
-
 \begin{comment}
 We briefly recall the main points of their
 encoding; however we propose a different representation of \textbf{exclusion}.
@@ -163,7 +161,6 @@ our revised version for exclusion is cleaner, typesafe and more direct.
 \shortItem
 \end{itemize}
 \end{comment}
-
 There are also proposals for extending Java with traits. For
 example, FeatherTrait Java (FTJ)~\cite{Liquori08ftj} extends
 FJ~\cite{Igarashi01FJ} with statically-typed traits, adding trait-based
@@ -354,8 +351,7 @@ Admittedly, MyType greatly enhances the expressiveness and extensibility of
 simulate some uses of MyType. But this approach only works for refining
 return types, whereas MyType is more general, as it also works for
 parameter types. Our approach to covariantly refine state can recover
-some of the additional expressiveness of MyType. As illustrated with our examples and
-case studies, object interfaces are still very useful in many
+some of the additional expressiveness of MyType. As illustrated with our examples, object interfaces are still very useful in many
 practical applications, yet they do not require additional
 complexity from the type system.
 

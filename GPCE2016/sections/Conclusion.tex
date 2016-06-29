@@ -12,12 +12,11 @@ can be defined and used without ever defining a single class.
 However, using this programming style directly in Java is very verbose.
 To avoid syntactic boilerplate
 caused by Java not being originally designed to work without classes,
-we introduce a new annotation, \mixin, which provides default implementations
+we introduce a new \mixin annotation. \mixin provides default implementations
 for various methods (e.g. getters, setters, with-methods) and a
 mechanism to instantiate objects.
 We leverage on annotation processing and the Lombok library, in this way
-\mixin is just a normal Java library; thus our proposed style can be integrated
-in any Java project.
+\mixin is just a normal Java library.
 The \mixin annotation helps programmers
 to write less cumbersome code while coding in Classless Java. Indeed,
 we think the obtained gain is so high that Classless Java with the \mixin
