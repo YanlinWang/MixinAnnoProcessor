@@ -580,21 +580,6 @@ by \mixin. The field-based abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of
 conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
 
-\paragraph{Property updater as Injections}
-
-By declaring fields in Newspeak and other languages,
-the programmers specifies field signatures and (critically) the intention of storing such information. 
-Then the language generates getters and setters.
-Once state is abstracted away, it is well known that state
-access can be replaced with computation, but the type of the field stays the same.
-% Our fluid approach to state is specular:
-In our approach,
-the intention of storing the information is not expressed by the programmer and set in stone, 
-but can vary by inheritance: we generate the idea of the field
-just starting from signatures of getters and setters.
-In this case, we leverage on our fluid state to changing the underling type of the field,
- and our \Q@with@ provides the right injection from the old type to the new.
-
 \subsection{Advanced Multiple Inheritance}
 Finally, defining \texttt{Pegasus} is as simple as we did in the simplified
 (and stateless) version on the right of Figure~\ref{fig:pegasus}.
