@@ -19,7 +19,7 @@ declarations as done in Section~\ref{sec:ep}) illustrates what \emph{pure} IB is
 However, using \mixin, CB and IB programming can be mixed together,
 harvesting the practical convenience of using existing Java libraries, the full
 Java language and IDE support.
-The key to our implementation is compilation agents, which
+The key to our implementation are compilation agents, which
  allows us to rewrite the Java AST just
 before compilation. We discuss advantages and limitations of our approach.
 
@@ -64,20 +64,48 @@ etc). Finally, the Java compiler works on the modified AST to generate bytecode.
 \saveSpaceFig
 \end{figure}
 
-
 \paragraph{Advantages of Lombok}
-The Lombok compilation agent has advantages over 
-pre-processors or other Java annotation processors.
-Lombok offers in Java an expressive power similar to that of Scala/Lisp macros,
-except, for the syntactic convenience of quote/unquote templating. Compilation
-agents act modularly on each compilation unit, applying transformations to one 
-annotated class/interface at a time. This allows library code to be reused
+The Lombok compilation agent has advantages with respect to alternatives like
+pre-processors, or other Java annotation processors.
+Lombok offers in Java an expressive power similar to that of Scala/Lisp macros;
+except, for the syntactic convenience of quote/unquote templating.
+
+\paragraph{Direct modification of the AST}
+Lombok alters the generation process of the class files,
+by directly modifying the AST. Neither the source code is modified nor
+new Java files are generated. Moreover, and probably more importantly,
+Lombok supports generation of code \emph{inside} a class/interface,
+which conventional Java annotation processors, such as \texttt{javax.annotation}, do not support.
+
+\paragraph{Modularity}
+While general preprocessing acts across module boundaries, compilation
+agents act modularly on each class/compilation unit. It makes sense to
+apply the transformations to one class/interface at a time, and only to
+annotated classes/interfaces. This allows library code to be reused
 without the need of being reprocessed and recompiled, making our
-approach 100\% compatible with existing Java libraries. 
-In Eclipse, the processing is 
+approach 100\% compatible with existing Java libraries, which can be
+used and extended normally.
+
+\paragraph{Tool support}
+Features written in Lombok integrate and are supported directly in the
+language, and are often also supported by (most) tools.  
+In Figure~\ref{fig:screenshot},
+\mixin generates an \Q@of@ method in \Q@Point2D@, and \Q@of@, \Q@withX@, \Q@withY@ methods in \Q@Point3D@.
+In Eclipse, the processing is
 performed transparently and the information of the interface from
-compilation is captured in the ``Outline'' window as shown in Figure~\ref{fig:screenshot}..
-This includes all the methods inside the interface as well as the generated ones.
+compilation is captured in the ``Outline'' window.
+This includes all
+the methods inside the interface as well as the generated ones.
+Moreover, as a useful IDE feature, the auto-completion also works for these newly generated methods.
+
+\begin{comment}
+\paragraph{Clarity against obfuscation}
+Preprocessors bring great power, which can easily be misused producing
+code hard to understand. Thus code quality and maintainability are reduced.
+Compilation agents start from Java syntax, but they can reinterpret it.
+Preserving the syntax avoids syntactic conflicts, allowing many
+tools to work transparently.
+\end{comment}
 
 \begin{figure*}[t]
 \saveSpaceFig
@@ -230,14 +258,14 @@ be aware of the annotation semantics and provide the right type while
 refining methods. To support heir coherence, we would need
 to give up automatic type refinement, which is an essential part of IB programming.
 However, the reader should note that Java libraries almost always break heir
-coherence during evolution and still claim backward compatibility (false in
-theory but statistically true in practice). In practice, adding any method to any
+coherence during evolution and still claim backward compatibility. In practice, adding any method to any
 non-final class of a Java library is enough to break heir
 coherence.  We think return type refinement breaks heir coherence ``less" than normal library evolution, and
 if no automatic type-refinements are needed, then \mixin can claim a
 form of heir coherence.
 %Section~\ref{sec:translation} 
-We provide a formal definition for our safety claims here~\footnote{See url?? Section B}.
+Formal definition/proofs for our safety claims are found in the
+technical report.
 
 \subsection{Limitations}
 Our prototype implementation has certain limitations:
@@ -258,7 +286,7 @@ requires that all
   related interfaces have to appear in a single Java file.
 Reusing the logic inside the experimental Lombok annotation \lstinline{@Delegate},
 we also offer a less polished annotation supporting
-separate compilation for files in the same package.
+separate compilation.
 %  has the same behavior as \mixin. A limitation is
 %  that users need to put references to the super types
 % of the annotated type together with the annotation, for instance,
