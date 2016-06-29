@@ -1,18 +1,18 @@
 \section{Conclusion}\label{sec:conclusion}
-Before Java 8, concrete methods and static methods were not allowed
+Before Java 8, concrete methods were not allowed
 to appear in interfaces.  Java 8 allows static interface methods and
-introduces \emph{default methods}, which enables implementations
-inside interfaces. This had an important positive consequence that
-was probably overlooked: the concept of class
+introduces \emph{default methods}, which enable implementations
+inside interfaces. An important positive consequence that
+was probably overlooked is that the concept of class
 (in Java) is now (almost) redundant and unneeded.
-We proposed a programming style, called Classless Java, where
+We propose a programming style, called Classless Java, where
 truly \objectoriented programs and (reusable) libraries
 can be defined and used without ever defining a single class.
 
 However, using this programming style directly in Java is very verbose.
 To avoid syntactic boilerplate
 caused by Java not being originally designed to work without classes,
-we introduce a new \mixin annotation. \mixin provides default implementations
+we introduce the \mixin annotation that provides default implementations
 for various methods (e.g. getters, setters, with-methods) and a
 mechanism to instantiate objects.
 We leverage on annotation processing and the Lombok library, in this way
@@ -22,15 +22,15 @@ to write less cumbersome code while coding in Classless Java. Indeed,
 we think the obtained gain is so high that Classless Java with the \mixin
 annotation can be less cumbersome than full Java.
 
-Classless Java is just a programming style, but is showing the way
-for a new flavour of object orientation: We propose \interfacebased
+Classless Java is just a programming style, but showing the way
+to a new flavour of OOP: we propose \interfacebased
 \objectoriented languages (IB), as opposed to \classbased or
-\prototypebased.  In IB state is not modelled at the platonic/ideal
-level but is handled exclusively by instances.  This unlocks useful
+\prototypebased. In IB state is not modelled at the platonic
+level but handled exclusively by instances.  This unlocks useful
 code reuse patterns, as shown in Section~\ref{sec:ep}.
 An interesting avenue for future work would be to design a new
-language based on IB. With a proper language design we would not need
-to restrict ourselves to the limitations of Java and its syntax.
+language based on IB. With a proper language design, IB would not be restricted 
+by limitations of Java and its syntax.
 
 
 %Interestingly, without classes there is also no subclassing. This scratches an old

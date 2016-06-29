@@ -171,25 +171,25 @@ structural subtyping) that default methods and interfaces cannot
 model.
 
 \paragraph{Traits vs Object Interfaces.}
-We consider object interfaces to be an alternative to traits or mixins.  In the
+We consider object interfaces an alternative to traits or mixins. In 
 trait model two concepts (traits and classes) coexist and cooperate. Some
 authors~\cite{BettiniDSS13} see this as good language design fostering good
-software development by helping programmers to think about the structure of
-their programs.  However, other authors see the need of two concepts and the
+software development by helping programmers think about the program structures. 
+However, others see the need of two concepts and the
 absence of state as drawbacks of this model~\cite{malayeri2009cz}.  Object
-interfaces are units of reuse, and at the same time they provide factory methods
-for instantiation and support state.  Our approach promotes the use of
-interfaces instead of classes, in order to rely on the modular composition
+interfaces are units of reuse, and meanwhile provide factory methods
+for instantiation and support state. Our approach promotes the use of
+interfaces in order to exploit the modular composition
 offered by interfaces. Since Java was designed for classes, a direct classless
 programming style is verbose and unnatural. However, annotation-driven code
-generation is enough to overcome this difficulty, and the resulting programming
-style encourages modularity, composability and reusability, by keeping a strong
-OO feel. In that sense, we promote object interfaces as being both units of
-reusable code and object factories. Our practical experience is that, in Java,
-separating the two notions leads to a lot of boilerplate code, and is quite
+generation is enough to overcome this difficulty and the resulting programming
+style encourages modularity, composability and reusability. %, by keeping a strong OO feel. 
+In that sense, we promote object interfaces as being both units of
+reuse and object factories. Our practical experience shows that 
+separating the two notions leads to lots of boilerplate code, and is quite
 limiting when multiple inheritance with state is required.  Abstract state
 operations avoid the key difficulties associated with multiple inheritance and
-state, while still being quite expressive.  Moreover the ability to support
+state, while still being quite expressive. Moreover the ability to support
 constructors adds expressivity, which is not available in approaches
 such as Scala's traits/mixins.
 %\footnote{Scala traits have
@@ -333,26 +333,26 @@ In this case, the underling type of the field can be changed by our fluid state,
 Object interfaces support automatic type-refinement.
 Type refinement is part of a bigger topic in \classbased languages: expressing and
 preserving type recursion and (nominal/structural) subtyping at the same time.
-One famous attempt in this direction is provided by
+One famous attempt in this direction is 
 \emph{MyType}~\cite{bruce1994paradigmatic}, representing the type of
 \textbf{this}, changing its meaning along with inheritance. However when
-invoking a method with MyType in a parameter position, the exact type of the
-receiver must be known.  This is a big limitation in \classbased \objectoriented
-programming, and is exasperated by the \interfacebased programming we propose: no
+invoking a method with MyType in parameter positions, the exact type of the
+receiver must be known. This is a big limitation in \classbased OO
+programming and is exasperated by the \interfacebased programming we propose: no
 type is ever going to be exact since classes are not explicitly used. A recent
-article~\cite{Saito2013933} lights up this topic, proposing two
+article~\cite{Saito2013933} proposes two
 new features: exact statements and nonheritable methods. Both are
 related to our work: 1) any method generated inside the \Q@of@ method is indeed
 non-inheritable since there is no class name to extend from; 2) exact
 statements (a form of wild-card capture on the exact run-time type) could
 capture the ``exact type'' of an object even in a class-less
 environment.
-Admittedly, MyType greatly enhances the expressiveness and extensibility of
-\objectoriented programming languages. Object interfaces use covariant-return types to
+Admittedly, MyType greatly enhances the expressivity and extensibility of
+\objectoriented programming languages. Object interfaces %use covariant-return types to
 simulate some uses of MyType. But this approach only works for refining
 return types, whereas MyType is more general, as it also works for
 parameter types. Our approach to covariantly refine state can recover
-some of the additional expressiveness of MyType. As illustrated with our examples, object interfaces are still very useful in many
+some of the additional expressivity of MyType. As illustrated with our examples, object interfaces are still very useful in many
 practical applications, yet they do not require additional
 complexity from the type system.
 
