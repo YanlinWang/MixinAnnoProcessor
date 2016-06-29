@@ -225,7 +225,7 @@ converted to interfaces due to the limitation of our implementation of \mixin.
 
 While the Java embedding has obvious advantages from the practical
 point-of-view, it also imposes some limitations that a new IB language
-would not have. In particular, supporting proper encapsulation is
+would not have. Supporting proper encapsulation is
 difficult in Java due to limitations of Java interfaces. In particular
 in Java interfaces the visibility of all methods is public. Thus
 modelling private state is difficult in current Java 8. However,
@@ -247,10 +247,9 @@ In summary, the contributions of this paper are:
 \item {\bf Classless Java:} a practical realization of IB in
   Java. Classless Java is implemented using annotation processing,
   allowing most tools to work transparently with our approach. 
-  We provide the formal semantics here~\footnote{See url?? Formal semantics for Classless Java is provided in Section A}.
   Existing Java projects can use our approach and still be
   backward compatible with their clients, in a way that is specified
-  by our safety properties.
+  by our safety properties. A formal semantics is available in an extended report~\footnote{url}.
 
 \item {\bf Type-safe covariant mutable state:} we show how the
  combination of abstract state operations and type-refinement enables
