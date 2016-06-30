@@ -29,7 +29,7 @@ utility methods (such as getters and setters, or clone-like
 methods). Objects are only responsible to define the ultimate
 behaviour of a method. % and, for example, if such a method is just a setter. 
 Anything related to state is completely contained in the
-instances and does not leak into the inheritance logic.  In CB, the structure of the state is fixed and can be only grown
+instances and does not leak into the inheritance logic.  In CB, the structure of the state is fixed and can only grow
 by inheritance.  In contrast, in IB the state is never
 fixed, and methods such as abstract setters and getters
 can always receive an explicit implementation down in the inheritance
@@ -42,7 +42,7 @@ required to produce code that deals with subtyping adequately. We
 believe that such verbosity hindered and slowed down the discovery of
 useful programming patterns involving type-refinement. A recently
 discovered solution~\cite{eptrivially} to the Expression
-Problem~\cite{wadler98expression} in Java-like languages, shows how
+Problem~\cite{wadler98expression} in Java-like languages shows how
 easy it is to solve the problem using only type-refinement. However it
 took nearly 20 years since the formulation of the problem for that
 solution to be presented in the literature. In IB, due to its emphasis
@@ -53,7 +53,7 @@ type-refinement is that it allows a new approach to
 \emph{type-safe covariant mutable state}. That is, in IB,
 it is possible to type-refine \emph{mutable} ``fields'' in subtypes. This is
 typically forbidden in CB: it is widely known that \emph{naive} type-refinement of
-mutable fields is not type-safe. While covariant refinement of mutable
+mutable fields is not type-safe. Although covariant refinement of mutable
 fields is supported by some type systems~\cite{bruce98astatically,bruce1994paradigmatic,ernst06virtual,Saito2013933}, this requires
 significant complexity and restrictions to ensure that all uses of
 covariant state are indeed type-safe.
@@ -67,9 +67,9 @@ In this paper we show how to support type-safe
 and \textbf{multiple inheritance}.}
 \end{comment}
 
-Another advantage of IB is support for
+Another advantage of IB is the support for
 multiple inheritance. The literature shows how
-easy it is to combine multiple sources of pure behaviour,
+easy it is to combine multiple sources of pure behaviour
 using traits~\cite{scharli03traits}. In Java
 multiple \emph{interface} inheritance has been supported since
 inception, and Java 8 default methods~\cite{goetz12fdefenders} bring some of the
@@ -231,7 +231,7 @@ in Java interfaces the visibility of all methods is public. Thus
 modelling private state is difficult in current Java 8. However,
  using existing design patterns~\cite{BettiniDSS13} we can emulate hiding
 methods from interfaces. Furthermore Java 9 will allow private methods
-on interfaces~\cite{srikanth16private}.
+in interfaces~\cite{srikanth16private}.
 
 %We discuss
 %these limitations, possible workarounds, and native language support in Section~\ref{sec:futurework}.

@@ -63,8 +63,7 @@ interface Animal {
 //BEGIN_HORSE
 @Obj interface Horse extends Animal {
 	default void run() {
-		location(location().withX(
-			location().x() + 20));} }
+		location(location().withX(location().x()+20));}}
 //END_HORSE
 
 //BEGIN_BIRD
