@@ -18,7 +18,7 @@ programs. This useful pattern is based on an existing solution to
 the \emph{Expression Problem} (EP)~\cite{wadler98expression}, which is a well-known
 problem about modular extensibility issues in software evolution. Recently, a
 new solution~\cite{eptrivially} using only covariant type refinement was
-proposed. When this solution is modeled with interfaces and default methods, it
+proposed. When this solution is modelled with interfaces and default methods, it
 can even provide independent extensibility~\cite{zenger05independentlyextensible}: the ability to assemble a system
 from multiple, independently developed extensions. Unfortunately, the
 required instantiation code makes a plain Java solution verbose and cumbersome
@@ -30,7 +30,7 @@ much smaller Expression Problem.
 
 \paragraph{Initial System}
 In the formulation of the EP, there is an initial system that models
-arithmetic expressions with only literals and addition, and an initial
+arithmetic expressions with only literals, addition, and an initial
 operation \texttt{eval} for expression evaluation.
 As shown in Figure~\ref{fig:ep}, \texttt{Exp} is the common
 super-interface with operation \texttt{eval()}
@@ -150,7 +150,7 @@ features, and the return type of fluent setters in
 \texttt{Database} is automatically refined to \texttt{ExtendedDatabase}:
 \lstinputlisting[linerange=14-18]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_DATABASE_EXT
 In this way, when a query is created using \texttt{ExtendedDatabase},
-all the fluent setters return the correct type, and not the old \texttt{Database} type, which would prevent calling
+all the fluent setters return the correct type instead of the old \texttt{Database} type, which would prevent calling
 \texttt{orderBy}.
 
 \lstinputlisting[linerange=39-39]{../UseMixinLombok/src/casestudy/sql/DatabaseTest.java}% APPLY:linerange=FLUENT_QUERY2
@@ -175,7 +175,7 @@ to model operations \texttt{symmetric sum}, \texttt{override} and
 \texttt{alias} from trait-oriented programming. The game has been
 implemented using plain Java 8 and default methods by Bono
 et. al~\cite{bono14}, and the code for that implementation is
-available online. We reimplemented the game using \mixin. Due to space
+available online. We refactored the game using \mixin. Due to space
 constraints, we omit the code here. The following table summarizes
 the number of lines of code and classes/interfaces in each implementation:
 

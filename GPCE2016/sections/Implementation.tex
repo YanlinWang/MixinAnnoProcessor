@@ -19,9 +19,9 @@ declarations as done in Section~\ref{sec:ep}) illustrates what \emph{pure} IB is
 However, using \mixin, CB and IB programming can be mixed together,
 harvesting the practical convenience of using existing Java libraries, the full
 Java language and IDE support.
-The key to our implementation are compilation agents, which
+The key to our implementation is compilation agents, which
  allow us to rewrite the Java AST just
-before compilation. We discuss advantages and limitations of our approach.
+before compilation. We discuss the advantages and limitations of our approach.
 
 \subsection{Compilation Agents}
 Java supports compilation agents, where Java libraries can interact with the Java compilation process,
@@ -82,7 +82,7 @@ While general preprocessing acts across module boundaries, compilation
 agents act modularly on each class/compilation unit. It makes sense to
 apply the transformations to one class/interface at a time, and only to
 annotated classes/interfaces. This allows library code to be reused
-without being reprocessed and recompiled, making our
+without being reprocessed or recompiled, making our
 approach 100\% compatible with existing Java libraries, which can be
 used and extended normally.
 
@@ -220,11 +220,10 @@ more detail next:
 
 \begin{itemize}
 
-\item{\bf Self coherence}: the generated code itself is well-typed. That is,
-  type errors are not present in code the user has not written (for
-  example \texttt{of} methods in Figure~\ref{fig:screenshot}).
+\item{\bf Self coherence}: the generated code itself is well-typed. 
 In our case, it means that either \mixin{} produces (in a controlled way) an
-understandable error or the interface can be successfully annotated and the generated code is well-typed.
+understandable error or the interface can be successfully annotated and the generated code
+ (e.g. the \texttt{of} methods in Figure~\ref{fig:screenshot}) is well-typed.
 
 \item{\bf Client coherence}: all the client code (for example method calls)
   that is well-typed before code generation is also well-typed after the generation.
@@ -274,9 +273,9 @@ Our prototype implementation has certain limitations:
 Our current implementation only realizes ejc version. The implementation for
   the \texttt{javac} version is still missing.
 \item Simple generics is supported:
-type parameters can be used, but generic
-method typing is %neither formalized in this paper nor 
-not explicitly checked by \mixin, but simply delegated to the Java compiler.
+type parameters can be used, but generic method typing is 
+delegated to the Java compiler instead of  %neither formalized in this paper nor 
+being explicitly checked by \mixin.
 \item 
 Due to limited support in Lombok for separate compilation, i.e., 
 accessing information of code defined in different files, \mixin 
