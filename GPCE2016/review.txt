@@ -1,0 +1,262 @@
+> ----------------------- REVIEW 1 ---------------------
+> PAPER: 27
+> TITLE: Classless Java
+> AUTHORS: Yanlin Wang, Haoyuan Zhang, Marco Servetto and Bruno C. D. S. Oliveira
+
+> OVERALL EVALUATION: 2 (accept)
+> REVIEWER'S CONFIDENCE: 3 (high)
+
+> ----------- Review -----------
+> The paper explores a language design in which objects are created based on interfaces,
+>  without using traditional class-based or prototype-based mechanisms. The paper discusses
+>  possible encodings in Java and introduces a compile-time transformation to automate
+>  the generation of boilerplate, primarily for object instantiation and state management.
+>  The approach is demonstrated on a running example and four small programs.
+
+> This is a language design paper with an interesting generator component to automatically
+>  generate boilerplate code during the compilation process (as an alternative to developing
+>  a whole new language). The proposed changes are interesting and allow to express
+>  certain problems quite elegantly. The integration into the familiar Java language
+>  lowers the bar of experimenting with it. The related work section makes a good job
+>  of contrasting different language mechanisms. Overall the paper is easy to follow.
+
+The paper could be improved by explaining more explicitly what problems are addressed
+and what tradeoffs are achieved with this design. In its current form the introduction
+is long and a laundry list of concepts and technical details without a clear problem
+and only a very vague motivation. Section 2 introduces the language based on a running
+example, which is very interesting to follow, but again without introducing a problem
+first, so that many points seem not obviously relevant or like side discussions
+(e.g., how to instantiate objects or unsatisfactory solutions). Only the related
+work section actually discusses conceptual differences and tradeoffs in more detail.
+An explicit comparison of concepts regarding certain capabilities, problems, or
+goals would position the approach more clearly.
+
+-- TODO
+
+> The ¡°case studies¡± are small demonstrators only that are discussed without a clear
+>  evaluation goal. They are essentially two instances of the expression problem, a
+>  demonstrator for how to design fluent interfaces, and a game (for which no details
+>  are given and little insights can be gained except for a reduction in code size).
+
+The paper could be improved by making explicit the goal of the evaluation, for example
+whether any research questions should be explored or what should be demonstrated.
+
+-- TODO
+
+The paper promises formal definitions and proofs of safety claims in a technical
+report, but that report is never referenced and not available in the review system.
+
+-- No???
+
+> Minor comments:
+
+
+* I was surprised that Cook¡¯s essay (On understanding data abstraction, revisited)
+wasn¡¯t mentioned at all; which would be my first thought of programming Java without
+classes.
+
+-- TODO
+
+* IB is defined as abbreviation for different long forms and ¡°IB interfaces¡± seems
+to be a weird term. In general, consider whether abbreviations are really necessary
+or could be removed for readability
+
+-- Not sure
+
+* Avoid hiding own prior work behind passive voice ([26])
+
+-- Really?
+
+* Multiple inheritance is a key focus but the diamond problem is never discussed
+until related work and it is not clearly explained how Java default methods solve
+the problem. For example, how would you resolve if Bird, Horse both had a method
+¡°sleep()¡± with different implementations?
+
+-- ???
+
+* There seems to be a lot of semantics and magic tied to naming conventions, for
+example detecting methods starting with ¡°with¡±, without ever discussing potential
+drawbacks of such approach; also why does the paper not follow Java¡¯s normal conventions
+for naming getters and setters?
+
+-- Should we do that?
+
+* Expansion of mutable state is never shown
+* Why are fields representing immutable state not final?
+* With the order of extended interfaces undefined, how is the order of variables
+in the constructor determined?
+
+-- TODO
+
+* The limitations especially regarding having to define all interfaces within a single
+file seem quite severe
+
+-- We don't have a solution yet
+
+
+> ----------------------- REVIEW 2 ---------------------
+> PAPER: 27
+> TITLE: Classless Java
+> AUTHORS: Yanlin Wang, Haoyuan Zhang, Marco Servetto and Bruno C. D. S. Oliveira
+
+> OVERALL EVALUATION: -1 (weak reject)
+> REVIEWER'S CONFIDENCE: 3 (high)
+
+> ----------- Review -----------
+> This paper proposes a programming style called Classless Java.  It is
+> implemented by using automatic code generation directed by
+> annotations.  In this style, programmers only write interfaces.  Object
+> states are implicitly declared by naming convention.  The code
+> generator automatically adds field declarations.
+
+with- methods would work for an object having only a few fields
+but not for an object having many fields.  If a Point object has
+four fields x, y, z, w, then programmers might want to use methods
+like withXandY(int x_val, int y_val).  Can @Obj produce with-methods
+for all possible combinations of fields?  (The reviewer later noticed
+that with- methods are sort of setters.  Maybe some notes should be
+added at the first paragraph where with-methods appear.)
+
+-- ???
+
+Maybe the description of @Obj in this paper could be improved.  The
+reviewer is still unsure of some corner cases.  Some summary (or
+formal definition?) would help.
+
+-- We do have formal definition, yet in appendix
+
+Classless Java seems to support only diamond inheritance, where
+a field declared in a common super interface is unique.  It might
+be a drawback.
+
+-- ???
+
+The reviewer is wondering what are differences between traits and
+object interfaces.  Classless Java's code generator invoked by @Obj
+can be regarded as a system generating a class inheriting from several
+traits (= interfaces in Classless Java).  Is this automatic class
+generation by @Obj (considering type refinement) only a unique feature
+against traits?
+
+-- ???
+
+> The reviewer's understanding is that if you have the following class:
+
+> interface A {
+>   A child();
+>   A child2();
+> }
+
+> interface B extends A {
+>   B child2();
+> }
+
+Then, B.of().child() also returns an instance of B.  But child() may
+have to keep returning an instance of A.  The reviewer supposes that
+the authors assume that, if a subinterface of A is defined, A is never
+instantiated (A is considered as an abstract class as in OOP).  This
+might be a problem in some cases.  The reviewer might miss something
+but the semantics of the type refinement should be presented more
+clearly.
+
+-- TODO
+
+
+> Section 3.2.Client coherence.
+
+This paragraph mentions that the well-typed code before code
+generation ... When are "of" methods available?  After code
+generation?  Do the authors mean in this paragraph that, if the code
+that does not call "of" methods is well typed, then ...?
+I suppose that the code calling "of" methods are not well-typed
+before code generation since "of" methods are added after that.
+Is this correct?
+
+-- To clarify
+
+Section 4.4.
+The last paragraph mentions that the code in the refactored version
+is slightly increased.  Why?
+
+-- TODO
+
+
+> ----------------------- REVIEW 3 ---------------------
+> PAPER: 27
+> TITLE: Classless Java
+> AUTHORS: Yanlin Wang, Haoyuan Zhang, Marco Servetto and Bruno C. D. S. Oliveira
+
+> OVERALL EVALUATION: 1 (weak accept)
+> REVIEWER'S CONFIDENCE: 2 (medium)
+
+> ----------- Review -----------
+> The paper presents classless Java, a technique for providing type inheritance by
+>  only using interfaces for programming. State is encoded by providing appropriate
+>  getter and setter methods, so-called abstract state operations. Behaviour is encoded
+>  through default methods. Instantiation is performed through factory methods. All
+>  actual fields and factory methods as well as the implementations of setters and
+>  getters are generated through an annotation processor. The authors claim that this
+>  approach to object-oriented programming, which they also call interface-based oo
+>  programming, improves flexibility and modularity, enabling multiple inheritance
+>  and solving the expression problem.
+
+> Overall, the paper presents an interesting novel approach to OO programming and,
+>  as such, is well worth presenting at GPCE. My main critique of the paper concerns
+>  (1) the clarity of the presentation, and (2) the evaluation of the work:
+
+(1) Presentation: Throughout, there a numerous points where it is difficult to follow
+the ideas of the paper. Perhaps the biggest one is Sect. 2.5, where it is simply
+stated that multiple inheritance now works, but no explanation is given as to why.
+In fact, it is easy to imagine a scenario where multiple sub-classes of, say, Point2D
+provide different refinements, and, thus, different implementations of with(Point2D).
+What happens in such a case if a new interface extends more than one of these sub-classes?
+
+-- TODO
+
+There are other, lesser, issues of this kind, too: For example, it is not clear how
+precisely with-methods are to be declared. On page 3 it appears as if they are recognised
+based on a naming convention (withXYZ, where XYZ is the name of the attribute).
+On page 4, there a new kind of naming convention is implicitly introduced. However,
+on page 8 all assumptions about naming conventions are broken when select, from,
+and where are essentially used like with-methods with the assertion that their implementation
+will be automatically generated (quite apart from the fact that this seems an awful
+performance waste when the corresponding attributes could simply be considered mutable).
+
+-- On page 8 they are fluent setters, not withers. TODO
+
+On page 4, mutable state is introduced, but it is never explained how this is handled
+in the generated code. It is unclear to me, for example, whether there is a way
+to implement some more logic into the setters (so that, for example, notifications
+could be sent when an attribute value changes) or whether the internal data structures
+are all too well hidden for this.
+
+-- ??? to clarify
+
+(2) Evaluation: The evaluation provided consists, essentially, of some examples presented.
+While this is nice in that it gives a more complete picture of how one would use
+the new approach, it does not provide many insights into its capabilities and limitations.
+For example, the authors discuss the reduction in code to be written, but this information
+is less useful unless there is also some information about how the new style affects
+understandability, maintainability, etc. Similarly, the limitations of the support
+for multiple inheritance etc. are not systematically explored, making it difficult
+for the reader to judge the range of applicability of the new approach.
+
+-- TODO
+
+> Minor comments:
+
+- the choice of "wither" in similarity to "getter" and "setter" seems a little bit
+unlucky as this parses as a synonym for "wilt"/"decay"/"die"
+
+-- ???
+
+- page 2, left column: "As a result, we experiment object interfaces with several
+interesting Java programs and conduct various case studies." didn't parse. I suspect
+that "experiment" is the wrong choice of word here, but am not sure what the authors
+intended to say.
+
+-- TODO
+
+- Is the implementation of the annotation processor available somewhere?
+
+-- add footnote for that
