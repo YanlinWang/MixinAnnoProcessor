@@ -31,7 +31,8 @@ work section actually discusses conceptual differences and tradeoffs in more det
 An explicit comparison of concepts regarding certain capabilities, problems, or
 goals would position the approach more clearly.
 
--- TODO
+-- TODO: Improve introduction, focus on a clear problem statement (modulariryt and flexibility),
+and then go on and discuss advantages of interface-based, and only later talk about the challenges.
 
 > The ¡°case studies¡± are small demonstrators only that are discussed without a clear
 >  evaluation goal. They are essentially two instances of the expression problem, a
@@ -46,7 +47,7 @@ whether any research questions should be explored or what should be demonstrated
 The paper promises formal definitions and proofs of safety claims in a technical
 report, but that report is never referenced and not available in the review system.
 
--- No???
+-- cite our technical report in footnote (Yanlin)
 
 > Minor comments:
 
@@ -55,38 +56,48 @@ report, but that report is never referenced and not available in the review syst
 wasn¡¯t mentioned at all; which would be my first thought of programming Java without
 classes.
 
--- TODO
+-- Cite that paper (Yanlin)
 
 * IB is defined as abbreviation for different long forms and ¡°IB interfaces¡± seems
 to be a weird term. In general, consider whether abbreviations are really necessary
 or could be removed for readability
 
--- Not sure
+-- No need to change?
 
 * Avoid hiding own prior work behind passive voice ([26])
 
--- Really?
+-- TODO (Yanlin)
 
 * Multiple inheritance is a key focus but the diamond problem is never discussed
 until related work and it is not clearly explained how Java default methods solve
 the problem. For example, how would you resolve if Bird, Horse both had a method
 ¡°sleep()¡± with different implementations?
 
--- ???
+-- TODO: briefly talk about Java's default methods and overriding in overview (Haoyuan)
 
 * There seems to be a lot of semantics and magic tied to naming conventions, for
 example detecting methods starting with ¡°with¡±, without ever discussing potential
 drawbacks of such approach; also why does the paper not follow Java¡¯s normal conventions
 for naming getters and setters?
 
--- Should we do that?
+-- No need to change? Mention about naming conventions (Haoyuan)
 
 * Expansion of mutable state is never shown
+
+-- ???
+
 * Why are fields representing immutable state not final?
+
+-- No need to change? (doesn't make sense for anonymous classes)
+
 * With the order of extended interfaces undefined, how is the order of variables
 in the constructor determined?
 
--- TODO
+-- TODO: mention that we sort arguments alphabetically? (Haoyuan)
+Discuss order?
+The order of the objects in the array corresponds to the order of the
+interface types used in the 'implements' clause of the declaration of
+this Class object.
 
 * The limitations especially regarding having to define all interfaces within a single
 file seem quite severe
@@ -117,19 +128,20 @@ for all possible combinations of fields?  (The reviewer later noticed
 that with- methods are sort of setters.  Maybe some notes should be
 added at the first paragraph where with-methods appear.)
 
--- ???
+-- No need to do?
 
 Maybe the description of @Obj in this paper could be improved.  The
 reviewer is still unsure of some corner cases.  Some summary (or
 formal definition?) would help.
 
--- We do have formal definition, yet in appendix
+-- We do have formal definition, yet in technical report (We should also have
+the link to github repo, Haoyuan)
 
 Classless Java seems to support only diamond inheritance, where
 a field declared in a common super interface is unique.  It might
 be a drawback.
 
--- ???
+-- Do anything about this?
 
 The reviewer is wondering what are differences between traits and
 object interfaces.  Classless Java's code generator invoked by @Obj
@@ -138,7 +150,7 @@ traits (= interfaces in Classless Java).  Is this automatic class
 generation by @Obj (considering type refinement) only a unique feature
 against traits?
 
--- ???
+-- No need to change?
 
 > The reviewer's understanding is that if you have the following class:
 
@@ -159,7 +171,7 @@ might be a problem in some cases.  The reviewer might miss something
 but the semantics of the type refinement should be presented more
 clearly.
 
--- TODO
+-- child() is not auto-refined in our case. No need to change.
 
 
 > Section 3.2.Client coherence.
@@ -172,13 +184,15 @@ I suppose that the code calling "of" methods are not well-typed
 before code generation since "of" methods are added after that.
 Is this correct?
 
--- To clarify
+-- Yes, the code means the code not calling "of", because if the 
+code were calling "of", then it wouldn't be well-typed before code 
+generation. Thus no need to change.
 
 Section 4.4.
 The last paragraph mentions that the code in the refactored version
 is slightly increased.  Why?
 
--- TODO
+-- TODO (Yanlin)
 
 
 > ----------------------- REVIEW 3 ---------------------
@@ -211,7 +225,7 @@ In fact, it is easy to imagine a scenario where multiple sub-classes of, say, Po
 provide different refinements, and, thus, different implementations of with(Point2D).
 What happens in such a case if a new interface extends more than one of these sub-classes?
 
--- TODO
+-- TODO: briefly explain the semantics of Java's default methods & overriding (Haoyuan)
 
 There are other, lesser, issues of this kind, too: For example, it is not clear how
 precisely with-methods are to be declared. On page 3 it appears as if they are recognised
@@ -222,7 +236,10 @@ and where are essentially used like with-methods with the assertion that their i
 will be automatically generated (quite apart from the fact that this seems an awful
 performance waste when the corresponding attributes could simply be considered mutable).
 
--- On page 8 they are fluent setters, not withers. TODO
+-- TODO: We need to talk more about fluent setters in S2 and mentione explicitly, in page 8
+that we are using fluent setters (they are not fluent withers) (Haoyuan)
+
+-- setters and withers: make examples or note in future work that show how they are different and can coexists (Yanlin)
 
 On page 4, mutable state is introduced, but it is never explained how this is handled
 in the generated code. It is unclear to me, for example, whether there is a way
@@ -230,7 +247,9 @@ to implement some more logic into the setters (so that, for example, notificatio
 could be sent when an attribute value changes) or whether the internal data structures
 are all too well hidden for this.
 
--- ??? to clarify
+-- user can always provide its implementation and the annotation will not generate that method,
+in addition, of course you can provide additional methods (like an extra setter) to perform....
+-- Already discussed in overview. Thus no need to change.
 
 (2) Evaluation: The evaluation provided consists, essentially, of some examples presented.
 While this is nice in that it gives a more complete picture of how one would use
@@ -241,22 +260,22 @@ understandability, maintainability, etc. Similarly, the limitations of the suppo
 for multiple inheritance etc. are not systematically explored, making it difficult
 for the reader to judge the range of applicability of the new approach.
 
--- TODO
+-- TODO (Yanlin)
 
 > Minor comments:
 
 - the choice of "wither" in similarity to "getter" and "setter" seems a little bit
 unlucky as this parses as a synonym for "wilt"/"decay"/"die"
 
--- ???
+-- No need to do
 
 - page 2, left column: "As a result, we experiment object interfaces with several
 interesting Java programs and conduct various case studies." didn't parse. I suspect
 that "experiment" is the wrong choice of word here, but am not sure what the authors
 intended to say.
 
--- TODO
+-- TODO (apply ... to, Yanlin)
 
 - Is the implementation of the annotation processor available somewhere?
 
--- add footnote for that
+-- add footnote for that (Haoyuan)
