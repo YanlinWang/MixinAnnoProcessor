@@ -14,7 +14,7 @@
 \saveSpaceFig
 \end{figure*}
 
-This section illustrates how our programming style, supported by 
+This section illustrates how our programming style, supported by
 \mixinAnn{}, enables powerful programming idioms based on multiple
 inheritance and type refinements.  We propose a standard example:
 \Q@Animal@s with a 2-dimensional \Q@Point2D@ representing their
@@ -200,7 +200,7 @@ Point2D p = Point2D.of(42,myPoint.y());
 The pattern of creating a new object by reusing most information from an old
 object is very common when programming with immutable
 data-structures. As such, it is
-supported by \mixin as \Q@with-@ methods: 
+supported by \mixin as \Q@with-@ methods:
 \begin{lstlisting}
 @Obj interface Point2D {
     int x();    int y(); // getters
@@ -258,7 +258,7 @@ interface Point2D {
       return new Point2D(){
         int x=_x;    int y=_y;
         public int x(){return x;}
-        public int y(){return y;} 
+        public int y(){return y;}
         public Point2D withY(int val){
           return of(x(),val);}  }; } }
 \end{lstlisting}
@@ -579,6 +579,11 @@ Figure~\ref{fig:abstractstate} summarizes the six operations supported
 by \mixin. The field-based abstract state operations are determined by
 naming conventions and the types of the methods. Fluent setters are a variant of
 conventional setters, and are discussed in more detail in Section~\ref{sec:dsls}.
+
+\textcolor{red}{Note that we are breaking the naming conventions for getters and setters in Java;
+they have the same names as their fields in our case, which makes code more concise,
+but also presents a nice form of fluent setters with method chaining (see Section~\ref{sec:dsls}).
+Fluent setters are useful, and the difference from \Q@with-@ methods is that they do not create new objects.}
 
 \subsection{Advanced Multiple Inheritance}
 Finally, defining \texttt{Pegasus} is as simple as we did in the simplified

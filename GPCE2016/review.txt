@@ -73,6 +73,7 @@ until related work and it is not clearly explained how Java default methods solv
 the problem. For example, how would you resolve if Bird, Horse both had a method
 ¡°sleep()¡± with different implementations?
 
+-- DONE
 -- TODO: briefly talk about Java's default methods and overriding in overview (Haoyuan)
 
 * There seems to be a lot of semantics and magic tied to naming conventions, for
@@ -80,6 +81,7 @@ example detecting methods starting with ¡°with¡±, without ever discussing potent
 drawbacks of such approach; also why does the paper not follow Java¡¯s normal conventions
 for naming getters and setters?
 
+-- DONE
 -- No need to change? Mention about naming conventions (Haoyuan)
 
 * Expansion of mutable state is never shown
@@ -93,7 +95,7 @@ for naming getters and setters?
 * With the order of extended interfaces undefined, how is the order of variables
 in the constructor determined?
 
--- TODO: mention that we sort arguments alphabetically? (Haoyuan)
+-- TODO: mention that we sort arguments alphabetically? (Haoyuan: don't intend to do)
 Discuss order?
 The order of the objects in the array corresponds to the order of the
 interface types used in the 'implements' clause of the declaration of
@@ -134,6 +136,7 @@ Maybe the description of @Obj in this paper could be improved.  The
 reviewer is still unsure of some corner cases.  Some summary (or
 formal definition?) would help.
 
+-- DONE
 -- We do have formal definition, yet in technical report (We should also have
 the link to github repo, Haoyuan)
 
@@ -225,6 +228,7 @@ In fact, it is easy to imagine a scenario where multiple sub-classes of, say, Po
 provide different refinements, and, thus, different implementations of with(Point2D).
 What happens in such a case if a new interface extends more than one of these sub-classes?
 
+-- DONE
 -- TODO: briefly explain the semantics of Java's default methods & overriding (Haoyuan)
 
 There are other, lesser, issues of this kind, too: For example, it is not clear how
@@ -236,6 +240,7 @@ and where are essentially used like with-methods with the assertion that their i
 will be automatically generated (quite apart from the fact that this seems an awful
 performance waste when the corresponding attributes could simply be considered mutable).
 
+-- DONE
 -- TODO: We need to talk more about fluent setters in S2 and mentione explicitly, in page 8
 that we are using fluent setters (they are not fluent withers) (Haoyuan)
 
@@ -278,4 +283,5 @@ intended to say.
 
 - Is the implementation of the annotation processor available somewhere?
 
+-- DONE
 -- add footnote for that (Haoyuan)

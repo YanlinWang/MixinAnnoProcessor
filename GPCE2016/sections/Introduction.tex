@@ -18,7 +18,7 @@ for the behaviour, which is structurally defined in their
 interface. Programmers do not define objects directly but delegate
 the task to \emph{object interfaces}, whose role is similar to non-abstract
 classes in \classbased \objectoriented programming languages
-(CB). Objects 
+(CB). Objects
 are instantiated by static factory methods in object interfaces.
 
 A key challenge in IB lies in how to model state, which is
@@ -27,7 +27,7 @@ object interface are interpreted as \emph{abstract state
   operations}. The abstract state operations include various common
 utility methods (such as getters and setters, or clone-like
 methods). Objects are only responsible to define the ultimate
-behaviour of a method. % and, for example, if such a method is just a setter. 
+behaviour of a method. % and, for example, if such a method is just a setter.
 Anything related to state is completely contained in the
 instances and does not leak into the inheritance logic.  In CB, the structure of the state is fixed and can only grow
 by inheritance.  In contrast, in IB the state is never
@@ -77,7 +77,7 @@ advantages of traits to Java. The literature~\cite{Sak89dis,bracha90mixin,malaye
 is also rich on how hard it is to combine multiple sources
 of behaviour \textbf{and} state with multiple \emph{implementation}
 inheritance of classes. In IB there is only multiple
-interface inheritance, yet programmers can still use state via 
+interface inheritance, yet programmers can still use state via
 abstract state operations. IB enables powerful
 idioms using multiple inheritance and state.
 
@@ -109,7 +109,14 @@ new features of Java 8: interface \emph{static methods} and
 implementations. In the context of Java, what we propose is a programming
 style, where we never use classes (more precisely, we never
   use the \Q@class@ keyword).  We call this restricted version of
-Java \emph{Classless Java}.
+Java \emph{Classless Java}. \textcolor{red}{Classless Java provides us
+with a way to address the famous diamond problem~\cite{bracha90mixin,Sak89dis}
+based on Java 8's interface model: interfaces can offer different implementations
+using the default methods, whereas conflicts are supposed to be explicitly resolved,
+otherwise the program will be rejected by the compiler. An interface that inherits
+a few default implementations of a method from its supertypes can define a new implemention
+to hide the conflicts among them, or use the \Q@super@ keyword to specify the one it wants. Examples
+and more discussion will be presented afterwards.}
 
 %Still, the design is quite conservative and appears to be quite limited
 % in its current form to model advanced forms of multiple inheritance.
@@ -168,7 +175,7 @@ IDEs) to work out-of-the-box with our implementation. Moreover, the
 implementation blends Java's conventional CB style and IB smoothly.
 As a result, we experiment object interfaces with several interesting
 Java programs and conduct various case studies.  Finally, we also
-discuss the behaviour of our \mixin annotation and 
+discuss the behaviour of our \mixin annotation and
 its properties.
 
 %Since Java was not designed to be used in this way, our style can be verbose, especially about object instantiation.
@@ -245,10 +252,10 @@ In summary, the contributions of this paper are:
 
 \item {\bf Classless Java:} a practical realization of IB in
   Java. Classless Java is implemented using annotation processing,
-  allowing most tools to work transparently with our approach. 
+  allowing most tools to work transparently with our approach.
   Existing Java projects can use our approach and still be
   backward compatible with their clients, in a way that is specified
-  by our safety properties. 
+  by our safety properties.
 
 \item {\bf Type-safe covariant mutable state:} we show how the
  combination of abstract state operations and type-refinement enables
@@ -266,10 +273,8 @@ In summary, the contributions of this paper are:
 \item {\bf Applications and case studies:} we illustrate the usefulness of IB
   through various examples and case studies. The implementation, case
   studies, and an extended
-  technical report with a formal translation to Java are 
-  online:
-
-{\footnotesize \url{https://github.com/YanlinWang/classless-java}}
+  technical report with a formal translation to Java are
+  online. \footnote{\url{https://github.com/YanlinWang/classless-java}}
 
 %\item{\bf Language Tuning:} We identify the concept of language tuning
 %and describe object interfaces as an example. We also discuss
