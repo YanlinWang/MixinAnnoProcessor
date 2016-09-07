@@ -40,9 +40,8 @@ Object interfaces provide support for automatic type-refinement.  In
 contrast, in CB special care and verbose explicit type-refinement are
 required to produce code that deals with subtyping adequately. We
 believe that such verbosity hindered and slowed down the discovery of
-useful programming patterns involving type-refinement. A recently
-discovered solution~\cite{eptrivially} to the Expression
-Problem~\cite{wadler98expression} in Java-like languages shows how
+useful programming patterns involving type-refinement. Our previous work~\cite{eptrivially} 
+on the Expression Problem~\cite{wadler98expression} in Java-like languages shows how
 easy it is to solve the problem using only type-refinement. However it
 took nearly 20 years since the formulation of the problem for that
 solution to be presented in the literature. In IB, due to its emphasis
@@ -173,8 +172,8 @@ transparently hide it from Java programmers. The implementation works
 by performing AST rewriting, allowing most existing Java tools (such as
 IDEs) to work out-of-the-box with our implementation. Moreover, the
 implementation blends Java's conventional CB style and IB smoothly.
-As a result, we experiment object interfaces with several interesting
-Java programs and conduct various case studies.  Finally, we also
+As a result, we apply object interfaces to several interesting
+Java programs and conduct various case studies. Finally, we also
 discuss the behaviour of our \mixin annotation and
 its properties.
 

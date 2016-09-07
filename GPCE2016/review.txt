@@ -48,6 +48,7 @@ The paper promises formal definitions and proofs of safety claims in a technical
 report, but that report is never referenced and not available in the review system.
 
 -- cite our technical report in footnote (Yanlin)
+DONE
 
 > Minor comments:
 
@@ -56,7 +57,11 @@ report, but that report is never referenced and not available in the review syst
 wasn¡¯t mentioned at all; which would be my first thought of programming Java without
 classes.
 
--- Cite that paper (Yanlin)
+-- (Yanlin)
+I think this paper is discussing a different issue to our paper. Didn't know why the 
+review think of this paper, because in the "Object Interfaces" section of this paper,
+it *does* use classes. And the "Object Interfaces" there are different concept with 
+"Object Interfaces" in our paper.
 
 * IB is defined as abbreviation for different long forms and ¡°IB interfaces¡± seems
 to be a weird term. In general, consider whether abbreviations are really necessary
@@ -67,6 +72,7 @@ or could be removed for readability
 * Avoid hiding own prior work behind passive voice ([26])
 
 -- TODO (Yanlin)
+DONE
 
 * Multiple inheritance is a key focus but the diamond problem is never discussed
 until related work and it is not clearly explained how Java default methods solve
@@ -196,6 +202,8 @@ The last paragraph mentions that the code in the refactored version
 is slightly increased.  Why?
 
 -- TODO (Yanlin)
+DONE: In original code, only one operation 'eval' is supported. 
+Extending Mumbler to support one more operation: pretty printer 'print', increases the code.
 
 
 > ----------------------- REVIEW 3 ---------------------
@@ -265,7 +273,7 @@ understandability, maintainability, etc. Similarly, the limitations of the suppo
 for multiple inheritance etc. are not systematically explored, making it difficult
 for the reader to judge the range of applicability of the new approach.
 
--- TODO (Yanlin)
+-- TODO (Yanlin).
 
 > Minor comments:
 
@@ -279,7 +287,7 @@ interesting Java programs and conduct various case studies." didn't parse. I sus
 that "experiment" is the wrong choice of word here, but am not sure what the authors
 intended to say.
 
--- TODO (apply ... to, Yanlin)
+-- TODO (apply ... to, Yanlin). DONE
 
 - Is the implementation of the annotation processor available somewhere?
 
