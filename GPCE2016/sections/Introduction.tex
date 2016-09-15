@@ -2,7 +2,7 @@
 
 \Objectoriented languages strive to offer great code reuse.
 They couple flexibility and rigour, expressive power and
-modular reasoning.  Two main ideas emerged to this end:
+modular reasoning.  Two main OO models emerged to this end:
 \prototypebased (PB)~\cite{Ungar87self} and \classbased languages such as
 Java, C\# or Scala.  In \prototypebased
 languages objects inherit from other objects. Thus objects own
@@ -11,17 +11,34 @@ In \classbased languages an object is an instance of a specific class,
 and classes inherit from other classes.  Objects own state,
 while classes contain behaviour and the structure of the state.
 
-This paper presents a third alternative: the concept of
-\emph{\interfacebased} \objectoriented programming languages (IB), where objects
-implement interfaces directly. In IB interfaces own the implementation
-for the behaviour, which is structurally defined in their
-interface. Programmers do not define objects directly but delegate
-the task to \emph{object interfaces}, whose role is similar to non-abstract
-classes in \classbased \objectoriented programming languages
-(CB). Objects
-are instantiated by static factory methods in object interfaces.
+Regardeless of the OO model, inheritance is a key mechanism is OO 
+languages. Inheritance provides a modularization mechanism, which 
+is used to reuse implementations from inherited classes/objects. 
+Unfortunatelly, as widely acknowledged in the literature~\cite{scharli03traits,Sak89dis,bracha90mixin,malayeri2009cz}
+multiple inheritance, especially when combined with state, has several
+tricky issues, including several variants of the famous 
+\emph{diamond problem}~\cite{}. Many of the problems related to 
+inheritance arize from the direct use of \emph{fields} to model state. 
+Inheriting two fields of the same name raises 
+the question of whether the two fields should be kept, or only one 
+field should exists (and if so, which value should be picked). Initialization 
+of the fields is also problematic, since initialization code may be inherited from 
+multiple parents. Finally, an additional problem with mutable fields is that their 
+type cannot be type-refined in extensions, which can cause modularity problems
+~\cite{wadler98expression,eptrivially}.
 
-A key challenge in IB lies in how to model state, which is
+To address those limitations, this paper presents a third alternative
+OO model called \emph{\interfacebased} \objectoriented programming
+languages (IB), where objects implement interfaces directly and fields
+are not directly supported. In IB interfaces own the implementation for the
+behaviour, which is structurally defined in their
+interface. Programmers do not define objects directly but delegate the
+task to \emph{object interfaces}, whose role is similar to
+non-abstract classes in \classbased \objectoriented programming
+languages (CB). Objects are instantiated by static factory methods in
+object interfaces.
+
+Due to the absence of fields, a key challenge in IB lies in how to model state, which is
 fundamental to have stateful objects. All abstract operations in an
 object interface are interpreted as \emph{abstract state
   operations}. The abstract state operations include various common
@@ -50,7 +67,7 @@ on type-refinement, that solution should have been more obvious.
 One advantage of abstract state operations and
 type-refinement is that it allows a new approach to
 \emph{type-safe covariant mutable state}. That is, in IB,
-it is possible to type-refine \emph{mutable} ``fields'' in subtypes. This is
+it is possible to type-refine \emph{mutable} state in subtypes. This is
 typically forbidden in CB: it is widely known that \emph{naive} type-refinement of
 mutable fields is not type-safe. Although covariant refinement of mutable
 fields is supported by some type systems~\cite{bruce98astatically,bruce1994paradigmatic,ernst06virtual,Saito2013933}, this requires
@@ -66,6 +83,7 @@ In this paper we show how to support type-safe
 and \textbf{multiple inheritance}.}
 \end{comment}
 
+\begin{comment}
 Another advantage of IB is the support for
 multiple inheritance. The literature shows how
 easy it is to combine multiple sources of pure behaviour
@@ -79,6 +97,7 @@ inheritance of classes. In IB there is only multiple
 interface inheritance, yet programmers can still use state via
 abstract state operations. IB enables powerful
 idioms using multiple inheritance and state.
+\end{comment}
 
 %Traits or Java8 interfaces still assume a CB model:
 %But traits still require classes, which
@@ -108,7 +127,9 @@ new features of Java 8: interface \emph{static methods} and
 implementations. In the context of Java, what we propose is a programming
 style, where we never use classes (more precisely, we never
   use the \Q@class@ keyword).  We call this restricted version of
-Java \emph{Classless Java}. \textcolor{red}{Classless Java provides us
+Java \emph{Classless Java}. 
+\begin{comment}
+\textcolor{red}{Classless Java provides us
 with a way to address the famous diamond problem~\cite{bracha90mixin,Sak89dis}
 based on Java 8's interface model: interfaces can offer different implementations
 using the default methods, whereas conflicts are supposed to be explicitly resolved,
@@ -116,6 +137,7 @@ otherwise the program will be rejected by the compiler. An interface that inheri
 a few default implementations of a method from its supertypes can define a new implemention
 to hide the conflicts among them, or use the \Q@super@ keyword to specify the one it wants. Examples
 and more discussion will be presented afterwards.}
+\end{comment}
 
 %Still, the design is quite conservative and appears to be quite limited
 % in its current form to model advanced forms of multiple inheritance.
@@ -164,17 +186,19 @@ and more discussion will be presented afterwards.}
 %without using a single class!
 
 Using Java annotation processors, we produce an implementation of
-Classless Java, which allows us to stick to pure Java 8. By annotating
- the interfaces that represent object interfaces with \mixin, code for interface instantiation and
-type refinement can be automatically generated. Such code should not be needed in the first place in
-a real IB language, and the annotation processor allows us to
-transparently hide it from Java programmers. The implementation works
+Classless Java, which allows us to stick to pure Java 8. 
+%By annotating
+% the interfaces that represent object interfaces with \mixin, code for interface instantiation and
+%type refinement can be automatically generated. Such code should not be needed in the first place in
+%a real IB language, and the annotation processor allows us to
+%transparently hide it from Java programmers. 
+The implementation works
 by performing AST rewriting, allowing most existing Java tools (such as
 IDEs) to work out-of-the-box with our implementation. Moreover, the
 implementation blends Java's conventional CB style and IB smoothly.
-As a result, we apply object interfaces to several interesting
+We apply object interfaces to several interesting
 Java programs and conduct various case studies. Finally, we also
-discuss the behaviour of our \mixin annotation and
+discuss the behaviour of Classless Java and
 its properties.
 
 %Since Java was not designed to be used in this way, our style can be verbose, especially about object instantiation.
@@ -229,6 +253,7 @@ without defining a single class! The last one contains several classes that cann
 converted to interfaces due to the limitation of our implementation of \mixin.
 \end{comment}
 
+\begin{comment}
 While the Java embedding has obvious advantages from the practical
 point-of-view, it also imposes some limitations that a new IB language
 would not have. Supporting proper encapsulation is
@@ -238,6 +263,7 @@ modelling private state is difficult in current Java 8. However,
  using existing design patterns~\cite{BettiniDSS13} we can emulate hiding
 methods from interfaces. Furthermore Java 9 will allow private methods
 in interfaces~\cite{srikanth16private}.
+\end{comment}
 
 %We discuss
 %these limitations, possible workarounds, and native language support in Section~\ref{sec:futurework}.
