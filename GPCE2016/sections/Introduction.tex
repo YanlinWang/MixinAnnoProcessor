@@ -17,11 +17,11 @@ is used to reuse implementations from inherited classes/objects.
 Unfortunatelly, as widely acknowledged in the literature~\cite{scharli03traits,Sak89dis,bracha90mixin,malayeri2009cz}
 multiple inheritance, especially when combined with state, has several
 tricky issues, including several variants of the famous 
-\emph{diamond problem}~\cite{}. Many of the problems related to 
+\emph{diamond problem}~\cite{bracha90mixin,Sak89dis}. Many of the problems related to 
 inheritance arize from the direct use of \emph{fields} to model state. 
 Inheriting two fields of the same name raises 
 the question of whether the two fields should be kept, or only one 
-field should exists (and if so, which value should be picked). Initialization 
+field should exist (and if so, which value should be picked). Initialization 
 of the fields is also problematic, since initialization code may be inherited from 
 multiple parents. Finally, an additional problem with mutable fields is that their 
 type cannot be type-refined in extensions, which can cause modularity problems
