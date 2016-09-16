@@ -11,19 +11,19 @@ In \classbased languages an object is an instance of a specific class,
 and classes inherit from other classes.  Objects own state,
 while classes contain behavior and the structure of the state.
 
-Regardless of the OO model, inheritance is a key mechanism is OO 
-languages. Inheritance provides a modularization mechanism, which 
-is used to reuse implementations from inherited classes/objects. 
+Regardless of the OO model, inheritance is a key mechanism is OO
+languages. Inheritance provides a modularization mechanism, which
+is used to reuse implementations from inherited classes/objects.
 Unfortunately, as widely acknowledged in the literature~\cite{scharli03traits,Sak89dis,bracha90mixin,malayeri2009cz}
 multiple inheritance, especially when combined with state, has several
-tricky issues, including several variants of the famous 
-\emph{diamond problem}~\cite{bracha90mixin,Sak89dis}. Many of the problems related to 
-inheritance arise from the direct use of \emph{fields} to model state. 
-Inheriting two fields with the same name raises 
-the question of whether the two fields should be kept, or only one 
-field should exist. Initialization 
-of the fields is also problematic, since initialization code may be inherited from 
-multiple parents. Finally, an additional problem with mutable fields is that their 
+tricky issues, including several variants of the famous
+\emph{diamond problem}~\cite{bracha90mixin,Sak89dis}. Many of the problems related to
+inheritance arise from the direct use of \emph{fields} to model state.
+Inheriting two fields with the same name raises
+the question of whether the two fields should be kept, or only one
+field should exist. Initialization
+of the fields is also problematic, since initialization code may be inherited from
+multiple parents. Finally, an additional problem with mutable fields is that their
 type cannot be type-refined in extensions, which can cause modularity problems
 ~\cite{wadler98expression,eptrivially}.
 
@@ -57,7 +57,7 @@ Object interfaces provide support for automatic type-refinement.  In
 contrast, in CB special care and verbose explicit type-refinement are
 required to produce code that deals with subtyping adequately. We
 believe that such verbosity hindered and slowed down the discovery of
-useful programming patterns involving type-refinement. Our previous work~\cite{eptrivially} 
+useful programming patterns involving type-refinement. Our previous work~\cite{eptrivially}
 on the Expression Problem~\cite{wadler98expression} in Java-like languages shows how
 easy it is to solve the problem using only type-refinement. However it
 took nearly 20 years since the formulation of the problem for that
@@ -127,7 +127,7 @@ new features of Java 8: interface \emph{static methods} and
 implementations. In the context of Java, what we propose is a programming
 style, where we never use classes (more precisely, we never
   use the \Q@class@ keyword).  We call this restricted version of
-Java \emph{Classless Java}. 
+Java \emph{Classless Java}.
 \begin{comment}
 \textcolor{red}{Classless Java provides us
 with a way to address the famous diamond problem~\cite{bracha90mixin,Sak89dis}
@@ -186,12 +186,12 @@ and more discussion will be presented afterwards.}
 %without using a single class!
 
 Using Java annotation processors, we produce an implementation of
-Classless Java, which allows us to stick to pure Java 8. 
+Classless Java, which allows us to stick to pure Java 8.
 %By annotating
 % the interfaces that represent object interfaces with \mixin, code for interface instantiation and
 %type refinement can be automatically generated. Such code should not be needed in the first place in
 %a real IB language, and the annotation processor allows us to
-%transparently hide it from Java programmers. 
+%transparently hide it from Java programmers.
 The implementation works
 by performing AST rewriting, allowing most existing Java tools (such as
 IDEs) to work out-of-the-box with our implementation. Moreover, the
@@ -281,7 +281,7 @@ In summary, the contributions of this paper are:
   Existing Java projects can use our approach and still be
   backward compatible with their clients, in a way that is specified
   by our safety properties.
-
+\vspace{10pt}
 \item {\bf Type-safe covariant mutable state:} we show how the
  combination of abstract state operations and type-refinement enables
  a form of mutable state that can be covariantly refined in a type-safe way.
@@ -296,8 +296,8 @@ In summary, the contributions of this paper are:
 %  the supplementary materials.}.
 
 \item {\bf Applications and case studies:} we illustrate the usefulness of IB
-  through various examples and case studies\footnote{\url{https://github.com/YanlinWang/classless-java}}. 
-  An extended version with a formal translation to Java can be found in the 
+  through various examples and case studies\footnote{\url{https://github.com/YanlinWang/classless-java}}.
+  An extended version with a formal translation to Java can be found in the
   companion technical report~\cite{classless}.
 
 %\item{\bf Language Tuning:} We identify the concept of language tuning
