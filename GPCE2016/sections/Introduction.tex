@@ -1,15 +1,15 @@
 \section{Introduction}\label{sec:intro}
 
 \Objectoriented languages strive to offer great code reuse.
-They couple flexibility and rigour, expressive power and
+They couple flexibility and rigor, expressive power and
 modular reasoning.  Two main OO models emerged to this end:
 \prototypebased (PB)~\cite{Ungar87self} and \classbased languages such as
 Java, C\# or Scala.  In \prototypebased
 languages objects inherit from other objects. Thus objects own
-both behaviour and state (and objects are all you have).
+both behavior and state (and objects are all you have).
 In \classbased languages an object is an instance of a specific class,
 and classes inherit from other classes.  Objects own state,
-while classes contain behaviour and the structure of the state.
+while classes contain behavior and the structure of the state.
 
 Regardless of the OO model, inheritance is a key mechanism is OO 
 languages. Inheritance provides a modularization mechanism, which 
@@ -31,7 +31,7 @@ To address those limitations, this paper presents a third alternative
 OO model called \emph{\interfacebased} \objectoriented programming
 languages (IB), where objects implement interfaces directly and fields
 are not directly supported. In IB interfaces own the implementation for the
-behaviour, which is structurally defined in their
+behavior, which is structurally defined in their
 interface. Programmers do not define objects directly but delegate the
 task to \emph{object interfaces}, whose role is similar to
 non-abstract classes in \classbased \objectoriented programming
@@ -44,7 +44,7 @@ object interface are interpreted as \emph{abstract state
   operations}. The abstract state operations include various common
 utility methods (such as getters and setters, or clone-like
 methods). Objects are only responsible to define the ultimate
-behaviour of a method. % and, for example, if such a method is just a setter.
+behavior of a method. % and, for example, if such a method is just a setter.
 Anything related to state is completely contained in the
 instances and does not leak into the inheritance logic.  In CB, the structure of the state is fixed and can only grow
 by inheritance.  In contrast, in IB the state is never
@@ -86,13 +86,13 @@ and \textbf{multiple inheritance}.}
 \begin{comment}
 Another advantage of IB is the support for
 multiple inheritance. The literature shows how
-easy it is to combine multiple sources of pure behaviour
+easy it is to combine multiple sources of pure behavior
 using traits~\cite{scharli03traits}. In Java
 multiple \emph{interface} inheritance has been supported since
 inception, and Java 8 default methods~\cite{goetz12fdefenders} bring some of the
 advantages of traits to Java. The literature~\cite{Sak89dis,bracha90mixin,malayeri2009cz}
 is also rich on how hard it is to combine multiple sources
-of behaviour \textbf{and} state with multiple \emph{implementation}
+of behavior \textbf{and} state with multiple \emph{implementation}
 inheritance of classes. In IB there is only multiple
 interface inheritance, yet programmers can still use state via
 abstract state operations. IB enables powerful
@@ -104,7 +104,7 @@ idioms using multiple inheritance and state.
 %are responsible for object construction and adding state.
 
 %To retain the easiness and modularity of combining multiple sources of
-%pure behaviour, in IB state is just a special kind of behaviour
+%pure behavior, in IB state is just a special kind of behavior
 %implementation.
 %\marco{NO NO!
 %the advantage is not just multiple composition
@@ -113,7 +113,7 @@ idioms using multiple inheritance and state.
 %what is state and what is not, thus you can (model an encoding of) REMOVE fields and you can refine
 %fields.}
 % Objects are the only responsibles to define the
-%ultimate behaviour of a method and, for example, if such method is
+%ultimate behavior of a method and, for example, if such method is
 %just a setter. Anything related to state is completely contained in
 %the instances and do not leak in the interfaces.
 
@@ -198,7 +198,7 @@ IDEs) to work out-of-the-box with our implementation. Moreover, the
 implementation blends Java's conventional CB style and IB smoothly.
 We apply object interfaces to several interesting
 Java programs and conduct various case studies. Finally, we also
-discuss the behaviour of Classless Java and
+discuss the behavior of Classless Java and
 its properties.
 
 %Since Java was not designed to be used in this way, our style can be verbose, especially about object instantiation.

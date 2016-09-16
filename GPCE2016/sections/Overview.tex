@@ -52,7 +52,7 @@ of Figure~\ref{fig:pegasus}.
 Note that the implementations of the methods \texttt{run}
 and \texttt{fly} are defined inside interfaces, using default
 methods. Moreover, because interfaces support multiple interface
-inheritance, the interface for \texttt{Pegasus} can inherit behaviour
+inheritance, the interface for \texttt{Pegasus} can inherit behavior
 from both \texttt{Horse} and \texttt{Bird}. Although Java interfaces
 do not allow instance fields, no form of state is needed so far to
 model the animal system.
@@ -130,7 +130,7 @@ namespace.
 
 \subsection{Object Interfaces with State}
 
-The animal system modelled so far is a simplified version of the
+The animal system modeled so far is a simplified version of the
 system presented in the left-side of Figure~\ref{fig:pegasus}.
 The example is still not sufficient to appreciate the advantages of IB
 programming.
@@ -138,7 +138,7 @@ Now we model the complete animal system where an \Q@Animal@ includes a \Q@locati
 representing its position in space. We use 2D points to keep track of locations.
 
 \para{\Q@Point2D@: simple immutable data with fields}
-Points can be modelled with interfaces.
+Points can be modeled with interfaces.
  In IB
  state is accessed and
 manipulated using abstract methods.  The usual approach to model
@@ -264,7 +264,7 @@ interface Point2D {
 \end{lstlisting}
 
 \noindent Only code for methods needing implementation is generated. Thus,
-programmers can easily customize the behaviour for their special needs.
+programmers can easily customize the behavior for their special needs.
 Also, since \mixin interfaces offer the \Q@of@ factory method, only interfaces where all the abstract methods
 can be synthesized can be object interfaces. A non-\mixin interface is like an abstract class in Java.
 %\end{comment}
