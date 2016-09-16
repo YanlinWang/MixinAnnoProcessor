@@ -170,6 +170,7 @@ trait model, with operations (e.g. renaming~\cite{reppy2006foundation}, which br
 structural subtyping) that default methods and interfaces cannot
 model.
 
+\savespace
 \para{Traits vs object interfaces.}
 We consider object interfaces an alternative to traits or mixins. In
 trait model two concepts (traits and classes) coexist and cooperate. Some
@@ -309,7 +310,7 @@ Furthermore, we do automatic return type refinement for this kind of methods. Th
 
 % \input{sections/Compare.tex}
 
-
+\savespace
 \para{Automatic generation of getters and setters}
 % \bruno{Need to discuss automatic generation of setter and
 %   getters, and then discuss this text about injections. See reviews
@@ -328,6 +329,7 @@ but can vary by inheritance.
 In this case, the underlying type of the field can be changed by our fluid state,
  and \Q@with@ methods provide the right injection from the old type to the new.
 
+\savespace
 \para{ThisType and MyType}
 %\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namely it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolishes most advantages of interfaces.}
 Object interfaces support automatic type-refinement.

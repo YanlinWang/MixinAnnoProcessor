@@ -1,3 +1,4 @@
+\savespace
 \section{Bridging between IB and CB in Java}\label{sec:imp}
 
 
@@ -23,6 +24,7 @@ The key to our implementation is compilation agents, which
  allow us to rewrite the Java AST just
 before compilation. We discuss the advantages and limitations of our approach.
 
+\savespace
 \subsection{Compilation Agents}
 Java supports compilation agents, where Java libraries can interact with the Java compilation process,
 acting as a man in the middle between the
@@ -54,7 +56,7 @@ etc). Finally, the Java compiler works on the modified AST to generate bytecode.
 %generation afterwards. Such a handler can either be a Javac handler or
 %an Eclipse handler.
 
-\begin{figure}[t]
+\begin{figure}[h]
 \saveSpaceFig
 \centering
 \includegraphics[width=3in]{pdfs/lombok3.png}
@@ -159,6 +161,7 @@ Preserving the syntax avoids syntactic conflicts, and allows many
 tools to work transparently.
 \end{comment}
 
+\savespace
 \subsection{\mixin AST Reinterpretation}
 
 Of course, careless reinterpretation of the AST could still be
@@ -266,6 +269,7 @@ form of heir coherence.
 Formal definition/proofs for our safety claims are in the
 technical report.%~\footnote{http://www.cs.hku.hk/research/techreps/document/TR-2016-02.pdf}.
 
+\savespace
 \subsection{Limitations}
 Our prototype implementation has certain limitations:
 \begin{itemize}
