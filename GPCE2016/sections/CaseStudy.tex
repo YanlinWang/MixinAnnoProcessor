@@ -28,7 +28,7 @@ in Section~\ref{subsec:int}, is essentially a (much larger) application of this
 pattern to an existing program. Here we illustrate the pattern in the
 much smaller Expression Problem.
 
-\para{Initial System}
+\para{Initial system}
 In the formulation of the EP, there is an initial system that models
 arithmetic expressions with only literals, addition, and an initial
 operation \texttt{eval} for expression evaluation.
@@ -54,14 +54,14 @@ as getter methods \texttt{e1()} and \texttt{e2()}.
 \end{figure*}% \bruno{Yanlin: code is overflowing the margins. Note that
   % there are 2 spare lines that can be used on the right!}
 
-\para{Adding a New Type of Expressions}
+\para{Adding a new type of expressions}
 In the OO paradigm, it is easy to add new types of expressions. For example, the
 following code shows how to add subtraction.
 
 \lstinputlisting[linerange=47-50]{../UseMixinLombok/src/casestudy/ep/TestExpression.java}% APPLY:linerange=EXPRESSION_SUB
 
 %\marco{text under need to be improved}
-\para{Adding a New Operation} The difficulty of the EP in OO
+\para{Adding a new operation} The difficulty of the EP in OO
 languages arises from adding new operations. For example, adding a pretty printing
 operation would typically change all existing code. However, a solution
 %to the EP forbids this and it also forbids using casts. In other words, it should be possible
@@ -76,7 +76,7 @@ default implementations of \texttt{print()}, extending base interfaces
 \texttt{e1} and \texttt{e2} are refined. If the types were not refined then
 the \texttt{print()} method in \texttt{AddP} would fail to type-check.
 
-\para{Independent Extensibility}
+\para{Independent extensibility}
 To show that our approach supports independent extensibility, a
 new operation \texttt{collectLit} which collects all
 literal components in an expression is defined. For space reasons,
@@ -143,7 +143,7 @@ us is the convenience of method chaining:
 
 \noindent Note how all the logic for the fluent setters is automatically provided by the \mixin annotation.
 
-\para{Extending the Query Language} The previous query language can be extended with a new feature
+\para{Extending the query language} The previous query language can be extended with a new feature
 \texttt{orderBy} which orders the result records by a field that users
 specify. With \mixin programmers just need to extend the interface \texttt{Database} with new
 features, and the return type of fluent setters in
@@ -253,7 +253,7 @@ modularity is greatly increased, allowing for improved reusability and maintaina
 
 The last case study refactors the code from an interpreter for
 a Lisp-like language
-\lstinline{Mumbler}\footnote{https://github.com/cesquivias/mumbler/tree/master/simple},
+\lstinline{Mumbler}\footnote{\url{https://github.com/cesquivias/mumbler/tree/master/simple}},
 which is created as a tutorial for the Truffle
 Framework~\cite{wurthinger2013one}.  Keeping a balance between
 simplicity and useful features, \lstinline{Mumbler} contains numbers,
