@@ -1,19 +1,4 @@
 \section{A Running Example: Animals}\label{sec:ep}
-\begin{figure*}
-\centering
-\saveSpaceFig
-\begin{tabular}{c|c}
-\includegraphics[height=3.3cm]{pdfs/PegasusDetail.pdf}\hspace{0pt} &
-\begin{minipage}{7cm}
-\vspace{-95pt}
-\lstinputlisting[linerange=6-13]{../UseMixinLombok/src/pegasus/simple/java8/Main.java}% APPLY:linerange=PEGASUS_JAVA
-%basicstyle=\ttfamily\scriptsize
-\end{minipage}
-\end{tabular}
-\caption{The animal system (left: complete structure, right: code for simplified animal system).}\label{fig:pegasus}
-\saveSpaceFig
-\end{figure*}
-
 This section illustrates how our programming style, supported by
 \mixinAnn{}, enables powerful programming idioms based on multiple
 inheritance and type refinements.  We propose a standard example:
@@ -34,6 +19,22 @@ given on the left side of Figure~\ref{fig:pegasus}.
 %is needed in Java (without Obj) vs the approach with CJ, for the Pegasus example?}
 %\marco{Not in the abstract. But I think is good to have that number and to put in in the example section.
 %I will set up the sentence and someone can compute the number.}
+
+\begin{figure*}[h]
+\centering
+% \saveSpaceFig
+\vspace{-1ex}
+\begin{tabular}{c|c}
+\includegraphics[height=3.3cm]{pdfs/PegasusDetail.pdf}\hspace{0pt} &
+\begin{minipage}{7cm}
+\vspace{-95pt}
+\lstinputlisting[linerange=6-13]{../UseMixinLombok/src/pegasus/simple/java8/Main.java}% APPLY:linerange=PEGASUS_JAVA
+%basicstyle=\ttfamily\scriptsize
+\end{minipage}
+\end{tabular}
+\caption{The animal system (left: complete structure, right: code for simplified animal system).}\label{fig:pegasus}
+\saveSpaceFig
+\end{figure*}
 
 \subsection{Simple Multiple Inheritance with Default
   Methods}\label{sec:simple}
@@ -532,7 +533,8 @@ then we can just return the parameter, as something that is just ``more'' than
 \Q@this@.
 
 \begin{figure*}
-\saveSpaceFig
+% \saveSpaceFig
+\vspace{-1ex}
 \centering
 \hspace{.01in}{%\fontsize{8}{10}\selectfont
 \begin{tabular}{|l|l|l|l|}
@@ -563,7 +565,7 @@ object; updates field \texttt{x} to \texttt{val}.             \\ \cline{2-4}
   annotation. }
 
 \label{fig:abstractstate}
-
+\saveSpaceFig
 \end{figure*}
 
 \para{Summary of operations in Classless Java}
