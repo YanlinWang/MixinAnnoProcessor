@@ -179,7 +179,8 @@ available online. We refactored the game using \mixin. Due to space
 constraints, we omit the code here. The following table summarizes
 the number of lines of code and classes/interfaces in each implementation:
 
-\vspace{5pt}
+\begin{table}[t]
+\centering
 {\fontsize{8}{10}\selectfont
 \begin{tabular}{ccc}
 \hline \rowcolor[HTML]{C0C0C0}
@@ -190,7 +191,9 @@ Ours        & 199    & 11                       \\
 Reduced by  & 40.6\% & 21.4\%                   \\ \hline
 \end{tabular}
 }
-\vspace{5pt}
+\caption{AAA.}
+\end{table}
+
 
 
 \noindent The \mixin annotation reduced the interfaces/classes used
@@ -276,7 +279,8 @@ base, the pretty printer is added modularly with more interfaces, thus
 the code is slightly increased by 2.4\% SLOC. However, the
 modularity is greatly increased, allowing for improved reusability and maintainability:
 
-\vspace{0.5em}
+\begin{table}[t]
+\centering
 {\fontsize{8}{10}\selectfont
 \begin{tabular}{llll}
 \hline
@@ -286,4 +290,5 @@ original (\texttt{eval})         & 626  & original (\texttt{eval}+\texttt{print}
 refactored (\texttt{eval})         & 560  & refactored (\texttt{eval}+\texttt{print}) & 677  \\ \hline
 \end{tabular}
 }
-
+\caption{AAA.}
+\end{table}
