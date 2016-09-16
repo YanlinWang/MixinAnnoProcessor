@@ -41,7 +41,7 @@ more expressive and automated forms of type-refinement, and support
 for multiple interface inheritance.
 \end{comment}
 
-\paragraph{Multiple inheritance in \objectoriented languages}
+\para{Multiple inheritance in \objectoriented languages}
 Many authors have argued in favor or against multiple inheritance.
 Multiple \emph{implementation}
 inheritance is very expressive, but difficult to model and implement. It can
@@ -59,7 +59,7 @@ state, instantiation, etc).
 %\paragraph{C++ Approach.}
 C++ has a general solution to multiple inheritance by
 virtual inheritance, dealing with the diamond problem by keeping only
-one copy of the base class~\cite{ellis1990annotated}. However it 
+one copy of the base class~\cite{ellis1990annotated}. However it
 suffers from object initialization problem~\cite{malayeri2009cz}.
 It bypasses constructor calls to virtual superclasses, which can
 cause serious semantic errors. In our approach, the \mixin
@@ -100,7 +100,7 @@ interfaces is unordered and symmetric.
 
 %\paragraph{CZ.}
 Malayeri and Aldrich proposed a model CZ~\cite{malayeri2009cz} which
-aims to do multiple inheritance without the diamond problem. 
+aims to do multiple inheritance without the diamond problem.
 Inheritance is divided into two concepts: inheritance dependency
 and implementation inheritance. Using a combination of
 \texttt{requires} and \texttt{extends}, a program with diamond
@@ -170,11 +170,11 @@ trait model, with operations (e.g. renaming~\cite{reppy2006foundation}, which br
 structural subtyping) that default methods and interfaces cannot
 model.
 
-\paragraph{Traits vs Object Interfaces.}
-We consider object interfaces an alternative to traits or mixins. In 
+\para{Traits vs Object Interfaces.}
+We consider object interfaces an alternative to traits or mixins. In
 trait model two concepts (traits and classes) coexist and cooperate. Some
 authors~\cite{BettiniDSS13} see this as good language design fostering good
-software development by helping programmers think about the program structures. 
+software development by helping programmers think about the program structures.
 However, others see the need of two concepts and the
 absence of state as drawbacks of this model~\cite{malayeri2009cz}.  Object
 interfaces are units of reuse, and meanwhile provide factory methods
@@ -183,9 +183,9 @@ interfaces in order to exploit the modular composition
 offered by interfaces. Since Java was designed for classes, a direct classless
 programming style is verbose and unnatural. However, annotation-driven code
 generation is enough to overcome this difficulty and the resulting programming
-style encourages modularity, composability and reusability. %, by keeping a strong OO feel. 
+style encourages modularity, composability and reusability. %, by keeping a strong OO feel.
 In that sense, we promote object interfaces as being both units of
-reuse and object factories. Our practical experience shows that 
+reuse and object factories. Our practical experience shows that
 separating the two notions leads to lots of boilerplate code, and is quite
 limiting when multiple inheritance with state is required.  Abstract state
 operations avoid the key difficulties associated with multiple inheritance and
@@ -310,30 +310,30 @@ Furthermore, we do automatic return type refinement for this kind of methods. Th
 % \input{sections/Compare.tex}
 
 
-\paragraph{Automatic generation of getters and setters}
+\para{Automatic generation of getters and setters}
 % \bruno{Need to discuss automatic generation of setter and
 %   getters, and then discuss this text about injections. See reviews
 %   and reply.}
-is an old idea used in languages such as 
+is an old idea used in languages such as
 Self~\cite{Ungar1987self}, Dart~\cite{Dart} and Newspeak~\cite{Bracha_thenewspeak}.
 % By declaring fields in Newspeak and other languages,
-The programmers specifies field signatures and (critically) the intention of storing such information,  
+The programmers specifies field signatures and (critically) the intention of storing such information,
 then the language generates getters and setters.
 Once state is abstracted away, it is well known that state
 access can be replaced with computation, but the type of the field stays the same.
-We do the opposite, the idea of the field is generated starting from signatures of 
+We do the opposite, the idea of the field is generated starting from signatures of
 getters and setters. % Our fluid approach to state is specular:
-In our approach, the intention of storing the information is not expressed by the programmer and set in stone  
-but can vary by inheritance. 
-In this case, the underling type of the field can be changed by our fluid state, 
+In our approach, the intention of storing the information is not expressed by the programmer and set in stone
+but can vary by inheritance.
+In this case, the underling type of the field can be changed by our fluid state,
  and \Q@with@ methods provide the right injection from the old type to the new.
 
-\paragraph{ThisType and MyType}
+\para{ThisType and MyType}
 %\marco{ this section is unfair. There are unsolved problems with ThisType in negative positions, namely it breaks subtyping. The most common solution is to allow calling some methods only when the exact type is known. This demolishes most advantages of interfaces.}
 Object interfaces support automatic type-refinement.
 Type refinement is part of a bigger topic in \classbased languages: expressing and
 preserving type recursion and (nominal/structural) subtyping at the same time.
-One famous attempt in this direction is 
+One famous attempt in this direction is
 \emph{MyType}~\cite{bruce1994paradigmatic}, representing the type of
 \textbf{this}, changing its meaning along with inheritance. However when
 invoking a method with MyType in parameter positions, the exact type of the

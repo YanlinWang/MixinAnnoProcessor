@@ -42,8 +42,10 @@
 
 \setlist[itemize]{noitemsep,nolistsep}
 \setlist[enumerate]{noitemsep,nolistsep}
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\vspace{-3pt}\oldparagraph{#1}}
+%\let\oldparagraph\paragraph
+%\renewcommand{\paragraph}[1]{\vspace{-3pt}\oldparagraph{#1}}
+
+\newcommand{\para}[1]{\vspace{-3pt}\paragraph{#1}}
 
 \input{predef/def.tex}
 \input{predef/java.tex}
@@ -129,7 +131,7 @@
   programming (IB). IB is a natural extension of closely
   related ideas such as traits.
   \emph{Abstract state
-    operations} provide a 
+    operations} provide a
   new way to deal with state, which allows for flexibility not
   available in class-based languages.  In IB state
   can be type-refined in subtypes. The combination of a
@@ -156,6 +158,18 @@ term1, term2
 \keywords
 keyword1, keyword2
 \end{comment}
+\category{D.3.2}{Programming Languages}
+                {Language Classifications}
+                [Object-Oriented Programming]
+\category{F.3.3}{Logics and Meanings of Programs}
+                {Studies of Program Constructs}
+                []
+                
+\terms
+Languages
+
+\keywords
+Interface-based programming, multiple inheritance, code generation
 
 \vspace{-10pt}
 \input{sections/Introduction.tex}
@@ -178,7 +192,8 @@ keyword1, keyword2
 
 \input{sections/Conclusion.tex}
 
-%\acks
+\acks
+We would like to thank the reviewers for their helpful comments. This work has been sponsored by the Hong Kong Research Grant Council Early Career Scheme project number 27200514.
 %
 % We recommend abbrvnat bibliography style.
 
