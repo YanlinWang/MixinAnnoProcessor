@@ -15,5 +15,4 @@ Point2D myPoint = Point2D.of(4, 2);
 Point2D p = Point2D.of(42, myPoint.y());
 
 ExtendedDatabase query2 = ExtendedDatabase.of()
-    .select("a, b").from("Table")
-    .where("c > 10").orderBy("b");
+    .select("a, b").from("Table").where("c > 10").orderBy("b");
