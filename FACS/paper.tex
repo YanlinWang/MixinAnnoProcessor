@@ -1,0 +1,574 @@
+%
+\documentclass{llncs}
+%
+\usepackage{makeidx}  % allows for indexgeneration
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xspace}
+
+\newcommand{\mynotes}[3]{{\color{#2} {\sc #1}: #3}}
+\newcommand\bruno[1]{\mynotes{Bruno}{red}{#1}}
+\newcommand\marco[1]{\mynotes{Marco}{blue}{#1}}
+
+\newcommand{\syndef}{$::=$}
+
+\newcommand\name{{\bf DTrait}\xspace}
+
+%
+\begin{document}
+%
+\frontmatter          % for the preliminaries
+%
+\pagestyle{headings}  % switches on printing of running heads
+%\addtocmark{Hamiltonian Mechanics} % additional mark in the TOC
+%
+
+\title{Separating Use and Reuse to Improve Both}
+%
+\titlerunning{Hamiltonian Mechanics}  % abbreviated title (for running head)
+
+\author{Marco Servetto\inst{1} \and Bruno C. d. S. Oliveira\inst{2}}
+%
+\authorrunning{Ivar Ekeland et al.} % abbreviated author list (for running head)
+%
+%%%% list of authors for the TOC (use if author list has to be modified)
+\tocauthor{Marco Servetto and Bruno C. d. S. Oliveira}
+%
+\institute{Victoria University of Wellington, New Zealand,\\
+\email{marco.servetto@ecs.vuw.ac.nz},\\ WWW home page:
+\texttt{https://ecs.victoria.ac.nz/Main/MarcoServetto}
+\and
+The University of Hong Kong, Hong Kong\\}
+
+\maketitle              % typeset the title of the contribution
+
+\begin{abstract}
+Abstract here!
+\dots
+\keywords{Code Reuse, Object-Oriented Programming}
+\end{abstract}
+
+\section{Introduction}
+
+Historically, we have seen a lot of focus on the importance of
+separing subtype from subclassing~\cite{cook}.  This is claimed to be
+good for code reuse, design and reasoning.  While there is no problem
+in subtyping without subclassing, in most OO languages code reuse
+(inheritance/extends) imply subtyping.  Consider the following (Java)
+code:
+
+\begin{lstlisting}[language=Java]
+  class A{ int ma(){return Utils.m(this);} }
+  class Utils{static int m(A a){..}}
+\end{lstlisting}
+
+This code seems correct, and there is no subtyping/subclassing.
+Now, lets add a class B
+
+\begin{lstlisting}[language=Java]
+  class B extends A{ int mb(){return this.ma();} }
+\end{lstlisting}
+
+Class \lstinline{B} now have a method \lstinline{ma} inherited from \lstinline{A}.
+This method passes \lstinline{this} as \lstinline{A}; we can see an invocation of \lstinline{ma}
+inside \lstinline{mb}, where \lstinline{this} is of type \lstinline{B}.
+The execution will eventually call \lstinline{Util.m} with a \lstinline{B} instance.
+This can be correct only if \lstinline{B} is a subtype of \lstinline{A}.
+Thus, every OO language with the minimal features 
+exposed in this example (using this, extends, method call)
+is forced to accept that subclassing implies subtyping.
+Note how this is true also in C++, where is possible to
+"extends privately". Such is a limitation of the visibility of
+subtyping but not over subtyping itself, and the former example
+would be accepted by C++ even if \lstinline{B} was to "privately extends" \lstinline{A}.
+\marco{Cite some work of bruceTHisType and show how he also fails.}
+\bruno{I was expecting some text/argument here on why subclassing
+  implies subtyping is bad. Perhaps another example where subclassing 
+must not imply subtyping to type-check.}
+
+
+We will show here a simple design to completley uncouple subtyping
+and subclassing in a nominally typed OO language,
+by dividing code designed for USE
+from code designed for REUSE.
+First we show a minimal language, then we show how mutually recursive types
+are supported, how state/constructors/fields are supported,
+how we can extend the language with nested classes.
+Finally we show 42, a full blown language build around our ideas of reuse.
+
+Our design leverage on traits~\cite{}: a well know mechanisms for pure
+code reuse
+
+\section{Overview of \name}
+
+Present basic examples and syntax?
+
+\section{A Decoupled Trait Calculus}\bruno{Probably we need a name 
+for the language/calculus}
+
+Lets consider a simple language where trait names start lowercase (t)
+and class names start uppercase (C).  
+The syntax of the language is:\\
+
+\begin{tabular}{lrcl}
+      Code Literal & $L$ & \syndef & ${{\bf interface}?~{\bf implements}~\overline{C}~\overline{M}}$ \\
+%      Types & $\tau$ & \syndef & $C$ \\
+      Method Declaration & $M$ & \syndef & ${\bf class}?~{\bf method}~C~m(C~\overline{x})~e?$ \\
+
+      Traits & $T$ & \syndef & $t \mid L$ \\
+      Trait Declarations & $TD$ & \syndef & $t:L \mid t:Sum~\overline{T}$ \\
+      Class Declarations & $CD$ & \syndef & $C:L \mid C:Sum~\overline{T}$ \\
+      Expressions & $e$ & \syndef & $x \mid C \mid e.m(\overline{e})$\\
+      Declarations & $D$ & \syndef & $CD \mid TD$\\
+\end{tabular}
+
+\bruno{Original is below for double-checking.}
+\begin{verbatim}
+L::={interface? implements Ts Ms} //code literal
+T::=C //types are class names
+M::= class? method T m(Txs) e? //method declaration
+tL::=t | L  //trait name or literal
+TD::= t:L | t:Sum tLs  //trait declaration
+CD::= C:L | C:Sum tLs
+e::= x | T | e.m(es)
+D::=CD | TD
+\end{verbatim}
+
+To declare a trait or a class, we can use a code literal (or a trait
+expression).  Traits come with various operators (restrict, hide,
+alias) but for now we focus on the single operator Sum, taking a set
+of trait names or literals and composing them in an \emph{associative}
+and \emph{commutative} way.  Sum is the simplest and most elegant
+composition operator.  $Sum \overline{T}$ composes the content of $\overline{T}$
+by taking the union of the methods and the union of the implementations.
+The Sum can not be applied if multiple versions of the same method are
+present in different traits.  An exception is done for abstract methods:
+methods where the implementation e is missing; In this case, if the
+headers are compatible the implemented version is selected.  In a sum
+of two abstract methods with compatible headers, the one with the more
+specific type is selected. We will discuss later the formal details of
+Sum.
+
+A version of this language where there are no traits can be seen 
+as a restriction/variation of FJ~\cite{}.
+
+As you can see code literals can be marked as interfaces.  We will call class
+interface, or simply interface a class declaration of for C:{interface
+  ...}.
+
+While classes are typed assuming \lstinline{this} is of the nominal type of the
+class, trait declarations, do not introduce any nominal type.  \lstinline{this}
+in a trait is typed with a special type \lstinline{This} that is visible only
+inside such trait~\bruno{{\bf This} does not show up anywhere in
+  the syntax!}.  Syntactically, a Literal can use the \lstinline{This} type,
+and when the trait is reuse to create a class, This will become just
+an alias for the class name.
+
+In a program $\overline{D}$, a code literal is not well typed if it
+implements some \lstinline{C} that is not an interface; that is,
+implementing interface is the only way to induce subtyping in this
+language literals can implement classes.
+
+\subsection{Code Use and Code Reuse in \name}
+
+As you can see there is no extends keyword, and \lstinline{Sum} can not contain class names.
+In a sense, all classes are final (as in Java).
+That is, using a trait is the only way to induce code reuse.
+
+Lets now try to encode the example in Section~\ref{} e in our language:
+
+\begin{lstlisting}
+ A:{ method int ma(){return Utils.m(this);} }
+ Utils:{ class method int m(A a){..}}
+\end{lstlisting} 
+
+This code is fine, but there is no way to add a B reusing code of A, since
+A is designed for code \emph{use} and not \emph{reuse}. Lets try
+again, but this time aiming at code reuse:
+
+\begin{lstlisting}
+ ta:{ method int ma(){return Utils.m(this);} }
+ A:SUM ta
+ Utils:{ class method int m(A a){..}}
+\end{lstlisting}
+
+This does not work, because \lstinline{Utils.m} requires an \lstinline{A} and \lstinline{this} in
+ta have no knowlegde of \lstinline{A}. Lets try again
+
+\begin{lstlisting}
+ IA:{interface method int ma()}
+ ta:{implements IA
+   method int ma(){return Utils.m(this);} }
+ A:SUM ta
+ Utils:{ class method int m(IA a){..}}
+\end{lstlisting}
+
+This code works: Utils is using an interface IA and the trait ta
+is implementing it. It is also possible to add a B as follow
+Abeit other semantic models for traits~\cite{} have been proposed,
+here we use the flattening model.
+This means that 
+ A:SUM ta
+  reduces/is equivalent to/is flatted into
+ A:{implements IA method int ma(){return Utils.m(this);} }
+This code seems correct, and there is no subtyping/subclassing.
+Now, lets add a class B
+
+\begin{lstlisting}
+  B:Sum ta, { int mb(){return this.ma();} }
+\end{lstlisting}
+
+This also works.  B reuses the code of ta, but has no knowledge of A.
+Since B reuses ta, and ta implements IA, also B implements IA.  By
+flattening, B is reduced to
+
+\begin{lstlisting}
+B:{implements IA
+  method int ma(){return Utils.m(this);}
+  int mb(){return this.ma();} } 
+\end{lstlisting}
+
+\subsection{Remarks on Typing}
+
+Now some important notes on typing:
+
+-traits are \emph{well-typed} before being reused. For example in
+
+\begin{lstlisting}
+t:{int m() 2 
+   int n() this.m()+1}
+\end{lstlisting}
+
+\noindent t is well typed since m() is declared inside of t, while
+
+\begin{lstlisting}
+t1:{int n() this.m()+1} would be ill typed.
+\end{lstlisting}
+
+\noindent Note how in the former example ta is well typed just by knowing itself and IA.
+
+-in class expressions C:Sum tLs
+L in tLs are not well typed (on their own) before flattening, only
+the result is supposed to be well typed.
+Also Java have the same behaviour:
+for example in
+
+\begin{lstlisting}[language=Java]
+  class B extends A{ int mb(){return this.ma();} }
+\end{lstlisting}
+
+\noindent we can call \lstinline{this.ma()} even if in the curly braces there is no declaration for ma.
+In our example,with the trait t of before
+
+\begin{lstlisting}
+C: Use t {int k() this.n()+this.m()}
+\end{lstlisting}
+\bruno{Do we mean Sum instead of Use?}
+
+\noindent would be well typed, even if n,m are not defined inside
+\begin{lstlisting}
+{int k() this.n()+this.m()}
+\end{lstlisting}
+This is not the case in may similar works in literature~\cite{} where the
+literals have to be self complete. In this case we would have been forced to
+declare abstract methods n and m.
+
+This idea that code literals wrote
+in the declaration of a class
+do not have to be well typed on their own also lets us
+reason about mutually recursive types, as shown in Section~\ref{}. 
+
+-if a class is declared by using C:Sum ts, that is, without literals,
+If the Sum is successfull, C is well typed, no need of further checking.
+-on the other side, if a class is declared by C:Sum tLs, with
+L1..Ln in tLs, and after successfull flattening C:L is not well typed,
+the error was originally present in one of L1..Ln.
+
+Recursive types:
+OO language leverage on recursive types most of the times.
+For example in a pure OO language, String may offer a Int size()
+method, and Int may offer a String toString() method.
+
+This means that is not possible to type in (full) isolation classes
+String and Int.
+
+The most expressive compilation process may divide the classes in groups of mutually 
+dependent classes.
+Each group may also depend from a number of other groups.
+This would form a Direct Aciclyc Graph of groups.
+To type a group, we first need to type all depended groups, then
+we can extract the structure/signature/structural type of all
+the classes of the group.
+Now, with the information of the depended groups and the one extracted
+from the current group, it is possible to typecheck the implementation
+ of each class in the group.
+
+In this model, it is reasonable to assume that flattening happens group by group, before
+extracting the class signatures.
+
+Here we go for a much simpler simple top down execution/interpretation for flattening, where flattening
+happen one at the time, and classes are typechecked where their type is first needed.
+
+For example
+
+A:{int ma(B b) b.mb()+1}
+tb:{int mb() 2}
+tc:{int mc(A a,B b) a.ma(b)}
+B: Sum tb
+C: Sum tc, {method int hello() 1}
+
+In this scenario, since we go top down, we first need to generate B.
+To generate B, we need to use tb;
+In order modularly ensure well typedness,
+we require tb to be well typed at this stage. If tb was not well typed
+a compilation error could be generated at this stage.
+In this moment, A can not be compiled/checked alone,
+we need informations about B, but A is not used in tb,
+thus we do not need to type A and we can type tb with
+ the available informations and proceed to generate B.
+Now, we need to generate C, and we need to ensure well typedness of tc.
+Now B is alreay well typed (since generated by Sum tb, with no Ls),
+and A can be typed;  finally tc can be typed and used.
+If sum could not be performed (for example it tc had a method hello too)
+a compilation error could be generated at this stage.
+
+On the opposite side, if B and C was swapped, as in
+C: Sum tc, {method int hello() 1}  
+B: Sum tb
+now the first task would be to generate C, but 
+to type tc we need to know the type of A and B.
+But they are both unavailable: B is still not computed and 
+A can not be compiled/checked alone, without information about B.
+A compilation error would be generated, on the line of "flattening of C
+requires tc, tc requires A,B, B is still in need of flattening".
+
+In this example, a more expressive compilation process 
+could compute a dependency graph and, if possible, reorganize the list,
+but for simplicity lets consider to always provide the declarations
+in the right order, if one exists.
+
+Some may find the requirement of the existence of an order restrictive;
+An example of a "morally correct" program where no right order exists is the following:
+
+t:{ int mt(A a) a.ma()}
+A:Sum t {int ma() 1}
+
+We expect two (related) criticism to our compilation model:
+1
+In a system without inference for method types,
+if the result of composition operators depends only on the
+structural shape of their input (as for Sum)
+is indeed possible to optimistically compute the resulting structural shape of the classes
+and use this information to type involved examples like the former.
+We believe such typing discipline could be fragile,
+and could make human understanding the code reuse process much harder/involved.
+2
+In the world of strongly typed languages we could be tempted to
+first check that all can go well, and then perform the flattening.
+This would however be overcompicated for no observable difference:
+Indeed, in the former example there is no difference
+between
+  First checking B and produce B code (that also contains B structural shape),
+  then use B shape to check C and produce C code
+or a more involved
+  First check B and discover B structural shape as result of the checking,
+  then use B shape to check C.
+  Finally produce both B and C code.
+
+\section{Managing State}
+
+The Sum operator is very elegant, but our research community is struggling to
+make it work with constructor/state/fields.
+The goals fo this struggle are as follow:
+
+\begin{itemize}
+
+\item keep sum associative and commutative.
+\item allowing a class to create instances of itself.
+\item actually initialize objects, not leaving no null fields
+\item managing fields in a way that borrows the elengance of summing methods
+\item make easy to add new fields
+
+\end{itemize}
+
+In the related work we will show some alternative ways to handle state.
+However the purest solution just requires methods:
+  The idea is that
+  the trait code just uses getter/setters/factories, while leaving
+  to classes the role to finally define the fields/constructors.
+  That is, the  the class has syntax richer that the trait one,
+  allowing declaration for fields and constructors.
+  This approach is very powefull[see class less java]
+ 
+  Pro: This approach is associative and commutative, even self construction
+  can be allowed if the trait requires a static/class method
+  returning This; the class will then implement this method by forwarding
+  a call to the constructor.
+  Negative: writing the class code with the constructors and
+   fields and getter/setters and factories can be quite tedious.
+   There is no way for a trait to specify a default value for a field,
+   the class need to handle all the state, even state that is conceptually
+   "private" of such trait.
+
+  for example 
+
+\begin{lstlisting}
+  pointSum: { method int x(); method int y();
+    static method This of(int x,int y);
+    method This sum(This other)
+      This.of(this.x+other.x,this.y+other.y);
+    }
+  pointMul: { method int x(); method int y();
+    static method This of(int x,int y);
+    method This mul(This other)
+      This.of(this.x*other.x,this.y*other.y);
+    }
+\end{lstlisting}
+
+\subsection{A First Attempt at Composition}
+
+\begin{lstlisting}
+  Point:Use pointSum,pointMul
+\end{lstlisting}  
+
+\noindent would fail since methods x,y and of are still abstract.
+In this model the user is required to write something similar to
+
+\begin{lstlisting}
+  CPoint:Use point,colored, {
+    int x; int y;
+    method int x()x; method int y()y;
+    class method This of(int x, int y)
+      new Point(x,y);
+    constructor Point(int x, int y){
+      this.x=x;this.y=y;this.color=color;
+      }
+    }
+\end{lstlisting}
+
+\noindent after a while programming in this style, those "fixpoint" close the state in
+the obvious way classes becomes quite repetitive, and one wonder
+if it could be possible to automatically generate such code[]
+In our model we go one step further:
+In our model there is no need to generate code, or to explicitly
+write down constructors and fields; there is not even syntax for those
+constructor.
+The idea is that any class that "could" be completed in the obvious way
+is a complete "coherent" class.
+Others call abstract a class that have abstract methods.
+We call abstract a class that have a set of abstract methods that are not
+coherent, that is, you can not interpret those as factory,getters and setters.
+  
+In the detail: a class with no abstract method is coherent, and like Java Math
+will just be usefull for calling class/static methods.
+a class with a single abstract class method returning This
+is coherent if all the other abstract methods can be seen as "abstract state
+operations" over one of its argument.
+For example,
+if there is a class method This of(int x, int y) as before,
+then
+a method int x() is an abstract state method, getter for x.
+a method Void x(int that) is abstract state method, setter for x.
+while getters and setters are fundamental operations, we can immagine
+more operations to be supported:
+
+\begin{lstlisting}
+method This withX(int that) 
+\end{lstlisting}
+may be a "wither", doing a functional field update
+  method Void update(int x,int) may do two field update at a time
+  method This clone() may do a shallow clone of the object.
+  We are not sure what is the best set of abstract state operations yet.
+  
+  
+  lets play with the points of before, to see what good can we do with the current
+  instruments:
+
+\begin{lstlisting}
+  pointSum: { method int x(); method int y();
+    static method This of(int x,int y);
+    method This sum(This other)
+      This.of(this.x+other.x,this.y+other.y);
+    }
+  pointMul: { method int x(); method int y();
+    static method This of(int x,int y);
+    method This mul(This other)
+      This.of(this.x*other.x,this.y*other.y);
+    }
+  PointAlgebra:Sum pointSum,pointMul
+\end{lstlisting}  
+
+  As you can see, we can declare the methods independently and compose the result
+  as we wish. However we have to repeat the abstract methods x,y and of.
+  In addition of Sum,Mul we may want many operations over points; can we improve our reuse
+  and not repeat such abstract definitions? of course!
+
+\begin{lstlisting}
+  p: { method int x(); method int y();
+    static method This of(int x,int y);
+    }
+  pointSum:Sum p, { method This sum(This other)
+      This.of(this.x+other.x,this.y+other.y);
+    }
+  pointMul:Sum p, { method This mul(This other)
+      This.of(this.x*other.x,this.y*other.y);
+    }
+  pointDiv: ...
+  PointAlgebra:Sum pointSum,pointMul,pointDiv,...
+\end{lstlisting}
+      
+now our code is fully modularized, and each trait handle exactly one method.
+
+What happens if we want to add fields instead of just operations?
+
+\begin{lstlisting}
+  colored:{ method Color color() }
+  Point:Sum pointSum,colored
+\end{lstlisting}
+
+This first attempt does not work: the abstract color method
+is not a getter for any of the parameters of 
+
+\begin{lstlisting}
+  class method This of(int x,int y) 
+\end{lstlisting}
+
+A solution is to provide a richer factory:
+
+\begin{lstlisting}
+  CPoint:Sum pointSum,colored,{
+    class method This of(int x,int y) This.of(x,y,Color.of(/*red*/)
+    class method This of(int x, int y,Color color)
+    }
+\end{lstlisting}
+
+where we assume to support overloading on different parameter number.
+This is a good solution, we think is better that any alternatives in literature,
+however the method CPoint.sum reset the color to red.
+What should be the behaviour in this case?
+If instead of writing This.of() we used 
+this.withX(newX).withY(newY) we could preserve the color from this.
+Not sure if that would be better.
+If the point designer could predict this kind of extension, then we could
+use the following design:  
+\begin{lstlisting}
+  p: { method int x(); method int y();
+    method This withX(int that);
+    method This withY(int that);
+    static method This of(int x,int y);
+    method This merge(This other);
+    }
+  pointSum:Sum p, { method This sum(This other)
+      this.merge(other).withX(this.x+other.x).withY(this.y+other.y);
+    }
+  colored:{method Color color();
+    method This withColor(Color that);
+    method This merge(This other)
+      this.withColor(this.color().mix(that.color());
+    }
+  CPoint:/*as before*/
+\end{lstlisting}  
+  Now we can merge colors, or any other kind of state we may want to add
+  following this pattern.
+
+\end{document}
