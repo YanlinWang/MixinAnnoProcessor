@@ -1,0 +1,51 @@
+\section{Introduction}
+
+Historically, we have seen a lot of focus on the importance of
+separing subtype from subclassing~\cite{cook}.  This is claimed to be
+good for code reuse, design and reasoning.  While there is no problem
+in subtyping without subclassing, in most OO languages code reuse
+(inheritance/extends) imply subtyping.  Consider the following (Java)
+code:
+
+\begin{lstlisting}[language=Java]
+  class A{ int ma(){return Utils.m(this);} }
+  class Utils{static int m(A a){..}}
+\end{lstlisting}
+
+This code seems correct, and there is no subtyping/subclassing.
+Now, lets add a class \Q@B@
+
+\begin{lstlisting}[language=Java]
+  class B extends A{ int mb(){return this.ma();} }
+\end{lstlisting}
+
+Class \lstinline{B} now have a method \lstinline{ma} inherited from \lstinline{A}.
+This method passes \lstinline{this} as \lstinline{A}; we can see an invocation of \lstinline{ma}
+inside \lstinline{mb}, where \lstinline{this} is of type \lstinline{B}.
+The execution will eventually call \lstinline{Util.m} with a \lstinline{B} instance.
+This can be correct only if \lstinline{B} is a subtype of \lstinline{A}.
+Thus, every OO language with the minimal features 
+exposed in this example (using this, extends, method call)
+is forced to accept that subclassing implies subtyping.
+Note how this is true also in C++, where is possible to
+"extends privately". Such is a limitation of the visibility of
+subtyping but not over subtyping itself, and the former example
+would be accepted by C++ even if \lstinline{B} was to "privately extends" \lstinline{A}.
+\marco{Cite some work of bruceTHisType and show how he also fails.}
+\bruno{I was expecting some text/argument here on why subclassing
+  implies subtyping is bad. Perhaps another example where subclassing 
+must not imply subtyping to type-check.}
+
+
+We will show here a simple design to completley uncouple subtyping
+and subclassing in a nominally typed OO language,
+by dividing code designed for \textbf{USE}
+from code designed for \textbf{REUSE}.\footnote{We need to talk of unanticipated extensions?}
+First we show a minimal language, then we show how mutually recursive types
+are supported, how state/constructors/fields are supported,
+how we can extend the language with nested classes.
+Finally we show 42, a full blown language build around our ideas of reuse.
+
+Our design leverage on traits~\cite{}: a well know mechanisms for pure
+code reuse
+
