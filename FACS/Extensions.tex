@@ -1,0 +1,157 @@
+\section{Extensions to our model}
+  One of the main feature of our simple reuse/use model is that it can be
+  easly extended. One simple but amazingly expressive extension is nested classes
+
+\subsection{Nested classes}
+
+A nested class will be another kind of member in the Literal, so  
+the grammar can be updated as following:
+
+\begin{bnf}
+\prodFull\mMD{
+\Opt{\terminalCode{class}}\ \terminalCode{method}\ \mT\ \mm\oR\overline{\mT\,\mx}\cR \Opt\me
+\mid \mCD
+}{Member Decl}\\
+\prodFull\mT{\mC\mid\mC\terminalCode{.}\mT}{types are now paths}
+\end{bnf}\\
+
+The general idea is that by composing code with \use, nested classes with the same name are recursivelly composed.
+Note that while we have nested classes, we do not have nested traits: all traits are still
+at top level.
+Untypable/unresolved Traits are also the only``dependency"
+the type system keeps track of, this means that when a nested class at an arbirary
+nested level is flattend, as in
+\Q@C:{ D:{ E:Use t1,t2,L}}@
+t1 and t2 must be defined before C at top level; and they may require classes (and their
+nested) defined before C. This means that the type system can still consider
+the class table as a simple map from Types T to their definition.
+
+This extension lets us challenge the expression problem[]:
+in the expression problem we have data variants and operations and....
+
+Let see how to easily encode and solve the expression problem:
+
+\begin{lstlisting}
+exp:{Exp:{interface}}//Exp declared once, reused everywhere
+lit:Use exp,{ Lit:{implements Exp //Exp not explicitly declared
+    class method Lit of(int inner) //Lit abstract state
+    method int inner()}
+  }
+sum:Use  exp,{ Sum:{implements Exp 
+    class method This of(Exp left, Exp right)
+    method Exp left() //Sum abstract state
+    method Exp right()}
+  }  
+uminus:Use exp,{ UMinus:{implements Exp 
+    class method This of(exp inner)//and so on for
+    method Exp inner()}//all the needed datavariants
+  }   
+  
+expToS:{Exp:{interface method String toString()}}
+//concept of toString declared once
+
+sumToS:Use sum,expToS,{ Sum:{implements Exp//with Exp.toString
+    method String toString()//just the implementation of the
+      left.toString()+"+"+right.toString()//specific method
+  }
+uminusToS:...//implement toString for all the datavariants
+
+expEval:{Exp:{interface method int eval()}}
+//declare the next operation and implement it for all the datavariant
+\end{lstlisting}
+
+Now that you have nicely modularized the code, just compose all the traits you need.
+\Q@MySolution:Use sumToS,litToS@ //sum,lit and exp traits are alread included
+
+The expression problem presented up to now is the traditional challenge proposed by [];
+this has been criticized to not really address the fundamental issues since it does not handle ....
+Now we show how we can go behond the traditional expression problem by encoding transformer methods:
+For example, lets add 1 to all literals
+\begin{lstlisting}
+expAdd1:{Exp:{interface method Exp add1()}}
+sumAdd1:Use sum,expAdd1,{Sum:{implements Exp
+    method Exp add1()
+      Sum.of(left.add1,right.add1())
+  }
+litAdd1:Use lit,expAdd1,{Lit:{implements Exp
+    method Exp add1()
+      Lit.of(inner()+1);
+    }
+
+MySolutionAdd1:Use sumToS,litToS,sumAdd1,litAdd1
+\end{lstlisting}
+
+This nicely solve our problem. 
+However, notice how if we wished to add many similar operations we would 
+have to repeat the propagation code (as in \Q@sumAdd1@) many times
+just changing the name of the operation.
+In the next section we will show how to improve on this point.
+
+
+\section{More composition operators}
+\use is amazing, elegant and simple, but the system can be easily enriched with more 
+operators: while most approaches in literator present a fixed set of operators, in our
+system we do not need such restriction.
+We just need to be sure that every newly added operator respects the following criteria:
+if starts form well typed code, it produces well typed code.\marco{not enough? rephrease to respect the two quality at the start?}
+
+
+---------
+Restrict make abstract method
+
+--------
+Rename, like refactoring
+Rename can invoke sum inside
+---------
+Redirect, like generics
+Redirect can be multiple.
+
+With redirect+rename we can have the general operator propagator
+ 
+operation:{//for sum and lit, easy to extends as before
+  T:{}
+  Exp:{interface method Exp op(T x)}}
+  Sum:Sum sum,{ extends Exp sum,expAdd1,{
+    method Exp op(T x)
+      Sum.of(left.op(x),right.op(x));
+    }
+  Lit:Sum lit,{
+    method Exp op(T x)
+      this;
+  }
+Now, to have my addN I can
+opAddn: Sum
+  operation[redirect T to Int]
+    [rename Exp.op(x) to addN(x)][restrict Lit.op(x)], {
+  Lit:{method Exp addN(Int x) Lit.of(inner())+x}
+  }
+  
+Full power of redirect
+
+serviceCombinator:{ S:{implements Service
+  method R report()
+  }
+  
+  R:{method R combine(R that)
+    class method R empty()}
+  
+  ListS:list[redirect Elem to S]
+  
+  class R method(ListS ss){//here we use extended java like syntax
+    R r=R.empty()
+    for(S s in ss){
+      s.performService();
+      r=r.combine(s.report())
+      }
+    return r;
+  }
+}
+PaintingService:serviceCombinator[redirect S to Painting.Service]
+
+To encode the former generic code in java you need to write
+the following headeche inducing interfaces for RService and Report (and still we miss the empty method)
+and require that the services you want to serve implement those.
+  interface Service{ void performService();}
+  interface Report<R extends Report<R>>{R combine(R that);}
+  interface RService<R extends Report<R>> extends Service{ R report();}
+

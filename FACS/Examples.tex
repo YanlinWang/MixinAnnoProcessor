@@ -24,6 +24,7 @@ of code values: that is trait names \mt\ or literals \mL\ and composing them in 
 and \emph{commutative} way.  This operation, sometimes called \emph{sum}, is the simplest and most elegant
 composition operator.  $\use\ \overline\mV$ composes the content of $\overline\mV$
 by taking the union of the methods and the union of the implementations.
+In our simple mode, we consider an error trying to merge a class and an interface.
 
 Use can not be applied if multiple versions of the same method are
 present in different traits.  An exception is done for abstract methods:
@@ -31,7 +32,7 @@ methods where the implementation \me\ is missing; In this case (if the
 headers are compatible) the implemented version is selected.  In a sum
 of two abstract methods with compatible headers, the one with the more
 specific type is selected. We will discuss later the formal details of
-Sum.\marco{actually, this makes the sum not strongly associative...}
+\use.\marco{actually, this makes the sum not strongly associative...}
 
 Code literals \mL\ can be marked as interfaces.  We will call class
 interface, or simply interface a class declaration of for \Q@C:{interface  ...}@.
@@ -300,24 +301,21 @@ or a more involved
   (3) Finally produce both \Q@B@ and \Q@C@ code.
 \end{itemize}
 
-Note how since our only point of relaxation is the class literal, there is no way an error can ``move around'' and be duplicated during the compilation process.
+Note that we can reuse code only by naming traits; but our only point of relaxation is the class literal: there is no way an error can ``move around'' and be duplicated during the compilation process.
 In particular, our approach allows for safe libraries of traits and classes to be fully typechecked, deployed and reused by multiple clients: no type error will emerge from library code.
 On the other side, we do not enforce the programmer to write always self-contained code where all the abstract method definition are explicitly declared.
 
 \section{Managing State}
-
-The Sum operator is very elegant, but our research community is struggling to
-make it work with constructor/state/fields.
-The goals fo this struggle are as follow:
+This idea of summing pieces of code is very elegant,
+and has proven very successfull in module composition languages~\cite{} but our research community is struggling to
+make it work with object state (constructor and fields) while acheving the following goals:
 
 \begin{itemize}
-
-\item keep sum associative and commutative.
-\item allowing a class to create instances of itself.
-\item actually initialize objects, not leaving no null fields
-\item managing fields in a way that borrows the elengance of summing methods
-\item make easy to add new fields
-
+\item keep sum associative and commutative,
+\item allowing a class to create instances of itself,
+\item actually initialize objects, leaving no null fields,
+\item managing fields in a way that borrows the elengance of summing methods,
+\item make easy to add new fields.
 \end{itemize}
 
 In the related work we will show some alternative ways to handle state.
@@ -329,42 +327,46 @@ However the purest solution just requires methods:
   allowing declaration for fields and constructors.
   This approach is very powefull[see class less java]
  
-  Pro: This approach is associative and commutative, even self construction
+\paragraph*{Advantages:} 
+this approach is associative and commutative, even self construction
   can be allowed if the trait requires a static/class method
   returning This; the class will then implement this method by forwarding
   a call to the constructor.
-  Negative: writing the class code with the constructors and
+  
+\paragraph*{Negatives:} writing the class code with the constructors and
    fields and getter/setters and factories can be quite tedious.
-   There is no way for a trait to specify a default value for a field,
+   Moreover, there is no way for a trait to specify a default value for a field,
    the class need to handle all the state, even state that is conceptually
    "private" of such trait.
 
-  for example 
+Here in the following an exaple of such approach:
 
 \begin{lstlisting}
-  pointSum: { method int x(); method int y();
-    static method This of(int x,int y);
+  pointSum: { method int x()  method int y()
+    class method This of(int x,int y)
     method This sum(This other)
-      This.of(this.x+other.x,this.y+other.y);
+      This.of(this.x+other.x,this.y+other.y)
     }
-  pointMul: { method int x(); method int y();
-    static method This of(int x,int y);
+  pointMul: { method int x() method int y()
+    class method This of(int x,int y)
     method This mul(This other)
-      This.of(this.x*other.x,this.y*other.y);
+      This.of(this.x*other.x,this.y*other.y)
     }
 \end{lstlisting}
 
-\subsection{A First Attempt at Composition}
+As you see, all the state operations are represented as abstract methods.
 
+\subsection{A First Attempt at Composition}
+According to the general ideas expressed before,
 \begin{lstlisting}
   Point:Use pointSum,pointMul
 \end{lstlisting}  
 
-\noindent would fail since methods x,y and of are still abstract.
-In this model the user is required to write something similar to
+\noindent would fail since methods \Q@x@,\Q@y@ and \Q@of@ are still abstract.
+In this mindset, the user would be required to write something similar to
 
 \begin{lstlisting}
-  CPoint:Use point,colored, {
+  CPoint:Use point,colored, {//not our suggested solution
     int x; int y;
     method int x()x; method int y()y;
     class method This of(int x, int y)
@@ -375,93 +377,97 @@ In this model the user is required to write something similar to
     }
 \end{lstlisting}
 
-\noindent after a while programming in this style, those "fixpoint" close the state in
-the obvious way classes becomes quite repetitive, and one wonder
-if it could be possible to automatically generate such code[]
-In our model we go one step further:
-In our model there is no need to generate code, or to explicitly
+\noindent after a while programming in this style, 
+writing those obvious ``close the state'' classes become a
+repetivie boring job, and one wonder
+if it could be possible to automatically generate such code[].
+Indeed those classes are just a form of ``fixpoint''.
+
+In our model we go one step further: there is no need to generate code, or to explicitly
 write down constructors and fields; there is not even syntax for those
 constructor.
-The idea is that any class that "could" be completed in the obvious way
-is a complete "coherent" class.
-Others call abstract a class that have abstract methods.
-We call abstract a class that have a set of abstract methods that are not
-coherent, that is, you can not interpret those as factory,getters and setters.
+The idea is that any class that ``could" be completed in the obvious way
+\emph{is a complete ``coherent" class}.
+In most other languages, a class is abstract if have abstract methods.
+Instead, we call abstract a class whose set of abstract methods is not
+coherent, that is, can not be automatically recognized as factory,getters and setters.
   
-In the detail: a class with no abstract method is coherent, and like Java Math
-will just be usefull for calling class/static methods.
-a class with a single abstract class method returning This
-is coherent if all the other abstract methods can be seen as "abstract state
-operations" over one of its argument.
+\paragraph*{Detaild definition of coherent:}
+\begin{itemize}
+\item a class with no abstract method is coherent, and like Java \Q@Math@.
+Will just be usefull for calling class/static methods.
+\item a class with a single abstract \Q@class@ method returning \Q@This@
+is coherent if all the other abstract methods can be seen as \emph{abstract state
+operations} over one of its argument.
 For example,
-if there is a class method This of(int x, int y) as before,
+if there is a \Q@class method This of(int x, int y)@ as before,
 then
-a method int x() is an abstract state method, getter for x.
-a method Void x(int that) is abstract state method, setter for x.
-while getters and setters are fundamental operations, we can immagine
-more operations to be supported:
+\item a method \Q@int x()@ is intepreted as an abstract state method: a getter for \Q@x@.
+\item a method \Q@Void x(int that)@ is a setter for x.
+\end{itemize}
 
-\begin{lstlisting}
-method This withX(int that) 
-\end{lstlisting}
-may be a "wither", doing a functional field update
-  method Void update(int x,int) may do two field update at a time
-  method This clone() may do a shallow clone of the object.
-  We are not sure what is the best set of abstract state operations yet.
+While getters and setters are fundamental operations, we can immagine
+more operations to be supported; for example
+\begin{itemize}
+\item \Q@method This withX(int that)@
+may be a ``wither", doing a functional field update.
+\item \Q@method Void update(int x,int)@
+may do two field update at a time.
+\item\Q@method This clone()@ may do a shallow clone of the object.
+\end{itemize}
+
+We are not sure what is the best set of abstract state operations yet, but we think this could become a very interesting area of research.
   
   
   lets play with the points of before, to see what good can we do with the current
   instruments:
 
 \begin{lstlisting}
-  pointSum: { method int x(); method int y();
-    static method This of(int x,int y);
+ //same code as before for pointSum and pointMul
+  pointSum: { method int x() method int y()
+    static method This of(int x,int y)
     method This sum(This other)
-      This.of(this.x+other.x,this.y+other.y);
+      This.of(this.x+other.x,this.y+other.y)
     }
-  pointMul: { method int x(); method int y();
-    static method This of(int x,int y);
+  pointMul: { method int x() method int y()//look we are repeating
+    static method This of(int x,int y)//the abstract method declarations.
     method This mul(This other)
-      This.of(this.x*other.x,this.y*other.y);
+      This.of(this.x*other.x,this.y*other.y)
     }
   PointAlgebra:Sum pointSum,pointMul
 \end{lstlisting}  
 
   As you can see, we can declare the methods independently and compose the result
-  as we wish. However we have to repeat the abstract methods x,y and of.
-  In addition of Sum,Mul we may want many operations over points; can we improve our reuse
+  as we wish. However we have to repeat the abstract methods \Q@x@,\Q@y@ and \Q@of@.
+  In addition of \Q@Sum@ and \Q@Mul@ we may want many operations over points; can we improve our reuse
   and not repeat such abstract definitions? of course!
 
 \begin{lstlisting}
-  p: { method int x(); method int y();
-    static method This of(int x,int y);
+  p: { method int x() method int y()
+    static method This of(int x,int y)
     }
-  pointSum:Sum p, { method This sum(This other)
-      This.of(this.x+other.x,this.y+other.y);
+  pointSum:Use p, { method This sum(This other)
+      This.of(this.x+other.x,this.y+other.y)
     }
-  pointMul:Sum p, { method This mul(This other)
-      This.of(this.x*other.x,this.y*other.y);
+  pointMul:Use p, { method This mul(This other)
+      This.of(this.x*other.x,this.y*other.y)
     }
   pointDiv: ...
-  PointAlgebra:Sum pointSum,pointMul,pointDiv,...
+  PointAlgebra:Use pointSum,pointMul,pointDiv,...
 \end{lstlisting}
       
-now our code is fully modularized, and each trait handle exactly one method.
+Now our code is fully modularized, and each trait handle exactly one method.
 
 What happens if we want to add fields instead of just operations?
 
 \begin{lstlisting}
   colored:{ method Color color() }
-  Point:Sum pointSum,colored
+  Point:Sum pointSum,colored //fails
 \end{lstlisting}
 
 This first attempt does not work: the abstract color method
 is not a getter for any of the parameters of 
-
-\begin{lstlisting}
-  class method This of(int x,int y) 
-\end{lstlisting}
-
+\Q@ class method This of(int x,int y)@
 A solution is to provide a richer factory:
 
 \begin{lstlisting}
@@ -475,23 +481,23 @@ where we assume to support overloading on different parameter number.
 This is a good solution, we think is better that any alternatives in literature,
 however the method CPoint.sum reset the color to red.
 What should be the behaviour in this case?
-If instead of writing This.of() we used 
-this.withX(newX).withY(newY) we could preserve the color from this.
-Not sure if that would be better.
-If the point designer could predict this kind of extension, then we could
-use the following design:  
+If we support withers, instead of writing This.of() we can use
+this.withX(newX).withY(newY) in order to preserve the color from \Q@this@.
+Sadly, if we use this design inside of \Q@sum(This other)@ we would loose the color from \Q@other@.
+
+If the point designer could predict this kind of extension, then we could use the following design:  
 \begin{lstlisting}
-  p: { method int x(); method int y();
-    method This withX(int that);
-    method This withY(int that);
-    static method This of(int x,int y);
-    method This merge(This other);
+  p: { method int x() method int y()
+    method This withX(int that)
+    method This withY(int that)
+    static method This of(int x,int y)
+    method This merge(This other)
     }
-  pointSum:Sum p, { method This sum(This other)
+  pointSum:Use p, { method This sum(This other)
       this.merge(other).withX(this.x+other.x).withY(this.y+other.y);
     }
-  colored:{method Color color();
-    method This withColor(Color that);
+  colored:{method Color color()
+    method This withColor(Color that)
     method This merge(This other)
       this.withColor(this.color().mix(that.color());
     }
@@ -499,3 +505,9 @@ use the following design:
 \end{lstlisting}  
   Now we can merge colors, or any other kind of state we may want to add
   following this pattern.
+  In order to compose, let say \Q@colored@ with \Q@flavored@ we would
+  need to compose the merge operation inside of both of them.
+  The simple model we are presenting could accomodate this with an
+  extension allowing code literals inside of a \use\ expression to use some form of super call to compose conflicting implementations. This is similar to the \emph{override} operation present in the original trait model[].
+  
+  
