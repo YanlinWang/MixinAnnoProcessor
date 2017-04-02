@@ -89,38 +89,115 @@ In the next section we will show how to improve on this point.
 
 
 \section{More composition operators}
-\use is amazing, elegant and simple, but the system can be easily enriched with more 
-operators: while most approaches in literator present a fixed set of operators, in our
-system we do not need such restriction.
+\use is amazing, elegant and simple, but our system can be easily enriched with more 
+operators: while most approaches in literature presents a fixed set of operators, we do not need such restriction.
 We just need to be sure that every newly added operator respects the following criteria:
-if starts form well typed code, it produces well typed code.\marco{not enough? rephrease to respect the two quality at the start?}
+
+\begin{itemize}
+\item As for \use, the operato does not need to be total, but if it fails it needs to provide an error that will be reported to the programmer.
+\item When the operator takes in input only traits (they are going to be well typed), if a result is produced,
+ such result is well typed.
+\item When the operator takes in input also code literal, if a non well typed result is produced,
+the type error must be tracked back to code in one of those non typed yet code literals.
+ \end{itemize}
 
 
----------
-Restrict make abstract method
+Here we see some example of other composition operators:
+\paragraph*{Restrict}${}_{}$\\*
+Restrict makes a method abstract
+\begin{lstlisting}
+t:{method bool geq(This x) x.leq(this)   method bool leq(This x) x.qeq(this) }
+C:Use t[restrict geq],{method bool geq(This x)  /*actual geq impl*/}
+\end{lstlisting}
 
---------
-Rename, like refactoring
-Rename can invoke sum inside
----------
-Redirect, like generics
-Redirect can be multiple.
+A variant of this operator allows to move the implementation to another name. This is very usefull to implement \Q@super@. This also is enough to suppor the example of before, when we try to compose \Q@colored@
+with \Q@flavoured@.
+
+\begin{lstlisting}
+t:{method int count() 0 }
+C:Use t[restrict count as _count],{method int count() this._count()+1}
+\end{lstlisting}
+Note how we are leveraging on the fact that the code literal does not need to be complete, thus we can just call \Q@_count()@.
+
+
+\paragraph*{Rename}${}_{}$\\*
+Rename allows to make some form of ``compile time'' refactoring
+There are a lots of different forms of rename in literature,
+sometime allowing only to rename specific methods, sometime allowing to rename
+nested classes into other nested classes either at the same or at a different nesting level.
+Renaming in the context of nested classes also means that when renaming a method of an interface, all the 
+nested classes implementing such interface inside of that code literal need to be adjusted.
+Renaming need to rename not only the method headers, but all the method calls inside of method bodies.
+At first glimps, this seams to be not always possible since we are considering to be able to apply those
+operators also to non well typed code.
+However, if the expression language is simple enough, it is possible to pre process the code to
+annotate the expected receiver type on all method calls by doing a purelly sintactic analysis
+on a single code literal in isolation. 
+All the expression whose type is guessed to be out of the border of the literal can stay unannotated; they are not going to be renamed anyway.
+
+\begin{lstlisting}
+t:{ I:{interface method int mI() }
+     A:{implements I  method int mI() 42}
+     B:{ method int mB(I i, A a, C c) i.mI()+a.mI()+c.mI()}
+     //mB would be annotated i[I].mI()+a[A].mI()+c.mI()
+     }
+D:t[rename A.mI kI]
+\end{lstlisting}
+ Notice how we are sure that c does not implements I since it is invisible from the outside: traits does not introduce nominal types!
+ 
+ We expect the flattened version for \Q@D@ to be
+\begin{lstlisting}
+D:{ I:{interface method int kI() }
+     A:{implements I  method int kI() 42}
+     B:{ method int mB(I i, A a, C c) i.kI()+a.kI()+c.mI()}
+     }
+\end{lstlisting}
+
+
+\paragraph*{Redirect}${}_{}$\\*
+Redirect allows to emulate generics; the main idea is that a (fully abstract) class can be redirect to another one external to the trait/code literal.
+For example a linked list can be implement as
+\begin{lstlisting}
+list:{ Elem:{}
+     Cell:{class method Cell of(Elem e,Cell c) 
+       method Elem e()  method Cell c()
+       }
+   method Elem get(int x) ...
+   ...more methods..
+   }
+ListString:list[redirect Elem to String]
+\end{lstlisting}
+
+%An expressive form of Redirect can be multiple, that is, can redirect may interdependent classes at the same time.
+%We show a graph example, where also we can show how to propagate generics:
+%For example
+%\begin{lstlisting}
+%t:{ method boolean reachable(Node start, Node end)/*implements reachability*/
+%     Node:{method ListEdge nodes()}
+%     Edge:{method Node in()  method Node out()}
+%     ListEdge:list[redirect Elem to Edge]
+%     }
+%\end{lstlisting}
+
+
+
+%Redirect can be multiple.
+
+\paragraph*{Application on the expression problem}${}_{}$\\*
 
 With redirect+rename we can have the general operator propagator
  
 operation:{//for sum and lit, easy to extends as before
   T:{}
   Exp:{interface method Exp op(T x)}}
-  Sum:Sum sum,{ extends Exp sum,expAdd1,{
+  Sum:Use sum,{ extends Exp sum,expAdd1,{
     method Exp op(T x)
-      Sum.of(left.op(x),right.op(x));
-    }
-  Lit:Sum lit,{
-    method Exp op(T x)
-      this;
+      Sum.of(left.op(x),right.op(x))  }
+  Lit:Use lit,{
+    method Exp op(T x)  this
   }
 Now, to have my addN I can
-opAddn: Sum
+opAddn: Use
   operation[redirect T to Int]
     [rename Exp.op(x) to addN(x)][restrict Lit.op(x)], {
   Lit:{method Exp addN(Int x) Lit.of(inner())+x}
