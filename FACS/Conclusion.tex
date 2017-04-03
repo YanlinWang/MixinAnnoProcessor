@@ -1,1 +1,26 @@
-\section{Conclusions}
+\section{Conclusions and practical applications}
+
+In this paper we explained a simple model to 
+radically decouple inheritance/code reuse and subtyping.
+
+We show how our model can be easly extended with more operators, if they behave well with respect to a simple predicate.
+
+In order to focus on the explanation of the high level concepts, this paper do not present formalism for our approach.
+Formalism for similar approaches can be found in[deefjig, myThesis].
+
+We are working on 42: a full blown language 
+that leverage on the ideas presented in this paper to obtain reliable and understandble metaprogramming.
+Formalization (in progress) for such language can be found at URLURLURL.
+42 extands our model allowing
+flattening to execute arbitrary computations.
+In such model we do not need an explicit notion of traits: they are encoded as method returning a code literal.
+
+  In addition to this, 42 have feature less related to code composition, like
+  a strong type system supporting aliasing mutability[] and circularity control[],
+   checked exceptions[], errors (unchecked exceptions) with strong exception safety for errors[].
+
+42 do not have a finite set of composion operators; they can be added using the built in support for native method calls. They can be dynamically checked to verify that they are well behaved according to our predicate, or they can be trusted to acheive efficiency. 
+
+
+
+%\item more operators can be accomodated without changing the general model

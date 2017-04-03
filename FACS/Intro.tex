@@ -35,7 +35,19 @@ would be accepted by C++ even if \lstinline{B} was to "privately extends" \lstin
 \bruno{I was expecting some text/argument here on why subclassing
   implies subtyping is bad. Perhaps another example where subclassing 
 must not imply subtyping to type-check.}
+An iconic example on why connecting inheritance/code reuse and subtpying is problematic is
+provided by the historic[]:
+A reasonable implementation for a \Q@Set@ may be easy to extend into a \Q@Bag@ keeping tracks of how many times an element occurs.
+We would just add some state and override a couple of methods.
 
+However, our subclassing would break LSP[]: not all bags are sets!
+Of course, one could retroactivelly fix this problem by introducing \Q@AbstractSetOrBag@
+and making both \Q@Bag@ and \Q@Set@ inherit from it.
+This looks innatural, since \Q@Set@ would extend it without adding anything,
+and we would be suprtised to find a use of the type \Q@AbstractSetOrBag@.
+Worst, if we was to constantly apply this mentalty, we would introduce a very high number
+of abstract classes that are not supposed to be used as types, and that will clutter the 
+public interface of our classes and our code project as a whole.
 
 We will show here a simple design to completley uncouple subtyping
 and subclassing in a nominally typed OO language,
@@ -49,3 +61,13 @@ Finally we show 42, a full blown language build around our ideas of reuse.
 Our design leverage on traits~\cite{}: a well know mechanisms for pure
 code reuse
 
+
+\subsection{List of contribution}
+\marco{text to improve, but is nice to keep a list}
+\begin{itemize}
+\item simple approach to fully separate inheritance and subtyping
+\item easy to grasp model of compilation were typing is late but not too late (lazy?)
+\item clean and elegant handling of state in trat/module composition language
+\item extension with nested class is natural and powefull
+\item more operators can be accomodated without changing the general model
+\end{itemize}
