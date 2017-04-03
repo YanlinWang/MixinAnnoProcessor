@@ -26,11 +26,11 @@ The execution will eventually call \lstinline{Util.m} with a \lstinline{B} insta
 This can be correct only if \lstinline{B} is a subtype of \lstinline{A}.
 Thus, every OO language with the minimal features 
 exposed in this example (using this, extends, method call)
-is forced to accept that subclassing implies subtyping.
+is forced to accept that subclassing implies subtyping.\footnote{
 Note how this is true also in C++, where is possible to
 "extends privately". Such is a limitation of the visibility of
 subtyping but not over subtyping itself, and the former example
-would be accepted by C++ even if \lstinline{B} was to "privately extends" \lstinline{A}.
+would be accepted by C++ even if \lstinline{B} was to "privately extends" \lstinline{A}.}
 \marco{Cite some work of bruceTHisType and show how he also fails.}
 \bruno{I was expecting some text/argument here on why subclassing
   implies subtyping is bad. Perhaps another example where subclassing 
@@ -44,7 +44,7 @@ However, our subclassing would break LSP[]: not all bags are sets!
 Of course, one could retroactivelly fix this problem by introducing \Q@AbstractSetOrBag@
 and making both \Q@Bag@ and \Q@Set@ inherit from it.
 This looks innatural, since \Q@Set@ would extend it without adding anything,
-and we would be suprtised to find a use of the type \Q@AbstractSetOrBag@.
+and we would be surprised to find a use of the type \Q@AbstractSetOrBag@.
 Worst, if we was to constantly apply this mentalty, we would introduce a very high number
 of abstract classes that are not supposed to be used as types, and that will clutter the 
 public interface of our classes and our code project as a whole.

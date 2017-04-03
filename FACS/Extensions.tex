@@ -61,7 +61,10 @@ expEval:{Exp:{interface method int eval()}}
 \end{lstlisting}
 
 Now that you have nicely modularized the code, just compose all the traits you need.
-\Q@MySolution:Use sumToS,litToS@ //sum,lit and exp traits are alread included
+\begin{lstlisting}
+MySolution:Use sumToS,litToS
+//sum,lit and exp traits are alread included
+\end{lstlisting}
 
 The expression problem presented up to now is the traditional challenge proposed by [];
 this has been criticized to not really address the fundamental issues since it does not handle ....
@@ -88,7 +91,7 @@ just changing the name of the operation.
 In the next section we will show how to improve on this point.
 
 
-\section{More composition operators}
+\subsection{More composition operators}
 \use\ is amazing, elegant and simple, but our system can be easily enriched with more 
 operators: while most approaches in literature presents a fixed set of operators, we do not need such restriction.
 We just need to be sure that every newly added operator respects the following criteria:
@@ -114,10 +117,23 @@ A variant of this operator allows to move the implementation to another name. Th
 with \Q@flavoured@.
 
 \begin{lstlisting}
-t:{method int count() 0 }
-C:Use t[restrict count as _count],{method int count() this._count()+1}
+  colored:{/*as before*/}
+  flavoured:{
+  method Flavour flavour()
+    method This withFlavour(Flavour that)
+    method This merge(This other)
+      this.withFlavour(this.flavour().mix(that.flavour())
+    }
+  CPoint:Use colored[restrict merge as _1merge],flavoured[restrict merge as _2merge],
+  pointSum,{
+    class method This of(int x,int y) This.of(x,y,Color.of(/*red*/))
+    class method This of(int x, int y,Color color)
+    method This merge(This other)
+      this._1merge(other)._2merge(other)
+    }
 \end{lstlisting}
-Note how we are leveraging on the fact that the code literal does not need to be complete, thus we can just call \Q@_count()@.
+
+Note how we are leveraging on the fact that the code literal does not need to be complete, thus we can just call \Q@_1merge()@ and \Q@_2merge()@
 
 
 \paragraph*{Rename}${}_{}$\\*
@@ -153,6 +169,7 @@ D:{ I:{interface method int kI() }
      }
 \end{lstlisting}
 
+Hide can be seen as a variation of rename, where the method/class is renamed to a fresh unguessable name.
 
 \paragraph*{Redirect}${}_{}$\\*
 Redirect allows to emulate generics; the main idea is that a (fully abstract) class can be redirect to another one external to the trait/code literal.

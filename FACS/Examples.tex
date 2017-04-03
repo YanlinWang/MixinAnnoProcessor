@@ -114,7 +114,7 @@ This does not work, because \lstinline{Utils.m} requires an \lstinline{A} and \l
 This code works: \Q@Utils@ is using an interface \Q@IA@ and the trait \Q@ta@
 is implementing it. It is also possible to add a \Q@B@ as follow
 \begin{lstlisting}
-  B:Use ta, { int mb(){return this.ma();} }
+  B:Use ta, { method int mb(){return this.ma();} }
 \end{lstlisting}
 This also works.  \Q@B@ reuses the code of \Q@ta@, but has no knowledge of \Q@A@.
 Since \Q@B@ reuses \Q@ta@, and \Q@ta@ implements \Q@IA@, also \Q@B@ implements \Q@IA@. 
@@ -125,7 +125,7 @@ here we use the flattening model.
 This means that 
 \begin{lstlisting}
 A:Use ta
-B:Use ta, { int mb(){return this.ma();} }
+B:Use ta, { method int mb(){return this.ma();} }
 \end{lstlisting}
  
   reduces/is equivalent to/is flatted into
@@ -134,7 +134,7 @@ B:Use ta, { int mb(){return this.ma();} }
 A:{implements IA method int ma() Utils.m(this) }
 B:{implements IA
   method int ma() Utils.m(this)
-  int mb() this.ma() } 
+  method int mb() this.ma() } 
 
  \end{lstlisting}
  
@@ -150,14 +150,14 @@ The are two core ideas:
  For example in
 
 \begin{lstlisting}
-t:{int m() 2 
-   int n() this.m()+1}
+t:{method int m() 2 
+   method int n() this.m()+1}
 \end{lstlisting}
 
 \noindent \Q@t@ is well typed since \Q@m()@ is declared inside of \Q@t@, while
 
 \begin{lstlisting}
-t1:{int n() this.m()+1} 
+t1:{method int n() this.m()+1} 
 \end{lstlisting}
 \noindent would be ill typed.
 
@@ -177,10 +177,10 @@ for example in
 In our example,using the trait \Q@t@ of before
 
 \begin{lstlisting}
-C: Use t {int k() this.n()+this.m()}
+C: Use t {method int k() this.n()+this.m()}
 \end{lstlisting}
 \noindent would be correct: even if n,m are not defined inside
-\Q@{int k() this.n()+this.m()}@,
+\Q@{method int k() this.n()+this.m()}@,
 the result of the flattening is well typed.
 
 This is not the case in many similar works in literature~\cite{} where the
@@ -229,9 +229,9 @@ happen one at the time, and classes are typechecked where their type is first ne
 
 For example
 \begin{lstlisting}
-A:{int ma(B b) b.mb()+1}
-tb:{int mb() 2}
-tc:{int mc(A a,B b) a.ma(b)}
+A:{method int ma(B b) b.mb()+1}
+tb:{method int mb() 2}
+tc:{method int mc(A a,B b) a.ma(b)}
 B: Use tb
 C: Use tc, {method int hello() 1}
 \end{lstlisting}
@@ -294,7 +294,7 @@ Indeed, in the \Q@A,B,C@ example above there is no difference
 between
 \begin{itemize}
 \item  (1)First check \Q@B@ and produce \Q@B@ code (that also contains \Q@B@ structural shape),
-  (2) then use \Q@B@ shape to check \Q@C@ and produce \Q@C@ code
+  (2) then use \Q@B@ shape to check \Q@C@ and produce \Q@C@ code;\ 
 or a more involved
 \item  (1)First check \Q@B@ and discover just \Q@B@ structural shape as result of the checking,
   (2)then use \Q@B@ shape to check \Q@C@.
@@ -366,14 +366,12 @@ According to the general ideas expressed before,
 In this mindset, the user would be required to write something similar to
 
 \begin{lstlisting}
-  CPoint:Use point,colored, {//not our suggested solution
-    int x; int y;
-    method int x()x; method int y()y;
+  CPoint:Use pointSum,pointMul, {//not our suggested solution
+    int x   int y
+    method int x()x   method int y()y
     class method This of(int x, int y)
-      new Point(x,y);
-    constructor Point(int x, int y){
-      this.x=x;this.y=y;this.color=color;
-      }
+      new Point(x,y)
+    constructor Point(int x, int y){ this.x=x   this.y=y }
     }
 \end{lstlisting}
 
@@ -411,7 +409,7 @@ more operations to be supported; for example
 \begin{itemize}
 \item \Q@method This withX(int that)@
 may be a ``wither", doing a functional field update.
-\item \Q@method Void update(int x,int)@
+\item \Q@method Void update(int x,int y)@
 may do two field update at a time.
 \item\Q@method This clone()@ may do a shallow clone of the object.
 \end{itemize}
@@ -425,12 +423,12 @@ We are not sure what is the best set of abstract state operations yet, but we th
 \begin{lstlisting}
  //same code as before for pointSum and pointMul
   pointSum: { method int x() method int y()
-    static method This of(int x,int y)
+    class method This of(int x,int y)
     method This sum(This other)
       This.of(this.x+other.x,this.y+other.y)
     }
   pointMul: { method int x() method int y()//look we are repeating
-    static method This of(int x,int y)//the abstract method declarations.
+    class method This of(int x,int y)//the abstract method declarations.
     method This mul(This other)
       This.of(this.x*other.x,this.y*other.y)
     }
@@ -444,7 +442,7 @@ We are not sure what is the best set of abstract state operations yet, but we th
 
 \begin{lstlisting}
   p: { method int x() method int y()
-    static method This of(int x,int y)
+    class method This of(int x,int y)
     }
   pointSum:Use p, { method This sum(This other)
       This.of(this.x+other.x,this.y+other.y)
@@ -471,18 +469,18 @@ is not a getter for any of the parameters of
 A solution is to provide a richer factory:
 
 \begin{lstlisting}
-  CPoint:Sum pointSum,colored,{
-    class method This of(int x,int y) This.of(x,y,Color.of(/*red*/)
+  CPoint:Use pointSum,colored,{
+    class method This of(int x,int y) This.of(x,y,Color.of(/*red*/))
     class method This of(int x, int y,Color color)
     }
 \end{lstlisting}
 
 where we assume to support overloading on different parameter number.
 This is a good solution, we think is better that any alternatives in literature,
-however the method CPoint.sum reset the color to red.
+however the method \Q@CPoint.sum@ resets the color to red.
 What should be the behaviour in this case?
-If we support withers, instead of writing This.of() we can use
-this.withX(newX).withY(newY) in order to preserve the color from \Q@this@.
+If we support withers, instead of writing \Q@This.of()@ we can use
+\Q@this.withX(newX).withY(newY)@ in order to preserve the color from \Q@this@.
 Sadly, if we use this design inside of \Q@sum(This other)@ we would loose the color from \Q@other@.
 
 If the point designer could predict this kind of extension, then we could use the following design:  
@@ -494,12 +492,12 @@ If the point designer could predict this kind of extension, then we could use th
     method This merge(This other)
     }
   pointSum:Use p, { method This sum(This other)
-      this.merge(other).withX(this.x+other.x).withY(this.y+other.y);
+      this.merge(other).withX(this.x+other.x).withY(this.y+other.y)
     }
   colored:{method Color color()
     method This withColor(Color that)
     method This merge(This other)
-      this.withColor(this.color().mix(that.color());
+      this.withColor(this.color().mix(that.color())
     }
   CPoint:/*as before*/
 \end{lstlisting}  
