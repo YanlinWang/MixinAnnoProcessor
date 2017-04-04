@@ -43,7 +43,7 @@ Methods \mMD can be instance methods or \Q@class@ methods. A class method is sim
 To denote a method as abstract, instead of an optional keyword we just omit the implementation \me.
 
 A version of this language where there are no traits can be seen 
-as a restriction/variation of FJ~\cite{}.
+as a restriction/variation of FJ~\cite{igarashi2001featherweight}.
 
 Basic well formedness rules applies:
 \begin{itemize}
@@ -142,8 +142,8 @@ This code seems correct, and there is no mention of the trait \Q@ta@. In some se
 
 \subsection{Remarks on Typing}
 Our typing discipline is 
-what distinguish our approach from a simple minded code composition macro(cite)
-or a rigid module composition(cite may be some of my work).
+what distinguish our approach from a simple minded code composition macro~\cite{bawden1999quasiquotation}
+or a rigid module composition~\cite{ancona2002calculus}
 
 The are two core ideas:
 \paragraph*{traits are \emph{well-typed} before being reused.}${}_{}$\\*
@@ -165,7 +165,7 @@ t1:{method int n() this.m()+1}
 
 \paragraph*{class expressions are not required to be \emph{well-typed} before flattening.}${}_{}$\\*
 In class expressions  $\use\ \overline\mV$
-an \mL\ in $\overline\mV$ is not well typed before flattening, only the result is supposed to be well typed.
+an \mL\ in $\overline\mV$ is not typechecked before flattening, and only the result is expected to be well-typed.
 While this seams a very dangerous approach at first, consider that also Java have the same behaviour:
 for example in
 \begin{lstlisting}[language=Java]
@@ -192,8 +192,11 @@ Our typing strategy have two important properties:
 \item if a class is declared by using $\mC : \use\ \overline\mt$, that is, without literals,
 and the flattening is successfull, \mC\ is well typed, no need of further checking.
 \item on the other side, if a class is declared by $\mC : \use\ \overline\mV$, with
-$\mL_1\ldots\mL_n \in \overline\mV$, and after successfull flattening $\mC : \mL$ is not well typed,
-the error was originally present in one of $\mL_1\ldots\mL_n$.
+$\mL_1\ldots\mL_n \in \overline\mV$, and after successfull flattening $\mC : \mL$ can not be typechecked,
+then the issue was originally present in one of $\mL_1\ldots\mL_n$.
+It may be that the result is intrinsically ill-typed, if of the methods in $\mL_1\ldots\mL_n$ is not well typed,
+but it may also happens that a type referred from one of those methods is declared \emph{after} the current class. As we will see later, this is how our relaxation allows to support recursive types.
+
 This also means that as an optimization strategy
  we may remember what method bodies come from traits and what method bodies come from code literals, in order to typecheck only the latter.
  \end{itemize}
