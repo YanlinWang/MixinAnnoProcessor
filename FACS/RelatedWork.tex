@@ -8,7 +8,7 @@ In all the line of work of Ferruccio [cite many] neither traits nor classes intr
 that are provided only by interfaces.
 In DeepFjig[] classes introduce nominal types but in an innatural way, the type of \Q@this@ is only \Q@This@ (sometimes called \Q@<>@) and not the nominal type of its class.
 
-Other work cite[something on family polimorphism, scala?]
+Other work cite~\cite{odersky2008programming,nystrom2006j}
 do no completly break the relation between inheritance and subtyping, but only prevent subtyping where 
 it would be unsound.
 
@@ -16,7 +16,7 @@ Our compilation model is a clear step forward with respect to
 \cite[metaFjig, deepFjig,myThesis], where all code was required to declare all the abstract dependencies all of the time.
 
 %\item clean and elegant handling of state in trat/module composition language
-The idea of abstract state operation has emerged from CJ[], and offer a clean solution to handling state
+The idea of abstract state operation has emerged from CJ~\cite{wang2016classless}, and offer a clean solution to handling state
 in a trait composition setting.
 Note how abstract state operation are different from just hiding fields under getter and setters: 
 in our model the programmer simply never declare what is the state of the class, not even what information is stored in fields.
@@ -59,7 +59,7 @@ somehow syntetized from the old constructor parameters.
 
 %\item extension with nested class is natural and powefull
 We claim that our solution to the expression problem is the most natural in literature to date:
-While a similar sintax can be achieved with the scandinavian style[], their dependent type system makes reasoning quite complex, and indeed more recent solutions have accepted a more involved syntax in order to have an understandable type system[Lightwait family polimporphism?].
+While a similar sintax can be achieved with the scandinavian style~\cite{ernst2004expression}, their dependent type system makes reasoning quite complex, and indeed more recent solutions have accepted a more involved syntax in order to have an understandable type system~\cite{igarashi2005lightweight}.
 
 Our close contendant is DeepFJig[]: all our gain over their model is based on our relaxation over abstract signatures.
 Note how we solve the expression problem in the most radical way possible \marco{bruno, here you can insert some of the criticism over expression problem trivially and explain how is not applicable to us here.}

@@ -26,7 +26,7 @@ t1 and t2 must be defined before C at top level; and they may require classes (a
 nested) defined before C. This means that the type system can still consider
 the class table as a simple map from Types T to their definition.
 
-This extension lets us challenge the expression problem[]:
+This extension lets us challenge the expression problem~\cite{wadler1998expression}:
 in the expression problem we have data variants and operations and....
 
 Let see how to easily encode and solve the expression problem:
@@ -66,7 +66,7 @@ MySolution:Use sumToS,litToS
 //sum,lit and exp traits are alread included
 \end{lstlisting}
 
-The expression problem presented up to now is the traditional challenge proposed by [];
+The expression problem presented up to now is the traditional challenge proposed by~\cite{wadler1998expression};
 this has been criticized to not really address the fundamental issues since it does not handle ....
 Now we show how we can go behond the traditional expression problem by encoding transformer methods:
 For example, lets add 1 to all literals
@@ -105,7 +105,7 @@ the type error must be tracked back to code in one of those non typed yet code l
  \end{itemize}
 
 
-Here we see some example of other composition operators:
+Here we see some example of other composition operators, inspired from~\cite{servetto2014meta}:
 \paragraph*{Restrict}${}_{}$\\*
 Restrict makes a method abstract
 \begin{lstlisting}

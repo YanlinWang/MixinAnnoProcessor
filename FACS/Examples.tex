@@ -310,7 +310,7 @@ On the other side, we do not enforce the programmer to write always self-contain
 
 \section{Managing State}
 This idea of summing pieces of code is very elegant,
-and has proven very successfull in module composition languages~\cite{} but our research community is struggling to
+and has proven very successfull in module composition languages~\cite{ancona2002calculus} but our research community is struggling to
 make it work with object state (constructor and fields) while acheving the following goals:
 
 \begin{itemize}
@@ -328,7 +328,7 @@ However the purest solution just requires methods:
   to classes the role to finally define the fields/constructors.
   That is, the  the class has syntax richer that the trait one,
   allowing declaration for fields and constructors.
-  This approach is very powefull[see class less java]
+  This approach is very powefull~\cite{wang2016classless}
  
 \paragraph*{Advantages:} 
 this approach is associative and commutative, even self construction
@@ -381,7 +381,7 @@ In this mindset, the user would be required to write something similar to
 \noindent after a while programming in this style, 
 writing those obvious ``close the state'' classes become a
 repetivie boring job, and one wonder
-if it could be possible to automatically generate such code[].
+if it could be possible to automatically generate such code~\cite{wang2016classless}.
 Indeed those classes are just a form of ``fixpoint''.
 
 In our model we go one step further: there is no need to generate code, or to explicitly
@@ -509,6 +509,6 @@ If the point designer could predict this kind of extension, then we could use th
   In order to compose, let say \Q@colored@ with \Q@flavored@ we would
   need to compose the merge operation inside of both of them.
   The simple model we are presenting could accomodate this with an
-  extension allowing code literals inside of a \use\ expression to use some form of super call to compose conflicting implementations. This is similar to the \emph{override} operation present in the original trait model[].
+  extension allowing code literals inside of a \use\ expression to use some form of super call to compose conflicting implementations. This is similar to the \emph{override} operation present in the original trait model~\cite{ducasse2006traits}.
   
   
