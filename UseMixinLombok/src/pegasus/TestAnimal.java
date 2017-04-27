@@ -70,13 +70,10 @@ interface Animal {
 @Obj interface Bird extends Animal {
 	Point3D location(); void location(Point3D val);
 	default void location(Point2D val) {
-		location(location().with(val));
-	}
+		location(location().with(val));}
 	default void fly() {
 		location(location().withX(
-			location().x() + 40));
-	}
-}
+			location().x() + 40));} }
 //END_BIRD
 
 //BEGIN_PEGASUS

@@ -1,0 +1,110 @@
+%
+\documentclass{llncs}
+%
+\usepackage{makeidx}  % allows for indexgeneration
+\usepackage{listings}
+\usepackage{color}
+\usepackage{xspace}
+\usepackage{times}
+\lstset{language=Java,
+  basicstyle=\ttfamily\small,%\scriptsize,
+  keywordstyle=\bfseries,%\color{darkRed},
+  showstringspaces=false,
+  mathescape=true,
+  xleftmargin=0pt,
+  xrightmargin=0pt,
+  breaklines=false,
+  breakatwhitespace=false,
+  breakautoindent=false,
+  linewidth=4\textwidth,% should be enough
+%  identifierstyle=\idstyle
+ morekeywords={method,Use,This}
+}
+
+%marco
+\newcommand{\Q}{\lstinline}
+\newcommand\Opt[1]{#1 ?}
+%bnf
+\newenvironment{bnf}{$\begin{array}{lcll}}{\end{array}$}
+\newcommand{\prodFull}[3]{#1&::=&#2&\mbox{#3}}
+\newcommand{\prodInline}[2]{#1::=#2}
+\newcommand{\prodNextLine}[2]{&&#1&\mbox{#2}}
+\newcommand{\terminal}[1]{%
+\ensuremath{$\texttt{#1}$}%
+}
+\newcommand{\terminalCode}[1]{\mbox{\lstinline{#1}}}
+\newcommand{\metavariable}[1]{%
+\ensuremath{\mathit{#1}}%
+}
+%----------------------
+\newcommand\mL{\metavariable{L}}
+\newcommand\mC{\metavariable{C}}
+\newcommand\mT{\metavariable{T}}
+\newcommand\mV{\metavariable{V}} %code value t or L
+\newcommand\mMD{\metavariable{MD}}
+\newcommand\mTD{\metavariable{TD}}
+\newcommand\mCD{\metavariable{CD}}
+\newcommand\mD{\metavariable{D}}
+\newcommand\me{\metavariable{e}}
+\newcommand\mx{\metavariable{x}}
+\newcommand\mm{\metavariable{m}}
+\newcommand\mt{\metavariable{t}}
+\newcommand\use{\terminalCode{Use}}
+\newcommand\oC{\mbox{\lstinline@{@}}
+\newcommand\cC{\mbox{\lstinline@}@}}
+\newcommand\oR{\mbox{\lstinline@(@}}
+\newcommand\cR{\mbox{\lstinline@)@}}
+%--------------------------
+\newcommand{\mynotes}[3]{{\color{#2} {\sc #1}: #3}}
+\newcommand\bruno[1]{\mynotes{Bruno}{red}{#1}}
+\newcommand\marco[1]{\mynotes{Marco}{blue}{#1}}
+
+\newcommand{\syndef}{$::=$}
+
+\newcommand\name{{\bf DTrait}\xspace}
+
+%
+\begin{document}
+%
+\frontmatter          % for the preliminaries
+%
+\pagestyle{headings}  % switches on printing of running heads
+%\addtocmark{Hamiltonian Mechanics} % additional mark in the TOC
+%
+
+\title{Separating Use and Reuse to Improve Both}
+%
+\titlerunning{Separating Use and Reuse to Improve Both}  % abbreviated title (for running head)
+
+\author{Marco Servetto\inst{1} \and Bruno C. d. S. Oliveira\inst{2}}
+%
+\authorrunning{M. Servetto and B. Oliveira} % abbreviated author list (for running head)
+%
+%%%% list of authors for the TOC (use if author list has to be modified)
+\tocauthor{Marco Servetto and Bruno C. d. S. Oliveira}
+%
+\institute{Victoria University of Wellington, New Zealand,\\
+\email{marco.servetto@ecs.vuw.ac.nz},\\ WWW home page:
+\texttt{https://ecs.victoria.ac.nz/Main/MarcoServetto}
+\and
+The University of Hong Kong, Hong Kong\\}
+
+\maketitle              % typeset the title of the contribution
+
+\begin{abstract}
+Abstract here!
+\dots
+\keywords{Code Reuse, Object-Oriented Programming}
+\end{abstract}
+
+\input{Intro}
+\input{Examples}
+\input{Extensions}
+\input{RelatedWork}
+\input{Conclusion}
+
+\section*{Bibliography}
+\bibliographystyle{elsart-num-sort}
+\bibliography{main}
+
+\end{document}

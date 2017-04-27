@@ -1,4 +1,4 @@
-\documentclass[10pt,preprint,nocopyrightspace,numbers]{sigplanconf}
+\documentclass[10pt,numbers]{sigplanconf}
 
 % The following \documentclass options may be useful:
 
@@ -36,12 +36,16 @@
 \usepackage[T1]{fontenc}
 \usepackage[scaled=0.85]{beramono}
 \usepackage{mathpartir}
+\usepackage[utf8]{inputenc}
+\usepackage{flushend}
 
 
 \setlist[itemize]{noitemsep,nolistsep}
 \setlist[enumerate]{noitemsep,nolistsep}
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\vspace{-3pt}\oldparagraph{#1}}
+%\let\oldparagraph\paragraph
+%\renewcommand{\paragraph}[1]{\vspace{-3pt}\oldparagraph{#1}}
+
+\newcommand{\para}[1]{\vspace{-3pt}\paragraph{#1}}
 
 \input{predef/def.tex}
 \input{predef/java.tex}
@@ -83,16 +87,22 @@
 \newtheorem{thm2}{Theorem}
 \newtheorem{lem2}{Lemma}
 
+\clubpenalty = 10000
+\widowpenalty = 10000
+\displaywidowpenalty = 10000
+
 \begin{document}
+
+\toappear{}
 
 \special{papersize=8.5in,11in}
 \setlength{\pdfpageheight}{\paperheight}
 \setlength{\pdfpagewidth}{\paperwidth}
 
-\conferenceinfo{CONF 'yy}{Month d--d, 20yy, City, ST, Country}
-\copyrightyear{20yy}
-\copyrightdata{978-1-nnnn-nnnn-n/yy/mm}
-\copyrightdoi{nnnnnnn.nnnnnnn}
+%\conferenceinfo{CONF 'yy}{Month d--d, 20yy, City, ST, Country}
+%\copyrightyear{20yy}
+%\copyrightdata{978-1-nnnn-nnnn-n/yy/mm}
+%\copyrightdoi{nnnnnnn.nnnnnnn}
 
 % Uncomment the publication rights you want to use.
 %\publicationrights{transferred}
@@ -107,10 +117,10 @@
 
 \vspace{-20pt}
 \authorinfo{Yanlin Wang\and Haoyuan Zhang \\ Bruno C. d. S. Oliveira}
-           {The University of Hong Kong}
+           {The University of Hong Kong, China}
            {\{ylwang,hyzhang,bruno\}@cs.hku.hk}
 \authorinfo{Marco Servetto}
-          {Victoria University of Wellington}
+          {Victoria University of Wellington, New Zealand}
           {marco.servetto@ecs.vuw.ac.nz}
 
 \maketitle
@@ -118,11 +128,11 @@
 
 \begin{abstract}
   This paper presents an OO style without classes, which we call \interfacebased \objectoriented
-  programming (IB). This style is a natural extension of closely
+  programming (IB). IB is a natural extension of closely
   related ideas such as traits.
-  To support state, IB uses \emph{abstract state
-    operations}. This
-  new way to deal with state allows flexibility not 
+  \emph{Abstract state
+    operations} provide a
+  new way to deal with state, which allows for flexibility not
   available in class-based languages.  In IB state
   can be type-refined in subtypes. The combination of a
   purely IB style and type-refinement enables
@@ -131,9 +141,9 @@
   directly into Java. Classless Java uses annotation processing for
   code generation and relies on new features of Java 8 for
   interfaces. The code generation techniques used in Classless Java
-  have interesting properties, including guarantees that 
-  the generated code is type-safe and good integration with IDEs. 
-  Usefulness of IB and Classless Java is shown with 
+  have interesting properties, including guarantees that
+  the generated code is type-safe and good integration with IDEs.
+  Usefulness of IB and Classless Java is shown with
   examples and case studies.
 \end{abstract}
 
@@ -148,6 +158,18 @@ term1, term2
 \keywords
 keyword1, keyword2
 \end{comment}
+\category{D.3.2}{Programming Languages}
+                {Language Classifications}
+                [Object-Oriented Programming]
+\category{F.3.3}{Logics and Meanings of Programs}
+                {Studies of Program Constructs}
+                []
+                
+\terms
+Languages
+
+\keywords
+Interface-based programming, multiple inheritance, code generation
 
 \vspace{-10pt}
 \input{sections/Introduction.tex}
@@ -170,7 +192,9 @@ keyword1, keyword2
 
 \input{sections/Conclusion.tex}
 
-%\acks
+\vspace{-5pt}
+\acks
+We would like to thank the reviewers for their helpful comments. This work is sponsored by the Hong Kong Research Grant Council Early Career Scheme project number 27200514.
 %
 % We recommend abbrvnat bibliography style.
 

@@ -1,0 +1,68 @@
+\section{Related Work}
+The literature on code reuse is too vast to let us do justice of it in a fiew pages,
+Our work is clearly inspired on Traits~\cite{ducasse2006traits}; they are in turn insipired on module composition languages~\cite{ancona2002calculus}
+and multiple inheritance~\cite{}.
+
+Our idea of fully separate inheritance and subtyping has some precedence
+In all the line of work of Ferruccio [cite many] neither traits nor classes introduce nominal types,
+that are provided only by interfaces.
+In DeepFjig[] classes introduce nominal types but in an innatural way, the type of \Q@this@ is only \Q@This@ (sometimes called \Q@<>@) and not the nominal type of its class.
+
+Other work cite~\cite{odersky2008programming,nystrom2006j}
+do no completly break the relation between inheritance and subtyping, but only prevent subtyping where 
+it would be unsound.
+
+Our compilation model is a clear step forward with respect to 
+\cite[metaFjig, deepFjig,myThesis], where all code was required to declare all the abstract dependencies all of the time.
+
+%\item clean and elegant handling of state in trat/module composition language
+The idea of abstract state operation has emerged from CJ~\cite{wang2016classless}, and offer a clean solution to handling state
+in a trait composition setting.
+Note how abstract state operation are different from just hiding fields under getter and setters: 
+in our model the programmer simply never declare what is the state of the class, not even what information is stored in fields.
+The state is computed by the system as an overall result of the whole code composition process.
+
+In literature there has been many attempts to add state in traits/module composition languages.
+\begin{itemize}  
+\item No constructor: all the fields start at null/a default specified value.
+  In this model fields are like another kind of member, and two fields
+  with identical type can be merged by sum; \Q@new C()@ can be used for all classes, and \Q@init@ method may be called later, as in
+  \Q@Point p=new Point(); p.init(10,30)@.
+  
+  To its credit, this simple approach is commutative and associative and do not disrupt elegance of summing methods.
+  However, objects are created "broken" and the user is trusted with fixing them.
+  While is easy to add fields, the load of inizializing them is on the user; moreover
+    all the objects are intrinsically mutable, so this model is unfriendly
+    to a functional programming style.
+\item Constructor compose fields:
+In this approach the fields are declared but not initialized, and
+a canonical constrctor constructor taking a value for each field and just initializing such field
+is automatically generated in the resulting class.
+
+In this approach it is easy to add fields, however this approach is associative but not commutative, since the order of composition will change the order of the fields; moreover there is no support for self construction
+since the signature of the constuctor change during composition.
+
+\item Constructor can be composed if they offers the same exact parameters:
+In this approach traits declare field and constructors.
+The constructor initialize the fields but can do any other computation.
+Traits whose constructors have the same signature can be composed.
+The composed constructor will execute both constructor bodies in order.
+
+This approach is designed to allows Self construction.
+It is also associative and mostly commutative: the order of composition is relevant only
+in the order of execution of side effects during construction.
+However the requirement that the constructors need the same parameters 
+hamper reuse, and if a field is added, its initial value need to be
+somehow syntetized from the old constructor parameters.
+
+\end{itemize}
+
+%\item extension with nested class is natural and powefull
+We claim that our solution to the expression problem is the most natural in literature to date:
+While a similar sintax can be achieved with the scandinavian style~\cite{ernst2004expression}, their dependent type system makes reasoning quite complex, and indeed more recent solutions have accepted a more involved syntax in order to have an understandable type system~\cite{igarashi2005lightweight}.
+
+Our close contendant is DeepFJig~\cite{corradi2011deepfjig}: all our gain over their model is based on our relaxation over abstract signatures.
+Note how we solve the expression problem in the most radical way possible \marco{bruno, here you can insert some of the criticism over expression problem trivially and explain how is not applicable to us here.}
+
+
+

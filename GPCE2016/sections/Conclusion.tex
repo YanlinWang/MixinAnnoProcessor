@@ -1,8 +1,7 @@
+\vspace{-5pt}
 \section{Conclusion}\label{sec:conclusion}
-Before Java 8, concrete methods were not allowed
-to appear in interfaces.  Java 8 allows static interface methods and
-introduces \emph{default methods}, which enable implementations
-inside interfaces. An important positive consequence that
+From Java 8, static and default methods are allowed in interfaces, 
+which enable implementations inside interfaces. An important positive consequence that
 was probably overlooked is that the concept of class
 (in Java) is now (almost) redundant and unneeded.
 We propose a programming style, called Classless Java, where
@@ -22,16 +21,17 @@ to write less cumbersome code while coding in Classless Java. Indeed,
 we think the obtained gain is so high that Classless Java with the \mixin
 annotation can be less cumbersome than full Java.
 
+\begin{comment}
 Classless Java is just a programming style, but showing the way
-to a new flavour of OOP: we propose \interfacebased
+to a new flavor of OOP: we propose \interfacebased
 \objectoriented languages (IB), as opposed to \classbased or
-\prototypebased. In IB state is not modelled at the platonic
+\prototypebased. In IB state is not modeled at the platonic
 level but handled exclusively by instances.  This unlocks useful
 code reuse patterns, as shown in Section~\ref{sec:ep}.
 An interesting avenue for future work would be to design a new
 language based on IB. With a proper language design, IB would not be restricted 
 by limitations of Java and its syntax.
-
+\end{comment}
 
 %Interestingly, without classes there is also no subclassing. This scratches an old
 % itching point in the long struggle of subtyping versus subclassing:
