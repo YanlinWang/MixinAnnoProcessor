@@ -1,9 +1,10 @@
 \section{A Decoupled Trait Calculus}
 In order to illustrate how we plan to properly divide code reuse/inheritance/subclassing from subtyping,
-lets consider a simple language where trait names start lowercase \mt
-and class names start uppercase \mC.  
+lets consider a simple language where trait names start with a lowercase \mt
+and class names start with an uppercase \mC.  
 The syntax of the language is:
 
+\begin{comment}
 \begin{bnf}
 \prodFull\mTD{\mt\terminalCode{:}\mL \mid \mt\terminalCode{:} \use\ \overline\mV}{Trait Decl}\\
 \prodFull\mCD{\mC\terminalCode{:}\mL \mid \mC\terminalCode{:} \use\ \overline\mV}{Class Decl}\\
@@ -15,6 +16,7 @@ The syntax of the language is:
 \prodFull\me{\mx\mid\mT\mid\me\terminalCode{.}\mm\oR\overline\me\cR}{expressions}\\
 \prodFull\mD{\mCD\mid\mTD}{Declaration}\\
 \end{bnf}
+\end{comment}
 
 To declare a trait \mTD\ or a class \mCD, we can use either a code literal \mL\ or a trait
 expression.  Traits come with various operators (restrict, hide,
@@ -24,28 +26,31 @@ of code values: that is trait names \mt\ or literals \mL\ and composing them in 
 and \emph{commutative} way.  This operation, sometimes called \emph{sum}, is the simplest and most elegant
 composition operator.  $\use\ \overline\mV$ composes the content of $\overline\mV$
 by taking the union of the methods and the union of the implementations.
-In our simple mode, we consider an error trying to merge a class and an interface.
+In our simple mode\bruno{you mean model?}, we consider an error trying to merge a class and an interface.
 
 Use can not be applied if multiple versions of the same method are
 present in different traits.  An exception is done for abstract methods:
-methods where the implementation \me\ is missing; In this case (if the
+methods where the implementation \me\ is missing. In this case (if the
 headers are compatible) the implemented version is selected.  In a sum
 of two abstract methods with compatible headers, the one with the more
 specific type is selected. We will discuss later the formal details of
 \use.\marco{actually, this makes the sum not strongly associative...}
+\bruno{ok: would be nice to see an example?}
 
 Code literals \mL\ can be marked as interfaces.  We will call class
 interface, or simply interface a class declaration of for \Q@C:{interface  ...}@.
-  Then we have a set of implemented interfaces and a set of member declarations; in this simple language, just methods.
+  Then we have a set of implemented interfaces and a set of member
+  declarations. In this simple language, the only members are methods.
 If there are no implemented interfaces, in the concrete syntax we will omit the \Q@implements@ keyword.
 
-Methods \mMD can be instance methods or \Q@class@ methods. A class method is similar to a \Q@static@ method in Java but can be abstract. This is very usefull in the context of code composition.
+Methods \mMD~can be instance methods or \Q@class@ methods. A class method is similar to a \Q@static@ method in Java but can be abstract. This is very usefull in the context of code composition.
 To denote a method as abstract, instead of an optional keyword we just omit the implementation \me.
 
 A version of this language where there are no traits can be seen 
 as a restriction/variation of FJ~\cite{igarashi2001featherweight}.
 
-Basic well formedness rules applies:
+\paragraph{Well-formedness}
+Basic well formedness rules apply:
 \begin{itemize}
 \item all the traits and classes have unique names in a program $\overline\mD$,
 \item all method parameters have unique names and the special parameter name \Q@this@ is not declared
@@ -53,15 +58,16 @@ Basic well formedness rules applies:
 \item all methods in a code literal have unique names,
 \item all used variables are in scope.
 \end{itemize}
-Those rules can be applied on any given \mL individually and in full isolation.
+Those rules can be applied on any given \mL~individually and in full isolation.
 
-We expect the type system to enforce 
+We expect the type system to enforce: 
 \begin{itemize}
 \item subtyping between interfaces and classes,
 \item method call typechecking,
 \item no circular implementation of interfaces,
 \item type signature of methods from interfaces can be refined following the well known variant-contravariant rules,
 \item only interfaces can be implemented.
+\item \bruno{method conflict detection in traits?}
 \item \marco{I'm sure I'm missing something}
 \end{itemize}
 We will see later the details on when exactly in the compilation process any code literal is typechecked.
@@ -73,14 +79,19 @@ A Literal can use the \lstinline{This} type,
 and when the trait is reused to create a class, \Q@This@ will become just
 an alias for the class name.
 
-For the sake of simplicity, method bodies are just simple expressions \me, whose can be just variables and method calls.
-We do not think that there is any problem to extend our language with other constructs; we use minimal expressions to keep our example simple and compact. In order to make our examples more engaging, we feel free to use the type int, numeric literals and their operations.
+For the sake of simplicity, method bodies are just simple expressions
+\me: they can be just variables and method calls.
+We do not think that there is any problem to extend our language with
+other constructs~\bruno{don't you actually have evidence that this is
+  the case from 42?}. We use minimal expressions to keep our example
+simple and compact. In order to make our examples more engaging, we
+feel free to use the type \lstinline{int}, numeric literals and their operations.
 
 \subsection{Code Use and Code Reuse in \name}
 
 The great absent in our language is the  \Q@extends@ keyword.
 In a sense, all classes are final (as in Java).
-Moreover  \use\ can not contain class names.
+Moreover  \use\ cannot contain class names.
 That is, using a trait is the only way to induce code reuse.
 
 Lets now try to encode the example in Section~\ref{} e in our language:
@@ -112,7 +123,7 @@ This does not work, because \lstinline{Utils.m} requires an \lstinline{A} and \l
 \end{lstlisting}
 
 This code works: \Q@Utils@ is using an interface \Q@IA@ and the trait \Q@ta@
-is implementing it. It is also possible to add a \Q@B@ as follow
+is implementing it. It is also possible to add a \Q@B@ as follows
 \begin{lstlisting}
   B:Use ta, { method int mb(){return this.ma();} }
 \end{lstlisting}
@@ -142,7 +153,7 @@ This code seems correct, and there is no mention of the trait \Q@ta@. In some se
 
 \subsection{Remarks on Typing}
 Our typing discipline is 
-what distinguish our approach from a simple minded code composition macro~\cite{bawden1999quasiquotation}
+what distinguishes our approach from a simple minded code composition macro~\cite{bawden1999quasiquotation}
 or a rigid module composition~\cite{ancona2002calculus}
 
 The are two core ideas:
@@ -161,12 +172,14 @@ t1:{method int n() this.m()+1}
 \end{lstlisting}
 \noindent would be ill typed.
 
-\noindent Note how in the former example \Q@ta@ is well typed just by knowing itself and \Q@IA@.
+\noindent Note how in the former example \Q@ta@ is well typed just by
+knowing itself and \Q@IA@.\bruno{why IA? it is not used in this
+  example, right?}
 
 \paragraph*{class expressions are not required to be \emph{well-typed} before flattening.}${}_{}$\\*
 In class expressions  $\use\ \overline\mV$
 an \mL\ in $\overline\mV$ is not typechecked before flattening, and only the result is expected to be well-typed.
-While this seams a very dangerous approach at first, consider that also Java have the same behaviour:
+While this seems a very dangerous approach at first, consider that also Java have the same behaviour:
 for example in
 \begin{lstlisting}[language=Java]
   class A{ int m() {return 2;}  int n(){return this.m()+1;} }
@@ -185,9 +198,9 @@ the result of the flattening is well typed.
 
 This is not the case in many similar works in literature~\cite{} where the
 literals have to be self complete. In this case we would have been forced to
-declare abstract methods \Q@n@ and \Q@m@.
+declare abstract methods \Q@n@ and \Q@m@.\bruno{right. this is a good point}
 
-Our typing strategy have two important properties:
+Our typing strategy has two important properties:
 \begin{itemize}
 \item if a class is declared by using $\mC : \use\ \overline\mt$, that is, without literals,
 and the flattening is successfull, \mC\ is well typed, no need of further checking.
@@ -195,7 +208,7 @@ and the flattening is successfull, \mC\ is well typed, no need of further checki
 $\mL_1\ldots\mL_n \in \overline\mV$, and after successfull flattening $\mC : \mL$ can not be typechecked,
 then the issue was originally present in one of $\mL_1\ldots\mL_n$.
 It may be that the result is intrinsically ill-typed, if of the methods in $\mL_1\ldots\mL_n$ is not well typed,
-but it may also happens that a type referred from one of those methods is declared \emph{after} the current class. As we will see later, this is how our relaxation allows to support recursive types.
+but it may also happen that a type referred from one of those methods is declared \emph{after} the current class. As we will see later, this is how our relaxation allows to support recursive types.
 
 This also means that as an optimization strategy
  we may remember what method bodies come from traits and what method bodies come from code literals, in order to typecheck only the latter.
