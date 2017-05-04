@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.17)  4 MAY 2017 14:14
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.17)  4 MAY 2017 15:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -263,15 +263,15 @@ LaTeX Warning: Citation `cook' on page I undefined on input line 16.
 Excluding 'comment' comment.
 
 LaTeX Warning: Citation `ducasse2006traits' on page II undefined on input line 
-111.
+126.
 
 
-Overfull \hbox (5.50285pt too wide) in paragraph at lines 119--123
+Overfull \hbox (5.50285pt too wide) in paragraph at lines 134--138
 []\OT1/ptm/m/n/10 easy to grasp model of com-pi-la-tion were typ-ing is late bu
 t not too late (lazy?)[]\OT1/ptm/m/sc/10 Bruno\OT1/ptm/m/n/10 :
  []
 
-) (./Examples.tex Excluding 'comment' comment. [2]
+) (./Examples.tex [2] Excluding 'comment' comment.
 
 LaTeX Warning: Citation `igarashi2001featherweight' on page III undefined on in
 put line 55.
@@ -303,12 +303,11 @@ Overfull \hbox (41.18498pt too wide) in paragraph at lines 227--230
  may of-fer a [][][][][][]
  []
 
-[6]
+[6] [7]
 
-LaTeX Warning: Citation `ancona2002calculus' on page VII undefined on input lin
-e 331.
+LaTeX Warning: Citation `ancona2002calculus' on page VIII undefined on input li
+ne 331.
 
-[7]
 
 LaTeX Warning: Citation `wang2016classless' on page VIII undefined on input lin
 e 349.
@@ -377,19 +376,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 10--17
 
  []
 
-
-LaTeX Warning: Citation `wadler1998expression' on page XI undefined on input li
-ne 29.
-
 [11]
+
+LaTeX Warning: Citation `wadler1998expression' on page XII undefined on input l
+ine 29.
+
 
 LaTeX Warning: Citation `wadler1998expression' on page XII undefined on input l
 ine 69.
 
-
-Underfull \vbox (badness 2326) has occurred while \output is active []
-
- [12]
+[12]
 
 LaTeX Warning: Citation `servetto2014meta' on page XIII undefined on input line
  108.
@@ -433,7 +429,11 @@ ut line 62.
 LaTeX Warning: Citation `corradi2011deepfjig' on page XVII undefined on input l
 ine 64.
 
-) (./Conclusion.tex [17]) (./paper.bbl) [18] (./paper.aux)
+) (./Conclusion.tex
+Underfull \vbox (badness 2922) has occurred while \output is active []
+
+ [17])
+(./paper.bbl) [18] (./paper.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -441,11 +441,11 @@ LaTeX Warning: There were undefined references.
 Here is how much of TeX's memory you used:
  3101 strings out of 493089
  42058 string characters out of 6134841
- 153377 words of memory out of 5000000
+ 155377 words of memory out of 5000000
  6551 multiletter control sequences out of 15000+600000
  25636 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,15n,40p,356b,1521s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,15n,40p,356b,1519s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
 xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texl
@@ -460,7 +460,7 @@ type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmri8a.pfb
 >
-Output written on paper.pdf (18 pages, 183366 bytes).
+Output written on paper.pdf (18 pages, 184545 bytes).
 PDF statistics:
  115 PDF objects out of 1000 (max. 8388607)
  81 compressed objects within 1 object stream

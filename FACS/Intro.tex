@@ -74,6 +74,14 @@ subtyping.\footnote{ Note how this is true also in C++, where is
   visibility of subtyping but not over subtyping itself, and the
   former example would be accepted by C++ even if \lstinline{B} was to
   "privately extends" \lstinline{A}.}
+In essence we believe that a problem with the design of classes in languages like Java
+is that classes do too many things at once. In particular they act
+both as units of \emph{use} and \emph{reuse}.
+That is, in languages like Java, classes can be
+instantiated (using {\bf new}) to create objects that \emph{use} some 
+functionality. Classes can also be subclassed to provide \emph{reuse}
+of code.  
+
 
 \marco{Cite some work of bruceTHisType and show how he also fails.}
 
@@ -97,10 +105,19 @@ of abstract classes that are not supposed to be used as types, and that will clu
 public interface of our classes and our code project as a whole.
 \end{comment}
 
-This paper aims at showing a simple language design to completley uncouple subtyping
-and subclassing in a nominally typed OO language. The key idea is to
-divide between code designed for \textbf{USE}
-and code designed for \textbf{REUSE}.\marco{We need to talk of unanticipated extensions?}
+This paper aims at showing a simple language design, called \name, to
+completley uncouples subtyping and subclassing in a nominally typed OO
+language. The key idea is to divide between code designed for
+\textbf{USE} and code designed for \textbf{REUSE}. 
+In \name there are two separate concepts: classes
+and traits~\cite{}. Classes are meant for code use, and cannot be used
+for reuse. In some sense classes in \name are like final classes in
+Java. Traits are used for code reuse and multiple traits can be
+composed to form a class which can then be instantiated. 
+\marco{We need to talk of unanticipated extensions?}
+\bruno{Talk more about typing aspects here. Summarize the important 
+aspects of the design of \name.}
+
 First we show a minimal language that illustrates the basic ideas. 
 Then we show how mutually recursive types
 are supported, how state/constructors/fields are supported,
@@ -127,3 +144,8 @@ code reuse.
     result on not saying enough about each individual ideas.}
 \item more operators can be accomodated without changing the general model
 \end{itemize}
+
+\section{Overview}
+
+This section presents the overview of \name. In name  
+
