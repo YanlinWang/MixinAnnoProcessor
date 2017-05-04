@@ -18,7 +18,7 @@ good for code reuse, design and reasoning.
 While there is no problem
 in subtyping without subclassing, in most OO languages code reuse
 (inheritance/extends) implies subtyping in a fundamental way because 
-of what we call the \emph{self-reference subclassing problem}. This 
+of what we call the self-reference \emph{leaking problem}. This 
 problem is illustrated by the following (Java) code:
 
 \begin{lstlisting}[language=Java]
@@ -62,8 +62,13 @@ type \lstinline{B}. Thus, when \lstinline{this} is passed as an argument to
 the method \lstinline{Utils.m} as a result of the invocation of
 \lstinline{mb}, it will have a type that is incompatible with the
 expected argument of type \lstinline{A}.  
+\bruno{
+We can also mention what happens in structural types:
+"System with structural types would *be required to* guarantee that
+the structural type of A is a supertype of the structural type of B”.
+}
 
-What the self-reference subclassing problem illustrates is that
+What the leaking problem illustrates is that
 adopting a more flexible
 nominally typed
 OO model where subclassing does not imply subtyping is not trivial. 

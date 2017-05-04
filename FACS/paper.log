@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.17)  4 MAY 2017 18:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.17)  4 MAY 2017 21:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -284,7 +284,7 @@ LaTeX Warning: Reference `' on page III undefined on input line 198.
 
 LaTeX Warning: Reference `' on page IV undefined on input line 243.
 
-) (./Examples.tex [4] Excluding 'comment' comment.
+[4]) (./Examples.tex Excluding 'comment' comment.
 
 LaTeX Warning: Citation `igarashi2001featherweight' on page V undefined on inpu
 t line 55.
@@ -324,7 +324,7 @@ LaTeX Warning: Citation `wang2016classless' on page IX undefined on input line
 LaTeX Warning: Citation `wang2016classless' on page X undefined on input line 4
 05.
 
-[10]
+[10] [11]
 Overfull \hbox (36.13449pt too wide) in paragraph at lines 502--509
 \OT1/ptm/m/n/10 sup-port with-ers, in-stead of writ-ing [][][][][][] we can use
  [][][][][][][][][][][][]
@@ -336,7 +336,6 @@ Overfull \hbox (39.47397pt too wide) in paragraph at lines 502--509
 this de-sign in-side of [][][][][][][][]
  []
 
-[11]
 
 LaTeX Warning: Citation `ducasse2006traits' on page XII undefined on input line
  533.
@@ -437,11 +436,7 @@ put line 62.
 LaTeX Warning: Citation `corradi2011deepfjig' on page XVIII undefined on input 
 line 64.
 
-) (./Conclusion.tex
-Underfull \vbox (badness 2922) has occurred while \output is active []
-
- [18])
-(./paper.bbl) [19] (./paper.aux)
+) (./Conclusion.tex [18]) (./paper.bbl) [19] (./paper.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -449,11 +444,11 @@ LaTeX Warning: There were undefined references.
 Here is how much of TeX's memory you used:
  3101 strings out of 493089
  42058 string characters out of 6134841
- 155377 words of memory out of 5000000
+ 153377 words of memory out of 5000000
  6551 multiletter control sequences out of 15000+600000
  25636 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,15n,40p,356b,1517s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,15n,40p,356b,1519s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
 xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texl
@@ -468,7 +463,7 @@ type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmri8a.pfb
 >
-Output written on paper.pdf (19 pages, 188307 bytes).
+Output written on paper.pdf (19 pages, 188144 bytes).
 PDF statistics:
  119 PDF objects out of 1000 (max. 8388607)
  84 compressed objects within 1 object stream
