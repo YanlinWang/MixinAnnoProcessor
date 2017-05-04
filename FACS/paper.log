@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.17)  28 APR 2017 14:36
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.17)  4 MAY 2017 14:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -197,19 +197,19 @@ File: lstlang1.sty 2014/09/06 1.5e listings language file
 (./paper.aux)
 \openout1 = `paper.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 68.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 69.
  (/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
@@ -230,50 +230,43 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 \everyMPtoPDFconversion=\toks21
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 93.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 94.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 93.
+(Font)              <7> on input line 94.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 93.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 93.
+(Font)              <5> on input line 94.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 94.
  (/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 93.
+(Font)              <9> on input line 94.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 93.
+(Font)              <6> on input line 94.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 95.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 96.
  (./Intro.tex
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 4.
-
-
-LaTeX Warning: Citation `cook' on page I undefined on input line 4.
-
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <9> not available
-(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 11.
+(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 7.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 11.
 
-LaTeX Warning: Citation `LaLonde:1991:SSS:110673.110679' on page I undefined on
- input line 42.
 
-
-LaTeX Warning: Citation `martin2000design' on page I undefined on input line 49
-.
+LaTeX Warning: Citation `cook' on page I undefined on input line 16.
 
 [1
 
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+Excluding 'comment' comment.
 
 LaTeX Warning: Citation `ducasse2006traits' on page II undefined on input line 
-69.
+111.
 
 
-Overfull \hbox (5.50285pt too wide) in paragraph at lines 77--81
+Overfull \hbox (5.50285pt too wide) in paragraph at lines 119--123
 []\OT1/ptm/m/n/10 easy to grasp model of com-pi-la-tion were typ-ing is late bu
 t not too late (lazy?)[]\OT1/ptm/m/sc/10 Bruno\OT1/ptm/m/n/10 :
  []
@@ -281,65 +274,68 @@ t not too late (lazy?)[]\OT1/ptm/m/sc/10 Bruno\OT1/ptm/m/n/10 :
 ) (./Examples.tex Excluding 'comment' comment. [2]
 
 LaTeX Warning: Citation `igarashi2001featherweight' on page III undefined on in
-put line 48.
+put line 55.
 
 [3]
 
-LaTeX Warning: Reference `' on page IV undefined on input line 88.
+LaTeX Warning: Reference `' on page IV undefined on input line 102.
 
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
-(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 91.
-
-LaTeX Warning: Citation `bawden1999quasiquotation' on page IV undefined on inpu
-t line 147.
-
-
-LaTeX Warning: Citation `ancona2002calculus' on page IV undefined on input line
- 148.
-
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 105.
 [4]
-Overfull \hbox (41.04472pt too wide) in paragraph at lines 184--187
+
+LaTeX Warning: Citation `bawden1999quasiquotation' on page V undefined on input
+ line 161.
+
+
+LaTeX Warning: Citation `ancona2002calculus' on page V undefined on input line 
+162.
+
+
+Overfull \hbox (41.04472pt too wide) in paragraph at lines 200--203
 \OT1/ptm/m/n/10 would be cor-rect: even if n,m are not de-fined in-side [][][][
 ][][][][][][][][][][][][][][],
  []
 
-
-Overfull \hbox (41.18498pt too wide) in paragraph at lines 211--214
+[5]
+Overfull \hbox (41.18498pt too wide) in paragraph at lines 227--230
 \OT1/ptm/m/n/10 lan-guage, [][][] may of-fers a [][][][][][] method, and [][][]
  may of-fer a [][][][][][]
  []
 
-[5] [6]
+[6]
 
 LaTeX Warning: Citation `ancona2002calculus' on page VII undefined on input lin
-e 315.
-
-
-LaTeX Warning: Citation `wang2016classless' on page VII undefined on input line
- 333.
+e 331.
 
 [7]
 
 LaTeX Warning: Citation `wang2016classless' on page VIII undefined on input lin
-e 386.
+e 349.
 
-[8] [9]
-Overfull \hbox (36.13449pt too wide) in paragraph at lines 483--490
+[8]
+
+LaTeX Warning: Citation `wang2016classless' on page IX undefined on input line 
+402.
+
+[9]
+Overfull \hbox (36.13449pt too wide) in paragraph at lines 499--506
 \OT1/ptm/m/n/10 sup-port with-ers, in-stead of writ-ing [][][][][][] we can use
  [][][][][][][][][][][][]
  []
 
 
-Overfull \hbox (39.47397pt too wide) in paragraph at lines 483--490
+Overfull \hbox (39.47397pt too wide) in paragraph at lines 499--506
 \OT1/ptm/m/n/10 in or-der to pre-serve the color from [][][]. Sadly, if we use 
 this de-sign in-side of [][][][][][][][]
  []
 
+[10]
 
-LaTeX Warning: Citation `ducasse2006traits' on page X undefined on input line 5
-14.
+LaTeX Warning: Citation `ducasse2006traits' on page XI undefined on input line 
+530.
 
-[10]) (./Extensions.tex
+) (./Extensions.tex
 ! Missing { inserted.
 <inserted text> 
                 {
@@ -391,19 +387,22 @@ LaTeX Warning: Citation `wadler1998expression' on page XII undefined on input l
 ine 69.
 
 
-LaTeX Warning: Citation `servetto2014meta' on page XII undefined on input line 
-108.
+Underfull \vbox (badness 2326) has occurred while \output is active []
 
-[12] [13] [14]) (./RelatedWork.tex
+ [12]
 
-LaTeX Warning: Citation `ducasse2006traits' on page XV undefined on input line 
-3.
+LaTeX Warning: Citation `servetto2014meta' on page XIII undefined on input line
+ 108.
 
+[13] [14] [15]) (./RelatedWork.tex
 
-LaTeX Warning: Citation `ancona2002calculus' on page XV undefined on input line
+LaTeX Warning: Citation `ducasse2006traits' on page XVI undefined on input line
  3.
 
-[15]
+
+LaTeX Warning: Citation `ancona2002calculus' on page XVI undefined on input lin
+e 3.
+
 
 LaTeX Warning: Citation `odersky2008programming' on page XVI undefined on input
  line 11.
@@ -434,19 +433,19 @@ ut line 62.
 LaTeX Warning: Citation `corradi2011deepfjig' on page XVII undefined on input l
 ine 64.
 
-) (./Conclusion.tex) (./paper.bbl) [17] (./paper.aux)
+) (./Conclusion.tex [17]) (./paper.bbl) [18] (./paper.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 3105 strings out of 493089
- 42132 string characters out of 6134841
- 152377 words of memory out of 5000000
- 6555 multiletter control sequences out of 15000+600000
+ 3101 strings out of 493089
+ 42058 string characters out of 6134841
+ 153377 words of memory out of 5000000
+ 6551 multiletter control sequences out of 15000+600000
  25636 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,15n,40p,356b,1519s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,15n,40p,356b,1521s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
 xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texl
@@ -461,10 +460,10 @@ type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmri8a.pfb
 >
-Output written on paper.pdf (17 pages, 181669 bytes).
+Output written on paper.pdf (18 pages, 183366 bytes).
 PDF statistics:
- 112 PDF objects out of 1000 (max. 8388607)
- 79 compressed objects within 1 object stream
+ 115 PDF objects out of 1000 (max. 8388607)
+ 81 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

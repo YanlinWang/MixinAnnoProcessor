@@ -1,11 +1,25 @@
 \section{Introduction}
 
+In mainstream OO languages like Java, C++ or C\# subclassing 
+implies subtyping. For example, in Java a subclass definition, such as:
+
+\begin{lstlisting}
+class A extends B {}
+\end{lstlisting}
+
+\noindent does two things at the same time:
+1) {\bf inheriting} code from class \lstinline{B}; and {\bf creating 
+a subtype} of \emph{B}. Therefore in a language like Java 
+a subclass is \emph{always} a subtype of the extended class.
+
 Historically, there has been a lot of focus on the importance of
-separing subtype from subclassing~\cite{cook}.  This is claimed to be
-good for code reuse, design and reasoning.  While there is no problem
+separing subtyping from subclassing~\cite{cook}.  This is claimed to be
+good for code reuse, design and reasoning. 
+While there is no problem
 in subtyping without subclassing, in most OO languages code reuse
-(inheritance/extends) implies subtyping in a fundamental way. 
-Consider the following (Java) code:
+(inheritance/extends) implies subtyping in a fundamental way because 
+of what we call the \emph{self-reference problem}. The self-reference
+problem is illustrated by the following (Java) code:
 
 \begin{lstlisting}[language=Java]
   class A{ int ma(){return Utils.m(this);} }
@@ -17,26 +31,53 @@ This code seems correct, and there is no subtyping/subclassing.
 Now, lets add a class \Q@B@
 
 \begin{lstlisting}[language=Java]
-  class B extends A{ int mb(){return this.ma();} }
+  class B extends A{ int mb(){return this.ma();} }  
 \end{lstlisting}
 
-Class \lstinline{B} inherits the method \lstinline{ma} from
-\lstinline{A}.  We can see an invocation of \lstinline{ma} inside
-\lstinline{mb}, where \lstinline{this} is of type \lstinline{B}.  The
-execution will eventually call \lstinline{Util.m} with a \lstinline{B}
-instance. This can be correct only if \lstinline{B} is a subtype of
-\lstinline{A}. Thus, every OO language with the minimal features
-exposed in this example (using \lstinline{this}, extends and method calls) is forced
-to accept that subclassing implies subtyping.\footnote{ Note how this
-  is true also in C++, where is possible to "extends privately". Such
-  is a limitation of the visibility of subtyping but not over
-  subtyping itself, and the former example would be accepted by C++
-  even if \lstinline{B} was to "privately extends" \lstinline{A}.}
-\marco{Cite some work of bruceTHisType and show how he also fails.}
-\bruno{I was expecting some text/argument here on why subclassing
-  implies subtyping is bad. Perhaps another example where subclassing
-  must not imply subtyping to type-check.} 
+%%Class \lstinline{B} does two things at the same time: 
+%%1) it {\bf inherits} the method \lstinline{ma} from
+%%\lstinline{A}; and 2) it creates a {\bf subtype} of \lstinline{A}.
+We can see an invocation of \lstinline{ma} inside
+\lstinline{mb}, where \lstinline{this} is of type \lstinline{B}. 
+The execution will eventually call \lstinline{Util.m} with an
+instance of \lstinline{B}. This can be correct only if \lstinline{B} is a subtype of
+\lstinline{A}. 
 
+If Java were to support a mechanism to allow reuse/inheritance 
+without introducing subtyping, such as:
+
+\begin{lstlisting}[language=Java]
+  class B inherits A{ int mb(){return this.ma();} }
+\end{lstlisting}
+
+\noindent Then an invocation of 
+\lstinline{mb} would be type-unsafe (i.e. it would 
+result in a run-time type error). 
+Note that here the intention of using the imaginary keyword {\bf
+  inherits} is to allow the code from \lstinline{A} to be inherited 
+without \lstinline{B} becoming a subtype of \lstinline{A}. 
+However this breaks type-safety. The problem is that the
+self-reference \lstinline{this} in class \lstinline{B} has 
+type \lstinline{B}. Thus, when \lstinline{this} is passed as an argument to 
+the method \lstinline{Utils.m} as a result of the invocation of
+\lstinline{mb}, it will have a type that is incompatible with the
+expected argument of type \lstinline{A}.  
+
+What the self-reference problem illustrates is that adopting a more flexible
+OO model where subclassing does not imply subtyping is not trivial. 
+If we are to separate subclassing from subtyping then a more substantial
+change in the language design is necessary.  Every OO language with
+the minimal features exposed in the example (using \lstinline{this},
+extends and method calls) is forced to accept that subclassing implies
+subtyping.\footnote{ Note how this is true also in C++, where is
+  possible to "extends privately". Such is a limitation of the
+  visibility of subtyping but not over subtyping itself, and the
+  former example would be accepted by C++ even if \lstinline{B} was to
+  "privately extends" \lstinline{A}.}
+
+\marco{Cite some work of bruceTHisType and show how he also fails.}
+
+\begin{comment}
 An iconic example on why connecting inheritance/code reuse and
 subtpying is problematic is provided by the
 historic\cite{LaLonde:1991:SSS:110673.110679}: A reasonable
@@ -54,6 +95,7 @@ and we would be surprised to find a use of the type \Q@AbstractSetOrBag@.
 Worst, if we was to constantly apply this mentalty, we would introduce a very high number
 of abstract classes that are not supposed to be used as types, and that will clutter the 
 public interface of our classes and our code project as a whole.
+\end{comment}
 
 This paper aims at showing a simple language design to completley uncouple subtyping
 and subclassing in a nominally typed OO language. The key idea is to
