@@ -18,7 +18,7 @@ good for code reuse, design and reasoning.
 While there is no problem
 in subtyping without subclassing, in most OO languages code reuse
 (inheritance/extends) implies subtyping in a fundamental way because 
-of what we call the \emph{self-reference problem}. The self-reference
+of what we call the \emph{self-reference subclassing problem}. This 
 problem is illustrated by the following (Java) code:
 
 \begin{lstlisting}[language=Java]
@@ -38,12 +38,12 @@ Now, lets add a class \Q@B@
 %%1) it {\bf inherits} the method \lstinline{ma} from
 %%\lstinline{A}; and 2) it creates a {\bf subtype} of \lstinline{A}.
 We can see an invocation of \lstinline{ma} inside
-\lstinline{mb}, where \lstinline{this} is of type \lstinline{B}. 
+\lstinline{mb}, where the self-reference \lstinline{this} is of type \lstinline{B}. 
 The execution will eventually call \lstinline{Util.m} with an
-instance of \lstinline{B}. This can be correct only if \lstinline{B} is a subtype of
+instance of \lstinline{B}. However, this can be correct only if \lstinline{B} is a subtype of
 \lstinline{A}. 
 
-If Java were to support a mechanism to allow reuse/inheritance 
+If Java was to support a mechanism to allow reuse/inheritance 
 without introducing subtyping, such as:
 
 \begin{lstlisting}[language=Java]
@@ -63,7 +63,9 @@ the method \lstinline{Utils.m} as a result of the invocation of
 \lstinline{mb}, it will have a type that is incompatible with the
 expected argument of type \lstinline{A}.  
 
-What the self-reference problem illustrates is that adopting a more flexible
+What the self-reference subclassing problem illustrates is that
+adopting a more flexible
+nominally typed
 OO model where subclassing does not imply subtyping is not trivial. 
 If we are to separate subclassing from subtyping then a more substantial
 change in the language design is necessary.  Every OO language with
@@ -106,14 +108,17 @@ public interface of our classes and our code project as a whole.
 \end{comment}
 
 This paper aims at showing a simple language design, called \name, to
-completley uncouples subtyping and subclassing in a nominally typed OO
+completely decouple subtyping and subclassing in a nominally typed OO
 language. The key idea is to divide between code designed for
 \textbf{USE} and code designed for \textbf{REUSE}. 
 In \name there are two separate concepts: classes
 and traits~\cite{}. Classes are meant for code use, and cannot be used
 for reuse. In some sense classes in \name are like final classes in
-Java. Traits are used for code reuse and multiple traits can be
-composed to form a class which can then be instantiated. 
+Java. Traits are meant for code reuse and multiple traits can be
+composed to form a class which can then be instantiated. Traits 
+cannot be instantiated (or used) directly. Such design allows the
+subtyping and code reuse to be treated separately, which in terms 
+brings several benefits in terms of flexibility and code reuse.
 \marco{We need to talk of unanticipated extensions?}
 \bruno{Talk more about typing aspects here. Summarize the important 
 aspects of the design of \name.}
@@ -147,5 +152,132 @@ code reuse.
 
 \section{Overview}
 
-This section presents the overview of \name. In name  
+This section presents the overview of \name, and it illustrates the
+key ideas of its design. In particular we illustrate how to separate code use and 
+code reuse in \name, and how this allows improving both. 
+
+\subsection{The Design of \name: Decoupling Use from Reuse}
+
+\paragraph{Classes in \name: A mechanism for code Use}
+\name has a substantially different design from Java-like languages.
+The concept of a class in \name provides a mechanism for code use
+only. This means that in \name there is actually no subclassing, and
+and classes are roughly equivalent to final classes in Java.  Thus,
+compared to Java-like languages, the most noticeable difference is the
+absence of the \Q@extends@ keyword in \name. 
+
+To illustrate classes in \name consider the example in Section~\ref{}:
+
+\begin{lstlisting}
+ A: { method int ma() Utils.m(this) }//note, no {return _}
+ Utils:{ class method int m(A a)/*method body here*/ }
+\end{lstlisting} 
+
+\noindent Classes in \name use a different declaration style compared
+to Java. Class declarations have a name (which must always start with
+an uppercase letter) and a code literal, which is used to specify the
+definitions of the class. For instance, in the class declaration
+for \lstinline{A}, the name of the class is \lstinline{A} and the code 
+literal associatted with the class (\Q@{ method int ma()   Utils.m(this) }@) contains the definitions associated to the
+class. There are important differences to Java-like languages in the way 
+classes and code-literals are type-checked, as we shall see next. 
+However for this example, things still work in a similar way to Java. 
+
+The \name code above is fine, but there is no way to add a \Q@B@ reusing code of \Q@A@, since
+\Q@A@ is designed for code \emph{use} and not \emph{reuse}. So, unlike
+the Java code, there is no way to introduce a subclass
+\lstinline{B}. At first, this may seem like a severe restriction, but
+\name has a different mechanism for code \emph{reuse} that 
+is more appropriate when code reuse is intended. 
+
+\paragraph{Traits in \name: A mechanim of code Reuse}
+Lets try again, but this time aiming at code reuse. Name 
+has a form of traits for code reuse. Trait declarations 
+look very much like class declarations, but trait names 
+start with a lowercase letter. An obvious first attempt 
+to model the example in Section~\ref{} (for a Java programmer) 
+with traits is:
+
+\begin{lstlisting}
+ ta:{ method int ma() Utils.m(this) }//type error
+ A:Use ta
+ Utils:{ class method int m(A a)/*method body here*/ }
+\end{lstlisting}
+
+\noindent Here \lstinline{ta} is a trait intended to replace the
+original class \lstinline{A} so that the code of the method
+\lstinline{ma} can be reused. Then the class \lstinline{A} 
+is created by inheriting the code from the trait using the keyword 
+{\bf Use}. Note that \use\ cannot contain class names: only trait
+names are allowed.
+That is, using a trait is the only way to induce code reuse.
+Unfortunatelly, this code does not work, 
+because \lstinline{Utils.m} requires an \lstinline{A} and \lstinline{this} in
+\Q@ta@ has no knowlegde of \lstinline{A}.
+%: in \name all declarations 
+%are sequentially type-checked and if a definition occurs afterwards
+%another, then it is not visible on all previous definitions.
+
+\paragraph{Type of the self-reference} The code above does not work
+because the way type-checking works in \name is that type-checking of 
+code literals is independent of the class/trait names associated to
+it. A Java programmer may expect that the type of \lstinline{this} 
+in the previous definition of \lstinline{ta} is \lstinline{ta}
+itself. However, this intuition brought from Java is wrong in \name
+for two reasons:
+
+\begin{itemize}
+
+\item The first reason is that {\bf traits are not types}. Traits in
+  \name are simply units of reuse and cannot be used as types. Types
+  are only introduced by class/interface declarations.
+
+\item The second reason is that {\bf the type of self-references is the structural type of the
+    code literal.} Unlike Java-like languages, where the body of a
+  class declaration is intrinsically coupled with the class itself, in
+  \name code literals are first-class\bruno{Is it appropriate to say
+    that they are first class?} and are type-checked independently
+  using a form of structural typing.\bruno{Say how we recover nominality?} 
+\end{itemize}
+
+With this in mind, we can try to model the example in Section~\ref{} again:
+
+\begin{lstlisting}
+ IA:{interface method int ma()}//interface with abstract method
+ ta:{implements IA
+   method int ma() Utils.m(this) }
+ A:Use ta
+ Utils:{ class method int m(IA a)/*method body here*/}
+\end{lstlisting}
+
+This code works: \Q@Utils@ is using an interface \Q@IA@ and the trait \Q@ta@
+is implementing it. It is also possible to add a \Q@B@ as follows
+\begin{lstlisting}
+  B:Use ta, { method int mb(){return this.ma();} }
+\end{lstlisting}
+This also works.  \Q@B@ reuses the code of \Q@ta@, but has no knowledge of \Q@A@.
+Since \Q@B@ reuses \Q@ta@, and \Q@ta@ implements \Q@IA@, also \Q@B@ implements \Q@IA@. 
+
+\paragraph*{Semantic of Use}
+Abeit alternative semantic models for traits~\cite{} have been proposed,
+here we use the flattening model.
+This means that 
+\begin{lstlisting}
+A:Use ta
+B:Use ta, { method int mb(){return this.ma();} }
+\end{lstlisting}
+ 
+\noindent reduces/is equivalent to/is flatted into
+  
+ \begin{lstlisting}
+A:{implements IA method int ma() Utils.m(this) }
+B:{implements IA
+  method int ma() Utils.m(this)
+  method int mb() this.ma() } 
+
+ \end{lstlisting}
+ 
+This code seems correct, and there is no mention of the trait \Q@ta@. In some sense, all the information about code reuse/subclassing is just a private implementation detail of \Q@A@ and \Q@B@; while subtyping is part of the class interface. 
+
+\subsection{Recursive Types}
 
