@@ -20,7 +20,7 @@ subclassing is helpful.
 
 \begin{itemize}
 
-\item {\bf Allowing reuse even when subtyping is impossible:} 
+\item {\bf Allowing inheritance/reuse even when subtyping is impossible:} 
 In some situations a subclass contains methods whose signatures 
 are incompatible with the superclass, yet inheritance is still
 possible. A typical example, which was illustrated by Cook et al., are 
@@ -333,6 +333,49 @@ B:{implements IA
  \Q@ta@. In some sense, all the information about code
  reuse/subclassing is just a private implementation detail of \Q@A@
  and \Q@B@; while subtyping is part of the class interface.
+
+\name solution for the leaking problem shows
+
+\subsection{Preventing Unintended Subtyping}
+As stated in Section~\ref{} a benefit of a nominally typed OO language
+that separates inheritance from subtyping is that it is possible to 
+have reuse, while preventing unintended subtyping. 
+
+An iconic example on why connecting inheritance/code reuse and
+subtpying is problematic is provided by the
+historic\cite{LaLonde:1991:SSS:110673.110679}: A reasonable
+implementation for a \Q@Set@ may be easy to extend into a \Q@Bag@
+keeping tracks of how many times an element occurs.  We would just add
+some state and override a couple of methods.\bruno{Are we going to
+  present this example in the paper solved in 42, for example? 
+I think I would expect to see it.}
+
+However, our subclassing would break Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
+Of course, one could retroactivelly fix this problem by introducing \Q@AbstractSetOrBag@
+and making both \Q@Bag@ and \Q@Set@ inherit from it.
+This looks unnatural, since \Q@Set@ would extend it without adding anything,
+and we would be surprised to find a use of the type \Q@AbstractSetOrBag@.
+Worst, if we was to constantly apply this mentalty, we would introduce a very high number
+of abstract classes that are not supposed to be used as types, and that will clutter the 
+public interface of our classes and our code project as a whole.
+
+\begin{lstlisting}
+class Set {.../* Elem put() boolean isIn(Elem)*/ ...}
+class Bag extends Set{.../*override something to keep track of duplications*/..}
+\end{lstlisting}
+
+but now, 
+
+\begin{lstlisting}
+Set mySet=new Bag(); //OK for the type system but not for LSP
+\end{lstlisting}
+
+as a pleasaruble accident, avoid such code gift us simple support for
+This type and (in the extensions with nested classes seen later)
+family polimporphism.
+
+
+
 
 \subsection{Self Types, Binary Methods and the Need to Separate
   Inheritance from Subtyping}
