@@ -14,12 +14,44 @@ a subclass is \emph{always} a subtype of the extended class.
 
 Historically, there has been a lot of focus on the importance of
 separing subtyping from subclassing~\cite{cook}.  This is claimed to be
-good for code reuse, design and reasoning. 
-While there is no problem
-in subtyping without subclassing, in most OO languages code reuse
-(inheritance/extends) implies subtyping in a fundamental way because 
-of what we call the self-reference \emph{leaking problem}. This 
-problem is illustrated by the following (Java) code:
+good for code reuse, design and reasoning. There are at
+least two distinct situations where the separation of subtyping and 
+subclassing is helpful.
+
+\begin{itemize}
+
+\item {\bf Allowing reuse even when subtyping is impossible:} 
+In some situations a subclass contains methods whose signatures 
+are incompatible with the superclass, yet inheritance is still
+possible. A typical example, which was illustrated by Cook et al., are 
+classes with \emph{binary methods}~\cite{}.
+
+\item {\bf Preventing unintended subtyping:} For certain classes we
+  would like to inherit code without creating a subtype even if, from
+  the typing point of view, subtyping is still possible. A typical
+  example~\cite{} of this are methods for collection classes such as Sets and
+  Bags. Bag implementations can often inherit 
+  from Set implementations, and the interfaces of the two collection types are
+  similar and type compatible. 
+  However, from the logical point-of-view a Bag is \emph{not a
+    subtype} of a Set. 
+
+\end{itemize}
+
+Type systems based on structural typing can deal with the first
+situation well, but not the second. Since structural subtyping
+accounts for the types of the methods only, a Bag would be a subtype
+of a Set if the two interfaces are type compatible. For dealing with
+the second situation nominal subtyping is preferable. With nominal
+subtyping an explicit subtyping relation must be signalled by the
+programmer. Thus if subtyping is not desired, the idea is that 
+programmer can simply not declare a subtyping relationship.
+
+While there is no problem in subtyping without subclassing, in the design
+of most nominal OO languages subtyping implies subtyping in a
+fundamental way. This is because of what we call the self-reference
+\emph{leaking problem}. The leaking problem is illustrated by the following
+(Java) code:
 
 \begin{lstlisting}[language=Java]
   class A{ int ma(){return Utils.m(this);} }
@@ -164,7 +196,7 @@ code reuse in \name, and how this allows improving both.
 \subsection{The Design of \name: Decoupling Use from Reuse}
 
 \paragraph{Classes in \name: A mechanism for code Use}
-\name has a substantially different design from Java-like languages.
+%\name has a substantially different design from Java-like languages.
 The concept of a class in \name provides a mechanism for code use
 only. This means that in \name there is actually no subclassing, and
 and classes are roughly equivalent to final classes in Java.  Thus,
@@ -178,20 +210,22 @@ To illustrate classes in \name consider the example in Section~\ref{}:
  Utils:{ class method int m(A a)/*method body here*/ }
 \end{lstlisting} 
 
-\noindent Classes in \name use a different declaration style compared
-to Java. Class declarations have a name (which must always start with
+\noindent Classes in \name use a slightly different declaration style compared
+to Java. In \name there is no \lstinline{class} keyword. 
+Class declarations have a name (which must always start with
 an uppercase letter) and a code literal, which is used to specify the
 definitions of the class. For instance, in the class declaration
 for \lstinline{A}, the name of the class is \lstinline{A} and the code 
 literal associatted with the class (\Q@{ method int ma()   Utils.m(this) }@) contains the definitions associated to the
-class. There are important differences to Java-like languages in the way 
+class. There are, however, some 
+important differences to Java-like languages in the way 
 classes and code-literals are type-checked, as we shall see next. 
-However for this example, things still work in a similar way to Java. 
+Nevertheless, for this example, things still work in a similar way to Java. 
 
 The \name code above is fine, but there is no way to add a \Q@B@ reusing code of \Q@A@, since
 \Q@A@ is designed for code \emph{use} and not \emph{reuse}. So, unlike
-the Java code, there is no way to introduce a subclass
-\lstinline{B}. At first, this may seem like a severe restriction, but
+the Java code, introducing a subclass
+\lstinline{B} is not possible. At first, this may seem like a severe restriction, but
 \name has a different mechanism for code \emph{reuse} that 
 is more appropriate when code reuse is intended. 
 
@@ -219,6 +253,15 @@ That is, using a trait is the only way to induce code reuse.
 Unfortunatelly, this code does not work, 
 because \lstinline{Utils.m} requires an \lstinline{A} and \lstinline{this} in
 \Q@ta@ has no knowlegde of \lstinline{A}.
+\bruno{Can we summarize in a table what are the differences between
+  traits and classes? For example: 
+traits: do not introduce types; units of reuse; cannot be instantiated
+classes: introduce types; can be instantiated. 
+Also it would be good to motivate those differences more from the 
+technical point of view. For example: the fact that traits do not
+introduce types is it mostly a philosophical difference, or does it 
+actually buy you something from the technical aspect.
+}
 %: in \name all declarations 
 %are sequentially type-checked and if a definition occurs afterwards
 %another, then it is not visible on all previous definitions.
@@ -237,12 +280,15 @@ for two reasons:
   \name are simply units of reuse and cannot be used as types. Types
   are only introduced by class/interface declarations.
 
-\item The second reason is that {\bf the type of self-references is the structural type of the
+\item The second reason is that {\bf the type of self-references is the self type of the
     code literal.} Unlike Java-like languages, where the body of a
   class declaration is intrinsically coupled with the class itself, in
   \name code literals are first-class\bruno{Is it appropriate to say
-    that they are first class?} and are type-checked independently
-  using a form of structural typing.\bruno{Say how we recover nominality?} 
+    that they are first class?} and are type-checked independently.
+  \name has a notion of self-type, which is closely related to
+  approaches such as ThisType~\cite{} and ...\cite{others}. Therefore
+  in \name the self-reference does not have the type of the class
+  being defined, but rather it has the self-type.
 \end{itemize}
 
 With this in mind, we can try to model the example in Section~\ref{} again:
@@ -256,7 +302,8 @@ With this in mind, we can try to model the example in Section~\ref{} again:
 \end{lstlisting}
 
 This code works: \Q@Utils@ is using an interface \Q@IA@ and the trait \Q@ta@
-is implementing it. It is also possible to add a \Q@B@ as follows
+is implementing it. Thus the self-type of the trait \Q@ta@ will be a
+subtype of \Q@IA@. It is also possible to add a \Q@B@ as follows
 \begin{lstlisting}
   B:Use ta, { method int mb(){return this.ma();} }
 \end{lstlisting}
@@ -264,7 +311,7 @@ This also works.  \Q@B@ reuses the code of \Q@ta@, but has no knowledge of \Q@A@
 Since \Q@B@ reuses \Q@ta@, and \Q@ta@ implements \Q@IA@, also \Q@B@ implements \Q@IA@. 
 
 \paragraph*{Semantic of Use}
-Abeit alternative semantic models for traits~\cite{} have been proposed,
+Albeit alternative semantic models for traits~\cite{} have been proposed,
 here we use the flattening model.
 This means that 
 \begin{lstlisting}
@@ -282,7 +329,23 @@ B:{implements IA
 
  \end{lstlisting}
  
-This code seems correct, and there is no mention of the trait \Q@ta@. In some sense, all the information about code reuse/subclassing is just a private implementation detail of \Q@A@ and \Q@B@; while subtyping is part of the class interface. 
+ This code seems correct, and there is no mention of the trait
+ \Q@ta@. In some sense, all the information about code
+ reuse/subclassing is just a private implementation detail of \Q@A@
+ and \Q@B@; while subtyping is part of the class interface.
 
-\subsection{Recursive Types}
+\subsection{Self Types, Binary Methods and the Need to Separate
+  Inheritance from Subtyping}
+
+So, far it appears that we have not gained much from decoupling
+reuse from subtyping.
+
+As discussed in Section~\ref{} the type of the self-reference is the
+self-type. Like languages with ThisType, \name allows explicit
+references to the self type. This is useful in several situations: 
+For example it can be helpful in the presence of binary
+methods~\cite{}, or methods that return an instance of the 
+class being defined. 
+
+
 
