@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.17)  8 MAY 2017 17:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.11.17)  11 MAY 2017 12:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -282,87 +282,120 @@ LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 209.
 [3]
 
-LaTeX Warning: Reference `' on page IV undefined on input line 237.
+LaTeX Warning: Reference `' on page IV undefined on input line 242.
 
 
-LaTeX Warning: Citation `others' on page IV undefined on input line 289.
+LaTeX Warning: Reference `' on page IV undefined on input line 266.
+
+
+LaTeX Warning: Citation `others' on page IV undefined on input line 295.
+
+
+LaTeX Warning: Reference `' on page IV undefined on input line 300.
 
 [4]
 
-LaTeX Warning: Reference `' on page V undefined on input line 294.
-
-
-LaTeX Warning: Reference `' on page V undefined on input line 340.
-
-
-LaTeX Warning: Citation `LaLonde:1991:SSS:110673.110679' on page V undefined on
- input line 346.
-
-
-LaTeX Warning: Citation `martin2000design' on page V undefined on input line 35
-3.
+LaTeX Warning: Reference `' on page V undefined on input line 365.
 
 [5]
 
-LaTeX Warning: Reference `' on page VI undefined on input line 386.
-
-) (./Examples.tex Excluding 'comment' comment. [6]
-
-LaTeX Warning: Citation `igarashi2001featherweight' on page VII undefined on in
-put line 55.
-
-Excluding 'comment' comment.
-
-LaTeX Warning: Citation `bawden1999quasiquotation' on page VII undefined on inp
-ut line 164.
+LaTeX Warning: Citation `LaLonde:1991:SSS:110673.110679' on page VI undefined o
+n input line 380.
 
 
-LaTeX Warning: Citation `ancona2002calculus' on page VII undefined on input lin
-e 165.
-
-[7]
-Overfull \hbox (41.04472pt too wide) in paragraph at lines 203--206
-\OT1/ptm/m/n/10 would be cor-rect: even if n,m are not de-fined in-side [][][][
-][][][][][][][][][][][][][][],
- []
+LaTeX Warning: Citation `martin2000design' on page VI undefined on input line 3
+87.
 
 
-Overfull \hbox (41.18498pt too wide) in paragraph at lines 230--233
-\OT1/ptm/m/n/10 lan-guage, [][][] may of-fers a [][][][][][] method, and [][][]
- may of-fer a [][][][][][]
- []
+LaTeX Warning: Citation `ancona2002calculus' on page VI undefined on input line
+ 429.
 
-[8] [9]
+[6]
 
-LaTeX Warning: Citation `ancona2002calculus' on page X undefined on input line 
-334.
+LaTeX Warning: Citation `wang2016classless' on page VII undefined on input line
+ 447.
 
 
-LaTeX Warning: Citation `wang2016classless' on page X undefined on input line 3
-52.
+LaTeX Warning: Citation `wang2016classless' on page VII undefined on input line
+ 500.
 
-[10]
-
-LaTeX Warning: Citation `wang2016classless' on page XI undefined on input line 
-405.
-
-[11] [12]
-Overfull \hbox (36.13449pt too wide) in paragraph at lines 502--509
+[7] [8]
+Overfull \hbox (36.13449pt too wide) in paragraph at lines 597--604
 \OT1/ptm/m/n/10 sup-port with-ers, in-stead of writ-ing [][][][][][] we can use
  [][][][][][][][][][][][]
  []
 
 
-Overfull \hbox (39.47397pt too wide) in paragraph at lines 502--509
+Overfull \hbox (39.47397pt too wide) in paragraph at lines 597--604
 \OT1/ptm/m/n/10 in or-der to pre-serve the color from [][][]. Sadly, if we use 
 this de-sign in-side of [][][][][][][][]
  []
 
 
-LaTeX Warning: Citation `ducasse2006traits' on page XIII undefined on input lin
-e 533.
+LaTeX Warning: Citation `ducasse2006traits' on page IX undefined on input line 
+628.
 
-[13]) (./Extensions.tex
+[9]
+
+LaTeX Warning: Reference `' on page X undefined on input line 639.
+
+) (./Examples.tex Excluding 'comment' comment.
+
+LaTeX Warning: Citation `igarashi2001featherweight' on page X undefined on inpu
+t line 55.
+
+[10] Excluding 'comment' comment.
+
+LaTeX Warning: Citation `bawden1999quasiquotation' on page XI undefined on inpu
+t line 165.
+
+
+LaTeX Warning: Citation `ancona2002calculus' on page XI undefined on input line
+ 166.
+
+[11]
+Overfull \hbox (41.04472pt too wide) in paragraph at lines 204--207
+\OT1/ptm/m/n/10 would be cor-rect: even if n,m are not de-fined in-side [][][][
+][][][][][][][][][][][][][][],
+ []
+
+
+Overfull \hbox (41.18498pt too wide) in paragraph at lines 231--234
+\OT1/ptm/m/n/10 lan-guage, [][][] may of-fers a [][][][][][] method, and [][][]
+ may of-fer a [][][][][][]
+ []
+
+[12] [13]
+
+LaTeX Warning: Citation `ancona2002calculus' on page XIV undefined on input lin
+e 335.
+
+
+LaTeX Warning: Citation `wang2016classless' on page XIV undefined on input line
+ 353.
+
+[14]
+
+LaTeX Warning: Citation `wang2016classless' on page XV undefined on input line 
+406.
+
+[15] [16]
+Overfull \hbox (36.13449pt too wide) in paragraph at lines 503--510
+\OT1/ptm/m/n/10 sup-port with-ers, in-stead of writ-ing [][][][][][] we can use
+ [][][][][][][][][][][][]
+ []
+
+
+Overfull \hbox (39.47397pt too wide) in paragraph at lines 503--510
+\OT1/ptm/m/n/10 in or-der to pre-serve the color from [][][]. Sadly, if we use 
+this de-sign in-side of [][][][][][][][]
+ []
+
+
+LaTeX Warning: Citation `ducasse2006traits' on page XVII undefined on input lin
+e 534.
+
+) (./Extensions.tex [17]
 ! Missing { inserted.
 <inserted text> 
                 {
@@ -405,71 +438,71 @@ Underfull \hbox (badness 10000) in paragraph at lines 10--17
  []
 
 
-LaTeX Warning: Citation `wadler1998expression' on page XIV undefined on input l
-ine 29.
-
-[14]
-
-LaTeX Warning: Citation `wadler1998expression' on page XV undefined on input li
-ne 69.
-
-
-LaTeX Warning: Citation `servetto2014meta' on page XV undefined on input line 1
-08.
-
-[15] [16] [17]) (./RelatedWork.tex
-
-LaTeX Warning: Citation `ducasse2006traits' on page XVIII undefined on input li
-ne 3.
-
-
-LaTeX Warning: Citation `ancona2002calculus' on page XVIII undefined on input l
-ine 3.
+LaTeX Warning: Citation `wadler1998expression' on page XVIII undefined on input
+ line 29.
 
 [18]
 
-LaTeX Warning: Citation `odersky2008programming' on page XIX undefined on input
- line 11.
+LaTeX Warning: Citation `wadler1998expression' on page XIX undefined on input l
+ine 69.
 
 
-LaTeX Warning: Citation `nystrom2006j' on page XIX undefined on input line 11.
+LaTeX Warning: Citation `servetto2014meta' on page XIX undefined on input line 
+108.
+
+[19] [20] [21]) (./RelatedWork.tex
+
+LaTeX Warning: Citation `ducasse2006traits' on page XXII undefined on input lin
+e 3.
 
 
-LaTeX Warning: Citation `' on page XIX undefined on input line 16.
+LaTeX Warning: Citation `ancona2002calculus' on page XXII undefined on input li
+ne 3.
 
 
-LaTeX Warning: Citation `' on page XIX undefined on input line 16.
+LaTeX Warning: Citation `odersky2008programming' on page XXII undefined on inpu
+t line 11.
 
 
-LaTeX Warning: Citation `wang2016classless' on page XIX undefined on input line
- 19.
-
-[19]
-
-LaTeX Warning: Citation `ernst2004expression' on page XX undefined on input lin
-e 62.
+LaTeX Warning: Citation `nystrom2006j' on page XXII undefined on input line 11.
 
 
-LaTeX Warning: Citation `igarashi2005lightweight' on page XX undefined on input
- line 62.
+[22]
+
+LaTeX Warning: Citation `' on page XXIII undefined on input line 16.
 
 
-LaTeX Warning: Citation `corradi2011deepfjig' on page XX undefined on input lin
-e 64.
+LaTeX Warning: Citation `' on page XXIII undefined on input line 16.
 
-) (./Conclusion.tex) (./paper.bbl) [20] (./paper.aux)
+
+LaTeX Warning: Citation `wang2016classless' on page XXIII undefined on input li
+ne 19.
+
+
+LaTeX Warning: Citation `ernst2004expression' on page XXIII undefined on input 
+line 62.
+
+
+LaTeX Warning: Citation `igarashi2005lightweight' on page XXIII undefined on in
+put line 62.
+
+
+LaTeX Warning: Citation `corradi2011deepfjig' on page XXIII undefined on input 
+line 64.
+
+[23]) (./Conclusion.tex) (./paper.bbl) [24] (./paper.aux)
 
 LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 3108 strings out of 493089
- 42163 string characters out of 6134841
- 152377 words of memory out of 5000000
- 6558 multiletter control sequences out of 15000+600000
+ 3110 strings out of 493089
+ 42182 string characters out of 6134841
+ 154377 words of memory out of 5000000
+ 6560 multiletter control sequences out of 15000+600000
  25636 words of font info for 52 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,15n,40p,356b,1516s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,15n,40p,356b,1519s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
 xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texl
@@ -484,10 +517,10 @@ type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/times/utmri8a.pfb
 >
-Output written on paper.pdf (20 pages, 193542 bytes).
+Output written on paper.pdf (24 pages, 203438 bytes).
 PDF statistics:
- 122 PDF objects out of 1000 (max. 8388607)
- 86 compressed objects within 1 object stream
+ 134 PDF objects out of 1000 (max. 8388607)
+ 94 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
