@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.1.2)  18 MAY 2017 11:08
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.1.2)  18 MAY 2017 11:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -274,12 +274,12 @@ Overfull \hbox (5.50285pt too wide) in paragraph at lines 178--182
 t not too late (lazy?)[]\OT1/ptm/m/sc/10 Bruno\OT1/ptm/m/n/10 :
  []
 
+[3]
 
-LaTeX Warning: Reference `' on page III undefined on input line 206.
+LaTeX Warning: Reference `' on page IV undefined on input line 206.
 
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 209.
-[3]
 
 LaTeX Warning: Reference `' on page IV undefined on input line 242.
 
@@ -488,7 +488,7 @@ type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/utmri8a.pfb
 >
-Output written on paper.pdf (25 pages, 204802 bytes).
+Output written on paper.pdf (25 pages, 205017 bytes).
 PDF statistics:
  138 PDF objects out of 1000 (max. 8388607)
  97 compressed objects within 1 object stream
