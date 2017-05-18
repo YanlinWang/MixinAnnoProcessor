@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.1.2)  18 MAY 2017 11:19
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.1.2)  18 MAY 2017 13:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -244,7 +244,19 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 94.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 96.
- (./Intro.tex
+
+Overfull \hbox (0.96048pt too wide) in paragraph at lines 97--114
+[]\OT1/ptm/m/n/9 In most ob-ject ori-ented lan-guages sub-class-ing/in-her-i-ta
+nce im-plies sub-
+ []
+
+
+Overfull \hbox (6.04042pt too wide) in paragraph at lines 97--114
+\OT1/ptm/m/n/9 guages that ad-dress this limitation:Delta-Trait, Pack-age Tem-p
+late, Deep-Fjig. Lever-
+ []
+
+(./Intro.tex
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <9> not available
@@ -488,7 +500,7 @@ type1/urw/courier/ucrro8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/u
 rw/times/utmb8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/urw/times/utmri8a.pfb
 >
-Output written on paper.pdf (25 pages, 205017 bytes).
+Output written on paper.pdf (25 pages, 205148 bytes).
 PDF statistics:
  138 PDF objects out of 1000 (max. 8388607)
  97 compressed objects within 1 object stream

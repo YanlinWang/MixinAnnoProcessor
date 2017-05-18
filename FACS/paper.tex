@@ -94,22 +94,22 @@ The University of Hong Kong, Hong Kong\\}
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-In most object oriented languages subclassing/code-reuse implies
+In most object oriented languages subclassing/inheritance implies
 subtyping. This is considered by many a conceptual design error, but it
 seems required for technical reasons, due to what we call the
-\emph{leaking problem}. The leaking problem shows that the separating
+\emph{this-leaking problem}. The leaking problem shows that separating
 code-reuse from subtyping is non-trivial and requires a significant
 departure from the OO models in existing mainstream OO languages.
-
-This paper synthesizes an OO language design for a nominally typed
-language that allows code-reuse and subtyping to be decoupled using a
-form of \emph{traits}. This design improves on previous work by
-Damiani and Servetto by providing a simpler and more natural model for
-OO programmers. By making our type system distinguish between code use
-and code reuse we can avoid many redundant abstract declarations that
-were required in previous work by Servetto and Damiani, while
-supporting self construction, binary methods and recursive
-types. Moreover, we provide a novel and elegant solution to uniformly
+We are aware of at least 3 independently designed research languages 
+that address this limitation:Delta-Trait, Package Template, DeepFjig.
+Leveraging on \emph{traits}, in this work we aim to synthesizes
+the main ideas of those very different language designs.
+Our result is a nominally typed minimalist language, natural to OO programmers.
+By making our type system distinguish between code-use and code-reuse
+we can separate inheritance and subtyping, while avoiding 
+redundant abstract declarations (required in Delta-Trait and DeepFjig), while supporting self construction,
+binary methods and recursive types.
+Moreover, we provide a novel and elegant solution to uniformly
 handle behavior and state within trait composition.
 
 
