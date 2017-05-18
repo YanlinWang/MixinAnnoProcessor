@@ -94,8 +94,43 @@ The University of Hong Kong, Hong Kong\\}
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-Abstract here!
-\dots
+In most object oriented languages subclassing/code-reuse implies
+subtyping. This is considered by many a conceptual design error, but it
+seems required by technical reasons.
+
+This paper synthesizes an OO language design for a nominally typed
+language that allows code-reuse and subtyping to be decoupled using a
+form of \emph{traits}. This design improves on previous work by
+Damiani and Servetto by proving a simpler and more natural model for
+OO programmers. We provide a novel and elegant solution to uniformly
+handle behavior and state within trait composition.  By making our
+type system distinguish between code use and code reuse we can avoid
+many redundant abstract declarations that were required in previous
+work by Servetto and Damiani, while supporting self construction,
+binary methods and recursive types.
+
+
+\begin{comment}
+Two distinct groups of researchers independently [.marco..] and
+[..ferruccio.] used traits to provide
+a sound language design where code-reuse and subtyping are decoupled.
+In this work we distill their work in a simpler model that is far more
+natural for a OO programmer.
+For example, in [ marco ] class A {A m(){return this;}} is not well typed code,
+and in [.ferruccio..] all the logic about object construction have to
+be provided after all trait composition.
+
+We provide an novel and elegant solution to uniformly handle behavior
+and state within trait composition,
+Making our type system distinguish between used code and reused code
+we  can avoid many redundant
+abstract declarations that was required by [ marco ] and [ ferruccio ],
+while supporting self construction, binary methods and recursive types;
+
+We then show that our model can easily support nested classes and a
+rich composition algebra as in [ marco ]
+\end{comment}
+
 \keywords{Code Reuse, Object-Oriented Programming}
 \end{abstract}
 
