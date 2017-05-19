@@ -350,6 +350,37 @@ Class  & Yes              & No          & Yes           \\
 Trait   & No               & Yes         & No            \\
 \end{tabular}
 \end{center}
+More complete table here, we can put it where you prefer
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c}
+&\Rotated{direct instantation}
+&\Rotated{self instantiation}
+&\Rotated{unit of use}
+&\Rotated{unit of reuse}
+&\Rotated{introduce type}
+&\Rotated{induced type is this type}
+&\Rotated{binary methods}
+&\Rotated{reuse induce subtype}
+&\Rotated{well-typed before imported}
+&\Rotated{well-typed before composed} 
+\\
+\hline
+java/scala class&Y&X&Y&Y&Y&Y&X&Y&Y&X\\
+java8 interface &X&X&X&Y&Y&Y&X&Y&Y&X\\
+scala trait        &X&X&X&Y&Y&Y&X&Y&X&X\\
+original trait     &X&X&X&Y&-&-&X&X&-&-\\
+Ferruccio trait  &X&X&X&Y&X&-&X&X&Y&Y\\
+42 trait            &X&Y&X&Y&X&-&Y&X&Y&X\\
+42 class           &Y&Y&Y&X&Y&Y&Y&-&Y&X\\
+module composition
+                      &-&-&Y&Y&-&-&-&-&Y&Y\\
+deepFJig class &Y&Y&Y&Y&Y&X&Y&X&Y&Y\\
+package template
+                      &X&Y&X&Y&X&-&X&X&Y&X\\
+
+\end{tabular}
+\end{center}
+
 \caption{A comparision between traits and classes in \name.}
 \label{fig:compare}
 \end{figure}

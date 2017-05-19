@@ -7,6 +7,7 @@
 \usepackage{xspace}
 \usepackage{times}
 \usepackage{comment}
+\usepackage{rotating} 
 \lstset{language=Java,
   basicstyle=\ttfamily\small,%\scriptsize,
   keywordstyle=\bfseries,%\color{darkRed},
@@ -21,7 +22,9 @@
 %  identifierstyle=\idstyle
  morekeywords={method,Use,This}
 }
-
+%
+\newcommand\Rotated[1]{\begin{turn}{90}\begin{minipage}{12em}#1\end{minipage}\end{turn}}
+%
 %marco
 \newcommand{\Q}{\lstinline}
 \newcommand\Opt[1]{#1 ?}
