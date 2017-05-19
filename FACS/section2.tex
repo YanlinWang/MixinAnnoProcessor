@@ -3,14 +3,15 @@
 
 This section presents the overview of \name, and it illustrates the
 key ideas of its design. In particular we illustrate how to separate code use and 
-code reuse in \name. %, and how this allows improving both. 
+code reuse.
+% in \name. %, and how this allows improving both. 
 
 %\subsection{The Design of \name: Decoupling Use from Reuse}
 
 \subsection{Classes in \name: A mechanism for code Use}
 %\name has a substantially different design from Java-like languages.
-The concept of a class in \name provides a mechanism for code use
-only. This means that in \name there is actually no subclassing, and
+The concept of a class in \name provides a mechanism for code-use
+only. This means that there is actually no subclassing:
 classes are roughly equivalent to final classes in Java.  Thus,
 compared to Java-like languages, the most noticeable difference is the
 absence of the \Q@extends@ keyword in \name. 
@@ -23,16 +24,17 @@ To illustrate classes in \name consider the example in Section~\ref{}:
 \end{lstlisting} 
 
 \noindent Classes in \name use a slightly different declaration style compared
-to Java. In \name there is no \lstinline{class} keyword. 
-Class declarations have a name (which must always start with
-an uppercase letter) and a code literal, which is used to specify the
-definitions of the class. For instance, in the class declaration
+to Java: there is no \lstinline{class} keyword, and a colon separe the class name (which must always start with
+an uppercase letter) and the class implementation, which is used to specify the
+definitions of the class. In our example, in the class declaration
 for \lstinline{A}, the name of the class is \lstinline{A} and the code 
 literal associatted with the class (\Q@{ method int ma()   Utils.m(this) }@) contains the definitions associated to the
-class. There are, however, some 
-important differences to Java-like languages in the way 
-classes and code-literals are type-checked, as we shall see next. 
-Nevertheless, for this example, things still work in a similar way to Java. 
+class.
+
+%We will see next some 
+%important differences to Java-like languages in the way 
+%classes and code-literals are type-checked, as we shall see next. 
+%Nevertheless, for this example, things still work in a similar way to Java. 
 
 The \name code above is fine, but there is no way to add a class 
 \Q@B@ reusing the code of \Q@A@, since
@@ -44,7 +46,7 @@ is more appropriate when code reuse is intended.
 
 \subsection{Traits in \name: A mechanim of code Reuse}
 
-Unlike classes traits in \name cannot be instantiated and do not introduce new
+Unlike classes, traits in \name cannot be instantiated and do not introduce new
 types. However they provide code reuse.
 %So, lets try again encoding the code for the leaking problem, but this
 %time aiming at code reuse. 
@@ -70,44 +72,60 @@ That is, using a trait is the only way to induce code reuse.
 Unfortunatelly, this code does not work, 
 because \lstinline{Utils.m} requires an \lstinline{A} and the type of \lstinline{this} in
 \Q@ta@ has no relationship to the type \lstinline{A}.
-Since the trait name is not a type, no code external to that trait can
+
+A Java programmer may then try to write
+\begin{lstlisting}
+ ta:{ method int ma() Utils.m(this) }//type error
+ A:Use ta
+ Utils:{ class method int m(ta a)//syntax error
+   /*method body here*/ }
+\end{lstlisting}
+But this does not work either, indeed \Q@ta@ is not a type in the first place, since it is a (lowercase) trait name.
+Indeed
+since the trait name is not a type, no code external to that trait can
 refer to it. This is one of the key design decisions in \name. 
-The point is that the trait can refer to the program via \lstinline{this}, but the
-program is agnostic to what the trait type is going to be, so it can
-be later assigned to any (or many) classes. This improves the
-flexibility of reuse as illustrated in Section~\ref{}. However, 
-to solve the more immediate typing issue above we need one more
-round of refactoring, as we shall see next. 
+
+% this text may go after, while explaining the This type?
+%Code inside traits/classes can refer to (uppercase) class names, but not to (lowercase) trait names.
+%%The point is that the trait can refer to the program via \lstinline{this},
+%??????????????
+% This means that the
+%program is agnostic to what the trait type is going to be, so it can
+%be later assigned to any (or many) classes. This improves the
+%flexibility of reuse as illustrated in Section~\ref{}.
+%However, 
+%to solve the more immediate typing issue above we need one more round of refactoring, as we shall see next. 
 
 
 %: in \name all declarations 
 %are sequentially type-checked and if a definition occurs afterwards
 %another, then it is not visible on all previous definitions.
 
-\paragraph{Type of the self-reference} The code above does not work
-because the way type-checking works in \name is that type-checking of 
-code literals is independent of the class/trait names associated to
-it. A Java programmer may expect that the type of \lstinline{this} 
-in the previous definition of \lstinline{ta} is \lstinline{ta}
-itself. However, this intuition brought from Java is wrong in \name
-for two reasons:
+%\paragraph{Type of the self-reference} 
+%The code above does not work.
+%because the way type-checking works in \name is that type-checking of 
+%code literals is independent of the class/trait names associated to it.
+%A Java programmer may expect that the type of \lstinline{this} 
+%in the previous definition of \lstinline{ta} is \lstinline{ta}
+%itself. However, this intuition brought from Java is wrong in \name
+%for two reasons:
 
-\begin{itemize}
+%\begin{itemize}
 
-\item The first reason is that {\bf traits are not types}. Traits in
-  \name are simply units of reuse and cannot be used as types. Types
-  are only introduced by class/interface declarations.
+%\item {\bf Traits are not types}. Traits in
+%  \name are simply units of reuse and cannot be used as types. Types
+%  are only introduced by class/interface declarations.
 
-\item The second reason is that {\bf the type of self-references is the self type of the
-    code literal.} Unlike Java-like languages, where the body of a
-  class declaration is intrinsically coupled with the class itself, in
-  \name code literals are first-class\bruno{Is it appropriate to say
-    that they are first class?} and are type-checked independently.
-  \name has a notion of self-type, which is closely related to
-  approaches such as ThisType~\cite{} and ...\cite{others}. Therefore
-  in \name the self-reference does not have the type of the class
-  being defined, but rather it has the self-type.
-\end{itemize}
+%\item The second reason is that {\bf the type of self-references is the self type of the
+%    code literal.} Unlike Java-like languages, where the body of a
+%  class declaration is intrinsically coupled with the class itself, in
+%  \name code literals are first-class\bruno{Is it appropriate to say
+%    that they are first class?} and are type-checked independently.
+%  \name has a notion of self-type, which is closely related to
+%  approaches such as ThisType~\cite{} and ...\cite{others}. Therefore
+%  in \name the self-reference does not have the type of the class
+%  being defined, but rather it has the self-type.
+%\end{itemize}
 
 With this in mind, we can try to model the example in Section~\ref{} again:
 
@@ -119,15 +137,24 @@ With this in mind, we can try to model the example in Section~\ref{} again:
  A:Use ta
 \end{lstlisting}
 
-This code works: \Q@Utils@ is using an interface \Q@IA@ and the trait \Q@ta@
-is implementing it. Thus the self-type of the trait \Q@ta@ (and the
-type of \lstinline{this}) will be a
-subtype of \Q@IA@. It is also possible to add a \Q@B@ as follows
+This code works: \Q@Utils@ rely over interface \Q@IA@ and the trait \Q@ta@
+implements \Q@IA@.
+\Q@ta@ is well typed: independently of what class name(s) will be associated to its code, we knew such class(es) will implement \Q@IA@, thus while typechecking \Q@Utils.m(this)@ we can assume
+\Q@this<:IA@.
+ It is also possible to add a \Q@B@ as follows
 \begin{lstlisting}
   B:Use ta, { method int mb(){return this.ma();} }
 \end{lstlisting}
 This also works.  \Q@B@ reuses the code of \Q@ta@, but has no knowledge of \Q@A@.
 Since \Q@B@ reuses \Q@ta@, and \Q@ta@ implements \Q@IA@, also \Q@B@ implements \Q@IA@. 
+
+Later, in section \ref{} we will provide a more formal detail over type system. For now notice that in the former example the code is correct even if no method called \Q@ma@ is explicitly declared.
+The idea is that such method is imported from trait \Q@ta@, exactly as in the java equivalent
+\begin{lstlisting}[language=Java]
+  class B extends A{ int mb(){return this.ma();} }  
+\end{lstlisting}
+method \Q@ma@ is imported from \Q@A@.
+This concept is natural for a Java programmer, but was not supported in previous work \cite{deep, ferruccio}
 
 \paragraph*{Semantic of Use}
 Albeit alternative semantic models for traits~\cite{} have been proposed,
@@ -149,9 +176,28 @@ B:{implements IA
  \end{lstlisting}
  
  This code seems correct, and there is no mention of the trait
- \Q@ta@. In some sense, all the information about code
- reuse/subclassing is just a private implementation detail of \Q@A@
+ \Q@ta@. In some sense, all the information about code-reuse/inheritance
+  is just a private implementation detail of \Q@A@
  and \Q@B@; while subtyping is part of the class interface.
+
+
+%To finish this section, Figure \ref{fig:compare} provides a summary of
+%the differences between classes and traits. The comparison focus on
+%the roles of traits and classes with respect to instantiation,
+%reusability and whether the declarations also introduce new types or
+%not.
+
+
+
+
+
+
+
+
+
+
+
+
 
 \begin{figure}[t]
 \begin{center}
@@ -196,9 +242,3 @@ package template
 \caption{A comparision between traits and classes in \name.}
 \label{fig:compare}
 \end{figure}
-
-To finish this section, Figure \ref{fig:compare} provides a summary of
-the differences between classes and traits. The comparison focus on
-the roles of traits and classes with respect to instantiation,
-reusability and whether the declarations also introduce new types or
-not.
