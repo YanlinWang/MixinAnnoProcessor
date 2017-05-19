@@ -1,0 +1,48 @@
+\section{Improving Use by Preventing Unintended Subtyping}
+%%Preventing Unintended Subtyping}
+As stated in Section~\ref{} a possible benefit of a nominally typed OO language
+that separates inheritance from subtyping is that it is possible to 
+have reuse, while preventing unintended subtyping. The design of \name 
+allows this, thus it \emph{improves the use} of classes, while
+retaining the benefits of reuse when compared to Java-like languages. 
+Here we illustrate this benefit by modelling a simplified version of
+Set and Bag collections. 
+
+\bruno{Plan: Show simplified Java code. Show how the Java code forces
+  us to make Bags a subtype of Set, if we want reuse. 
+Then show the 42/language in this paper/ code and solution.  
+}
+
+An iconic example on why connecting inheritance/code reuse and
+subtpying is problematic is provided by the
+historic\cite{LaLonde:1991:SSS:110673.110679}: A reasonable
+implementation for a \Q@Set@ may be easy to extend into a \Q@Bag@
+keeping tracks of how many times an element occurs.  We would just add
+some state and override a couple of methods.\bruno{Are we going to
+  present this example in the paper solved in 42, for example? 
+I think I would expect to see it.}
+
+However, our subclassing would break Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
+Of course, one could retroactivelly fix this problem by introducing \Q@AbstractSetOrBag@
+and making both \Q@Bag@ and \Q@Set@ inherit from it.
+This looks unnatural, since \Q@Set@ would extend it without adding anything,
+and we would be surprised to find a use of the type \Q@AbstractSetOrBag@.
+Worst, if we was to constantly apply this mentalty, we would introduce a very high number
+of abstract classes that are not supposed to be used as types, and that will clutter the 
+public interface of our classes and our code project as a whole.
+
+\begin{lstlisting}
+class Set {.../* Elem put() boolean isIn(Elem)*/ ...}
+class Bag extends Set{.../*override something to keep track of duplications*/..}
+\end{lstlisting}
+
+but now, 
+
+\begin{lstlisting}
+Set mySet=new Bag(); //OK for the type system but not for LSP
+\end{lstlisting}
+
+as a pleasaruble accident, avoid such code gift us simple support for
+This type and (in the extensions with nested classes seen later)
+family polimporphism.
+
