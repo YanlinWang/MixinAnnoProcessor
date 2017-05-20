@@ -45,12 +45,12 @@ of a Set if the two interfaces are type compatible. For dealing with
 the second situation nominal subtyping is preferable. With nominal
 subtyping an explicit subtyping relation must be signalled by the
 programmer. Thus if subtyping is not desired, the idea is that 
-programmer can simply not declare a subtyping relationship.
+programmer can simply {\bf not} declare a subtyping relationship.
 
 While there is no problem in subtyping without subclassing, in the design
 of most nominal OO languages subtyping implies subtyping in a
-fundamental way. This is because of what we call the self-reference
-\emph{leaking problem}. The leaking problem is illustrated by the following
+fundamental technical way. This is because of what we call the
+\emph{this leaking problem}, illustrated by the following
 (Java) code:
 
 \begin{lstlisting}[language=Java]
@@ -58,7 +58,7 @@ fundamental way. This is because of what we call the self-reference
   class Utils{static int m(A a){..}}
 \end{lstlisting}
 
-In class \lstinline{A}, the method \lstinline{m} passes \lstinline{this} as \lstinline{A}.
+Method \lstinline{A.ma} passes \lstinline{this} as \lstinline{A} to \Q@Util.m@.
 This code seems correct, and there is no subtyping/subclassing.
 Now, lets add a class \Q@B@
 
@@ -69,80 +69,62 @@ Now, lets add a class \Q@B@
 %%Class \lstinline{B} does two things at the same time: 
 %%1) it {\bf inherits} the method \lstinline{ma} from
 %%\lstinline{A}; and 2) it creates a {\bf subtype} of \lstinline{A}.
-We can see an invocation of \lstinline{ma} inside
-\lstinline{mb}, where the self-reference \lstinline{this} is of type \lstinline{B}. 
+We can see an invocation of \lstinline{A.ma} inside
+\lstinline{B.mb}, where the self-reference \lstinline{this} is of type \lstinline{B}. 
 The execution will eventually call \lstinline{Util.m} with an
 instance of \lstinline{B}. However, this can be correct only if \lstinline{B} is a subtype of
 \lstinline{A}. 
 
-If Java was to support a mechanism to allow reuse/inheritance 
-without introducing subtyping, such as:
+%If Java was to support a mechanism to allow reuse/inheritance 
+%without introducing subtyping, such as:
+%
+%\begin{lstlisting}[language=Java]
+%  class B inherits A{ int mb(){return this.ma();} }
+%\end{lstlisting}
+%
+%\noindent Then an invocation of 
+%\lstinline{mb} would be type-unsafe (i.e. it would 
+%result in a run-time type error). 
+%Note that here the intention of using the imaginary keyword {\bf
+%  inherits} is to allow the code from \lstinline{A} to be inherited 
+%without \lstinline{B} becoming a subtype of \lstinline{A}. 
+%However this breaks type-safety. The problem is that the
+%self-reference \lstinline{this} in class \lstinline{B} has 
+%type \lstinline{B}. Thus, when \lstinline{this} is passed as an argument to 
+%the method \lstinline{Utils.m} as a result of the invocation of
+%\lstinline{mb}, it will have a type that is incompatible with the
+%expected argument of type \lstinline{A}.  
 
-\begin{lstlisting}[language=Java]
-  class B inherits A{ int mb(){return this.ma();} }
-\end{lstlisting}
-
-\noindent Then an invocation of 
-\lstinline{mb} would be type-unsafe (i.e. it would 
-result in a run-time type error). 
-Note that here the intention of using the imaginary keyword {\bf
-  inherits} is to allow the code from \lstinline{A} to be inherited 
-without \lstinline{B} becoming a subtype of \lstinline{A}. 
-However this breaks type-safety. The problem is that the
+If in Java code reuse was not introducing subtyping an invocation of 
+\lstinline{B.mb} would result in a run-time type error.
+The problem is that the
 self-reference \lstinline{this} in class \lstinline{B} has 
 type \lstinline{B}. Thus, when \lstinline{this} is passed as an argument to 
 the method \lstinline{Utils.m} as a result of the invocation of
 \lstinline{mb}, it will have a type that is incompatible with the
 expected argument of type \lstinline{A}.  
-\bruno{
-We can also mention what happens in structural types:
-"System with structural types would *be required to* guarantee that
-the structural type of A is a supertype of the structural type of B”.
-}
 
-What the leaking problem illustrates is that
-adopting a more flexible
-nominally typed
-OO model where subclassing does not imply subtyping is not trivial. 
-If we are to separate subclassing from subtyping then a more substantial
-change in the language design is necessary.  Every OO language with
-the minimal features exposed in the example (using \lstinline{this},
+
+
+Every OO language with the minimal features exposed in the example (using \lstinline{this},
 extends and method calls) is forced to accept that subclassing implies
 subtyping.\footnote{ Note how this is true also in C++, where is
   possible to "extends privately". Such is a limitation of the
   visibility of subtyping but not over subtyping itself, and the
   former example would be accepted by C++ even if \lstinline{B} was to
   "privately extends" \lstinline{A}.}
+  
 In essence we believe that a problem with the design of classes in languages like Java
 is that classes do too many things at once. In particular they act
 both as units of \emph{use} and \emph{reuse}.
-That is, in languages like Java, classes can be
-instantiated (using {\bf new}) to create objects that \emph{use} some 
-functionality. Classes can also be subclassed to provide \emph{reuse}
+That is, in languages like Java, class names can be
+\emph{use}d as type and instantiated.
+Classes can also be subclassed to provide \emph{reuse}
 of code.  
 
+Adopting a more flexible nominally typed OO model where subclassing does not imply subtyping is not trivial,
+and a more substantial change in the language design is necessary.
 
-\marco{Cite some work of bruceTHisType and show how he also fails.}
-
-\begin{comment}
-An iconic example on why connecting inheritance/code reuse and
-subtpying is problematic is provided by the
-historic\cite{LaLonde:1991:SSS:110673.110679}: A reasonable
-implementation for a \Q@Set@ may be easy to extend into a \Q@Bag@
-keeping tracks of how many times an element occurs.  We would just add
-some state and override a couple of methods.\bruno{Are we going to
-  present this example in the paper solved in 42, for example? 
-I think I would expect to see it.}
-
-However, our subclassing would break Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
-Of course, one could retroactivelly fix this problem by introducing \Q@AbstractSetOrBag@
-and making both \Q@Bag@ and \Q@Set@ inherit from it.
-This looks unnatural, since \Q@Set@ would extend it without adding anything,
-and we would be surprised to find a use of the type \Q@AbstractSetOrBag@.
-Worst, if we was to constantly apply this mentalty, we would introduce a very high number
-of abstract classes that are not supposed to be used as types, and that will clutter the 
-public interface of our classes and our code project as a whole.
-\end{comment}
 
 This paper aims at showing a simple language design, called \name, to
 completely decouple subtyping and subclassing in a nominally typed OO
@@ -154,11 +136,11 @@ for reuse. In some sense classes in \name are like final classes in
 Java. Traits are meant for code reuse and multiple traits can be
 composed to form a class which can then be instantiated. Traits 
 cannot be instantiated (or used) directly. Such design allows the
-subtyping and code reuse to be treated separately, which in terms 
+subtyping and code reuse to be treated separately, which in turn
 brings several benefits in terms of flexibility and code reuse.
-\marco{We need to talk of unanticipated extensions?}
-\bruno{Talk more about typing aspects here. Summarize the important 
-aspects of the design of \name.}
+%\marco{We need to talk of unanticipated extensions?}
+%\bruno{Talk more about typing aspects here. Summarize the important 
+%aspects of the design of \name.}
 
 First we show a minimal language that illustrates the basic ideas. 
 Then we show how mutually recursive types
