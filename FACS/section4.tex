@@ -1,19 +1,25 @@
-\section{Improving Reuse when Subtyping is Impossible}
+\section{Allowing Reuse against Subtyping}
+Before we discussed how traits does not induce a new (externally visible) type.
+However, locally in the trait the programmer can use the special type \Q@This@ in order to denote the 
+type of \Q@this@.
+That is: the program is agnostic to what the \Q@This@ type is going to be, so it can
+be later assigned to any (or many) classes. 
+The idea is that during flattening, \Q@This@ will be replaced with the actual class name.
+In this way, \name allows reuse even when subtyping is
+impossible, that is, when a method parameter has type \Q@This@ (also called \emph{binary
+  methods}~\cite{}). 
+This type of situations is the primary motivator
+for previous work aiming at separating inheritance from subtyping.
+Leveraging on \Q@This@ type, we can also provide self-instantiation (trait methods can create instances of the class using them) and smootly integrate state and traits: 
 
-\name retains the ability to allow reuse even when subtyping is
-impossible. That is, in some situations a subclass contains methods
-whose signatures are incompatible with the superclass, yet inheritance
-is still possible. This type of situations is the primary motivator
-for previous work aiming at separating inheritance from subtyping, and
-it happens, for example, in classes with \emph{binary
-  methods}~\cite{}.  Despite the adoption of a nominal approach and
-unlike other nominally typed languages, the leaking problem does not
-prevent \name from enjoying such kind of improved reuse.
+  %????Despite the adoption of a nominal approach and unlike other nominally typed languages, the leaking problem does not prevent \name from enjoying such kind of improved reuse.
 
-To illustrate how \name allows for improved reuse, we consider a
-pattern to combine \emph{multiple trait inheritance} and \emph{state}:
+%To illustrate how \name allows for improved reuse, we consider a
+%pattern to combine \emph{multiple trait inheritance} and \emph{state}:
 a challenging problem that has limited the flexibility of traits and
 reuse in the past.
+%First we show how self-instantiation and state are already avaible in the simplest trait model,
+%then we show how to radically improve the 
 
 \subsection{Managing State}
 
@@ -41,25 +47,11 @@ However the purest solution just requires methods:
   allowing declaration for fields and constructors.
   This approach is very powefull~\cite{wang2016classless}
  
-\paragraph*{Advantages:} 
-this approach is associative and commutative, even self construction
-  can be allowed if the trait requires a static/class method
-  returning This; the class will then implement this method by forwarding
-  a call to the constructor.
-  
-\paragraph*{Negatives:} writing the class code with the constructors and
-   fields and getter/setters and factories can be quite tedious.
-   Moreover, there is no way for a trait to specify a default value for a field,
-   the class need to handle all the state, even state that is conceptually
-   "private" of such trait.
-
-Here in the following an example of such approach:
-
 \begin{lstlisting}
-  pointSum: { method int x()  method int y()
-    class method This of(int x,int y)
+  pointSum: { method int x()  method int y()//getters
+    class method This of(int x,int y)//factory method
     method This sum(This other)
-      This.of(this.x+other.x,this.y+other.y)
+      This.of(this.x+other.x,this.y+other.y)//self instantiation
     }
   pointMul: { method int x() method int y()
     class method This of(int x,int y)
@@ -82,22 +74,29 @@ In this mindset, the user would be required to write something similar to
 \begin{lstlisting}
   CPoint:Use pointSum,pointMul, {//not our suggested solution
     int x   int y
-    method int x()x   method int y()y
-    class method This of(int x, int y)
-      new Point(x,y)
+    method int x() x       
+    method int y() y
+    class method This of(int x, int y) new Point(x,y)
     constructor Point(int x, int y){ this.x=x   this.y=y }
     }
 \end{lstlisting}
 
-\noindent after a while programming in this style, 
-writing those obvious ``close the state'' classes become a
-repetivie boring job, and one wonder
-if it could be possible to automatically generate such code~\cite{wang2016classless}.
-Indeed those classes are just a form of ``fixpoint''.
+\paragraph*{Advantages:} 
+this approach is associative and commutative, even self construction
+  can be allowed if the trait requires a static/class method
+  returning \Q@This@; the class will then implement this method by forwarding
+  a call to the constructor.
+  
+\paragraph*{Negatives:} writing those obvious ``close the state/fixpoint'' class 
+   with the constructors and  fields and getter/setters and factories can be quite tedious.
+   %Moreover, there is no way for a trait to specify a default value for a field,
+   %the class need to handle all the state, even state that is conceptually
+   %"private" of such trait. 
+   Former work consider to automatically generate such code~\cite{wang2016classless}.
 
 In our model we go one step further: there is no need to generate code, or to explicitly
 write down constructors and fields; there is not even syntax for those
-constructor.
+constructs.
 The idea is that any class that ``could" be completed in the obvious way
 \emph{is a complete ``coherent" class}.
 In most other languages, a class is abstract if have abstract methods.
@@ -122,7 +121,7 @@ While getters and setters are fundamental operations, we can immagine
 more operations to be supported; for example
 \begin{itemize}
 \item \Q@method This withX(int that)@
-may be a ``wither", doing a functional field update.
+may be a ``wither", doing a functional field update, that is create a new instance that is like \Q@this@ but where field \Q@x@ has now \Q@that@ value.
 \item \Q@method Void update(int x,int y)@
 may do two field update at a time.
 \item\Q@method This clone()@ may do a shallow clone of the object.
@@ -130,9 +129,7 @@ may do two field update at a time.
 
 We are not sure what is the best set of abstract state operations yet, but we think this could become a very interesting area of research.
   
-  
-  lets play with the points of before, to see what good can we do with the current
-  instruments:
+With our approach to handle the state, the following code can be directly composed:
 
 \begin{lstlisting}
  //same code as before for pointSum and pointMul
