@@ -31,11 +31,11 @@ struggling to make it work with object state (constructor and fields)
 while acheving the following goals:
 
 \begin{itemize}
-\item keep sum associative and commutative,
-\item allowing a class to create instances of itself,
-\item actually initialize objects, leaving no null fields,
+%complicated discussions on this point \item keep sum associative and commutative,
 \item managing fields in a way that borrows the elegance of summing methods,
-\item make it easy to add new fields.
+\item actually initialize objects, leaving no null fields,
+\item make it easy to add new fields,
+\item allowing a class to create instances of itself.
 \end{itemize}
 
 In the related work we will show some alternative ways to handle state.
@@ -50,13 +50,13 @@ However the purest solution just requires methods:
 \begin{lstlisting}
   pointSum: { method int x()  method int y()//getters
     class method This of(int x,int y)//factory method
-    method This sum(This other)
-      This.of(this.x+other.x,this.y+other.y)//self instantiation
+    method This sum(This that)
+      This.of(this.x()+that.x(),this.y()+that.y())//self instantiation
     }
   pointMul: { method int x() method int y()
     class method This of(int x,int y)
-    method This mul(This other)
-      This.of(this.x*other.x,this.y*other.y)
+    method This mul(This that)
+      This.of(this.x()*that.x(),this.y()*that.y())
     }
 \end{lstlisting}
 
@@ -128,26 +128,27 @@ may do two field update at a time.
 \end{itemize}
 
 We are not sure what is the best set of abstract state operations yet, but we think this could become a very interesting area of research.
-  
+
+\paragraph{The solution in \name:}${}_{}$\\
 With our approach to handle the state, the following code can be directly composed:
 
 \begin{lstlisting}
  //same code as before for pointSum and pointMul
   pointSum: { method int x() method int y()
     class method This of(int x,int y)
-    method This sum(This other)
-      This.of(this.x+other.x,this.y+other.y)
+    method This sum(This that)
+      This.of(this.x()+that.x(),this.y()+that.y())
     }
   pointMul: { method int x() method int y()//look we are repeating
     class method This of(int x,int y)//the abstract method declarations.
-    method This mul(This other)
-      This.of(this.x*other.x,this.y*other.y)
+    method This mul(This that)
+      This.of(this.x()*that.x(),this.y()*that.y())
     }
   PointAlgebra:Sum pointSum,pointMul
 \end{lstlisting}  
 
   As you can see, we can declare the methods independently and compose the result
-  as we wish. However we have to repeat the abstract methods \Q@x@,\Q@y@ and \Q@of@.
+  as we wish. In this first attempt, we repeated the abstract methods \Q@x@,\Q@y@ and \Q@of@.
   In addition of \Q@Sum@ and \Q@Mul@ we may want many operations over points; can we improve our reuse
   and not repeat such abstract definitions? of course!
 
@@ -155,11 +156,11 @@ With our approach to handle the state, the following code can be directly compos
   p: { method int x() method int y()
     class method This of(int x,int y)
     }
-  pointSum:Use p, { method This sum(This other)
-      This.of(this.x+other.x,this.y+other.y)
+  pointSum:Use p, { method This sum(This that)
+      This.of(this.x()+that.x(),this.y()+that.y())
     }
-  pointMul:Use p, { method This mul(This other)
-      This.of(this.x*other.x,this.y*other.y)
+  pointMul:Use p, { method This mul(This that)
+      This.of(this.x()*that.x(),this.y()*that.y())
     }
   pointDiv: ...
   PointAlgebra:Use pointSum,pointMul,pointDiv,...
@@ -167,11 +168,14 @@ With our approach to handle the state, the following code can be directly compos
       
 Now our code is fully modularized, and each trait handle exactly one method.
 
+
+
+\paragraph{Adding state:}${}_{}$\\
 What happens if we want to add fields instead of just operations?
 
 \begin{lstlisting}
   colored:{ method Color color() }
-  Point:Sum pointSum,colored //fails
+  Point:Use pointSum,colored //Failure: resulting class not coherent
 \end{lstlisting}
 
 This first attempt does not work: the abstract color method
@@ -187,35 +191,54 @@ A solution is to provide a richer factory:
 \end{lstlisting}
 
 where we assume to support overloading on different parameter number.
-This is a good solution, we think is better that any alternatives in literature,
-however the method \Q@CPoint.sum@ resets the color to red.
+This is a good solution, indeed we think is better that any alternatives in literature,
+however the method \Q@CPoint.sum@ resets the color to red: we call the \Q@of(int,int)@ method, that now delegate to \Q@of(int,int,Color)@ by passing red as the default field value.
 What should be the behaviour in this case?
-If we support withers, instead of writing \Q@This.of()@ we can use
+If our abstract state supports withers, instead of writing \Q@This.of(...)@ we can use
 \Q@this.withX(newX).withY(newY)@ in order to preserve the color from \Q@this@.
-Sadly, if we use this design inside of \Q@sum(This other)@ we would loose the color from \Q@other@.
+This solution is still not sadisfactory: this design ignore the color from \Q@that@.
 
-If the point designer could predict this kind of extension, then we could use the following design:  
+If the point designer could predict this kind of extension, then we could use the following better design:  
 \begin{lstlisting}
-  p: { method int x() method int y()
-    method This withX(int that)
-    method This withY(int that)
-    static method This of(int x,int y)
-    method This merge(This other)
+  p: { method int x() method int y() //getters
+    method This withX(int that) method This withY(int that)//withers
+    class method This of(int x,int y)
+    method This merge(This that) //new method merge!
     }
-  pointSum:Use p, { method This sum(This other)
-      this.merge(other).withX(this.x+other.x).withY(this.y+other.y)
+  pointSum:Use p, { method This sum(This that)
+      this.merge(that).withX(this.x()+that.x()).withY(this.y()+that.y())
     }
   colored:{method Color color()
     method This withColor(Color that)
-    method This merge(This other)
+    method This merge(This that) //how to merge color handled here
       this.withColor(this.color().mix(that.color())
     }
   CPoint:/*as before*/
 \end{lstlisting}  
   Now we can merge colors, or any other kind of state we may want to add
   following this pattern.
+  
   In order to compose, let say \Q@colored@ with \Q@flavored@ we would
   need to compose the merge operation inside of both of them.
   The simple model we are presenting could accomodate this with an
   extension allowing code literals inside of a \use\ expression to use some form of super call to compose conflicting implementations. This is similar to the \emph{override} operation present in the original trait model~\cite{ducasse2006traits}.
-  
+
+In the following you can see how to mix colors and flavours. The syntax \Q@_2merge@ and   \Q@_3merge@
+call the version of merge as defined in the second/third element of \use.
+\begin{lstlisting}
+  p: {/*as before*/ }
+  pointSum:Use p, {/*as before*/ }
+  colored:{/*as before*/}
+  flavored:{method Flavor flavor() //very similar to colored
+    method This withFlavor(Flavor that)
+    method This merge(This that) //how to merge flavors handled here
+      this.withFlavor(that.flavor())}//here we just inherit ``that'' flavor
+  FCPoint:Use pointSum,colored,flavored{
+    class method This of(int x,int y)
+      This.of(x,y,Color.of(/*red*/),Flavor.none())
+    class method This of(int x, int y,Color color,Flavor flavor)
+    //we can resolve the conflict about two implementations for merge
+    //by proving our own implementation here
+    method This merge(This that) this._2merge(that)._3merge(that)
+    }
+\end{lstlisting}  
