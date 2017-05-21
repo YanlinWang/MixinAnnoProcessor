@@ -26,6 +26,8 @@ The literature on code reuse is too vast to let us do justice of it in a fiew pa
 Our work is clearly inspired on Traits~\cite{ducasse2006traits}; they are in turn insipired on module composition languages~\cite{ancona2002calculus}
 and multiple inheritance~\cite{}.
 
+\subsection{Inheritance and subtyping}
+
 We are aware of at least 3 independently designed research languages 
 that address this limitation:Delta-Trait(DT)\cite{3ferruccio works}, Package Template(PT)\cite{}, DeepFjig\cite{}.
 Leveraging on \emph{traits}, in this work we aim to synthesizes
@@ -63,27 +65,23 @@ heavy task of integrating with full Java.
 The idea of using composition operators over atomic values as in an arithmetic expression is very powerfull,
 and makes easy to extend languages with more operators. Deepfjig and DT embrace this idea, while PT takes the traditional Java/C++ approach of using enhanced class/package declaration syntax.
 The typing strategy of PT also seams to be connected with this decision, so it would be hard to move their approach in a composition algebra setting.
-\item DT- {\bf Naming your type, even if you have none.}
-Both Deepfjig and PT allows a class to refer to its name, abait is more unobvious in PT and is unclear 
-...
-\item DT+ real separation use-reuse
+\item DT- {\bf Naming your type, even if you have none yet.}
+Both Deepfjig and PT allows a class to refer to its name, abait is more unobvious in PT since you have to introduce both a package and a classes to express it.
+This allows to encode binary methods, express patterns like withers or fluent setters and to instantiate instances of the (future) class(es)  using the reused code.
+\item DT+{\bf Complete ontological separation between use and reuse}
+While all 3 works allows to separate inheritance and subtyping only DT properly enforce 
+separation between use (classes and interfaces) and reuse (traits).
+This is because in DeepFjig all classes are both units of use and reuse (however, subtype is not induced)
+and PT imports all the complexity of Java, so abait is possible to separate use and reuse, the model have powerfull but unobvous implications where (conventional Java) \Q@extends@ and PT are used together
 
 \end{itemize}
-
-Our idea of fully separate inheritance and subtyping has some precedence
-In all the line of work of Ferruccio [cite many] neither traits nor classes introduce nominal types,
-that are provided only by interfaces.
-In DeepFjig[] classes introduce nominal types but in an innatural way, the type of \Q@this@ is only \Q@This@ (sometimes called \Q@<>@) and not the nominal type of its class: that is in DeepFjig 
-\Q@A:{ method A m()this}@ is not well typed.
-
-Other work cite~\cite{odersky2008programming,nystrom2006j}
-do no completly break the relation between inheritance and subtyping, but only prevent subtyping where 
+With the exception of those 3 lines of work, to the best of our understading
+other famous work in literature, like~\cite{odersky2008programming,nystrom2006j}
+does no completly break the relation between inheritance and subtyping, but only prevent subtyping only where 
 it would be unsound.
 
-Our compilation model is a clear step forward with respect to 
-\cite[metaFjig, deepFjig,myThesis,allferruccioWorkBefore2017], where all code was required to declare all the abstract dependencies all of the time.
+\subsection{State and traits}
 
-%\item clean and elegant handling of state in trat/module composition language
 The idea of abstract state operation has emerged from CJ~\cite{wang2016classless}, and offer a clean solution to handling state
 in a trait composition setting.
 Note how abstract state operation are different from just hiding fields under getter and setters: 
@@ -93,8 +91,8 @@ The state is computed by the system as an overall result of the whole code compo
 In literature there has been many attempts to add state in traits/module composition languages.
 \begin{itemize}  
 \item No constructor: all the fields start at null/a default specified value.
-  In this model fields are like another kind of member, and two fields
-  with identical type can be merged by sum; \Q@new C()@ can be used for all classes, and \Q@init@ method may be called later, as in
+  Fields are just like another kind of (abstract) member, and two fields
+  with identical type can be merged by sum/use; \Q@new C()@ can be used for all classes, and \Q@init@ methods may be called later, as in
   \Q@Point p=new Point(); p.init(10,30)@.
   
   To its credit, this simple approach is commutative and associative and do not disrupt elegance of summing methods.
@@ -103,37 +101,84 @@ In literature there has been many attempts to add state in traits/module composi
     all the objects are intrinsically mutable, so this model is unfriendly
     to a functional programming style.
 \item Constructor compose fields:
-In this approach the fields are declared but not initialized, and
-a canonical constrctor constructor taking a value for each field and just initializing such field
+In this approach (used by \cite{FJig}) the fields are declared but not initialized, and
+a canonical constrctor constructor (as in FJ) taking a value for each field and just initializing such field
 is automatically generated in the resulting class.
 
-In this approach it is easy to add fields, however this approach is associative but not commutative, since the order of composition will change the order of the fields; moreover there is no support for self construction
+It is easy to add fields, however this model is associative but not commutative: composition order influence field order, and thus the construtor signature.
+Self construction is not possible 
 since the signature of the constuctor change during composition.
 
 \item Constructor can be composed if they offers the same exact parameters:
-In this approach traits declare field and constructors.
+In this approach (used by DeepFJig) traits declare field and constructors.
 The constructor initialize the fields but can do any other computation.
 Traits whose constructors have the same signature can be composed.
 The composed constructor will execute both constructor bodies in order.
 
 This approach is designed to allows Self construction.
-It is also associative and mostly commutative: the order of composition is relevant only
-in the order of execution of side effects during construction.
-However the requirement that the constructors need the same parameters 
+It is also associative and mostly commutative: composition order only influence execution order of side effects during construction.
+However constructors composition requires identical constructor signature: this
 hamper reuse, and if a field is added, its initial value need to be
-somehow syntetized from the old constructor parameters.
+somehow syntetized from the constructor parameters.
 
 \end{itemize}
 
 %\item extension with nested class is natural and powefull
-We claim that our solution to the expression problem is the most natural in literature to date:
-While a similar sintax can be achieved with the scandinavian style~\cite{ernst2004expression}, their dependent type system makes reasoning quite complex, and indeed more recent solutions have accepted a more involved syntax in order to have an understandable type system~\cite{igarashi2005lightweight}.
+%We claim that our solution to the expression problem is the most natural in literature to date:
+%While a similar sintax can be achieved with the scandinavian style~\cite{ernst2004expression}, their dependent type system makes reasoning quite complex, and indeed more recent solutions have accepted a more involved syntax in order to have an understandable type system~\cite{igarashi2005lightweight}.
 
-Our close contendant is DeepFJig~\cite{corradi2011deepfjig}: all our gain over their model is based on our relaxation over abstract signatures.
-Note how we solve the expression problem in the most radical way possible \marco{bruno, here you can insert some of the criticism over expression problem trivially and explain how is not applicable to us here.}
+%Our close contendant is DeepFJig~\cite{corradi2011deepfjig}: all our gain over their model is based on our relaxation over abstract signatures.
+%Note how we solve the expression problem in the most radical way possible \marco{bruno, here you can insert some of the criticism over expression problem trivially and explain how is not applicable to us here.}
 
-Add that: original trait model has no self construction and types introduction not relevant since dynamicly typed language
+%Add that: original trait model has no self construction and types introduction not relevant since dynamicly typed language
 
+\subsection{Tablular comparision of many approaches}
+\begin{minipage}[t]{0.4\textwidth}
+In this table we show if some approach or part-there-of support certain critical features:
+Direct instantation (as in \Q@new C()@),
+Self instantiation (as in \Q@new This()@),
+Unit of use, Unit of reuse,
+Introduce type and if the Induced type is the type of \Q@this@,
+support for binary methods,
+does inheritance induce subtype?,
+is code required to be well-typed before being inherited /imported in a new context?
+is code required to be well-typed before composed with other code?
+
+We use Y and X to mean yes and no, and we use ``-'' were the question is not really applicable to the current approach. For example the original trait model was untyped, so typing questions makes little sense.
+\end{minipage}
+%second column
+\begin{minipage}[t]{0.6\textwidth}
+${}_{}$
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c}
+&\Rotated{direct instantation}
+&\Rotated{self instantiation}
+&\Rotated{unit of use}
+&\Rotated{unit of reuse}
+&\Rotated{introduce type}
+&\Rotated{induced type is this type}
+&\Rotated{binary methods}
+&\Rotated{inheritance induce subtype}
+&\Rotated{well-typed before imported}
+&\Rotated{well-typed before composed} 
+\\
+\hline
+java/scala class&Y&X&Y&Y&Y&Y&X&Y&Y&X\\
+java8 interface &X&X&X&Y&Y&Y&X&Y&Y&X\\
+scala trait        &X&X&X&Y&Y&Y&X&Y&X&X\\
+original trait     &X&X&X&Y&-&-&X&X&-&-\\
+Ferruccio trait  &X&X&X&Y&X&-&X&X&Y&Y\\
+\name trait            &X&Y&X&Y&X&-&Y&X&Y&X\\
+\name class           &Y&Y&Y&X&Y&Y&Y&-&Y&X\\
+module composition
+                      &-&-&Y&Y&-&-&-&-&Y&Y\\
+deepFJig class &Y&Y&Y&Y&Y&X&Y&X&Y&Y\\
+package template
+                      &X&Y&X&Y&X&-&X&X&Y&X\\
+
+\end{tabular}
+\end{center}
+\end{minipage}
 
 \bruno{
 We can also mention what happens in structural types:
