@@ -1,4 +1,4 @@
-\section{Introduction}
+\section{Introduction}\label{sec:intro}
 
 In mainstream OO languages like Java, C++ or C\# subclassing 
 implies subtyping. For example, in Java a subclass definition, such as:
@@ -23,13 +23,13 @@ subclassing is helpful.
 \item {\bf Allowing inheritance/reuse even when subtyping is impossible:} 
 In some situations a subclass contains methods whose signatures 
 are incompatible with the superclass, yet inheritance is still
-possible. A typical example, which was illustrated by Cook et al., are 
-classes with \emph{binary methods}~\cite{}.
+possible. A typical example, which was illustrated by Cook et al.~\cite{cook}, are 
+classes with \emph{binary methods}~\cite{bruce96binary}.
 
 \item {\bf Preventing unintended subtyping:} For certain classes we
   would like to inherit code without creating a subtype even if, from
   the typing point of view, subtyping is still possible. A typical
-  example~\cite{} of this are methods for collection classes such as Sets and
+  example~\cite{LaLonde:1991:SSS:110673.110679} of this are methods for collection classes such as Sets and
   Bags. Bag implementations can often inherit 
   from Set implementations, and the interfaces of the two collection types are
   similar and type compatible. 
@@ -49,8 +49,8 @@ programmer can simply {\bf not} declare a subtyping relationship.
 
 While there is no problem in subtyping without subclassing, in the design
 of most nominal OO languages subtyping implies subtyping in a
-fundamental technical way. This is because of what we call the
-\emph{this leaking problem}, illustrated by the following
+fundamental way. This is because of what we call the
+\emph{this-leaking problem}, illustrated by the following
 (Java) code:
 
 \begin{lstlisting}[language=Java]
@@ -95,7 +95,9 @@ instance of \lstinline{B}. However, this can be correct only if \lstinline{B} is
 %\lstinline{mb}, it will have a type that is incompatible with the
 %expected argument of type \lstinline{A}.  
 
-If in Java code reuse was not introducing subtyping an invocation of 
+\bruno{You removed my lengthier explanation. I think this makes things
+less clear.}
+If in Java code reuse was not introducing subtyping, then an invocation of 
 \lstinline{B.mb} would result in a run-time type error.
 The problem is that the
 self-reference \lstinline{this} in class \lstinline{B} has 
@@ -104,34 +106,35 @@ the method \lstinline{Utils.m} as a result of the invocation of
 \lstinline{mb}, it will have a type that is incompatible with the
 expected argument of type \lstinline{A}.  
 
-
-
 Every OO language with the minimal features exposed in the example (using \lstinline{this},
 extends and method calls) is forced to accept that subclassing implies
-subtyping.\footnote{ Note how this is true also in C++, where is
+subtyping. Note how this is true also in C++, where is
   possible to "extends privately". Such is a limitation of the
   visibility of subtyping but not over subtyping itself, and the
   former example would be accepted by C++ even if \lstinline{B} was to
-  "privately extends" \lstinline{A}.}
+  "privately extends" \lstinline{A}.
   
-In essence we believe that a problem with the design of classes in languages like Java
-is that classes do too many things at once. In particular they act
-both as units of \emph{use} and \emph{reuse}.
-That is, in languages like Java, class names can be
-\emph{use}d as type and instantiated.
-Classes can also be subclassed to provide \emph{reuse}
-of code.  
+In essence we believe that a problem with the design of classes in
+languages like Java is that classes do too many things at once. In
+particular they act both as units of \emph{use} and \emph{reuse}.
+That is, in languages like Java, class names can be \emph{use}d as
+type and instantiated.  Classes can also be subclassed to provide
+\emph{reuse} of code.
 
-Adopting a more flexible nominally typed OO model where subclassing does not imply subtyping is not trivial,
-and a more substantial change in the language design is necessary.
-
+What the this-leaking problem shows is that 
+adopting a more flexible nominally typed OO model where subclassing
+does not imply subtyping is not trivial, and a more substantial change
+in the language design is necessary. 
+We are aware of at least 3 independently designed research languages 
+that address this limitation: Delta-Trait~\cite{Damiani2014}, Package Templates~\cite{KrogdahlMS09}, DeepFjig~\cite{deep}.
+\bruno{Marco, please expand this a bit. Check if references are correct!}
 
 This paper aims at showing a simple language design, called \name, to
 completely decouple subtyping and subclassing in a nominally typed OO
 language. The key idea is to divide between code designed for
 \textbf{USE} and code designed for \textbf{REUSE}. 
 In \name there are two separate concepts: classes
-and traits~\cite{}. Classes are meant for code use, and cannot be used
+and traits~\cite{Traits:ECOOP2003}. Classes are meant for code use, and cannot be used
 for reuse. In some sense classes in \name are like final classes in
 Java. Traits are meant for code reuse and multiple traits can be
 composed to form a class which can then be instantiated. Traits 
@@ -142,6 +145,16 @@ brings several benefits in terms of flexibility and code reuse.
 %\bruno{Talk more about typing aspects here. Summarize the important 
 %aspects of the design of \name.}
 
+\bruno{Need to say something about state?}
+
+The language design of \name is adopted by the 42 programming 
+language, All the examples shown in this paper can be run in 42.
+The compiler for 42 is available at: 
+
+\url{http://l42.is}
+
+
+\begin{comment}
 First we show a minimal language that illustrates the basic ideas. 
 Then we show how mutually recursive types
 are supported, how state/constructors/fields are supported,
@@ -151,11 +164,23 @@ reuse.
 
 Our design leverage on traits~\cite{ducasse2006traits}: a well know mechanisms for pure
 code reuse.
+\end{comment}
 
-
-\subsection{List of contribution}
-\marco{text to improve, but is nice to keep a list}
+\subsection{Contributions:}
 \begin{itemize}
+\item We identify the {\bf this-leaking} problem and argue why it
+  makes the separation of subclassing and subtyping difficult.
+\item Inspired by previous language designs that solve the
+  this-leaking problem, we synthesize the key ideas in {\bf a novel and
+  simple language design}. 
+\item We illustrate how the new design {\bf improves both code use and code
+  reuse}.
+\item We propose {\bf a clean and elegant approach to handle of state} in a
+  languages that support traits.
+\item The new language design is {\bf adopted by the 42 language}. All the
+  examples in the paper are valid 42 programs. 
+
+\begin{comment}
 \item simple approach to fully separate inheritance and subtyping
 \item easy to grasp model of compilation were typing is late but not
   too late (lazy?)\bruno{this idea is important: it's a key design
@@ -166,7 +191,9 @@ code reuse.
   powefull\bruno{wondering if this is necessary. I think there are
     several interesting/novel ideas already. Covering too much will
     result on not saying enough about each individual ideas.}
-\item more operators can be accomodated without changing the general model
+\item more operators can be accomodated without changing the general
+  model
+\end{comment}
 \end{itemize}
 
 

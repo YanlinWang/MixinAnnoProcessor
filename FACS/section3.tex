@@ -1,23 +1,28 @@
-\section{Improving Use by Preventing Unintended Subtyping}
+\section{Improving Use}
 
+This section illustrates how 
 %As stated in Section~\ref{} 
-To have code-reuse, while preventing unintended subtyping
-in a nominally typed OO language we need to
- separates inheritance from subtyping.
-
-Thus, \name  \emph{improves the use} of classes, while
+%To have code-reuse, while preventing unintended subtyping
+%in a nominally typed OO language we need to
+% separate inheritance from subtyping.
+\name \emph{improves the use} of classes, while
 retaining the benefits of code-reuse when compared to Java-like languages. 
 Here we illustrate this benefit by modelling a simplified version of
-Set and Bag collections. 
+Set and Bag collections first in Java, and then in \name.
+The main benefit of the \name solution is that we can get reuse 
+without introducing subtyping between Bags and Sets. This improves the 
+use of Bags and eliminates logical errors arizing from incorrect
+subtyping relations that are allowed in the Java solution. 
 
-\paragraph{Set/Bag broken solution}
+\subsection{Sets and Bags in Java}
 An iconic example on why connecting inheritance/code reuse and
-subtpying is problematic is provided by the
-historic\cite{LaLonde:1991:SSS:110673.110679}: A reasonable
-implementation for a \Q@Set@ may be easy to extend into a \Q@Bag@
-keeping tracks of how many times an element occurs.  We would just add
-some state and override a couple of methods.
-For example in Java one could have
+subtpying is problematic is provided by
+LaLonde~\cite{LaLonde:1991:SSS:110673.110679}.  A reasonable
+implementation for a \Q@Set@ is easy to extend into a \Q@Bag@ by
+keeping track of how many times an element occurs.  We just need to
+add some state and override a few methods.
+
+For example in Java one could have:
 
 \begin{lstlisting}
 class Set {...//usual hashmap implementation
@@ -30,55 +35,63 @@ class Bag extends Set{...//for each element in the hash map,
   @Override Elem put()/*body*/
   int howManyTimes(Elem)/*body*/
   ...}\end{lstlisting}
+\bruno{did you mean get instead of put?}
 
-Coding \Q@Bag@ in this way can avoid a lot of code duplication, but we induced unintented subtyping: indeed
+\noindent Coding \Q@Bag@ in this way can avoid a lot of code
+duplication, but \emph{we induced unintented subtyping}! 
+Indeed, the following is allowed:
 
 \begin{lstlisting}
 Set mySet=new Bag(); //OK for the type system but not for LSP
 \end{lstlisting}
-Since Subclassing implies subtyping, our code break Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
+Since subclassing implies subtyping, our code break Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
 
-\paragraph{Set/Bag fixed solution still broken}
-Of course, one could retroactivelly fix this problem by introducing \Q@AbstractSetOrBag@
+\paragraph{A (broken) attempt to fix the Problem in Java.}
+Of course, one could \emph{retroactivelly} fix this problem by introducing \Q@AbstractSetOrBag@
 and making both \Q@Bag@ and \Q@Set@ inherit from it:
 \begin{lstlisting}
 abstract class AbstractSetOrBag{/*old set code goes here*/}
-class Set extends AbstractSetOrBag{} //empty body? just repeat constructors?
+class Set extends AbstractSetOrBag{} //empty body
 class Bag extends AbstractSetOrBag{/*old bag code goes here*/}
-..
-AbstractSetOrBag unexpected=new Bag(); //AbstractSetOrBag type not designed to be used.
+...
+//AbstractSetOrBag type not designed to be used.
+AbstractSetOrBag unexpected=new Bag(); 
 \end{lstlisting}
 
 This looks unnatural, since \Q@Set@ would extend \Q@AbstractSetOrBag@ without adding anything,
 and we would be surprised to find a use of the type \Q@AbstractSetOrBag@.
-Worst, if we was to constantly apply this mentalty, we would introduce a very high number
-of abstract classes that are not supposed to be used as types, and that will clutter the 
+Worst, if we are to constantly apply this mentalty, we would introduce a very high number
+of abstract classes that are not supposed to be used as types. Those classes would clutter the 
 public interface of our classes and our code project as a whole.
-In our example now the information \Q@Set<:AbstractSetOrBag@ is present in the public interface
-of the class \Q@Set@, but is not needed to use the class properly.
+In our example the information \Q@Set<:AbstractSetOrBag@ would be present in the public interface
+of the class \Q@Set@, but it is not needed to use the class properly!
 
-Moreover, we have not really solved the original problem but only moved it further away. For example: one day  we may need bags that can only store up to 5 copies of the same element.
+Moreover, the original problem is not really solved, but only moved 
+further away. For example, one day  we may need bags that can only store up to 5 copies of the same element.
 We are now at the starting point again:
 \begin{itemize}
-\item either we inser \Q@class Bag5 extends Bag@ and we break LSP,
-\item we duplicate the code of the \Q@Bag@ implementation with minimal adjustments in \Q@class Bag5 extends AbstractSetOrBag@
+\item either we insert \Q@class Bag5 extends Bag@ and we break LSP; 
+\item or we duplicate the code of the \Q@Bag@ implementation with minimal
+  adjustments in \Q@class Bag5 extends AbstractSetOrBag@;
 \item or we introduce a
 \Q@abstract class BagN extends AbstractSetOrBag@ and \Q@class Bag5 extends BagN@
 and we modify \Q@Bag@ so that  \Q@class Bag extends BagN@.
 Note that this last solution is changing the public interface of the formerly released \Q@Bag@ class, and
-this may even break retro-compatibility (if a client program was using reflection in a poor way)
+this may even break retro-compatibility (if a client program was using
+reflection, for example).
 \end{itemize}
 
-\paragraph{Set/Bag in \name}
-Instead, in our proposed approach, if we was to originally declare
+\subsection{Sets and Bags in \name}
+Instead, in \name, if we was to originally declare
 \begin{lstlisting}
 Set:{/*set implementation*/} 
 \end{lstlisting}
 Then our code would be impossible to reuse in the first place for any user of our library.
-We consider this an advantage, since unintended code reuse runs into underdocumented behaviour near all of the times\footnote{See
-``Design and document for inheritance or else prohibit it''\cite{https://www.infoq.com/articles/API-Design-Joshua-Bloch}:
-self use of public methods is rarelly documented, thus is hard to understand the effects of overriding a library metod\cite{https://www.infoq.com/articles/API-Design-Joshua-Bloch}.
-}
+We consider this an advantage, since unintended code reuse runs into underdocumented behaviour nearly all the time\footnote{See
+``Design and document for inheritance or else prohibit
+it''\cite{Bloch08}: the
+self use of public methods is rarelly documented, thus is hard to understand the effects of overriding a library metod.
+}!
 
 If the designer of the set class wishes to make it reusable, it can do it explicitly by providing a set trait:
 \begin{lstlisting}

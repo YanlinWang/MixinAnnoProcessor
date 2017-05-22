@@ -3,7 +3,7 @@
 
 This section presents the overview of \name, and it illustrates the
 key ideas of its design. In particular we illustrate how to separate code use and 
-code reuse.
+code reuse, and how \name solves the this-leaking problem.
 % in \name. %, and how this allows improving both. 
 
 %\subsection{The Design of \name: Decoupling Use from Reuse}
@@ -16,7 +16,7 @@ classes are roughly equivalent to final classes in Java.  Thus,
 compared to Java-like languages, the most noticeable difference is the
 absence of the \Q@extends@ keyword in \name. 
 
-To illustrate classes in \name consider the example in Section~\ref{}:
+To illustrate classes in \name consider the example in Section~\ref{sec:intro}:
 
 \begin{lstlisting}
  A: { method int ma() Utils.m(this) }//note, no {return _}
@@ -24,7 +24,7 @@ To illustrate classes in \name consider the example in Section~\ref{}:
 \end{lstlisting} 
 
 \noindent Classes in \name use a slightly different declaration style compared
-to Java: there is no \lstinline{class} keyword, and a colon separe the class name (which must always start with
+to Java: there is no \lstinline{class} keyword, and a colon separates the class name (which must always start with
 an uppercase letter) and the class implementation, which is used to specify the
 definitions of the class. In our example, in the class declaration
 for \lstinline{A}, the name of the class is \lstinline{A} and the code 
@@ -53,7 +53,7 @@ types. However they provide code reuse.
 Trait declarations 
 look very much like class declarations, but trait names 
 start with a lowercase letter. An obvious first attempt 
-to model the example in Section~\ref{} (for a Java programmer) 
+to model the example in Section~\ref{sec:intro} 
 with traits and code reuse is:
 
 \begin{lstlisting}
@@ -80,7 +80,7 @@ A Java programmer may then try to write
  Utils:{ class method int m(ta a)//syntax error
    /*method body here*/ }
 \end{lstlisting}
-But this does not work either, indeed \Q@ta@ is not a type in the first place, since it is a (lowercase) trait name.
+But this does not work either: \Q@ta@ is not a type in the first place, since it is a (lowercase) trait name.
 Indeed
 since the trait name is not a type, no code external to that trait can
 refer to it. This is one of the key design decisions in \name. 
@@ -127,19 +127,22 @@ refer to it. This is one of the key design decisions in \name.
 %  being defined, but rather it has the self-type.
 %\end{itemize}
 
-With this in mind, we can try to model the example in Section~\ref{} again:
+With this in mind, we can try to model the example again:
 
 \begin{lstlisting}
  IA:{interface method int ma()}//interface with abstract method
- Utils:{ class method int m(IA a)/*method body here*/}
+ Utils:{class method int m(IA a)/*method body here*/}
  ta:{implements IA
-   method int ma() Utils.m(this) }
+     method int ma() Utils.m(this) }
  A:Use ta
 \end{lstlisting}
 
-This code works: \Q@Utils@ rely over interface \Q@IA@ and the trait \Q@ta@
+This code works: \Q@Utils@ relies on interface \Q@IA@ and the trait \Q@ta@
 implements \Q@IA@.
-\Q@ta@ is well typed: independently of what class name(s) will be associated to its code, we knew such class(es) will implement \Q@IA@, thus while typechecking \Q@Utils.m(this)@ we can assume
+\Q@ta@ is well typed: independently of what class name(s) will be
+associated to its code, we know that such class(es) will implement
+\Q@IA@. 
+Therefore, while typechecking \Q@Utils.m(this)@ we can assume
 \Q@this<:IA@.
  It is also possible to add a \Q@B@ as follows
 \begin{lstlisting}
@@ -148,18 +151,28 @@ implements \Q@IA@.
 This also works.  \Q@B@ reuses the code of \Q@ta@, but has no knowledge of \Q@A@.
 Since \Q@B@ reuses \Q@ta@, and \Q@ta@ implements \Q@IA@, also \Q@B@ implements \Q@IA@. 
 
-Later, in section \ref{} we will provide a more formal detail over type system. For now notice that in the former example the code is correct even if no method called \Q@ma@ is explicitly declared.
-The idea is that such method is imported from trait \Q@ta@, exactly as in the java equivalent
+Later, in Section \ref{sec:formal} we will provide more details on the type
+system. 
+For now notice that in the former example the code is correct even if
+no method called \Q@ma@ is explicitly declared\bruno{but it would not
+  work if the \lstinline{ta} was not in the use list, right?}.
+The idea is that such method is imported from trait \Q@ta@, exactly as in the Java equivalent
 \begin{lstlisting}[language=Java]
   class B extends A{ int mb(){return this.ma();} }  
 \end{lstlisting}
-method \Q@ma@ is imported from \Q@A@.
-This concept is natural for a Java programmer, but was not supported in previous work \cite{deep, ferruccio}
+where method \Q@ma@ is imported from \Q@A@.
+This concept is natural for a Java programmer, but was not supported
+in previous work \cite{Damiani2014,deep}. Those works require all
+dependencies in code literals to be explicitly declared, so that the
+code literal is completely self-contained. However, this results in
+many spurious abstract method declarations.\bruno{Improved text. 
+Please double-check! You may actually show how the code with the extra 
+explicit declarations would look like! 
+} 
 
 \paragraph*{Semantic of Use}
-Albeit alternative semantic models for traits~\cite{} have been proposed,
-here we use the flattening model.
-This means that 
+Albeit alternative semantic models for traits~\cite{Traits:ECOOP2003} have been proposed,
+here we use the flattening model. This means that 
 \begin{lstlisting}
 A:Use ta
 B:Use ta, { method int mb(){return this.ma();} }
@@ -175,10 +188,12 @@ B:{implements IA
 
  \end{lstlisting}
  
- This code seems correct, and there is no mention of the trait
+ This code is correct, and there is no mention of the trait
  \Q@ta@. In some sense, all the information about code-reuse/inheritance
   is just a private implementation detail of \Q@A@
  and \Q@B@; while subtyping is part of the class interface.
+\bruno{I don't think we are making  a strong point here, and this
+  discussion seems inconsequent at this point!}
 
 
 %To finish this section, Figure \ref{fig:compare} provides a summary of

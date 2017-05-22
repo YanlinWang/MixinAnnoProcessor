@@ -66,7 +66,7 @@
 
 \newcommand{\syndef}{$::=$}
 
-\newcommand\name{{\bf DTrait}\xspace}
+\newcommand\name{{\bf $42_{\mu}$}\xspace}
 
 %
 \begin{document}
@@ -100,21 +100,24 @@ The University of Hong Kong, Hong Kong\\}
 In most object oriented languages subclassing/inheritance implies
 subtyping. This is considered by many a conceptual design error, but it
 seems required for technical reasons, due to what we call the
-\emph{this-leaking problem}. The leaking problem shows that separating
+\emph{this-leaking problem}. The this-leaking problem shows that separating
 code-reuse from subtyping is non-trivial and requires a significant
 departure from the OO models in existing mainstream OO languages.
 We are aware of at least 3 independently designed research languages 
 that address this limitation:Delta-Trait, Package Template, DeepFjig.
-Leveraging on \emph{traits}, in this work we aim to synthesizes
+Leveraging on \emph{traits}, in this work we aim to synthesize
 the main ideas of those very different language designs.
 Our result is a nominally typed minimalist language, natural to OO programmers.
 By making our type system distinguish between code-use and code-reuse
 we can separate inheritance and subtyping, while avoiding 
-redundant abstract declarations (required in Delta-Trait and DeepFjig), while supporting self construction,
-binary methods and recursive types.
+redundant abstract declarations (required in Delta-Trait and
+DeepFjig). At the same time self construction,
+binary methods and recursive types are also supported.
 Moreover, we provide a novel and elegant solution to uniformly
 handle behavior and state within trait composition.
-
+These ideas have been implemented in the 42 language, which we use 
+throughout the paper for code examples.\bruno{Is it true that all the code
+examples are valid 42?} 
 
 \begin{comment}
 Two distinct groups of researchers independently [.marco..] and
@@ -142,15 +145,15 @@ rich composition algebra as in [ marco ]
 
 \input{Intro}
 \input{section2}
-\input{section4}
 \input{section3}
+\input{section4}
 \input{Examples}
 %\input{Extensions}
 \input{RelatedWork}
 \input{Conclusion}
 
 \section*{Bibliography}
-\bibliographystyle{elsart-num-sort}
+\bibliographystyle{plain}
 \bibliography{main}
 
 \end{document}
