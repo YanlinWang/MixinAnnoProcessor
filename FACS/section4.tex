@@ -1,51 +1,54 @@
-\section{Allowing Reuse against Subtyping}
-Before we discussed how traits does not induce a new (externally visible) type.
-However, locally in the trait the programmer can use the special type \Q@This@ in order to denote the 
+\section{Improving Reuse}
+\name allows reuse even when subtyping is impossible.
+In \name traits do not induce a new (externally visible) type.
+However, locally in the trait the programmer can use the special self-type \Q@This@ in order to denote the 
 type of \Q@this@.
 That is: the program is agnostic to what the \Q@This@ type is going to be, so it can
 be later assigned to any (or many) classes. 
 The idea is that during flattening, \Q@This@ will be replaced with the actual class name.
 In this way, \name allows reuse even when subtyping is
 impossible, that is, when a method parameter has type \Q@This@ (also called \emph{binary
-  methods}~\cite{}). 
+  methods}~\cite{bruce96binary}). 
 This type of situations is the primary motivator
 for previous work aiming at separating inheritance from subtyping.
-Leveraging on \Q@This@ type, we can also provide self-instantiation (trait methods can create instances of the class using them) and smootly integrate state and traits: 
-
-  %????Despite the adoption of a nominal approach and unlike other nominally typed languages, the leaking problem does not prevent \name from enjoying such kind of improved reuse.
-
-%To illustrate how \name allows for improved reuse, we consider a
-%pattern to combine \emph{multiple trait inheritance} and \emph{state}:
-a challenging problem that has limited the flexibility of traits and
+Leveraging on the \Q@This@ type, we can also provide self-instantiation (trait methods can create instances of the class using them) and smootly integrate state and traits: a challenging problem that has limited the flexibility of traits and
 reuse in the past.
 %First we show how self-instantiation and state are already avaible in the simplest trait model,
 %then we show how to radically improve the 
 
 \subsection{Managing State}
 
-This idea of summing pieces of code is very elegant, and has proven
-very successfull in module composition
-languages~\cite{ancona2002calculus}\bruno{and several trait models?}. 
-However our research community is
-struggling to make it work with object state (constructor and fields)
-while acheving the following goals:
+To illustrate how \name improves reuse, we will show a novel approach
+to deal with \emph{state} in traits.  The idea of summing pieces of
+code is very elegant, and has proven very successfull in module
+composition languages~\cite{ancona2002calculus} and several trait
+models~\cite{Traits:ECOOP2003}\bruno{others}.  However the research
+community is struggling to make it work with object state (constructor
+and fields) while achieving the following goals:
 
 \begin{itemize}
 %complicated discussions on this point \item keep sum associative and commutative,
-\item managing fields in a way that borrows the elegance of summing methods,
-\item actually initialize objects, leaving no null fields,
-\item make it easy to add new fields,
+\item managing fields in a way that borrows the elegance of summing methods;
+\item actually initialize objects, leaving no null fields;
+\item making it easy to add new fields;
 \item allowing a class to create instances of itself.
 \end{itemize}
 
-In the related work we will show some alternative ways to handle state.
-However the purest solution just requires methods:
-  The idea is that
-  the trait code just uses getter/setters/factories, while leaving
-  to classes the role to finally define the fields/constructors.
-  That is, the  the class has syntax richer that the trait one,
-  allowing declaration for fields and constructors.
-  This approach is very powefull~\cite{wang2016classless}
+In the related work we will show some alternative ways to handle
+state.  However the purest solution just requires methods. The idea is
+that the trait code just uses getter/setters/factories, while leaving
+to classes the role to finally define the fields/constructors. That
+is, the class has syntax richer that the trait one, allowing
+declaration for fields and constructors.  This approach is very
+powerful as illustrated by Wang et al.~\cite{wang2016classless}.
+
+\paragraph{Immutable Points} Consider, for example, two simple 
+traits that deal with \emph{immutable point} objects. That is, points
+in the cartesian plane (with coordinates \lstinline{x} and
+\lstinline{y}). The first trait provides a \emph{binary method} that 
+sums the point object with another point to return a new point. 
+The second trait provides a similar operation that does multiplication 
+instead.
  
 \begin{lstlisting}
   pointSum: { method int x()  method int y()//getters
@@ -60,16 +63,23 @@ However the purest solution just requires methods:
     }
 \end{lstlisting}
 
-As you see, all the state operations are represented as abstract methods.
+\noindent As we can see, all the state operations (the getters for the 
+\lstinline{x} and \lstinline{y} coordinates) are represented as abstract methods.
+Moreover there is an \lstinline{of} method which acts as a constructor
+for points. \bruno{I think we need to explain what a class method is
+  here, and how it differs from Java's static methods! mention
+  flatenning; importantly they can be abstract!}
 
 \subsection{A First Attempt at Composition}
-According to the general ideas expressed before,
+According to the general ideas about trait composition presented in
+Section~\ref{sec:separate}, a first attempt at composing the two traits providing
+two different operations on points is:
 \begin{lstlisting}
   Point:Use pointSum,pointMul
 \end{lstlisting}  
 
-\noindent would fail since methods \Q@x@,\Q@y@ and \Q@of@ are still abstract.
-In this mindset, the user would be required to write something similar to
+\noindent However this fails since methods \Q@x@,\Q@y@ and \Q@of@ are still abstract!
+Instead a user could write something similar to:
 
 \begin{lstlisting}
   CPoint:Use pointSum,pointMul, {//not our suggested solution
@@ -81,44 +91,58 @@ In this mindset, the user would be required to write something similar to
     }
 \end{lstlisting}
 
-\paragraph*{Advantages:} 
-this approach is associative and commutative, even self construction
+\noindent This approach works, and it as some advantages, but also
+some disadvantages: 
+
+\begin{itemize}
+
+\item {\bf Advantages:} This approach is associative and commutative, even self construction
   can be allowed if the trait requires a static/class method
-  returning \Q@This@; the class will then implement this method by forwarding
-  a call to the constructor.
+  returning \Q@This@. The class will then implement the methods returning \Q@This@
+  by forwarding a call to the constructor.
   
-\paragraph*{Negatives:} writing those obvious ``close the state/fixpoint'' class 
-   with the constructors and  fields and getter/setters and factories can be quite tedious.
+\item {\bf Disadvantages:} Writing those obvious definitions to close
+  the state/fixpoint in the class 
+   with the constructors and fields and getter/setters and factories can be quite tedious.
    %Moreover, there is no way for a trait to specify a default value for a field,
    %the class need to handle all the state, even state that is conceptually
    %"private" of such trait. 
-   Former work consider to automatically generate such code~\cite{wang2016classless}.
+   Previous work shows that such code can be automatically generated~\cite{wang2016classless}.
 
-In our model we go one step further: there is no need to generate code, or to explicitly
-write down constructors and fields; there is not even syntax for those
-constructs.
-The idea is that any class that ``could" be completed in the obvious way
-\emph{is a complete ``coherent" class}.
-In most other languages, a class is abstract if have abstract methods.
-Instead, we call abstract a class whose set of abstract methods is not
-coherent, that is, can not be automatically recognized as factory,getters and setters.
+\end{itemize}
+
+\subsection{The \name approach to State}
+
+In our model we go one step further: there is no need to generate
+code, or to explicitly write down constructors and fields. In fact in
+\name there is not even syntax for those constructs!  The idea is that
+any class that ``can" be completed in the obvious way to form \emph{a
+  complete ``coherent" class}.  In most other languages, a class is
+abstract if it has abstract methods.  Instead, we call a class
+abstract only when the set of abstract methods is not coherent. That
+is, the unimplemented methods cannot not be automatically recognized
+as factory, getters and setters. Getters and setters are called
+\emph{abstract state operations}.
   
-\paragraph*{Detaild definition of coherent:}
+\paragraph*{Coherent classes} A more detailed definition of coherent
+classes is given next:
 \begin{itemize}
-\item a class with no abstract method is coherent, and like Java \Q@Math@.
-Will just be usefull for calling class/static methods.
+\item a class with no abstract methods is coherent (just like Java
+  \Q@Math@, for example). Such classes are useful for calling class/static methods.
 \item a class with a single abstract \Q@class@ method returning \Q@This@
 is coherent if all the other abstract methods can be seen as \emph{abstract state
 operations} over one of its argument.
 For example,
 if there is a \Q@class method This of(int x, int y)@ as before,
 then
-\item a method \Q@int x()@ is intepreted as an abstract state method: a getter for \Q@x@.
-\item a method \Q@Void x(int that)@ is a setter for x.
+\begin{itemize}
+\item a method \Q@int x()@ is interpreted as an abstract state method: a \emph{getter} for \Q@x@.
+\item a method \Q@Void x(int that)@ is a \emph{setter} for x.
+\end{itemize}
 \end{itemize}
 
 While getters and setters are fundamental operations, we can immagine
-more operations to be supported; for example
+more operations to be supported; for example:
 \begin{itemize}
 \item \Q@method This withX(int that)@
 may be a ``wither", doing a functional field update, that is create a new instance that is like \Q@this@ but where field \Q@x@ has now \Q@that@ value.
@@ -127,29 +151,22 @@ may do two field update at a time.
 \item\Q@method This clone()@ may do a shallow clone of the object.
 \end{itemize}
 
-We are not sure what is the best set of abstract state operations yet, but we think this could become a very interesting area of research.
+We are not sure what is the best set of abstract state operations yet,
+but we think this could become a very interesting area of research.
+The work by Wang et al.~\cite{wang2016classless} explores a particular
+set of such abstract state operations.
 
-\paragraph{The solution in \name:}${}_{}$\\
-With our approach to handle the state, the following code can be directly composed:
+\paragraph{Points in \name:}
+In \name and with our approach to handle the state, 
+\lstinline{pointSum} and \lstinline{pointMul} can be directly composed:
 
 \begin{lstlisting}
- //same code as before for pointSum and pointMul
-  pointSum: { method int x() method int y()
-    class method This of(int x,int y)
-    method This sum(This that)
-      This.of(this.x()+that.x(),this.y()+that.y())
-    }
-  pointMul: { method int x() method int y()//look we are repeating
-    class method This of(int x,int y)//the abstract method declarations.
-    method This mul(This that)
-      This.of(this.x()*that.x(),this.y()*that.y())
-    }
   PointAlgebra:Sum pointSum,pointMul
 \end{lstlisting}  
 
-  As you can see, we can declare the methods independently and compose the result
+  As we can see, we can declare the methods independently and compose the result
   as we wish. In this first attempt, we repeated the abstract methods \Q@x@,\Q@y@ and \Q@of@.
-  In addition of \Q@Sum@ and \Q@Mul@ we may want many operations over points; can we improve our reuse
+  In addition to \Q@sum@ and \Q@mul@ we may want many operations over points; can we improve our reuse
   and not repeat such abstract definitions? of course!
 
 \begin{lstlisting}

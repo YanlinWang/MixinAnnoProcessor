@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.21)  22 MAY 2017 11:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.21)  22 MAY 2017 17:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -349,7 +349,7 @@ LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
  [3] [4]) (./section3.tex [5]
 Overfull \hbox (21.01276pt too wide) in paragraph at lines 47--48
 \OT1/ptm/m/n/10 Since sub-class-ing im-plies sub-typ-ing, our code break Liskov
- sub-sti-tu-tion prin-ci-ple (LSP) [11]:
+ sub-sti-tu-tion prin-ci-ple (LSP) [12]:
  []
 
 
@@ -358,15 +358,8 @@ Overfull \hbox (23.75555pt too wide) in paragraph at lines 76--82
 [][].
  []
 
-[6]
-
-LaTeX Warning: Citation `Bloch08' on page VII undefined on input line 94.
-
-) (./section4.tex [7] [8] [9] [10]) (./Examples.tex
-Underfull \vbox (badness 6188) has occurred while \output is active []
-
- [11]
-[12] Excluding 'comment' comment.
+[6]) (./section4.tex [7] [8] [9] [10]) (./Examples.tex [11] [12]
+Excluding 'comment' comment.
 Overfull \hbox (41.04472pt too wide) in paragraph at lines 189--192
 \OT1/ptm/m/n/10 would be cor-rect: even if n,m are not de-fined in-side [][][][
 ][][][][][][][][][][][][][][],
@@ -411,8 +404,8 @@ Missing character: There is no  in font ptmr7t!
 (./Conclusion.tex [19]) (./paper.bbl) [20] (./paper.aux) ) 
 Here is how much of TeX's memory you used:
  3722 strings out of 493014
- 52319 string characters out of 6133351
- 158937 words of memory out of 5000000
+ 52325 string characters out of 6133351
+ 161937 words of memory out of 5000000
  7156 multiletter control sequences out of 15000+600000
  34570 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -435,7 +428,7 @@ ype1/urw/courier/ucrb8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw
 /ucrro8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmb8a.p
 fb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/l
 ocal/texlive/2016/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on paper.pdf (20 pages, 231424 bytes).
+Output written on paper.pdf (20 pages, 232769 bytes).
 PDF statistics:
  138 PDF objects out of 1000 (max. 8388607)
  98 compressed objects within 1 object stream
