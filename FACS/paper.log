@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.21)  22 MAY 2017 17:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.5.21)  23 MAY 2017 12:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -322,12 +322,12 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 99.
 
-Overfull \hbox (0.96048pt too wide) in paragraph at lines 100--121
+Overfull \hbox (0.96048pt too wide) in paragraph at lines 100--120
 []\OT1/ptm/m/n/9 In most ob-ject ori-ented lan-guages sub-class-ing/in-her-i-ta
 nce im-plies sub-
  []
 
-Excluding 'comment' comment. (./Intro.tex
+(./Intro.tex
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <9> not available
@@ -337,47 +337,67 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
  [1
 
 
-{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] Exc
-luding 'comment' comment.
-Excluding 'comment' comment.) (./section2.tex
+{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+Overfull \hbox (5.05661pt too wide) in paragraph at lines 137--140
+[]\OT1/ptm/m/n/10 DeepFjig [11,21,15]: A mod-ule com-po-si-tion lan-guage sup-p
+ort-ing com-pos-ing nested
+ []
+
+Excluding 'comment' comment. Excluding 'comment' comment.) (./section2.tex
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 2.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 2.
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 22.
- [3] [4]) (./section3.tex [5]
-Overfull \hbox (21.01276pt too wide) in paragraph at lines 47--48
+
+[3] [4]
+
+LaTeX Warning: Citation `Damiani2014' on page V undefined on input line 170.
+
+LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <10> not available
+(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 194.
+) (./section3.tex [5]
+Overfull \hbox (21.01276pt too wide) in paragraph at lines 46--47
 \OT1/ptm/m/n/10 Since sub-class-ing im-plies sub-typ-ing, our code break Liskov
- sub-sti-tu-tion prin-ci-ple (LSP) [12]:
+ sub-sti-tu-tion prin-ci-ple (LSP) [17]:
  []
 
 
-Overfull \hbox (23.75555pt too wide) in paragraph at lines 76--82
+Overfull \hbox (23.75555pt too wide) in paragraph at lines 75--81
 [][][][][][][][][] \OT1/ptm/m/n/10 and we mod-ify [][][] so that [][][][][][][]
 [][].
  []
 
-[6]) (./section4.tex [7] [8] [9] [10]) (./Examples.tex [11] [12]
-Excluding 'comment' comment.
+[6]) (./section4.tex [7] [8] [9] [10]
+Overfull \hbox (56.22437pt too wide) in paragraph at lines 217--227
+\OT1/ptm/m/n/10 sup-ports with-ers, in-stead of writ-ing [][][][][][] we can us
+e [][][][][][][][][][][][]
+ []
+
+
+LaTeX Warning: Citation `Zenger-Odersky2005' on page XI undefined on input line
+ 253.
+
+[11]) (./Examples.tex [12] Excluding 'comment' comment. [13]
 Overfull \hbox (41.04472pt too wide) in paragraph at lines 189--192
 \OT1/ptm/m/n/10 would be cor-rect: even if n,m are not de-fined in-side [][][][
 ][][][][][][][][][][][][][][],
  []
 
-[13]
+
 Overfull \hbox (41.18498pt too wide) in paragraph at lines 213--216
 \OT1/ptm/m/n/10 lan-guage, [][][] may of-fers a [][][][][][] method, and [][][]
  may of-fer a [][][][][][]
  []
 
-[14] Excluding 'comment' comment.) (./RelatedWork.tex [15]
+[14] [15] Excluding 'comment' comment.) (./RelatedWork.tex
 
 LaTeX Warning: Citation `deepfjig' on page XVI undefined on input line 3.
 
 
-LaTeX Warning: Citation `3ferruccio works' on page XVI undefined on input line 
-32.
+LaTeX Warning: Citation `ferruccioworks' on page XVI undefined on input line 32
+.
 
 [16] [17]
 
@@ -393,45 +413,41 @@ Overfull \hbox (1.90001pt too wide) in paragraph at lines 136--182
 [] [] 
  []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [18]
+[18]
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ù in font ptmr7t!
-)
-(./Conclusion.tex [19]) (./paper.bbl) [20] (./paper.aux) ) 
+) (./Conclusion.tex [19]) (./paper.bbl [20]) [21] (./paper.aux) ) 
 Here is how much of TeX's memory you used:
- 3722 strings out of 493014
- 52325 string characters out of 6133351
- 161937 words of memory out of 5000000
- 7156 multiletter control sequences out of 15000+600000
- 34570 words of font info for 74 fonts, out of 8000000 for 9000
+ 3730 strings out of 493014
+ 52528 string characters out of 6133351
+ 155937 words of memory out of 5000000
+ 7165 multiletter control sequences out of 15000+600000
+ 33062 words of font info for 73 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  38i,15n,40p,331b,1519s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2
-016/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2016/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2016/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2016/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2016/texmf-dist/fonts
-/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/local/texlive/2016/texmf-dist/f
-onts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2016/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2016/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2016/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2016/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2016/texmf-dist/fonts/t
-ype1/urw/courier/ucrb8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw
-/courier/ucrr8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/courier
-/ucrro8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmb8a.p
-fb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/l
-ocal/texlive/2016/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on paper.pdf (20 pages, 232769 bytes).
+{/usr/local/te
+xlive/2016/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2016/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2016/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2016/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2016/texmf-dis
+t/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/local/texlive/2016/texmf
+-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2016/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2016/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2016/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2016/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2016/texmf-dist/
+fonts/type1/urw/courier/ucrb8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/ty
+pe1/urw/courier/ucrr8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/
+courier/ucrro8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/u
+tmb8a.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
+</usr/local/texlive/2016/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on paper.pdf (21 pages, 235310 bytes).
 PDF statistics:
- 138 PDF objects out of 1000 (max. 8388607)
- 98 compressed objects within 1 object stream
+ 141 PDF objects out of 1000 (max. 8388607)
+ 100 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
