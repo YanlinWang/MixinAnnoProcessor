@@ -22,17 +22,21 @@ To illustrate how \name improves reuse, we will show a novel approach
 to deal with \emph{state} in traits.  The idea of summing pieces of
 code is very elegant, and has proven very successfull in module
 composition languages~\cite{ancona2002calculus} and several trait
-models~\cite{Traits:ECOOP2003}\bruno{others}.  However the research
+models~\cite{Traits:ECOOP2003,Bergel2007,BETTINI2013521,DBLP:journals/iandc/LagorioSZ12}.  However the research
 community is struggling to make it work with object state (constructor
 and fields) while achieving the following goals:
 
-\begin{itemize}
+%\begin{itemize}
 %complicated discussions on this point \item keep sum associative and commutative,
-\item managing fields in a way that borrows the elegance of summing methods;
-\item actually initialize objects, leaving no null fields;
-\item making it easy to add new fields;
-\item allowing a class to create instances of itself.
-\end{itemize}
+%\item
+(1) managing fields in a way that borrows the elegance of summing methods;
+%\item
+(2) actually initialize objects, leaving no null fields;
+%\item
+(3) making it easy to add new fields;
+%\item
+(4) allowing a class to create instances of itself.
+%\end{itemize}
 
 In the related work we will show some alternative ways to handle
 state.  However the purest solution just requires methods. The idea is
@@ -56,19 +60,20 @@ instead.
     method This sum(This that)
       This.of(this.x()+that.x(),this.y()+that.y())//self instantiation
     }
-  pointMul: { method int x() method int y()
-    class method This of(int x,int y)
+  pointMul: { method int x() method int y()//repeating getters
+    class method This of(int x,int y)//repeating factory
     method This mul(This that)
       This.of(this.x()*that.x(),this.y()*that.y())
     }
 \end{lstlisting}
 
 \noindent As we can see, all the state operations (the getters for the 
-\lstinline{x} and \lstinline{y} coordinates) are represented as abstract methods.
-Moreover there is an \lstinline{of} method which acts as a constructor
-for points. \bruno{I think we need to explain what a class method is
-  here, and how it differs from Java's static methods! mention
-  flatenning; importantly they can be abstract!}
+\lstinline{x} and \lstinline{y} coordinates) are represented as {\bf abstract} methods.
+Notice the abstract \Q@class method This of(..)@ which acts as a constructor
+for points:
+A class method is similar to a \Q@static@ method in Java but can be abstract. 
+As for instance methods, they are late bound:  flattening can provide an implementation for them.
+abstract class method are very similar to the original concept of member functions in the module composition setting.
 
 \subsection{A First Attempt at Composition}
 According to the general ideas about trait composition presented in
@@ -93,6 +98,7 @@ Instead a user could write something similar to:
 \bruno{We talk about withers later on. So I think we should consider
   having withers in this code, so that readers can understand what 
 withers are!}
+\marco{with withers it will look more complicated}
 
 \noindent This approach works, and it as some advantages, but also
 some disadvantages: 
@@ -119,12 +125,12 @@ some disadvantages:
 In our model we go one step further: there is no need to generate
 code, or to explicitly write down constructors and fields. In fact in
 \name there is not even syntax for those constructs!  The idea is that
-any class that ``can" be completed in the obvious way to form \emph{a
+any class that ``can" be completed in the obvious way  is \emph{a
   complete ``coherent" class}.  In most other languages, a class is
 abstract if it has abstract methods.  Instead, we call a class
 abstract only when the set of abstract methods is not coherent. That
 is, the unimplemented methods cannot not be automatically recognized
-as factory, getters and setters. Getters and setters are called
+as factory, getters and setters. Methods recognized as factory, getters and setters are called
 \emph{abstract state operations}.
   
 \paragraph*{Coherent classes} A more detailed definition of coherent
@@ -148,7 +154,7 @@ While getters and setters are fundamental operations, we can immagine
 more operations to be supported; for example:
 \begin{itemize}
 \item \Q@method This withX(int that)@
-may be a ``wither", doing a functional field update, that is create a new instance that is like \Q@this@ but where field \Q@x@ has now \Q@that@ value.
+may be a ``wither", doing a functional field update: it creates a new instance that is like \Q@this@ but where field \Q@x@ has now \Q@that@ value.
 \item \Q@method Void update(int x,int y)@
 may do two field update at a time.
 \item\Q@method This clone()@ may do a shallow clone of the object.
@@ -249,7 +255,7 @@ a better design would be the following:
   enough.}
 
 \paragraph{Independent Extensibility}
-  Ofcourse, quite frequentely there can be multiple independent
+  Of course, quite frequentely there can be multiple independent
   extensions~\cite{Zenger-Odersky2005} that need to be composed. Lets suppose that 
   we could have a notion of flavoured points as well.   
   In order to compose, let say \Q@colored@ with \Q@flavored@ we would
