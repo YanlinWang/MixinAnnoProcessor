@@ -27,15 +27,14 @@ For example in Java one could have:
 \begin{lstlisting}
 class Set {...//usual hashmap implementation
   private Elem[] hashMap;
-  Elem put() /*body*/
-  boolean isIn(Elem)/*body*/
+  void put(Elem e) /*body*/
+  boolean isIn(Elem e)/*body*/
   ...}
 class Bag extends Set{...//for each element in the hash map,
   private int[] countMap;// keep track of how many times is there
-  @Override Elem put()/*body*/
-  int howManyTimes(Elem)/*body*/
+  @Override void put(Elem e)/*body*/
+  int howManyTimes(Elem e)/*body*/
   ...}\end{lstlisting}
-\bruno{did you mean get instead of put?}
 
 \noindent Coding \Q@Bag@ in this way can avoid a lot of code
 duplication, but \emph{we induced unintented subtyping}! 
@@ -113,7 +112,8 @@ Set:Use set
 bag: Use set, {/*bag implementation*/}
 Bag: Use bag
 \end{lstlisting}
-Notice how, thanks to flattening, the resulting code for \Q@Bag@ is identical in both versions, thus if we are the developers of bags, we can temporarly go for the first version, and move when needed to the second without adding new undesired complexity for our old clients. 
+Notice how, thanks to flattening, the resulting code for \Q@Bag@ is identical in both versions, 
+and as shown in Section 2, there is no trace of trait \Q@bag@. Thus if we are the developers of bags, we can temporarly go for the first version, and move when needed to the second without adding new undesired complexity for our old clients. 
 
 
 %As a pleasaruble accident, avoid such code gift us simple support for

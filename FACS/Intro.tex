@@ -95,9 +95,8 @@ instance of \lstinline{B}. However, this can be correct only if \lstinline{B} is
 %\lstinline{mb}, it will have a type that is incompatible with the
 %expected argument of type \lstinline{A}.  
 
-\bruno{You removed my lengthier explanation. I think this makes things
-less clear.}
-If in Java code reuse was not introducing subtyping, then an invocation of 
+
+As a though experiment, imagine that Java code-reuse (extends keyword) was not introducing subtyping: then an invocation of 
 \lstinline{B.mb} would result in a run-time type error.
 The problem is that the
 self-reference \lstinline{this} in class \lstinline{B} has 
@@ -126,8 +125,19 @@ adopting a more flexible nominally typed OO model where subclassing
 does not imply subtyping is not trivial, and a more substantial change
 in the language design is necessary. 
 We are aware of at least 3 independently designed research languages 
-that address this limitation: Delta-Trait~\cite{Damiani2014}, Package Templates~\cite{KrogdahlMS09}, DeepFjig~\cite{deep}.
-\bruno{Marco, please expand this a bit. Check if references are correct!}
+that address this limitation
+\begin{itemize}
+\item Delta-Trait (DT)~\cite{Bettini:2010:ISP:1774088.1774530,BETTINI2013521,Bettini2015282}:
+Each language constructs  has one single responsibilty: classes instantiate objects,
+interfaces induce norminal types, records express state and traits are unit of reuse.
+\item Package Templates (PT)~\cite{KrogdahlMS09,DBLP:journals/taosd/AxelsenSKM12,DBLP:conf/gpce/AxelsenK12}:
+An extension of (full) Java where new packages can be ``syntetized'' by mixing
+and integrating code templates. As an extension of java, PT allows but not requires
+separation of inheritance and subtyping.
+\item DeepFjig~\cite{deep,servetto2014meta,DBLP:journals/iandc/LagorioSZ12}:
+A module composition language supporting composing nested classes, where the main idea is that
+nested classes with the same name are recursivelly composed.
+\end{itemize}
 
 This paper aims at showing a simple language design, called \name, to
 completely decouple subtyping and subclassing in a nominally typed OO
@@ -172,13 +182,15 @@ code reuse.
   makes the separation of subclassing and subtyping difficult.
 \item Inspired by previous language designs that solve the
   this-leaking problem, we synthesize the key ideas in {\bf a novel and
-  simple language design}. 
+  simple language design}. This language is the logic core of the language 42, and 
+  all the examples in the paper can be directly encoded as valid 42 programs. 
+
 \item We illustrate how the new design {\bf improves both code use and code
   reuse}.
 \item We propose {\bf a clean and elegant approach to handle of state} in a
   languages that support traits.
-\item The new language design is {\bf adopted by the 42 language}. All the
-  examples in the paper are valid 42 programs. 
+%\item The new language design is {\bf adopted by the 42 language}. All the
+ % examples in the paper are valid 42 programs. 
 
 \begin{comment}
 \item simple approach to fully separate inheritance and subtyping
