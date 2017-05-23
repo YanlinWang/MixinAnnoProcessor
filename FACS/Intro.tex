@@ -1,20 +1,16 @@
 \section{Introduction}\label{sec:intro}
 
 In mainstream OO languages like Java, C++ or C\# subclassing 
-implies subtyping. For example, in Java a subclass definition, such as:
-
-\begin{lstlisting}
-class A extends B {}
-\end{lstlisting}
-
+implies subtyping. For example, in Java a subclass definition, such as 
+\Q@class A extends B {}@
 \noindent does two things at the same time:
-1) {\bf inheriting} code from class \lstinline{B}; and {\bf creating 
+1) {\bf inherits} \lstinline{B} code; and {\bf create
 a subtype} of \emph{B}. Therefore in a language like Java 
 a subclass is \emph{always} a subtype of the extended class.
 
 Historically, there has been a lot of focus on the importance of
 separing subtyping from subclassing~\cite{cook}.  This is claimed to be
-good for code reuse, design and reasoning. There are at
+good for code-reuse, design and reasoning. There are at
 least two distinct situations where the separation of subtyping and 
 subclassing is helpful.
 
@@ -107,15 +103,15 @@ expected argument of type \lstinline{A}.
 
 Every OO language with the minimal features exposed in the example (using \lstinline{this},
 extends and method calls) is forced to accept that subclassing implies
-subtyping. Note how this is true also in C++, where is
-  possible to "extends privately". Such is a limitation of the
-  visibility of subtyping but not over subtyping itself, and the
-  former example would be accepted by C++ even if \lstinline{B} was to
-  "privately extends" \lstinline{A}.
+subtyping.\footnote{C++ allows to "extends privately", but it is a limitation over
+  subtyping visibility, not over subtyping itself.  The
+  former example would be accepted even if \lstinline{B} was to
+  "privately extends" \lstinline{A}}.
   
 In essence we believe that a problem with the design of classes in
-languages like Java is that classes do too many things at once. In
-particular they act both as units of \emph{use} and \emph{reuse}.
+languages like Java is that classes
+% do too many things at once. In particular they 
+act both as units of \emph{use} and \emph{reuse}.
 That is, in languages like Java, class names can be \emph{use}d as
 type and instantiated.  Classes can also be subclassed to provide
 \emph{reuse} of code.
@@ -128,8 +124,8 @@ We are aware of at least 3 independently designed research languages
 that address this limitation
 \begin{itemize}
 \item Delta-Trait (DT)~\cite{Bettini:2010:ISP:1774088.1774530,BETTINI2013521,Bettini2015282}:
-Each language constructs  has one single responsibilty: classes instantiate objects,
-interfaces induce norminal types, records express state and traits are unit of reuse.
+Each  constructs  has one single responsibilty: classes instantiate objects,
+interfaces induce types, records express state and traits are unit of reuse.
 \item Package Templates (PT)~\cite{KrogdahlMS09,DBLP:journals/taosd/AxelsenSKM12,DBLP:conf/gpce/AxelsenK12}:
 An extension of (full) Java where new packages can be ``syntetized'' by mixing
 and integrating code templates. As an extension of java, PT allows but not requires

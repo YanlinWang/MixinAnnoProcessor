@@ -8,6 +8,12 @@
 \usepackage{times}
 \usepackage{comment}
 \usepackage{rotating} 
+\addtolength{\textwidth}{0.5ex}
+\usepackage{enumitem}
+\setlist{nosep}
+\setlist{leftmargin=0ex}
+
+
 \lstset{language=Java,
   basicstyle=\ttfamily\small,%\scriptsize,
   keywordstyle=\bfseries,%\color{darkRed},
@@ -97,21 +103,21 @@ The University of Hong Kong, Hong Kong\\}
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-In most object oriented languages subclassing/inheritance implies
+In most OO languages subclassing/inheritance implies
 subtyping. This is considered by many a conceptual design error, but it
 seems required for technical reasons, due to what we call the
 \emph{this-leaking problem}. It shows that separating
-code-reuse from subtyping is non-trivial and requires a significant
+inheritance from subtyping is non-trivial and requires a significant
 departure from the OO models in existing mainstream OO languages.
 We are aware of at least 3 independently designed research languages 
 that address this limitation:Delta-Trait, Package Template, DeepFjig.
-Leveraging on \emph{traits}, in this work we aim to synthesize
-the main ideas of those very different language designs.
-Our result is a nominally typed minimalist language, natural to OO programmers.
+In this work we synthesize
+the main ideas of those very different language designs into a nominally typed minimalist language,
+natural to OO programmers.
 By making our type system distinguish between code-use and code-reuse
 we can separate inheritance and subtyping, while avoiding 
-redundant abstract declarations (required in Delta-Trait and
-DeepFjig). At the same time self construction,
+redundant abstract declarations required in Delta-Trait and
+DeepFjig. At the same time self construction,
 binary methods and recursive types are also supported.
 Moreover, we provide a novel and elegant solution to uniformly
 handle behavior and state within trait composition.
@@ -131,7 +137,7 @@ that supports all the examples we show in the paper.
 \input{RelatedWork}
 \input{Conclusion}
 
-\section*{Bibliography}
+
 \bibliographystyle{plain}
 \bibliography{main}
 
