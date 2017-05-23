@@ -100,7 +100,7 @@ The University of Hong Kong, Hong Kong\\}
 In most object oriented languages subclassing/inheritance implies
 subtyping. This is considered by many a conceptual design error, but it
 seems required for technical reasons, due to what we call the
-\emph{this-leaking problem}. The this-leaking problem shows that separating
+\emph{this-leaking problem}. It shows that separating
 code-reuse from subtyping is non-trivial and requires a significant
 departure from the OO models in existing mainstream OO languages.
 We are aware of at least 3 independently designed research languages 
@@ -115,29 +115,9 @@ DeepFjig). At the same time self construction,
 binary methods and recursive types are also supported.
 Moreover, we provide a novel and elegant solution to uniformly
 handle behavior and state within trait composition.
-These ideas have been implemented in the 42 language, which we use 
-throughout the paper for code examples.
+These ideas have been implemented in the 42 language, 
+that supports all the examples we show in the paper.
 
-\begin{comment}
-Two distinct groups of researchers independently [.marco..] and
-[..ferruccio.] used traits to provide
-a sound language design where code-reuse and subtyping are decoupled.
-In this work we distill their work in a simpler model that is far more
-natural for a OO programmer.
-For example, in [ marco ] class A {A m(){return this;}} is not well typed code,
-and in [.ferruccio..] all the logic about object construction have to
-be provided after all trait composition.
-
-We provide an novel and elegant solution to uniformly handle behavior
-and state within trait composition,
-Making our type system distinguish between used code and reused code
-we  can avoid many redundant
-abstract declarations that was required by [ marco ] and [ ferruccio ],
-while supporting self construction, binary methods and recursive types;
-
-We then show that our model can easily support nested classes and a
-rich composition algebra as in [ marco ]
-\end{comment}
 
 \keywords{Code Reuse, Object-Oriented Programming}
 \end{abstract}
