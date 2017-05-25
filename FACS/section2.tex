@@ -172,10 +172,10 @@ The idea is that such method is imported from trait \Q@ta@, exactly as in the Ja
 \saveSpace
 where method \Q@ma@ is imported from \Q@A@.
 This concept is natural for a Java programmer, but was not supported
-in previous work \cite{Damiani2014,deep}. Those works require all
+in previous work \cite{BETTINI2013521,deep}. Those works require all
 dependencies in code literals to be explicitly declared, so that the
 code literal is completely self-contained. However, this results in
-many spurious abstract method declarations.
+many redundant abstract method declarations.
 
 \paragraph{Semantic of Use}
 Albeit alternative semantic models for traits~\cite{Traits:ECOOP2003} have been proposed,
@@ -185,7 +185,7 @@ A:Use ta
 B:Use ta, { method int mb(){return this.ma();} }
 \end{lstlisting}\saveSpace
  
-\noindent reduces/is equivalent to/is flatted into
+\noindent is equivalent to:
   
 \saveSpace \begin{lstlisting}
 A:{implements IA method int ma() Utils.m(this) }

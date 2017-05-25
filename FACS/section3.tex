@@ -30,7 +30,7 @@ class Bag extends Set{...//for each element in the hash map,
 
 \noindent Coding \Q@Bag@ in this way avoids a lot of code
 duplication, but \emph{we induced unintented subtyping}! 
-Since subclassing implies subtyping, our code break Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
+Since subclassing implies subtyping, our code breaks the Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
 Indeed, the following is allowed:
 
 \begin{lstlisting}
@@ -52,17 +52,17 @@ AbstractSetOrBag unexpected=new Bag();
 
 This looks unnatural, since \Q@Set@ would extend \Q@AbstractSetOrBag@ without adding anything,
 and we would be surprised to find a use of the type \Q@AbstractSetOrBag@.
-Worst, if we are to constantly apply this mentalty, we would introduce a very high number
+Worst, if we are to constantly apply this mentaly, we would introduce a very high number
 of abstract classes that are not supposed to be used as types. Those classes would clutter the 
 public interface of our classes and our code project as a whole.
 In our example the information \Q@Set<:AbstractSetOrBag@ would be present in the public interface
-of the class \Q@Set@, but it is not needed to use the class properly!
+of the class \Q@Set@, but such information is not needed to use the class properly!
 
 Moreover, the original problem is not really solved, but only moved 
 further away. For example, one day  we may need bags that can only store up to 5 copies of the same element.
 We are now at the starting point again:
 \begin{itemize}
-\item either we insert \Q@class Bag5 extends Bag@ and we break LSP; 
+\item either we insert \Q@class Bag5 extends Bag@ and we break the LSP; 
 \item or we duplicate the code of the \Q@Bag@ implementation with minimal
   adjustments in \\* \Q@class Bag5 extends AbstractSetOrBag@;
 \item or we introduce a
@@ -81,7 +81,7 @@ Set:{/*set implementation*/}
 Then our code would be impossible to reuse in the first place for any user of our library.
 We consider this an advantage, since unintended code reuse runs into underdocumented behaviour nearly all the time\footnote{See
 ``Design and document for inheritance or else prohibit
-it''\cite{Bloch08}: the
+it''~\cite{Bloch08}: the
 self use of public methods is rarelly documented, thus is hard to understand the effects of overriding a library metod.
 }!
 If the designer of the set class wishes to make it reusable, it can do it explicitly by providing a set trait:
