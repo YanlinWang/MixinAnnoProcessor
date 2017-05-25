@@ -1,24 +1,4 @@
-\section{Extensions and practical experience}
-The model presented here is very easy to extend:
-For example nested classes can be easly added,giving us enough power to easly solve the expression problem as in \cite{deepfjig}. More composition operators can be added in addition to use. Indeed
-we just need to be sure that every newly added operator respects the following criteria:
 
-\begin{itemize}
-\item As for \use, the operato does not need to be total, but if it fails it needs to provide an error that will be reported to the programmer.
-\item When the operator takes in input only traits (they are going to be well typed), if a result is produced,
- such result is well typed.
-\item When the operator takes in input also code literal, if a non well typed result is produced,
-the type error must be tracked back to code in one of those non typed yet code literals.
- \end{itemize}
- That is, our model can easly support all the operators of \cite{deep}.
- 
- 
- Our simplified model represent the conceptual core of  a novel programming language (http://L42.is)
- we are currently working at.
- L42 contains the extensions described before and much more, and provide a concrete example of the usability of our model.
- 
- The main difference is that code literal are first class values in L42, thus we do not need traits as a language concept, but just as a method returning such code literal.
- 
  
  
 \section{Related Work}
