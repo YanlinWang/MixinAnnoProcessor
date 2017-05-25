@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.5.7)  25 MAY 2017 07:32
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.5.7)  25 MAY 2017 09:08
 entering extended mode
 **./paper.tex
 (paper.tex
@@ -232,19 +232,19 @@ File: lstlang1.sty 2015/06/04 1.6 listings language file
 (paper.aux)
 \openout1 = `paper.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 78.
-LaTeX Font Info:    ... okay on input line 78.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 78.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 86.
+LaTeX Font Info:    ... okay on input line 86.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 86.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1ptm.fd"
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
@@ -265,242 +265,77 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 \everyMPtoPDFconversion=\toks23
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 103.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 109.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 103.
+(Font)              <7> on input line 109.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 103.
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 103.
-
- ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1pcr.fd"
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
+(Font)              <5> on input line 109.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 103.
+(Font)              <9> on input line 109.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 103.
+(Font)              <6> on input line 109.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 105.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 111.
  (Intro.tex
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 5.
+ ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1pcr.fd"
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <9> not available
 (Font)              Font shape `OT1/pcr/b/n' tried instead on input line 5.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 7.
 
-
-LaTeX Warning: Citation `cook' on page I undefined on input line 12.
-
-
-LaTeX Warning: Citation `cook' on page I undefined on input line 22.
-
-
-LaTeX Warning: Citation `bruce96binary' on page I undefined on input line 23.
-
-
-LaTeX Warning: Citation `LaLonde:1991:SSS:110673.110679' on page I undefined on
- input line 28.
-
 [1
 
 
-{C:/Users/user/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-
-LaTeX Warning: Citation `Bettini:2010:ISP:1774088.1774530' on page II undefined
- on input line 126.
-
-
-LaTeX Warning: Citation `BETTINI2013521' on page II undefined on input line 126
-.
-
-
-LaTeX Warning: Citation `Bettini2015282' on page II undefined on input line 126
-.
-
-
-LaTeX Warning: Citation `KrogdahlMS09' on page II undefined on input line 129.
-
-
-LaTeX Warning: Citation `DBLP:journals/taosd/AxelsenSKM12' on page II undefined
- on input line 129.
-
-
-LaTeX Warning: Citation `DBLP:conf/gpce/AxelsenK12' on page II undefined on inp
-ut line 129.
-
-
-LaTeX Warning: Citation `deep' on page II undefined on input line 133.
-
-
-LaTeX Warning: Citation `servetto2014meta' on page II undefined on input line 1
-33.
-
-
-LaTeX Warning: Citation `DBLP:journals/iandc/LagorioSZ12' on page II undefined 
-on input line 133.
-
-[2]
-
-LaTeX Warning: Citation `Traits:ECOOP2003' on page III undefined on input line 
-143.
-
-Excluding 'comment' comment. Excluding 'comment' comment.) (section2.tex
+{C:/Users/user/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}] [2])
+(section2.tex
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 2.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 2.
-
-
-LaTeX Warning: Reference `sec:intro' on page III undefined on input line 19.
-
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 22.
-[3]
+ [3]
 
-LaTeX Warning: Reference `sec:intro' on page IV undefined on input line 56.
+LaTeX Warning: Citation `Damiani2014' on page IV undefined on input line 170.
 
 [4]
-
-LaTeX Warning: Reference `sec:formal' on page V undefined on input line 154.
-
-
-LaTeX Warning: Citation `Damiani2014' on page V undefined on input line 170.
-
-
-LaTeX Warning: Citation `deep' on page V undefined on input line 170.
-
-
-LaTeX Warning: Citation `Traits:ECOOP2003' on page V undefined on input line 17
-6.
-
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <10> not available
 (Font)              Font shape `OT1/pcr/b/n' tried instead on input line 194.
-) (section3.tex
-
-LaTeX Warning: Citation `LaLonde:1991:SSS:110673.110679' on page V undefined on
- input line 20.
-
-[5]
-
-LaTeX Warning: Citation `martin2000design' on page VI undefined on input line 4
-6.
-
-
-Overfull \hbox (13.85999pt too wide) in paragraph at lines 46--47
-\OT1/ptm/m/n/10 Since sub-class-ing im-plies sub-typ-ing, our code break Liskov
- sub-sti-tu-tion prin-ci-ple (LSP) [\OT1/ptm/b/n/10 ?\OT1/ptm/m/n/10 ]:
- []
-
-
-Overfull \hbox (161.1599pt too wide) in paragraph at lines 73--75
+) (section3.tex [5]
+Overfull \hbox (161.1599pt too wide) in paragraph at lines 66--68
 []\OT1/ptm/m/n/10 or we du-pli-cate the code of the [][][] im-ple-men-ta-tion w
 ith min-i-mal ad-just-ments in [][][][][][][][][]; 
  []
 
 
-Overfull \hbox (100.5628pt too wide) in paragraph at lines 75--81
+Overfull \hbox (100.5628pt too wide) in paragraph at lines 68--74
 []\OT1/ptm/m/n/10 or we in-tro-duce a [][][][][][][][][][][] and [][][][][][][]
 [][]
  []
 
-[6]
-
-LaTeX Warning: Citation `Bloch08' on page VII undefined on input line 93.
-
-) (section4.tex
-
-LaTeX Warning: Citation `bruce96binary' on page VII undefined on input line 11.
-
-
-[7]
-
-LaTeX Warning: Citation `ancona2002calculus' on page VIII undefined on input li
-ne 24.
-
-
-LaTeX Warning: Citation `Traits:ECOOP2003' on page VIII undefined on input line
- 25.
-
-
-LaTeX Warning: Citation `Bergel2007' on page VIII undefined on input line 25.
-
-
-LaTeX Warning: Citation `BETTINI2013521' on page VIII undefined on input line 2
-5.
-
-
-LaTeX Warning: Citation `DBLP:journals/iandc/LagorioSZ12' on page VIII undefine
-d on input line 25.
-
-
-LaTeX Warning: Citation `wang2016classless' on page VIII undefined on input lin
-e 47.
-
-
-LaTeX Warning: Reference `sec:separate' on page VIII undefined on input line 80
-.
-
-[8]
-
-LaTeX Warning: Citation `wang2016classless' on page IX undefined on input line 
-119.
-
-[9]
-
-LaTeX Warning: Citation `wang2016classless' on page X undefined on input line 1
-65.
-
-
+[6]) (section4.tex [7] [8]
 Overfull \hbox (6.77654pt too wide) in paragraph at lines 169--171
  \OT1/ptm/m/it/10 Points in $\OT1/cmr/m/n/10 42[]$\OT1/ptm/m/it/10 :[] \OT1/ptm
 /m/n/10 In $\OT1/cmr/m/n/10 42[]$ \OT1/ptm/m/n/10 and with our ap-proach to han
 -dle the state, [][][] and [][][]
  []
 
-[10]
+[9]
 Overfull \hbox (54.0716pt too wide) in paragraph at lines 223--233
 \OT1/ptm/m/n/10 sup-ports with-ers, in-stead of writ-ing [][][][][][] we can us
 e [][][][][][][][][][][][]
  []
 
-
-LaTeX Warning: Citation `Zenger-Odersky2005' on page XI undefined on input line
- 259.
-
-
-LaTeX Warning: Citation `ducasse2006traits' on page XI undefined on input line 
-264.
-
-[11]) (Examples.tex
-
-LaTeX Warning: Citation `igarashi2001featherweight' on page XII undefined on in
-put line 55.
-
-[12] Excluding 'comment' comment.
-
-LaTeX Warning: Citation `bawden1999quasiquotation' on page XIII undefined on in
-put line 160.
-
-
-LaTeX Warning: Citation `ancona2002calculus' on page XIII undefined on input li
-ne 161.
-
-[13]
+[10]) (Examples.tex [11] Excluding 'comment' comment. [12]
 Overfull \hbox (38.89195pt too wide) in paragraph at lines 195--198
 \OT1/ptm/m/n/10 would be cor-rect: even if n,m are not de-fined in-side [][][][
 ][][][][][][][][][][][][][][],
  []
-
-
-LaTeX Warning: Citation `deep' on page XIV undefined on input line 199.
-
-
-LaTeX Warning: Citation `Bettini2015282' on page XIV undefined on input line 19
-9.
-
-
-LaTeX Warning: Citation `Bergel2007' on page XIV undefined on input line 199.
 
 
 Overfull \hbox (39.03221pt too wide) in paragraph at lines 219--222
@@ -508,35 +343,14 @@ Overfull \hbox (39.03221pt too wide) in paragraph at lines 219--222
  may of-fer a [][][][][][]
  []
 
-[14] [15] Excluding 'comment' comment.) (RelatedWork.tex
+[13] [14] Excluding 'comment' comment.) (RelatedWork.tex
 
-LaTeX Warning: Citation `ducasse2006traits' on page XVI undefined on input line
- 6.
-
-
-LaTeX Warning: Citation `ancona2002calculus' on page XVI undefined on input lin
-e 6.
+LaTeX Warning: Citation `ferruccioworks' on page XV undefined on input line 12.
 
 
-LaTeX Warning: Citation `ferruccioworks' on page XVI undefined on input line 12
-.
+[15] [16]
 
-[16]
-
-LaTeX Warning: Citation `odersky2008programming' on page XVII undefined on inpu
-t line 59.
-
-
-LaTeX Warning: Citation `nystrom2006j' on page XVII undefined on input line 59.
-
-
-
-LaTeX Warning: Citation `wang2016classless' on page XVII undefined on input lin
-e 65.
-
-[17]
-
-LaTeX Warning: Citation `FJig' on page XVIII undefined on input line 84.
+LaTeX Warning: Citation `FJig' on page XVII undefined on input line 84.
 
 
 Underfull \hbox (badness 1184) in paragraph at lines 127--128
@@ -551,55 +365,42 @@ Overfull \hbox (1.90001pt too wide) in paragraph at lines 116--162
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ù in font ptmr7t!
-[18]) (Conclusion.tex
-
-LaTeX Warning: Citation `deep' on page XIX undefined on input line 7.
-
-
-LaTeX Warning: Citation `deep' on page XIX undefined on input line 8.
-
-
+) (Conclusion.tex [17]
 Overfull \hbox (114.923pt too wide) in paragraph at lines 21--32
 \OT1/ptm/m/n/10 such lan-guage can be found at []\OT1/pcr/m/n/10 github.com/Elv
 isResearchGroup/L42/tree/master/Main/formal\OT1/ptm/m/n/10 .
  []
 
-) (paper.bbl [19]) [20] (paper.aux)
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
- ) 
+) (paper.bbl [18]) [19] (paper.aux) ) 
 Here is how much of TeX's memory you used:
- 3652 strings out of 493634
- 50618 string characters out of 3141318
- 164427 words of memory out of 3000000
- 6956 multiletter control sequences out of 15000+200000
+ 3658 strings out of 493634
+ 50679 string characters out of 3141318
+ 161569 words of memory out of 3000000
+ 6962 multiletter control sequences out of 15000+200000
  33361 words of font info for 74 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
  32i,15n,40p,338b,1519s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Progra
-m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Program 
-Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
-les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program File
-s (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files (
-x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><C:/Program File
-s (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb><C:/Program F
-iles (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program File
-s (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Program Files (x
-86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program Files (x86)/
-MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/Mi
-KTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files (x86)/MiKT
-eX 2.9/fonts/type1/urw/courier/ucrb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fo
-nts/type1/urw/courier/ucrr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
-/urw/courier/ucrro8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/tim
-es/utmb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.p
-fb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on paper.pdf (20 pages, 252466 bytes).
+{C:/Program Files (x86)/MiKTeX 2.9/fonts/e
+nc/dvips/fontname/8r.enc}<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/
+amsfonts/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/am
+sfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsf
+onts/cm/cmmi10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cm/cmmi7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/
+cmextra/cmmib7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cmextra/cmmib8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/ams
+fonts/cm/cmr10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfon
+ts/cm/cmr6.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/c
+m/cmr7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
+sy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti
+10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/courier/ucrb8a.pfb><C
+:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program
+ Files (x86)/MiKTeX 2.9/fonts/type1/urw/courier/ucrro8a.pfb><C:/Program Files (
+x86)/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX
+ 2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/
+type1/urw/times/utmri8a.pfb>
+Output written on paper.pdf (19 pages, 250327 bytes).
 PDF statistics:
- 136 PDF objects out of 1000 (max. 8388607)
+ 133 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

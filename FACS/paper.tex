@@ -12,10 +12,17 @@
 \usepackage{enumitem}
 \setlist{nosep}
 \setlist{leftmargin=0ex}
+\setlist[itemize]{noitemsep,nolistsep}
+\setlist[enumerate]{noitemsep,nolistsep}
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\vspace{-5pt}\oldparagraph{#1}\vspace{-5pt}}
+\let\oldsubsection\subsection
+\renewcommand{\subsection}[1]{\vspace{-5pt}\oldsubsection{#1}\vspace{-5pt}}
 
-
+\newenvironment{listing}{\vspace{-3pt}\begin{lstlisting}}{\end{lstlisting}\vspace{-3pt}}
+%
 \lstset{language=Java,
-  basicstyle=\ttfamily\small,%\scriptsize,
+  basicstyle=\ttfamily\footnotesize,%\small,%\scriptsize,
   keywordstyle=\bfseries,%\color{darkRed},
   showstringspaces=false,
   mathescape=true,
@@ -29,6 +36,7 @@
  morekeywords={method,Use,This}
 }
 %
+\newcommand\saveSpace{\vspace{-3pt}}
 \newcommand\Rotated[1]{\begin{turn}{90}\begin{minipage}{12em}#1\end{minipage}\end{turn}}
 %
 %marco
@@ -95,14 +103,13 @@
 \tocauthor{Marco Servetto and Bruno C. d. S. Oliveira}
 %
 \institute{Victoria University of Wellington, New Zealand,\\
-\email{marco.servetto@ecs.vuw.ac.nz},\\ WWW home page:
-\texttt{https://ecs.victoria.ac.nz/Main/MarcoServetto}
 \and
 The University of Hong Kong, Hong Kong\\}
 
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
+\saveSpace\saveSpace\saveSpace
 In most OO languages subclassing/inheritance implies
 subtyping. This is considered by many a conceptual design error, but it
 seems required for technical reasons, due to what we call the
@@ -110,9 +117,9 @@ seems required for technical reasons, due to what we call the
 inheritance from subtyping is non-trivial and requires a significant
 departure from the OO models in existing mainstream OO languages.
 We are aware of at least 3 independently designed research languages 
-that address this limitation:Delta-Trait, Package Template, DeepFjig.
-In this work we synthesize
-the main ideas of those very different language designs into a nominally typed minimalist language,
+addressing this limitation:Delta-Trait, Package Template, DeepFjig.
+Here we synthesize
+the main ideas of those very different designs into a nominally typed minimalist language,
 natural to OO programmers.
 By making our type system distinguish between code-use and code-reuse
 we can separate inheritance and subtyping, while avoiding 
@@ -123,9 +130,10 @@ Moreover, we provide a novel and elegant solution to uniformly
 handle behavior and state within trait composition.
 These ideas have been implemented in the 42 language, 
 that supports all the examples we show in the paper.
-
+\saveSpace\saveSpace\saveSpace
 
 \keywords{Code Reuse, Object-Oriented Programming}
+\saveSpace\saveSpace\saveSpace
 \end{abstract}
 
 \input{Intro}

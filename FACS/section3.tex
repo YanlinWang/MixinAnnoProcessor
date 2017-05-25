@@ -1,13 +1,7 @@
 \section{Improving Use}
 
-This section illustrates how 
-%As stated in Section~\ref{} 
-%To have code-reuse, while preventing unintended subtyping
-%in a nominally typed OO language we need to
-% separate inheritance from subtyping.
-\name \emph{improves the use} of classes, while
-retaining the benefits of code-reuse when compared to Java-like languages. 
-Here we illustrate this benefit by modelling a simplified version of
+To illustrates how 
+\name \emph{improves the use} of classes we model a simplified version of
 Set and Bag collections first in Java, and then in \name.
 The main benefit of the \name solution is that we can get reuse 
 without introducing subtyping between Bags and Sets. This improves the 
@@ -21,32 +15,31 @@ LaLonde~\cite{LaLonde:1991:SSS:110673.110679}.  A reasonable
 implementation for a \Q@Set@ is easy to extend into a \Q@Bag@ by
 keeping track of how many times an element occurs.  We just need to
 add some state and override a few methods.
-
 For example in Java one could have:
 
 \begin{lstlisting}
 class Set {...//usual hashmap implementation
   private Elem[] hashMap;
   void put(Elem e) /*body*/
-  boolean isIn(Elem e)/*body*/
-  ...}
+  boolean isIn(Elem e)/*body*/}
 class Bag extends Set{...//for each element in the hash map,
   private int[] countMap;// keep track of how many times is there
   @Override void put(Elem e)/*body*/
-  int howManyTimes(Elem e)/*body*/
-  ...}\end{lstlisting}
+  int howManyTimes(Elem e)/*body*/}
+\end{lstlisting}
 
-\noindent Coding \Q@Bag@ in this way can avoid a lot of code
+\noindent Coding \Q@Bag@ in this way avoids a lot of code
 duplication, but \emph{we induced unintented subtyping}! 
+Since subclassing implies subtyping, our code break Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
 Indeed, the following is allowed:
 
 \begin{lstlisting}
 Set mySet=new Bag(); //OK for the type system but not for LSP
 \end{lstlisting}
-Since subclassing implies subtyping, our code break Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
+
 
 \paragraph{A (broken) attempt to fix the Problem in Java.}
-Of course, one could \emph{retroactivelly} fix this problem by introducing \Q@AbstractSetOrBag@
+One could \emph{retroactivelly} fix this problem by introducing \Q@AbstractSetOrBag@
 and making both \Q@Bag@ and \Q@Set@ inherit from it:
 \begin{lstlisting}
 abstract class AbstractSetOrBag{/*old set code goes here*/}
