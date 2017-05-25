@@ -64,9 +64,9 @@ We are now at the starting point again:
 \begin{itemize}
 \item either we insert \Q@class Bag5 extends Bag@ and we break LSP; 
 \item or we duplicate the code of the \Q@Bag@ implementation with minimal
-  adjustments in \Q@class Bag5 extends AbstractSetOrBag@;
+  adjustments in \\* \Q@class Bag5 extends AbstractSetOrBag@;
 \item or we introduce a
-\Q@abstract class BagN extends AbstractSetOrBag@ and \Q@class Bag5 extends BagN@
+\Q@abstract class BagN extends AbstractSetOrBag@ and \\*\Q@class Bag5 extends BagN@
 and we modify \Q@Bag@ so that  \Q@class Bag extends BagN@.
 Note that this last solution is changing the public interface of the formerly released \Q@Bag@ class, and
 this may even break retro-compatibility (if a client program was using
@@ -75,36 +75,35 @@ reflection, for example).
 
 \subsection{Sets and Bags in \name}
 Instead, in \name, if we was to originally declare
-\begin{lstlisting}
+\saveSpace\begin{lstlisting}
 Set:{/*set implementation*/} 
-\end{lstlisting}
+\end{lstlisting}\saveSpace
 Then our code would be impossible to reuse in the first place for any user of our library.
 We consider this an advantage, since unintended code reuse runs into underdocumented behaviour nearly all the time\footnote{See
 ``Design and document for inheritance or else prohibit
 it''\cite{Bloch08}: the
 self use of public methods is rarelly documented, thus is hard to understand the effects of overriding a library metod.
 }!
-
 If the designer of the set class wishes to make it reusable, it can do it explicitly by providing a set trait:
-\begin{lstlisting}
+\saveSpace\begin{lstlisting}
 set:{/*set implementation*/} 
 Set:Use set
-\end{lstlisting}
-Notice how since \Q@set@ can never be used as a type, there is no reason to give it a fancy-future-aware name like
+\end{lstlisting}\saveSpace
+Since \Q@set@ can never be used as a type, there is no reason to give it a {\bf fancy-future-aware} name like
 \Q@AbstractSetOrBag@.
 When bag will be added, the code will look either like
-\begin{lstlisting}
+\saveSpace\begin{lstlisting}
 set:{/*set implementation*/} 
 Set:Use set
 Bag: Use set, {/*bag implementation*/}
-\end{lstlisting}
+\end{lstlisting}\saveSpace\saveSpace
 or 
-\begin{lstlisting}
+\saveSpace\saveSpace\begin{lstlisting}
 set:{/*set implementation*/} 
 Set:Use set
 bag: Use set, {/*bag implementation*/}
 Bag: Use bag
-\end{lstlisting}
+\end{lstlisting}\saveSpace
 Notice how, thanks to flattening, the resulting code for \Q@Bag@ is identical in both versions, 
 and as shown in Section 2, there is no trace of trait \Q@bag@. Thus if we are the developers of bags, we can temporarly go for the first version, and move when needed to the second without adding new undesired complexity for our old clients. 
 

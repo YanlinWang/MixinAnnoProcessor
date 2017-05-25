@@ -11,11 +11,13 @@
 \addtolength{\textwidth}{0.5ex}
 \usepackage{enumitem}
 \setlist{nosep}
-\setlist{leftmargin=0ex}
+\setlist{leftmargin=1ex}
 \setlist[itemize]{noitemsep,nolistsep}
 \setlist[enumerate]{noitemsep,nolistsep}
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\vspace{-5pt}\oldparagraph{#1}\vspace{-5pt}}
+%\let\oldparagraph\paragraph
+%\renewcommand{\paragraph}[1]{\vspace{-5pt}\oldparagraph{#1}}
+\renewcommand{\paragraph}[1]{\noindent\emph{#1}}
+
 \let\oldsubsection\subsection
 \renewcommand{\subsection}[1]{\vspace{-5pt}\oldsubsection{#1}\vspace{-5pt}}
 
