@@ -106,7 +106,7 @@ the type error must be tracked back to code in one of those non typed yet code l
 
 
 Here we see some example of other composition operators, inspired from~\cite{servetto2014meta}:
-\paragraph*{Restrict}${}_{}$\\*
+\paragraph{Restrict}${}_{}$\\*
 Restrict makes a method abstract
 \begin{lstlisting}
 t:{method bool geq(This x) x.leq(this)   method bool leq(This x) x.qeq(this) }
@@ -136,7 +136,7 @@ with \Q@flavoured@.
 Note how we are leveraging on the fact that the code literal does not need to be complete, thus we can just call \Q@_1merge()@ and \Q@_2merge()@
 
 
-\paragraph*{Rename}${}_{}$\\*
+\paragraph{Rename}${}_{}$\\*
 Rename allows to make some form of ``compile time'' refactoring
 There are a lots of different forms of rename in literature,
 sometime allowing only to rename specific methods, sometime allowing to rename
@@ -171,7 +171,7 @@ D:{ I:{interface method int kI() }
 
 Hide can be seen as a variation of rename, where the method/class is renamed to a fresh unguessable name.
 
-\paragraph*{Redirect}${}_{}$\\*
+\paragraph{Redirect}${}_{}$\\*
 Redirect allows to emulate generics; the main idea is that a (fully abstract) class can be redirect to another one external to the trait/code literal.
 For example a linked list can be implement as
 \begin{lstlisting}
@@ -200,7 +200,7 @@ ListString:list[redirect Elem to String]
 
 %Redirect can be multiple.
 
-\paragraph*{Application on the expression problem}${}_{}$\\*
+\paragraph{Application on the expression problem}${}_{}$\\*
 With redirect, rename and restrict we can have the general operator propagator
 \begin{lstlisting}
 operation:{//for sum and lit, easy to extends as before
@@ -226,7 +226,7 @@ opAddn: Use
 
 
 
-\paragraph*{Full power of redirect}${}_{}$\\*
+\paragraph{Full power of redirect}${}_{}$\\*
 An expressive form of Redirect can be multiple, that is, can redirect may interdependent classes at the same time.
 We show an example where a specific kind of \Q@Service@ can produce a \Q@Report@, and 
 \Q@Report@s can be combined together.

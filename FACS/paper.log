@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.5.7)  25 MAY 2017 09:08
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.5.7)  25 MAY 2017 09:57
 entering extended mode
 **./paper.tex
 (paper.tex
@@ -232,19 +232,19 @@ File: lstlang1.sty 2015/06/04 1.6 listings language file
 (paper.aux)
 \openout1 = `paper.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 86.
-LaTeX Font Info:    ... okay on input line 86.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 86.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 88.
+LaTeX Font Info:    ... okay on input line 88.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 88.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1ptm.fd"
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
@@ -265,17 +265,17 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 \everyMPtoPDFconversion=\toks23
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 109.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 109.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 109.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 109.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 109.
-LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 111.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 111.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 111.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <9> on input line 111.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 111.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 113.
  (Intro.tex
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
@@ -301,85 +301,81 @@ LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 22.
  [3]
 
-LaTeX Warning: Citation `Damiani2014' on page IV undefined on input line 170.
+LaTeX Warning: Citation `Damiani2014' on page IV undefined on input line 175.
 
-[4]
 LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <10> not available
-(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 194.
-) (section3.tex [5]
-Overfull \hbox (161.1599pt too wide) in paragraph at lines 66--68
-[]\OT1/ptm/m/n/10 or we du-pli-cate the code of the [][][] im-ple-men-ta-tion w
-ith min-i-mal ad-just-ments in [][][][][][][][][]; 
+(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 198.
+) (section3.tex [4] [5]
+Overfull \hbox (9.10277pt too wide) in paragraph at lines 68--74
+[][][][][][][][][] \OT1/ptm/m/n/10 and we mod-ify [][][] so that [][][][][][][]
+[][].
  []
 
-
-Overfull \hbox (100.5628pt too wide) in paragraph at lines 68--74
-[]\OT1/ptm/m/n/10 or we in-tro-duce a [][][][][][][][][][][] and [][][][][][][]
-[][]
+) (section4.tex [6] [7]
+Overfull \hbox (4.67662pt too wide) in paragraph at lines 168--172
+\OT1/ptm/m/it/10 Points in $\OT1/cmr/m/n/10 42[]$\OT1/ptm/m/it/10 : \OT1/ptm/m/
+n/10 In $\OT1/cmr/m/n/10 42[]$ \OT1/ptm/m/n/10 and with our ap-proach to han-dl
+e the state, [][][] and [][][]
  []
 
-[6]) (section4.tex [7] [8]
-Overfull \hbox (6.77654pt too wide) in paragraph at lines 169--171
- \OT1/ptm/m/it/10 Points in $\OT1/cmr/m/n/10 42[]$\OT1/ptm/m/it/10 :[] \OT1/ptm
-/m/n/10 In $\OT1/cmr/m/n/10 42[]$ \OT1/ptm/m/n/10 and with our ap-proach to han
--dle the state, [][][] and [][][]
- []
-
-[9]
-Overfull \hbox (54.0716pt too wide) in paragraph at lines 223--233
+[8]
+Overfull \hbox (54.0716pt too wide) in paragraph at lines 224--234
 \OT1/ptm/m/n/10 sup-ports with-ers, in-stead of writ-ing [][][][][][] we can us
 e [][][][][][][][][][][][]
  []
 
-[10]) (Examples.tex [11] Excluding 'comment' comment. [12]
-Overfull \hbox (38.89195pt too wide) in paragraph at lines 195--198
+[9]) (Examples.tex [10]
+Underfull \vbox (badness 3849) has occurred while \output is active []
+
+ [11]
+Overfull \hbox (38.89195pt too wide) in paragraph at lines 127--130
 \OT1/ptm/m/n/10 would be cor-rect: even if n,m are not de-fined in-side [][][][
 ][][][][][][][][][][][][][][],
  []
 
 
-Overfull \hbox (39.03221pt too wide) in paragraph at lines 219--222
+Overfull \hbox (39.03221pt too wide) in paragraph at lines 151--154
 \OT1/ptm/m/n/10 lan-guage, [][][] may of-fers a [][][][][][] method, and [][][]
  may of-fer a [][][][][][]
  []
 
-[13] [14] Excluding 'comment' comment.) (RelatedWork.tex
+[12] [13]) (RelatedWork.tex
 
-LaTeX Warning: Citation `ferruccioworks' on page XV undefined on input line 12.
+LaTeX Warning: Citation `ferruccioworks' on page XIV undefined on input line 11
+.
+
+[14] [15]
+
+LaTeX Warning: Citation `FJig' on page XVI undefined on input line 83.
 
 
-[15] [16]
-
-LaTeX Warning: Citation `FJig' on page XVII undefined on input line 84.
-
-
-Underfull \hbox (badness 1184) in paragraph at lines 127--128
+Underfull \hbox (badness 1184) in paragraph at lines 126--127
 \OT1/ptm/m/n/10 so typ-ing ques-tions makes lit-tle
  []
 
 
-Overfull \hbox (1.90001pt too wide) in paragraph at lines 116--162
+Overfull \hbox (1.90001pt too wide) in paragraph at lines 115--161
 [] [] 
  []
 
 Missing character: There is no ‚ in font ptmr7t!
 Missing character: There is no Ä in font ptmr7t!
 Missing character: There is no ù in font ptmr7t!
-) (Conclusion.tex [17]
+) (Conclusion.tex [16]
 Overfull \hbox (114.923pt too wide) in paragraph at lines 21--32
 \OT1/ptm/m/n/10 such lan-guage can be found at []\OT1/pcr/m/n/10 github.com/Elv
 isResearchGroup/L42/tree/master/Main/formal\OT1/ptm/m/n/10 .
  []
 
-) (paper.bbl [18]) [19] (paper.aux) ) 
+) (paper.bbl [17]) [18] (paper.aux) ) 
 Here is how much of TeX's memory you used:
- 3658 strings out of 493634
- 50679 string characters out of 3141318
- 161569 words of memory out of 3000000
- 6962 multiletter control sequences out of 15000+200000
+ 3656 strings out of 493634
+ 50657 string characters out of 3141318
+ 166492 words of memory out of 3000000
+ 6960 multiletter control sequences out of 15000+200000
  33361 words of font info for 74 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 32i,15n,40p,338b,1519s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 32i,15n,40p,338b,1523s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files (x86)/MiKTeX 2.9/fonts/e
 nc/dvips/fontname/8r.enc}<C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/
 amsfonts/cm/cmbx10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/am
@@ -398,9 +394,9 @@ sy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti
 x86)/MiKTeX 2.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files (x86)/MiKTeX
  2.9/fonts/type1/urw/times/utmr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/
 type1/urw/times/utmri8a.pfb>
-Output written on paper.pdf (19 pages, 250327 bytes).
+Output written on paper.pdf (18 pages, 249141 bytes).
 PDF statistics:
- 133 PDF objects out of 1000 (max. 8388607)
+ 129 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
