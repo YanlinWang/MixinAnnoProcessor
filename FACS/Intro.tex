@@ -34,7 +34,7 @@ classes with \emph{binary methods}~\cite{bruce96binary}.
 
 \end{itemize}
 
-Type systems based on structural typing can deal with the first
+Type systems based on structural typing~\cite{cook} can deal with the first
 situation well, but not the second. Since structural subtyping
 accounts for the types of the methods only, a Bag would be a subtype
 of a Set if the two interfaces are type compatible. For dealing with
@@ -55,7 +55,7 @@ fundamental way. This is because of what we call the
 \end{lstlisting}
 
 Method \lstinline{A.ma} passes \lstinline{this} as \lstinline{A} to \Q@Util.m@.
-This code seems correct, and there is no subtyping/subclassing.  Now, lets add a class \Q@B@
+This code is correct, and there is no subtyping/subclassing.  Now, lets add a class \Q@B@
 
 \begin{lstlisting}[language=Java]
   class B extends A{ int mb(){return this.ma();} }  
@@ -64,11 +64,11 @@ This code seems correct, and there is no subtyping/subclassing.  Now, lets add a
 %%Class \lstinline{B} does two things at the same time: 
 %%1) it {\bf inherits} the method \lstinline{ma} from
 %%\lstinline{A}; and 2) it creates a {\bf subtype} of \lstinline{A}.
-We can see an invocation of \lstinline{A.ma} inside
+\noindent We can see an invocation of \lstinline{A.ma} inside
 \lstinline{B.mb}, where the self-reference \lstinline{this} is of type \lstinline{B}. 
 The execution will eventually call \lstinline{Util.m} with an
-instance of \lstinline{B}. However, this can be correct only if \lstinline{B} is a subtype of
-\lstinline{A}. 
+instance of \lstinline{B}. However, \emph{this can be correct only if \lstinline{B} is a subtype of
+\lstinline{A}}. 
 
 %If Java was to support a mechanism to allow reuse/inheritance 
 %without introducing subtyping, such as:
@@ -100,42 +100,43 @@ the method \lstinline{Utils.m} as a result of the invocation of
 \lstinline{mb}, it will have a type that is incompatible with the
 expected argument of type \lstinline{A}.  
 Therefore, every OO language with the minimal features exposed in the example (using \lstinline{this},
-extends and method calls) is forced to accept that subclassing implies
+{\bf extends} and method calls) is forced to accept that subclassing implies
 subtyping\footnote{C++ allows to "extends privately", but it is a limitation over
   subtyping visibility, not over subtyping itself.  The
   former example would be accepted even if \lstinline{B} was to
   "privately extends" \lstinline{A}}.
   
-In essence we believe that in languages like Java classes do too many
-things at once. In particular they act both as units of \emph{use} and
-\emph{reuse}: classes can be \emph{use}d as types and can be instantiated;
-classes can also be subclassed to provide \emph{reuse} of code.
 
 What the this-leaking problem shows is that adopting a more flexible
 nominally typed OO model where subclassing does not imply subtyping is
 not trivial, and a more substantial change in the language design is
-necessary.  We are aware of at least 3 independently designed research
+necessary.  In essence we believe that in languages like Java classes do too many
+things at once. In particular they act both as units of \emph{use} and
+\emph{reuse}: classes can be \emph{use}d as types and can be instantiated;
+classes can also be subclassed to provide \emph{reuse} of code.
+We are aware of at least 3 independently designed research
 languages that address this limitation:
 \begin{itemize}
 \item In {\bf Delta-Trait (DT)}~\cite{Bettini:2010:ISP:1774088.1774530,BETTINI2013521,Bettini2015282}
 each  construct has a single responsability: classes instantiate objects,
 interfaces induce types, records express state and traits are reuse units.
-\item {\bf Package Templates (PT)}~\cite{KrogdahlMS09,DBLP:journals/taosd/AxelsenSKM12,DBLP:conf/gpce/AxelsenK12}:
-are an extension of (full) Java where new packages can be ``syntetized'' by mixing
-and integrating code templates. As an extension of java, PT allows but not requires
+\item {\bf Package Templates (PT)}~\cite{KrogdahlMS09,DBLP:journals/taosd/AxelsenSKM12,DBLP:conf/gpce/AxelsenK12}
+are an extension of (full) Java where new packages can be ``synthesized'' by mixing
+and integrating code templates. As an extension of java, PT allows but not require
 separation of inheritance and subtyping.
 \item {\bf
     DeepFjig}~\cite{deep,servetto2014meta,fjig} is
 a module composition language where the main idea is that
 nested classes with the same name are recursivelly composed.
 \end{itemize}
-\bruno{We need here a better motivation. From the reviewer perspactive
-he will think: ``So, there are already 3 solutions, why should I care
-about a new one?''}
-This paper aims at showing a simple language design, called \name, to
-completely decouple subtyping and subclassing in a nominally typed OO
-language. The key idea is to divide between code designed for
-\textbf{USE} and code designed for \textbf{REUSE}. 
+This paper aims at showing a simple language design, called \name.
+Leveraging on traits, in this work we aim to synthesize the best ideas
+of those 3 very different designs, while at the same time coming up with a simpler and
+improved design for separating subclassing from subtyping.
+The keys ideas in \name are to divide between code designed for
+\textbf{USE} and code designed for \textbf{REUSE}, and a novel
+approach to state in traits that avoids the complexities introduced by
+fields and their initialization.
 In \name there are two separate concepts: classes
 and traits~\cite{Traits:ECOOP2003}. Classes are meant for code use, and cannot be used
 for reuse. In some sense classes in \name are like final classes in
@@ -144,6 +145,17 @@ composed to form a class which can then be instantiated. Traits
 cannot be instantiated (or used) directly. Such design allows the
 subtyping and code reuse to be treated separately, which in turn
 brings several benefits in terms of flexibility and code reuse.
+
+We focus on an example-driven presentation to illustrate how to
+improve use and reuse. Most of the hard technical aspects of the
+semantics have been studied in previous 
+work~\cite{Bettini:2010:ISP:1774088.1774530,BETTINI2013521,Bettini2015282,KrogdahlMS09,DBLP:journals/taosd/AxelsenSKM12,DBLP:conf/gpce/AxelsenK12,deep,servetto2014meta,fjig},
+and the design of \name is a simplification of the previously studied
+concepts. The language design ideas have been implemented in the 42 language, which supports all
+the examples we show in the paper, and is available at:
+
+\url{http://l42.is}
+
 In summary, our contributions are:
 
 %\marco{We need to talk of unanticipated extensions?}
