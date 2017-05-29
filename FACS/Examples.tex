@@ -2,10 +2,8 @@
 \saveSpace\saveSpace
 
 This section sketches some of the key ideas in \name more
-formally. \bruno{Could we point out here a few references of key 
-ideas that were presented in other work? This would justify the 
-formalization sketch better, I think.}
-\bruno{Mention work on active libraries?}
+formally. 
+A similarly interleaving approach can be seen in\cite{servetto2014meta} fully formalized.
 
 %In this article we dedicate more space to examples and informal presentation and motivations;
 %so we do not have space to provide a full formalizations.
@@ -36,18 +34,16 @@ In the following, we present a simplified grammar of \name:
 \end{bnf}
 %\end{comment}
 
-To declare a trait \mTD\ or a class \mCD, we can use either a code literal \mL\ or a trait
-expression.  Traits in full 42 come with various operators (restrict, hide,
+\noindent To declare a trait \mTD\ or a class \mCD, we can use either a code literal \mL\ or a trait
+expression.  In full 42 we support with various operators (restrict, hide,
 alias) but in \name we focus on the single operator 
 $\use$, taking a set
-of code values: that is trait names \mt\ or literals \mL\ and composing them.  This operation, sometimes called \emph{sum}, is the simplest and most elegant
-trait composition operator~\bruno{Maybe some references here would
-  help}.  
+of code values: that is trait names \mt\ or code literals \mL\ and composing them.  This operation, sometimes called \emph{sum}, is the simplest and most elegant
+trait composition operator~\cite{ducasse2006traits}.
 
 $\use\ \overline\mV$ composes the content of $\overline\mV$
 by taking the union of the methods and the union of the
-implementations.\bruno{Also, for Use, wasn't this similar to your
-  previous work in FJig/DeepFJig?}
+implementations.
 \use\ cannot be applied if multiple versions of the same method are
 present in different traits.  An exception is done for abstract methods:
 methods where the implementation \me\ is missing. In this case (if the
