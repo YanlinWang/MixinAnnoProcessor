@@ -7,11 +7,12 @@ That is: the program is agnostic to what the \Q@This@ type is going to be, so it
 be later assigned to any (or many) classes. 
 The idea is that during flattening, \Q@This@ will be replaced with the actual class name.
 In this way, \name allows reuse even when subtyping is
-impossible, that is, when a method parameter has type \Q@This@ (also called \emph{binary
-  methods}~\cite{bruce96binary}). 
+impossible, that is, when a method parameter has type \Q@This@ (also
+called a \emph{binary
+  method}~\cite{bruce96binary}). 
 This type of situations is the primary motivator
 for previous work aiming at separating inheritance from subtyping.
-Leveraging on the \Q@This@ type, we can also provide self-instantiation (trait methods can create instances of the class using them) and smootly integrate state and traits: a challenging problem that has limited the flexibility of traits and
+Leveraging on the \Q@This@ type, we can also provide self-instantiation (trait methods can create instances of the class using them) and smoothly integrate state and traits: a challenging problem that has limited the flexibility of traits and
 reuse in the past.
 %First we show how self-instantiation and state are already avaible in the simplest trait model,
 %then we show how to radically improve the 
@@ -22,32 +23,28 @@ To illustrate how \name improves reuse, we will show a novel approach
 to deal with \emph{state} in traits.  The idea of summing pieces of
 code is very elegant, and has proven very successfull in module
 composition languages~\cite{ancona2002calculus} and several trait
-models~\cite{Traits:ECOOP2003,Bergel2007,BETTINI2013521,DBLP:journals/iandc/LagorioSZ12}.  However the research
-community is struggling to make it work with object state (constructor
+models~\cite{Traits:ECOOP2003,Bergel2007,BETTINI2013521,fjig}.  However the research
+community is struggling to make it work with object state (constructors
 and fields) while achieving the following goals:
 
-%\begin{itemize}
+\begin{itemize}
 %complicated discussions on this point \item keep sum associative and commutative,
-%\item
-(1) managing fields in a way that borrows the elegance of summing methods;
-%\item
-(2) actually initialize objects, leaving no null fields;
-%\item
-(3) making it easy to add new fields;
-%\item
-(4) allowing a class to create instances of itself.
-%\end{itemize}
+\item managing fields in a way that borrows the elegance of summing methods;
+\item actually initialize objects, leaving no null fields;
+\item making it easy to add new fields;
+\item allowing a class to create instances of itself.
+\end{itemize}
 
 In the related work we will show some alternative ways to handle
-state.  However the purest solution just requires methods. The idea is
+state.  However the purest solution requires methods only. The idea is
 that the trait code just uses getter/setters/factories, while leaving
 to classes the role to finally define the fields/constructors. That
-is, the class has syntax richer that the trait one, allowing
+is, classes have syntax richer than traits, allowing
 declaration for fields and constructors.  This approach is very
 powerful as illustrated by Wang et al.~\cite{wang2016classless}.
 
-\paragraph{Immutable Points} Consider, for example, two simple 
-traits that deal with \emph{immutable point} objects. That is, points
+\paragraph{Modeling Points} Consider, for example, two simple 
+traits that deal with \emph{point} objects. That is, points
 in the cartesian plane (with coordinates \lstinline{x} and
 \lstinline{y}). The first trait provides a \emph{binary method} that 
 sums the point object with another point to return a new point. 
@@ -71,11 +68,12 @@ instead.
 \lstinline{x} and \lstinline{y} coordinates) are represented as {\bf abstract} methods.
 Notice the abstract \Q@class method This of(..)@ which acts as a constructor
 for points:
-A class method is similar to a \Q@static@ method in Java but can be abstract. 
+a class method is similar to a \Q@static@ method in Java but can be abstract. 
 As for instance methods, they are late bound:  flattening can provide an implementation for them.
-abstract class method are very similar to the original concept of member functions in the module composition setting.
+Abstract class methods are very similar to the original concept of member functions in the module composition setting.
 
-\subsection{A First Attempt at Composition}
+\subsection{A First Attempt at Composition with a Traditional Model of
+Traits}
 According to the general ideas about trait composition presented in
 Section~\ref{sec:separate}, a first attempt at composing the two traits providing
 two different operations on points is:
@@ -83,7 +81,7 @@ two different operations on points is:
   Point:Use pointSum,pointMul
 \end{lstlisting}  \saveSpace
 
-\noindent However this fails since methods \Q@x@,\Q@y@ and \Q@of@ are still abstract!
+\noindent However \emph{in a traditional trait model} this would fail since methods \Q@x@,\Q@y@ and \Q@of@ are still abstract!
 Instead a user could write something similar to:
 
 \begin{lstlisting}
@@ -120,7 +118,7 @@ some disadvantages:
 
 \end{itemize}
 
-\subsection{The \name approach to State}
+\subsection{The \name Approach to State: Coherent Classes}
 
 In our model we go one step further: there is no need to generate
 code, or to explicitly write down constructors and fields. In fact in
@@ -150,13 +148,13 @@ then
 \end{itemize}
 \end{itemize}
 \noindent
-While getters and setters are fundamental operations, we can immagine
-more operations to be supported; for example:
+While getters and setters are fundamental operations, it is possible to
+support more operations. For example:
 \begin{itemize}
 \item \Q@method This withX(int that)@
 may be a ``wither", doing a functional field update: it creates a new instance that is like \Q@this@ but where field \Q@x@ has now \Q@that@ value.
 \item \Q@method Void update(int x,int y)@
-may do two field update at a time.
+may do two field updates at a time.
 \item\Q@method This clone()@ may do a shallow clone of the object.
 \end{itemize}
 
@@ -167,17 +165,18 @@ set of such abstract state operations.
 
 \paragraph{Points in \name:}
 In \name and with our approach to handle the state, 
-\lstinline{pointSum} and \lstinline{pointMul} can be directly composed:
+\lstinline{pointSum} and \lstinline{pointMul} can indeed be directly composed:
 \saveSpace
 \begin{lstlisting}
-  PointAlgebra:Use pointSum,pointMul
+  PointAlgebra:Use pointSum,pointMul //coherent class completion!
 \end{lstlisting}  
 \saveSpace
 \noindent
   Note how we can declare the methods independently and compose the result
   as we wish. 
 
-  \paragraph{Improved solution} In this first attempt, we repeated the abstract methods \Q@x@,\Q@y@ and \Q@of@.
+  \paragraph{Improved solution} So far the current solution still
+  repeats the abstract methods \Q@x@, \Q@y@ and \Q@of@.
   Moreover, in addition to \Q@sum@ and \Q@mul@ we may want many
   operations over points. It is possible to improve reuse
   and not repeat such abstract definitions by abstracting the common
@@ -206,7 +205,7 @@ this would be:
 \saveSpace
 \begin{lstlisting}
   colored:{ method Color color() }
-  Point:Use pointSum,colored //Failure: resulting class not coherent
+  Point:Use pointSum,colored //Fails: class not coherent
 \end{lstlisting}
 \saveSpace
 This first attempt does not work: the abstract color method
@@ -227,8 +226,8 @@ This is a reasonable solution, however the method \Q@CPoint.sum@ resets
 the color to red: we call the \Q@of(int,int)@ method, that now
 delegates to \Q@of(int,int,Color)@ by passing red as the default field
 value.  What should be the behaviour in this case?  If our abstract
-state supports withers, instead of writing \Q@This.of(...)@ we can use
-\Q@this.withX(newX).withY(newY)@ in order to preserve the color from
+state supports withers, we can use
+\Q@this.withX(newX).withY(newY)@, instead of writing \Q@This.of(...)@, in order to preserve the color from
 \Q@this@.  This solution is still not satisfactory: this design ignores
 the color from \Q@that@.
 
