@@ -124,7 +124,7 @@ t1:{method int n() this.m()+1}
 \paragraph{2: code literals are not required to be \emph{well-typed} before flattening.}${}_{}$\\*
 In class expressions  $\use\ \overline\mV$
 an \mL\ in $\overline\mV$ is not typechecked before flattening, and only the result is expected to be well-typed.
-While this seems a dangerous approach at first, consider that also Java have the same behaviour:
+While this seems a dangerous approach at first, consider that also Java has the same behaviour:
 for example in
 \saveSpace\begin{lstlisting}[language=Java]
   class A{ int m() {return 2;}  int n(){return this.m()+1;} }
@@ -141,7 +141,7 @@ C: Use t {method int k() this.n()+this.m()}
  even if \Q@n@, \Q@m@ are not locally defined, in 
 \name the result of the flattening is well typed.
 This is not the case in many similar works in literature~\cite{deep,Bettini2015282,Bergel2007} where the
-literals have to be \emph{self complete}. In this case we would have been forced to
+literals have to be \emph{self contained}. In this case we would have been forced to
 declare abstract methods \Q@n@ and \Q@m@, even if \Q@t@ already 
 provides such methods.
 
