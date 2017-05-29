@@ -1,7 +1,10 @@
 \saveSpace\saveSpace\section{Intuitions on formalization}\label{sec:formal}
 \saveSpace\saveSpace
 
-This section sketches some of the key ideas in \name. 
+This section sketches some of the key ideas in \name more
+formally. \bruno{Could we point out here a few references of key 
+ideas that were presented in other work? This would justify the 
+formalization sketch better, I think.}
 
 %In this article we dedicate more space to examples and informal presentation and motivations;
 %so we do not have space to provide a full formalizations.
@@ -9,7 +12,7 @@ This section sketches some of the key ideas in \name.
 
 \subsection{Syntax}
 
-In the following, we present a very simplified grammar:
+In the following, we present a simplified grammar of \name:
 %\begin{bnf}
 %\prodFull{aa}{bb}{Declaration}\\
 %\end{bnf}
@@ -33,14 +36,18 @@ In the following, we present a very simplified grammar:
 %\end{comment}
 
 To declare a trait \mTD\ or a class \mCD, we can use either a code literal \mL\ or a trait
-expression.  Traits come with various operators (restrict, hide,
-alias) but in this work we focus on the single operator 
+expression.  Traits in full 42 come with various operators (restrict, hide,
+alias) but in \name we focus on the single operator 
 $\use$, taking a set
 of code values: that is trait names \mt\ or literals \mL\ and composing them.  This operation, sometimes called \emph{sum}, is the simplest and most elegant
-trait composition operator.  $\use\ \overline\mV$ composes the content of $\overline\mV$
-by taking the union of the methods and the union of the implementations.
+trait composition operator~\bruno{Maybe some references here would
+  help}.  
 
-\use\ can not be applied if multiple versions of the same method are
+$\use\ \overline\mV$ composes the content of $\overline\mV$
+by taking the union of the methods and the union of the
+implementations.\bruno{Also, for Use, wasn't this similar to your
+  previous work in FJig/DeepFJig?}
+\use\ cannot be applied if multiple versions of the same method are
 present in different traits.  An exception is done for abstract methods:
 methods where the implementation \me\ is missing. In this case (if the
 headers are compatible) the implemented version is selected.  In a sum
@@ -54,14 +61,14 @@ In our simple model, we consider an error trying to merge an interface with a no
   declarations. In this simple language, the only members are methods.
 If there are no implemented interfaces, in the concrete syntax we will omit the \Q@implements@ keyword.
 
-Methods \mMD~can be instance methods or \Q@class@ methods. A class method is similar to a \Q@static@ method in Java but can be abstract. This is very usefull in the context of code composition.
+Methods \mMD~can be instance methods or \Q@class@ methods. A class method is similar to a \Q@static@ method in Java but can be abstract. This is very useful in the context of code composition.
 To denote a method as abstract, instead of an optional keyword we just omit the implementation \me.
 
 A version of this language where there are no traits can be seen 
 as a restriction/variation of FJ~\cite{igarashi2001featherweight}.
 
 \subsection{Well-formedness}
-Basic well formedness rules apply:
+In \name the basic well formedness rules apply:
 \begin{itemize}
 \item all method parameters have unique names and the special parameter name \Q@this@ is not declared
  in the parameter list,
@@ -81,7 +88,6 @@ We expect the type system to enforce:
 \item no circular implementation of interfaces,
 \item type signature of methods from interfaces can be refined following the well known variant-contravariant rules,
 \item only interfaces can be implemented.
-\item \marco{I'm sure I'm missing something}
 \end{itemize}
 While classes are typed assuming \lstinline{this} is of the nominal type of the
 class, trait declarations, do not introduce any nominal type.  \lstinline{this}
@@ -99,7 +105,8 @@ what distinguishes our approach from a simple minded code composition macro~\cit
 or a rigid module composition~\cite{ancona2002calculus}.
 
 The are two core ideas:
-\paragraph{1: traits are \emph{well-typed} before being reused.}${}_{}$\\*
+
+\paragraph{1: traits are \emph{well-typed} before being reused.}
  For example in
 
 \saveSpace\begin{lstlisting}
@@ -117,7 +124,7 @@ t1:{method int n() this.m()+1}
 \paragraph{2: code literals are not required to be \emph{well-typed} before flattening.}${}_{}$\\*
 In class expressions  $\use\ \overline\mV$
 an \mL\ in $\overline\mV$ is not typechecked before flattening, and only the result is expected to be well-typed.
-While this seems a very dangerous approach at first, consider that also Java have the same behaviour:
+While this seems a dangerous approach at first, consider that also Java have the same behaviour:
 for example in
 \saveSpace\begin{lstlisting}[language=Java]
   class A{ int m() {return 2;}  int n(){return this.m()+1;} }
@@ -129,23 +136,26 @@ In our example, using the trait \Q@t@ of before
 \saveSpace\begin{lstlisting}
 C: Use t {method int k() this.n()+this.m()}
 \end{lstlisting}\saveSpace
-\noindent would be correct: even if n,m are not defined inside
-\Q@{method int k() this.n()+this.m()}@,
-the result of the flattening is well typed.
-
+\noindent would be correct. In the code literal
+\Q@{method int k() this.n()+this.m()}@, 
+ even if \Q@n@, \Q@m@ are not locally defined, in 
+\name the result of the flattening is well typed.
 This is not the case in many similar works in literature~\cite{deep,Bettini2015282,Bergel2007} where the
-literals have to be self complete. In this case we would have been forced to
-declare abstract methods \Q@n@ and \Q@m@.
+literals have to be \emph{self complete}. In this case we would have been forced to
+declare abstract methods \Q@n@ and \Q@m@, even if \Q@t@ already 
+provides such methods.
 
 Our typing strategy has two important properties:
 \begin{itemize}
-\item If a class is declared by using $\mC : \use\ \overline\mt$, that is, without literals,
-and the flattening is successfull, \mC\ is well typed, no need of further checking.
+\item If a class is declared by using $\mC : \use\ \overline\mt$, that is without literals,
+and the flattening is successfull then \mC\ is well typed: there is no need of further checking.
 \item On the other side, if a class is declared by $\mC : \use\ \overline\mV$, with
 $\mL_1\ldots\mL_n \in \overline\mV$, and after successfull flattening $\mC : \mL$ can not be typechecked,
 then the issue was originally present in one of $\mL_1\ldots\mL_n$.
 It may be that the result is intrinsically ill-typed, if one of the methods in $\mL_1\ldots\mL_n$ is not well typed,
-but it may also happen that a type referred from one of those methods is declared \emph{after} the current class. As we will see later, this is how our relaxation allows to support (indirectly) recursive types.
+but it may also happen that a type referred from one of those methods
+is declared \emph{after} the current class. As we will see later, this
+is how our relaxation allows us to support (indirectly) recursive types.
 
 This also means that as an optimization strategy
  we may remember what method bodies come from traits and what method bodies come from code literals, in order to typecheck only the latter.
@@ -154,16 +164,15 @@ This also means that as an optimization strategy
  \subsection{Recursive types}
 
 OO languages leverage on recursive types most of the times.
-For example in a pure OO language, \Q@String@ may offers a \Q@Int size()@
+For example in a pure OO language, \Q@String@ may offer a \Q@Int size()@
 method, and \Q@Int@ may offer a \Q@String toString()@ method.
-
 This means that is not possible to type in (full) isolation classes
 \Q@String@ and \Q@Int@.
 
 The most expressive compilation process may divide the program in groups of mutually 
 dependent classes.
 Each group may also depend from a number of other groups.
-This would form a Direct Aciclyc Graph of groups.
+This would form a Direct Acyclic Graph of groups.
 To type a group, we first need to type all depended groups, then
 we can extract the structure/signature/structural type of all
 the classes of the group.
@@ -175,8 +184,8 @@ extracting the class signatures.
 
 Here we go for a much simpler simple top down execution/interpretation for flattening, where flattening
 happen one at the time, and classes are typechecked where their type is first needed.
-That is, In our approach typing and flattening interleaves. We assume our compilation process to stop as soon as 
-an error arise. There are two main kinds of errors: Type errors (like method not found) or Composition errors (like summing two conflicting implementation for the same method).
+That is, in \name typing and flattening are interleaved. We assume our compilation process to stop as soon as 
+an error arises. There are two main kinds of errors: \emph{type errors} (like method not found) or \emph{composition errors} (like summing two conflicting implementation for the same method).
 For example
 \saveSpace\begin{lstlisting}
 A:{method int ma(B b) b.mb()+1}
@@ -186,17 +195,17 @@ B: Use tb
 C: Use tc, {method int hello() 1}
 \end{lstlisting}\saveSpace
 In this scenario, since we go top down, we first need to generate \Q@B@.
-To generate \Q@B@, we need to use \Q@tb@;
+To generate \Q@B@, we need to use \Q@tb@.
 In order to modularly ensure well typedness,
 we require \Q@tb@ to be well typed at this stage. If \Q@tb@ was not well typed
 a type error could be generated at this stage.
-In this moment, \Q@A@ can not be compiled/checked alone,
-we need informations about \Q@B@, but \Q@A@ is not used in \Q@tb@,
+At this moment, \Q@A@ cannot be compiled/checked alone:
+information about \Q@B@ is needed, but \Q@A@ is not used in \Q@tb@,
 thus we do not need to type \Q@A@ and we can type \Q@tb@ with
  the available informations and proceed to generate \Q@B@.
 Now, we need to generate \Q@C@, and we need to ensure well typedness of \Q@tc@.
-Now \Q@B@ is alreay well typed (since generated by \use\ \Q@tb@, with no \mL),
-and \Q@A@ can be typed;  finally \Q@tc@ can be typed and used.
+Now \Q@B@ is already well typed (since generated by \use\ \Q@tb@, with no \mL),
+and \Q@A@ can be typed. Finally \Q@tc@ can be typed and used.
 If \use\ could not be performed (for example it \Q@tc@ had a method \Q@hello@ too)
 a composition error could be generated at this stage.
 On the opposite side, if \Q@B@ and \Q@C@ was swapped, as in
@@ -207,7 +216,7 @@ B: Use tb
 \noindent
 now the first task would be to generate \Q@C@, but 
 to type \Q@tc@ we need to know the type of \Q@A@ and \Q@B@.
-But they are both unavailable: \Q@B@ is still not computed and 
+However they are both unavailable: \Q@B@ is still not computed and 
 \Q@A@ can not be compiled/checked without information about \Q@B@.
 A type error would be generated, on the line of ``flattening of \Q@C@
 requires \Q@tc@, \Q@tc@ requires \Q@A@,\Q@B@, but \Q@B@ is still in need of flattening".
@@ -238,7 +247,7 @@ Indeed we just wrote an involved program where the correctness of trait \Q@t@ de
 \paragraph{Criticism: it would be better to typecheck before flattening.}${}_{}$\\*
 In the world of strongly typed languages we are tempted to
 first check that all can go well, and then perform the flattening.
-This would however be overcompicated for no observable difference:
+This would however be overcomplicated without any observable difference:
 Indeed, in the \Q@A,B,C@ example above there is no difference
 between
 \begin{itemize}
@@ -252,4 +261,4 @@ or a more involved
 
 Note that we can reuse code only by naming traits; but our only point of relaxation is {\bf only} the code literal: there is no way an error can ``move around'' and be duplicated during the compilation process.
 In particular, our approach allows for safe libraries of traits and classes to be fully typechecked, deployed and reused by multiple clients: no type error will emerge from library code.
-On the other side, we do not enforce the programmer to write always self-contained code where all the abstract method definition are explicitly declared.
+On the other side, we do not enforce the programmer to always write self-contained code where all the abstract method definition are explicitly declared.
