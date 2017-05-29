@@ -13,11 +13,10 @@ that address the this-leaking problem: Delta-Trait~(DT)\cite{Bettini:2010:ISP:17
 Leveraging on \emph{traits}, in this work we aim to synthesize
 the best ideas of those very different designs, while at the same time 
 coming up with a simpler and improved design for separating
-subclassing from subtyping. The following compares 
+subclassing from subtyping, which also addresses various limitations of those
+3 particular language designs.
+The following compares 
 various aspects of the language designs:
-\bruno{can we say that by borrowing ideas from various designs we come
-up with a simpler design, which also addresses various limitations of
-particular designs?}
 
 \begin{itemize}
 \item {\bf A simple uniform syntax for code literals}
@@ -70,10 +69,6 @@ less obvious in PT since both a package and a class have to be introduced to exp
 This allows encoding binary methods, express patterns like withers or fluent setters and to instantiate instances of the (future) class(es)  using the reused code.
 
 \end{itemize}
-With the exception of those 3 lines of work, to the best of our understading
-other famous work in literature, like~\cite{odersky2008programming,nystrom2006j}
-does not completely break the relation between inheritance and subtyping, but only prevents subtyping where 
-it would be unsound.\bruno{structural typing? Cook?}
 
 \subsection{State and traits}
 
@@ -98,7 +93,7 @@ In the literature there have been many attempts to add state in traits/module co
     to a functional programming style.
 \item {\bf Constructors compose fields}:
 In this approach (used by \cite{fjig}) the fields are declared but not initialized, and
-a canonical constructor constructor (as in FJ) taking a value for each field and just initializing such field
+a canonical constructor (as in FJ) taking a value for each field and just initializing such field
 is automatically generated in the resulting class.
 It is easy to add fields, however this model is associative but not commutative: composition order influences field order, and thus the construtor signature.
 Self construction is not possible 
@@ -127,10 +122,12 @@ somehow syntetized from the constructor parameters.
 %Add that: original trait model has no self construction and types introduction not relevant since dynamicly typed language
 
 \subsection{ThisType with Subclassing implying Subtyping}
-
-Various Java/FJ extensions with ThisType here.
-
-\marco{Cite some work of bruceTHisType and show how he also fails to separe reuse and use}
+With the exception of those mentioned 3 lines of work, to the best of our understading
+other famous work in literature, like~\cite{odersky2008programming,nystrom2006j}
+does not completely break the relation between inheritance and subtyping, but only prevents subtyping where 
+it would be unsound.
+Recently work on ThisType \cite{ToplasAndIgarashi}
+also continue on this line. In those works, ``subtyping by subclassing'' is considered a valuable feature.
 
 \begin{comment}
 \subsection{Tablular comparision of many approaches}
