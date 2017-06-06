@@ -5,7 +5,7 @@ To illustrates how
 Set and Bag collections first in Java, and then in \name.
 The main benefit of the \name solution is that \emph{we can get reuse 
 without introducing subtyping between Bags and Sets}. This improves the 
-use of Bags and eliminates logical errors arizing from incorrect
+use of Bags and eliminates logical errors arising from incorrect
 subtyping relations that are allowed in the Java solution. 
 
 \subsection{Sets and Bags in Java}
@@ -29,7 +29,7 @@ class Bag extends Set{...//for each element in the hash map,
 \end{lstlisting}
 
 \noindent Coding \Q@Bag@ in this way avoids a lot of code
-duplication, but \emph{we induced unintented subtyping}! 
+duplication, but \emph{we induced unintended subtyping}! 
 Since subclassing implies subtyping, our code breaks the Liskov substitution principle (LSP)~\cite{martin2000design}: not all bags are sets!
 Indeed, the following is allowed:
 
@@ -39,7 +39,7 @@ Set mySet=new Bag(); //OK for the type system but not for LSP
 
 
 \paragraph{A (broken) attempt to fix the Problem in Java.}
-One could \emph{retroactivelly} fix this problem by introducing \Q@AbstractSetOrBag@
+One could \emph{retroactively} fix this problem by introducing \Q@AbstractSetOrBag@
 and making both \Q@Bag@ and \Q@Set@ inherit from it:
 \begin{lstlisting}
 abstract class AbstractSetOrBag{/*old set code goes here*/}
@@ -52,7 +52,7 @@ AbstractSetOrBag unexpected=new Bag();
 
 This looks unnatural, since \Q@Set@ would extend \Q@AbstractSetOrBag@ without adding anything,
 and we would be surprised to find a use of the type \Q@AbstractSetOrBag@.
-Worst, if we are to constantly apply this mentaly, we would introduce a very high number
+Worst, if we are to constantly apply this mentally, we would introduce a very high number
 of abstract classes that are not supposed to be used as types. Those classes would clutter the 
 public interface of our classes and our code project as a whole.
 In our example the information \Q@Set<:AbstractSetOrBag@ would be present in the public interface
@@ -82,7 +82,7 @@ Then our code would be impossible to reuse in the first place for any user of ou
 We consider this an advantage, since unintended code reuse runs into underdocumented behaviour nearly all the time\footnote{See
 ``Design and document for inheritance or else prohibit
 it''~\cite{Bloch08}: the
-self use of public methods is rarelly documented, thus is hard to understand the effects of overriding a library metod.
+self use of public methods is rarely documented, thus is hard to understand the effects of overriding a library method.
 }!
 If the designer of the set class wishes to make it reusable, he/she can do it explicitly by providing a set trait:
 \saveSpace\begin{lstlisting}
@@ -105,7 +105,7 @@ bag: Use set, {/*bag implementation*/}
 Bag: Use bag
 \end{lstlisting}\saveSpace
 Notice how, thanks to flattening, the resulting code for \Q@Bag@ is identical in both versions, 
-and as shown in Section 2, there is no trace of trait \Q@bag@. Thus if we are the developers of bags, we can temporarly go for the first version, and move when needed to the second without adding new undesired complexity for our old clients. 
+and as shown in Section 2, there is no trace of trait \Q@bag@. Thus if we are the developers of bags, we can temporarily go for the first version, and move when needed to the second without adding new undesired complexity for our old clients. 
 
 
 %As a pleasaruble accident, avoid such code gift us simple support for

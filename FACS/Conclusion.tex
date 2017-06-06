@@ -4,7 +4,7 @@ In this paper we explained a simple model to
 radically decouple inheritance/code reuse and subtyping.
 The model presented here is easy to extend.
 For example nested classes can be easily added, giving us enough power
-to easly solve the Expression Problem~\cite{EP}, as demonstrated previously in
+to easily solve the Expression Problem~\cite{EP}, as demonstrated previously in
 DeepFJig~\cite{deep}. More composition operators can be added in addition to \use.
 In particular all the sophisticated operators of DeepFJig can be added.
  Indeed we can add any operator respecting following criteria:
@@ -22,7 +22,7 @@ the type error must be traced back to code in one of those not-yet typed code li
  Our simplified model represents the conceptual core of  42: a novel full blown programming language,
 which leverages on the ideas presented in this paper to obtain reliable and understandable metaprogramming.
 Formalization (in progress) for full 42 can be found at
-\url{http://}\footnote{Ommitted for anonymous review}. 
+\url{http://}\footnote{Omitted for anonymous review}. 
 %\verb@urlOmittedForDoubleBlindReview@.
 %\verb@github.com/ElvisResearchGroup/L42/tree/master/Main/formal@.
 42 extends our model allowing
@@ -32,10 +32,11 @@ In such model we do not need an explicit notion of traits: they are encoded as m
   a strong type system supporting aliasing mutability and circularity control,
    checked exceptions, errors (unchecked exceptions) with strong-exception-safety for errors.
 
-42 do not have a finite set of composion operators; they can be
+\begin{comment}
+42 do not have a finite set of composition operators; they can be
 added using the built in support for native method calls. They can
 be dynamically checked to verify that they are well behaved
-according to our predicate, or they can be trusted to acheive
+according to our predicate, or they can be trusted to achieve
 efficiency.
-
+\end{comment}
 

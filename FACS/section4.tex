@@ -20,7 +20,7 @@ reuse in the past.
 
 To illustrate how \name improves reuse, we will show a novel approach
 to deal with \emph{state} in traits.  The idea of summing pieces of
-code is very elegant, and has proven very successfull in module
+code is very elegant, and has proven very successful in module
 composition languages~\cite{ancona2002calculus} and several trait
 models~\cite{Traits:ECOOP2003,Bergel2007,BETTINI2013521,fjig}.  However the research
 community is struggling to make it work with object state (constructors
@@ -42,7 +42,7 @@ is, classes have syntax richer than traits, allowing
 declaration for fields and constructors.  This approach is very
 powerful as illustrated by Wang et al.~\cite{wang2016classless}.
 
-\paragraph{Modeling Points} Consider, for example, two simple 
+\paragraph{Modelling Points} Consider, for example, two simple 
 traits that deal with \emph{point} objects. That is, points
 in the cartesian plane (with coordinates \lstinline{x} and
 \lstinline{y}). The first trait provides a \emph{binary method} that 
@@ -129,8 +129,8 @@ any class that ``can" be completed in the obvious way  is \emph{a
   complete ``coherent" class}.  In most other languages, a class is
 abstract if it has abstract methods.  Instead, we call a class
 abstract only when the set of abstract methods is not coherent. That
-is, the unimplemented methods cannot not be automatically recognized
-as factory, getters and setters. Methods recognized as factory, getters and setters are called
+is, the unimplemented methods cannot not be automatically recognised
+as factory, getters and setters. Methods recognised as factory, getters and setters are called
 \emph{abstract state operations}.
   
 \paragraph{Coherent classes} A more detailed definition of coherent
@@ -253,19 +253,19 @@ a better design would be the following:
     }
   CPoint:/*as before*/
 \end{lstlisting}  \saveSpace
-  \noindent This design allows merging colors, or any other kind of state we may want to add
+  \noindent This design allows merging colours, or any other kind of state we may want to add
   following this pattern.%\bruno{worried that withers are not explained enough.}
 
 \paragraph{Independent Extensibility}
-  Of course, quite frequentely there can be multiple independent
+  Of course, quite frequently there can be multiple independent
   extensions~\cite{Zenger-Odersky2005} that need to be composed. Lets suppose that 
   we could have a notion of flavoured points as well.   
   In order to compose, let say \Q@colored@ with \Q@flavored@ we would
   need to compose the merge operation inside of both of them.
-  The simple model we are presenting could accomodate this with an
+  The simple model we are presenting could accommodate this with an
   extension allowing code literals inside of a \use\ expression to use some form of super call to compose conflicting implementations. This is similar to the \emph{override} operation present in the original trait model~\cite{ducasse2006traits}.
 
-The following code shows how to mix colors and flavours. The syntax \Q@_2merge@ and   \Q@_3merge@
+The following code shows how to mix colours and flavours. The syntax \Q@_2merge@ and   \Q@_3merge@
 call the version of merge as defined in the second/third element of \use.
 \saveSpace\begin{lstlisting}
   p: {/*as before*/ }

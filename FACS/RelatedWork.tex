@@ -23,7 +23,7 @@ PT on the other hand is built on top of full Java, thus has a very
 involved syntax.
 \name leverages on DeepFJig's approach but,
 \emph{thanks to our novel representation of state}, \name also offers a much simpler and uniform syntax than
-all other approaches: everyhing is just a method.
+all other approaches: everything is just a method.
 \item 
 {\bf Reusable code cannot be ``used'', that is instantiated or used as a type.}
 This happens in TR and in PT, but not in DeepFJig. To allow reusable code to be directly 
@@ -86,7 +86,7 @@ In the literature there have been many attempts to add state in traits/module co
   
   To its credit, this simple approach is commutative and associative and does not disrupt elegance of summing methods.
   However, objects are created "broken" and the user is trusted with fixing them.
-  While is easy to add fields, the load of inizializing them is on the user; moreover
+  While is easy to add fields, the load of initializing them is on the user; moreover
     all the objects are intrinsically mutable, so this model is unfriendly
     to a functional programming style.
 \item {\bf Constructors compose fields}:
@@ -95,7 +95,7 @@ a canonical constructor (as in FJ) taking a value for each field and just initia
 is automatically generated in the resulting class.
 It is easy to add fields, however this model is associative but not commutative: composition order influences field order, and thus the construtor signature.
 Self construction is not possible 
-since the signature of the constuctors changes during composition.
+since the signature of the constructors changes during composition.
 
 \item {\bf Constructors can be composed if they offer the same exact parameters}:
 In this approach (used by DeepFJig) traits declare fields and constructors.
@@ -106,18 +106,18 @@ This approach is designed to allow self construction.
 It is also associative and mostly commutative: composition order only influences execution order of side effects during construction.
 However constructor composition requires identical constructor signatures: this
 hampers reuse, and if a field is added, its initial value needs to be
-somehow syntetized from the constructor parameters.
+somehow syntesized from the constructor parameters.
 
 \end{itemize}
 
-%\item extension with nested class is natural and powefull
+%\item extension with nested class is natural and powerful
 %We claim that our solution to the expression problem is the most natural in literature to date:
 %While a similar sintax can be achieved with the scandinavian style~\cite{ernst2004expression}, their dependent type system makes reasoning quite complex, and indeed more recent solutions have accepted a more involved syntax in order to have an understandable type system~\cite{igarashi2005lightweight}.
 
 %Our close contendant is DeepFJig~\cite{corradi2011deepfjig}: all our gain over their model is based on our relaxation over abstract signatures.
 %Note how we solve the expression problem in the most radical way possible \marco{bruno, here you can insert some of the criticism over expression problem trivially and explain how is not applicable to us here.}
 
-%Add that: original trait model has no self construction and types introduction not relevant since dynamicly typed language
+%Add that: original trait model has no self construction and types introduction not relevant since dynamically typed language
 
 \subsection{ThisType with Subclassing implying Subtyping}
 With the exception of those mentioned 3 lines of work, to the best of our understading
@@ -126,8 +126,11 @@ does not completely break the relation between inheritance and subtyping, but on
 it would be unsound.
 Recent work on {\bf ThisType} \cite{Saito:2009,ryu16ThisType}
 also continues on this line.
-In those works, ``subtyping by subclassing'' is considered a valuable
-feature. 
+In those works, ``subtyping by subclassing'' is preserved, which means
+that those designs are more suitable to retain the programming model
+of mainstream OOP languages and backwards compatibility. The design 
+of \name (and 42) is a more radical departure of mainstream OOP, with
+the hope to improve both the mechanisms for use and reuse in OOP.
 
 \begin{comment}
 \subsection{Tablular comparision of many approaches}

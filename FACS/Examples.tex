@@ -51,7 +51,7 @@ of two abstract methods with compatible headers, the one with the more
 specific type is selected.
 
 Code literals \mL\ can be marked as interfaces. 
-That is, the interface keyword is inside the curly brakets, so an upper case name associated with an interface literal is a class-interface, while a lowercase one is a trait-interface.
+That is, the interface keyword is inside the curly brackets, so an upper case name associated with an interface literal is a class-interface, while a lowercase one is a trait-interface.
 In our simple model, we consider an error trying to merge an interface with a non-interface.
  Then we have a set of implemented interfaces and a set of member
   declarations. In this simple language, the only members are methods.
@@ -142,7 +142,7 @@ provides such methods.
 Our typing strategy has two important properties:
 \begin{itemize}
 \item If a class is declared by using $\mC : \use\ \overline\mt$, that is without literals,
-and the flattening is successfull then \mC\ is well typed: there is no need of further checking.
+and the flattening is successful then \mC\ is well typed: there is no need of further checking.
 \item On the other side, if a class is declared by $\mC : \use\ \overline\mV$, with
 $\mL_1\ldots\mL_n \in \overline\mV$, and after successfull flattening $\mC : \mL$ can not be typechecked,
 then the issue was originally present in one of $\mL_1\ldots\mL_n$.

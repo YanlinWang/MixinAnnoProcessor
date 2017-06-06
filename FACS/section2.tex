@@ -44,7 +44,7 @@ the Java code, introducing a subclass
 \name has a different mechanism for \emph{code-reuse} that 
 is more appropriate when \emph{code-reuse} is intended. 
 
-\subsection{Traits in \name: A mechanim of code Reuse}
+\subsection{Traits in \name: A mechanism of code Reuse}
 
 Unlike classes, traits in \name cannot be instantiated and do not introduce new
 types. However they provide code reuse.
@@ -69,7 +69,7 @@ is created by inheriting the code from the trait using the keyword
 {\bf Use}. Note that \use\ cannot contain class names: only trait
 names are allowed.
 That is, using a trait is the only way to induce code reuse.
-Unfortunatelly, this code does not work, 
+Unfortunately, this code does not work, 
 because \lstinline{Utils.m} requires an \lstinline{A} and the type of \lstinline{this} in
 \Q@ta@ has no relationship to the type \lstinline{A}.
 A Java programmer may then try to write:
