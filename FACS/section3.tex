@@ -3,8 +3,8 @@
 To illustrates how 
 \name \emph{improves the use} of classes we model a simplified version of
 Set and Bag collections first in Java, and then in \name.
-The main benefit of the \name solution is that we can get reuse 
-without introducing subtyping between Bags and Sets. This improves the 
+The main benefit of the \name solution is that \emph{we can get reuse 
+without introducing subtyping between Bags and Sets}. This improves the 
 use of Bags and eliminates logical errors arizing from incorrect
 subtyping relations that are allowed in the Java solution. 
 
@@ -74,7 +74,7 @@ reflection, for example).
 \end{itemize}
 
 \subsection{Sets and Bags in \name}
-Instead, in \name, if we was to originally declare
+Instead, in \name, if we were to originally declare
 \saveSpace\begin{lstlisting}
 Set:{/*set implementation*/} 
 \end{lstlisting}\saveSpace
@@ -84,7 +84,7 @@ We consider this an advantage, since unintended code reuse runs into underdocume
 it''~\cite{Bloch08}: the
 self use of public methods is rarelly documented, thus is hard to understand the effects of overriding a library metod.
 }!
-If the designer of the set class wishes to make it reusable, it can do it explicitly by providing a set trait:
+If the designer of the set class wishes to make it reusable, he/she can do it explicitly by providing a set trait:
 \saveSpace\begin{lstlisting}
 set:{/*set implementation*/} 
 Set:Use set

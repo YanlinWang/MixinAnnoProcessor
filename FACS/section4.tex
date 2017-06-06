@@ -1,17 +1,16 @@
 \saveSpace\saveSpace\section{Improving Reuse}\saveSpace
 \name allows reuse even when subtyping is impossible.
-In \name traits do not induce a new (externally visible) type.
-However, locally in the trait the programmer can use the special self-type \Q@This@ in order to denote the 
+\name traits do not induce a new (externally visible) type.
+However, locally in a trait, programmers can use the special self-type \Q@This@~\cite{bruce_1994,Saito:2009,ryu16ThisType} in order to denote the 
 type of \Q@this@.
-That is: the program is agnostic to what the \Q@This@ type is going to be, so it can
+That is, a program is agnostic to what the \Q@This@ type is, so that it can
 be later assigned to any (or many) classes. 
 The idea is that during flattening, \Q@This@ will be replaced with the actual class name.
 In this way, \name allows reuse even when subtyping is
-impossible, that is, when a method parameter has type \Q@This@ (also
-called a \emph{binary
-  method}~\cite{bruce96binary}). 
+impossible. For example for \emph{binary
+  methods}~\cite{bruce96binary} where the method parameter has type \Q@This@. 
 This type of situations is the primary motivator
-for previous work aiming at separating inheritance from subtyping.
+for previous work aiming at separating inheritance from subtyping~\cite{cook}.
 Leveraging on the \Q@This@ type, we can also provide self-instantiation (trait methods can create instances of the class using them) and smoothly integrate state and traits: a challenging problem that has limited the flexibility of traits and
 reuse in the past.
 %First we show how self-instantiation and state are already avaible in the simplest trait model,
@@ -70,7 +69,7 @@ Notice the abstract \Q@class method This of(..)@ which acts as a constructor
 for points:
 a class method is similar to a \Q@static@ method in Java but can be abstract. 
 As for instance methods, they are late bound:  flattening can provide an implementation for them.
-Abstract class methods are very similar to the original concept of member functions in the module composition setting.
+Abstract class methods are very similar to the original concept of member functions in the module composition setting~\cite{ancona2002calculus}.
 
 \subsection{A First Attempt at Composition with a Traditional Model of
 Traits}
@@ -81,7 +80,7 @@ two different operations on points is:
   Point:Use pointSum,pointMul
 \end{lstlisting}  \saveSpace
 
-\noindent However \emph{in a traditional trait model} this would fail since methods \Q@x@,\Q@y@ and \Q@of@ are still abstract!
+\noindent However \emph{in a traditional trait model}~\cite{Traits:ECOOP2003} this would fail since methods \Q@x@,\Q@y@ and \Q@of@ are still abstract!
 Instead a user could write something similar to:
 
 \begin{lstlisting}
@@ -108,13 +107,16 @@ some disadvantages:
   returning \Q@This@. The class will then implement the methods returning \Q@This@
   by forwarding a call to the constructor.
   
-\item {\bf Disadvantages:} Writing those obvious definitions to close
+\item {\bf Disadvantages:} Writing such obvious definitions to close
   the state/fixpoint in the class 
-   with the constructors and fields and getter/setters and factories can be quite tedious.
+   with the constructors and fields and getter/setters and factories is tedious.
    %Moreover, there is no way for a trait to specify a default value for a field,
    %the class need to handle all the state, even state that is conceptually
    %"private" of such trait. 
-   Previous work shows that such code can be automatically generated~\cite{wang2016classless}.
+   Previous work shows that such code can be automatically
+   generated~\cite{wang2016classless}.
+   Also a model with fields and constructors is necessarily
+   more complex than a model with methods only.
 
 \end{itemize}
 
@@ -168,7 +170,7 @@ In \name and with our approach to handle the state,
 \lstinline{pointSum} and \lstinline{pointMul} can indeed be directly composed:
 \saveSpace
 \begin{lstlisting}
-  //Same code as before! It works because resulting class is coherent.
+  //Same code as before! Works because resulting class is coherent.
   PointAlgebra:Use pointSum,pointMul 
 \end{lstlisting}  
 \saveSpace
@@ -263,7 +265,7 @@ a better design would be the following:
   The simple model we are presenting could accomodate this with an
   extension allowing code literals inside of a \use\ expression to use some form of super call to compose conflicting implementations. This is similar to the \emph{override} operation present in the original trait model~\cite{ducasse2006traits}.
 
-In the following you can see how to mix colors and flavours. The syntax \Q@_2merge@ and   \Q@_3merge@
+The following code shows how to mix colors and flavours. The syntax \Q@_2merge@ and   \Q@_3merge@
 call the version of merge as defined in the second/third element of \use.
 \saveSpace\begin{lstlisting}
   p: {/*as before*/ }
@@ -271,13 +273,13 @@ call the version of merge as defined in the second/third element of \use.
   colored:{/*as before*/}
   flavored:{method Flavor flavor() //very similar to colored
     method This withFlavor(Flavor that)
-    method This merge(This that) //how to merge flavors handled here
-      this.withFlavor(that.flavor())}//here we just inherit ``that'' flavor
+    method This merge(This that) //merging flavors handled here
+      this.withFlavor(that.flavor())}//inherits ``that'' flavor
   FCPoint:Use pointSum,colored,flavored{
     class method This of(int x,int y)
       This.of(x,y,Color.of(/*red*/),Flavor.none())
     class method This of(int x, int y,Color color,Flavor flavor)
-    //we can resolve the conflict about two implementations for merge
+    //resolves the conflict about two implementations for merge
     //by proving our own implementation here
     method This merge(This that) this._2merge(that)._3merge(that)
     }
