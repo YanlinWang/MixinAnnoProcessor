@@ -1,7 +1,7 @@
 \section{Introduction}\label{sec:intro}
 \saveSpace\saveSpace
 In mainstream OO languages like Java, C++ or C\# subclassing 
-implies subtyping. For example, in Java a subclass definition, such as 
+implies subtyping. For example, a Java subclass definition, such as 
 \Q@class A extends B {}@
 \noindent does two things at the same time:
 it {\bf inherits} code from \lstinline{B}; and it {\bf creates
@@ -129,14 +129,15 @@ separation of inheritance and subtyping.
 a module composition language where the main idea is that
 nested classes with the same name are recursivelly composed.
 \end{itemize}
-This paper aims at showing a simple language design, called \name.
+This paper aims at showing a simple language design, called \name,
+which addresses the this-leaking problem and decouples subtyping from inheritance.
 Leveraging on traits, in this work we aim to synthesize the best ideas
 of those 3 very different designs, while at the same time coming up with a simpler and
 improved design for separating subclassing from subtyping.
 The keys ideas in \name are to divide between code designed for
-\textbf{USE} and code designed for \textbf{REUSE}, and a novel
+\textbf{use} and code designed for \textbf{reuse}, and a novel
 approach to state in traits that avoids the complexities introduced by
-fields and their initialization.
+fields and their initialization in previous approaches.
 In \name there are two separate concepts: classes
 and traits~\cite{Traits:ECOOP2003}. Classes are meant for code use, and cannot be used
 for reuse. In some sense classes in \name are like final classes in
@@ -153,7 +154,7 @@ work~\cite{Bettini:2010:ISP:1774088.1774530,BETTINI2013521,Bettini2015282,Krogda
 and the design of \name synthesises some of the previously studied
 concepts. We briefly sketch the key ideas of the formalization of
 \name in Section~\ref{sec:formal}.
-The language design ideas have been implemented in the 42 language, which supports all
+The language design ideas have been implemented in the {\bf 42 language}, which supports all
 the examples we show in the paper, and is available at:
 
 \url{http://l42.is}
@@ -180,7 +181,7 @@ In summary, our contributions are:
 \item We synthesize the key ideas of previous designs that solve the
   this-leaking problem into {\bf a novel and
   simple language design}. This language is the logic core of the language 42, and 
-  all the examples in the paper can be directly encoded as valid 42 programs. 
+  all the examples in the paper can be encoded as valid 42 programs. 
 
 \item We illustrate how the new design {\bf improves both code use and code
   reuse}.
