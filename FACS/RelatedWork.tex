@@ -1,4 +1,3 @@
-\bruno{renaming DeltaTrait as RecordTrait}
 \saveSpace\saveSpace
 \section{Related Work}
 \saveSpace\saveSpace
@@ -7,9 +6,8 @@ Our work is inspired by traits~\cite{ducasse2006traits}, which in turn
 are inspired by module composition languages~\cite{ancona2002calculus}.
 \saveSpace
 \subsection{Separating Inheritance and Subtyping}
-\saveSpace
 We are aware of at least 3 independently designed research languages 
-that address the this-leaking problem: Delta-Trait~(DT)\cite{Bettini:2010:ISP:1774088.1774530,BETTINI2013521,Bettini2015282}, Package Templates~(PT)\cite{KrogdahlMS09,DBLP:journals/taosd/AxelsenSKM12,DBLP:conf/gpce/AxelsenK12}, DeepFjig\cite{deep,servetto2014meta,fjig}.
+that address the this-leaking problem: TraitRecordJ~(TR)\cite{Bettini:2010:ISP:1774088.1774530,BETTINI2013521,Bettini2015282}, Package Templates~(PT)\cite{KrogdahlMS09,DBLP:journals/taosd/AxelsenSKM12,DBLP:conf/gpce/AxelsenK12}, DeepFJig~\cite{deep,servetto2014meta,fjig}.
 Leveraging on \emph{traits}, in this work we aim to synthesize
 the best ideas of those very different designs, while at the same time 
 coming up with a simpler and improved design for separating
@@ -20,29 +18,29 @@ various aspects of the language designs:
 
 \begin{itemize}
 \item {\bf A simple uniform syntax for code literals}
-DeepFjig is best in this sense, since DT has separate syntax for class literals, trait literals and record literals.
+DeepFJig is best in this sense, since TR has separate syntax for class literals, trait literals and record literals.
 PT on the other hand is built on top of full Java, thus has a very
 involved syntax.
-\name leverages on DeepFjig's approach but,
+\name leverages on DeepFJig's approach but,
 \emph{thanks to our novel representation of state}, \name also offers a much simpler and uniform syntax than
 all other approaches: everyhing is just a method.
 \item 
 {\bf Reusable code cannot be ``used'', that is instantiated or used as a type.}
-This happens in DT and in PT, but not in DeepFjig. To allow reusable code to be directly 
-usable, in DeepFjig
+This happens in TR and in PT, but not in DeepFJig. To allow reusable code to be directly 
+usable, in DeepFJig
 classes introduce nominal types in an unnatural way: the type of
 \Q@this@ is only \Q@This@ (sometimes called \Q@<>@) and not the
 nominal type of its class. 
-That is in DeepFjig 
+That is in DeepFJig 
 \Q@A:{ method A m()this}@ is not well typed. This is because
 \Q@B: Use A@ flattens to \Q@B:{ method A m()this}@, which is clearly not well typed.
 Looking to this example is clear why we need reusable code to be agnostic of its name.
-Then, either reusable code has no name (as in DT, PT and \name)
+Then, either reusable code has no name (as in TR, PT and \name)
 or all code is reusable and usable, and all code needs to be awkwardly agnostic of its name.
 
 \item 
 {\bf Requiring abstract signatures is a left over of module composition mindset.}
-DT and Deepfjig comes from a tradition of functional module composition, where 
+TR and DeepFJig comes from a tradition of functional module composition, where 
 modules are typed in isolation under an environment, and then the composition is performed.
 As we show in this work, this ends up requiring verbose repetition of abstract signatures,
 which (for highly modularized code) may end up constituting most of the program.
@@ -51,20 +49,20 @@ the meaning of names can be understood from the reuse context.
 The typing strategy of PT offers the same advantages of our typing model, 
 but is more involved and indirect. This may be caused by the
 heavy task of integrating with full Java.
-Recent versions of Delta-Traits are trying to address this issue too.
+%Recent work based on TR is trying to address this issue too.
 \item {\bf Composition algebra.}
 The idea of using composition operators over atomic values as in an arithmetic expression is very powerful,
-and makes it easy to extend languages with more operators. Deepfjig and DT embrace this idea, while PT takes the traditional Java/C++ approach of using enhanced class/package declaration syntax.
+and makes it easy to extend languages with more operators. DeepFJig and TR embrace this idea, while PT takes the traditional Java/C++ approach of using enhanced class/package declaration syntax.
 The typing strategy of PT also seems to be connected with this
 decision, so it would be hard to move their approach in a composition
 algebra setting.
 \item {\bf Complete ontological separation between use and reuse}
-While all 3 works allow separating inheritance and subtyping only DT properly enforces 
+While all 3 works allow separating inheritance and subtyping only TR properly enforces 
 separation between use (classes and interfaces) and reuse (traits).
-This is because in DeepFjig all classes are both units of use and reuse (however, subtyping is not induced).
+This is because in DeepFJig all classes are both units of use and reuse (however, subtyping is not induced).
 PT imports all the complexity of Java, so although is possible to separate use and reuse, the model have powerful but non-obvious implications where (conventional Java) \Q@extends@ and PT are used together.
-\item {\bf Naming your type, even if there is none yet.}
-Both Deepfjig and PT allow a class to refer to its name, albeit this is
+\item {\bf Naming the self type, even if there is none yet.}
+Both DeepFJig and PT allow a class to refer to its name, albeit this is
 less obvious in PT since both a package and a class have to be introduced to express it.
 This allows encoding binary methods, express patterns like withers or fluent setters and to instantiate instances of the (future) class(es)  using the reused code.
 
@@ -104,7 +102,7 @@ In this approach (used by DeepFJig) traits declare fields and constructors.
 The constructor initializes the fields but can do any other computation.
 Traits whose constructors have the same signature can be composed.
 The composed constructor will execute both constructor bodies in order.
-This approach is designed to allows Self construction.
+This approach is designed to allow self construction.
 It is also associative and mostly commutative: composition order only influences execution order of side effects during construction.
 However constructor composition requires identical constructor signatures: this
 hampers reuse, and if a field is added, its initial value needs to be
@@ -126,8 +124,10 @@ With the exception of those mentioned 3 lines of work, to the best of our unders
 other famous work in literature, like~\cite{odersky2008programming,nystrom2006j}
 does not completely break the relation between inheritance and subtyping, but only prevents subtyping where 
 it would be unsound.
-Recently work on ThisType \cite{Saito:2009,ryu16ThisType}
-also continue on this line. In those works, ``subtyping by subclassing'' is considered a valuable feature.
+Recent work on {\bf ThisType} \cite{Saito:2009,ryu16ThisType}
+also continues on this line.
+In those works, ``subtyping by subclassing'' is considered a valuable
+feature. 
 
 \begin{comment}
 \subsection{Tablular comparision of many approaches}

@@ -1,5 +1,4 @@
 \section{Introduction}\label{sec:intro}
-\saveSpace\saveSpace
 In mainstream OO languages like Java, C++ or C\# subclassing 
 implies subtyping. For example, a Java subclass definition, such as 
 \Q@class A extends B {}@
@@ -117,7 +116,7 @@ classes can also be subclassed to provide \emph{reuse} of code.
 We are aware of at least 3 independently designed research
 languages that address the this-leaking problem:
 \begin{itemize}
-\item In {\bf Delta-Trait (DT)}~\cite{Bettini:2010:ISP:1774088.1774530,BETTINI2013521,Bettini2015282}
+\item In {\bf TraitRecordJ (TR)}~\cite{Bettini:2010:ISP:1774088.1774530,BETTINI2013521,Bettini2015282}
 each  construct has a single responsability: classes instantiate objects,
 interfaces induce types, records express state and traits are reuse units.
 \item {\bf Package Templates (PT)}~\cite{KrogdahlMS09,DBLP:journals/taosd/AxelsenSKM12,DBLP:conf/gpce/AxelsenK12}
@@ -125,7 +124,7 @@ are an extension of (full) Java where new packages can be ``synthesized'' by mix
 and integrating code templates. As an extension of Java, PT allows but not require
 separation of inheritance and subtyping.
 \item {\bf
-    DeepFjig}~\cite{deep,servetto2014meta,fjig} is
+    DeepFJig}~\cite{deep,servetto2014meta,fjig} is
 a module composition language where the main idea is that
 nested classes with the same name are recursivelly composed.
 \end{itemize}
