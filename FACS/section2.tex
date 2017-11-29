@@ -19,8 +19,8 @@ absence of the \Q@extends@ keyword in \name.
 Consider the example in Section~\ref{sec:intro}:
 \saveSpace
 \begin{lstlisting}
- A: { method int ma() Utils.m(this) }//note, no {return _}
- Utils:{ class method int m(A a)/*method body here*/ }
+ A: { method int ma() Utils.m(this) }//note, no need for {return _}
+ Utils:{ class method int m(A a)/*some method body here*/ }
 \end{lstlisting} 
 \saveSpace
 \noindent Classes in \name use a slightly different declaration style compared
@@ -87,46 +87,46 @@ since the trait name is not a type, no code external to that trait can
 refer to it. This is one of the key design decisions in \name. 
 
 % this text may go after, while explaining the This type?
-%Code inside traits/classes can refer to (uppercase) class names, but not to (lowercase) trait names.
-%%The point is that the trait can refer to the program via \lstinline{this},
+Code inside traits/classes can refer to (uppercase) class names, but not to (lowercase) trait names.
+The point is that the trait can refer to the program via \lstinline{this},
 %??????????????
-% This means that the
-%program is agnostic to what the trait type is going to be, so it can
-%be later assigned to any (or many) classes. This improves the
-%flexibility of reuse as illustrated in Section~\ref{}.
-%However, 
-%to solve the more immediate typing issue above we need one more round of refactoring, as we shall see next. 
+ This means that the
+program is agnostic to what the trait type is going to be, so it can
+be later assigned to any (or many) classes. This improves the
+flexibility of reuse as illustrated in Section~\ref{}.
+However, 
+to solve the more immediate typing issue above we need one more round of refactoring, as we shall see next. 
 
 
-%: in \name all declarations 
-%are sequentially type-checked and if a definition occurs afterwards
-%another, then it is not visible on all previous definitions.
+in \name all declarations 
+are sequentially type-checked and if a definition occurs afterwards
+another, then it is not visible on all previous definitions.
 
-%\paragraph{Type of the self-reference} 
-%The code above does not work.
-%because the way type-checking works in \name is that type-checking of 
-%code literals is independent of the class/trait names associated to it.
-%A Java programmer may expect that the type of \lstinline{this} 
-%in the previous definition of \lstinline{ta} is \lstinline{ta}
-%itself. However, this intuition brought from Java is wrong in \name
-%for two reasons:
+\paragraph{Type of the self-reference} 
+The code above does not work.
+because the way type-checking works in \name is that type-checking of 
+code literals is independent of the class/trait names associated to it.
+A Java programmer may expect that the type of \lstinline{this} 
+in the previous definition of \lstinline{ta} is \lstinline{ta}
+itself. However, this intuition brought from Java is wrong in \name
+for two reasons:
 
-%\begin{itemize}
+\begin{itemize}
 
-%\item {\bf Traits are not types}. Traits in
-%  \name are simply units of reuse and cannot be used as types. Types
-%  are only introduced by class/interface declarations.
+\item {\bf Traits are not types}. Traits in
+  \name are simply units of reuse and cannot be used as types. Types
+  are only introduced by class/interface declarations.
 
-%\item The second reason is that {\bf the type of self-references is the self type of the
-%    code literal.} Unlike Java-like languages, where the body of a
-%  class declaration is intrinsically coupled with the class itself, in
-%  \name code literals are first-class\bruno{Is it appropriate to say
-%    that they are first class?} and are type-checked independently.
-%  \name has a notion of self-type, which is closely related to
-%  approaches such as ThisType~\cite{} and ...\cite{others}. Therefore
-%  in \name the self-reference does not have the type of the class
-%  being defined, but rather it has the self-type.
-%\end{itemize}
+\item The second reason is that {\bf the type of self-references is the self type of the
+    code literal.} Unlike Java-like languages, where the body of a
+  class declaration is intrinsically coupled with the class itself, in
+  \name code literals are first-class\bruno{Is it appropriate to say
+    that they are first class?} and are type-checked independently.
+  \name has a notion of self-type, which is closely related to
+  approaches such as ThisType~\cite{} and ...\cite{others}. Therefore
+  in \name the self-reference does not have the type of the class
+  being defined, but rather it has the self-type.
+\end{itemize}
 
 With this in mind, we can try to model the example again:
 \saveSpace
@@ -200,11 +200,11 @@ B:{implements IA
  and \Q@B@; while subtyping is part of the class interface.
 
 
-%To finish this section, Figure \ref{fig:compare} provides a summary of
-%the differences between classes and traits. The comparison focus on
-%the roles of traits and classes with respect to instantiation,
-%reusability and whether the declarations also introduce new types or
-%not.
+To finish this section, Figure \ref{fig:compare} provides a summary of
+the differences between classes and traits. The comparison focus on
+the roles of traits and classes with respect to instantiation,
+reusability and whether the declarations also introduce new types or
+not.
 
 
 

@@ -13,8 +13,6 @@ This type of situations is the primary motivator
 for previous work aiming at separating inheritance from subtyping~\cite{cook}.
 Leveraging on the \Q@This@ type, we can also provide self-instantiation (trait methods can create instances of the class using them) and smoothly integrate state and traits: a challenging problem that has limited the flexibility of traits and
 reuse in the past.
-%First we show how self-instantiation and state are already avaible in the simplest trait model,
-%then we show how to radically improve the 
 
 \subsection{Managing State}
 
@@ -110,9 +108,9 @@ some disadvantages:
 \item {\bf Disadvantages:} Writing such obvious definitions to close
   the state/fixpoint in the class 
    with the constructors and fields and getter/setters and factories is tedious.
-   %Moreover, there is no way for a trait to specify a default value for a field,
-   %the class need to handle all the state, even state that is conceptually
-   %"private" of such trait. 
+   Moreover, there is no way for a trait to specify a default value for a field,
+   the class need to handle all the state, even state that is conceptually
+   "private" of such trait. 
    Previous work shows that such code can be automatically
    generated~\cite{wang2016classless}.
    Also a model with fields and constructors is necessarily
