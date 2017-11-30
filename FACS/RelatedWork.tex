@@ -149,6 +149,7 @@ We use Y and X to mean yes and no, and we use ``-'' were the question is not rea
 \end{minipage}
 %second column
 \begin{minipage}[t]{0.6\textwidth}
+\newcommand{\YY}{\textbf{Y}}
 ${}_{}$
 \begin{center}
 \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c}
@@ -164,18 +165,18 @@ ${}_{}$
 &\Rotated{well-typed before composed} 
 \\
 \hline
-java/scala class&Y&X&Y&Y&Y&Y&X&Y&Y&X\\
-java8 interface &X&X&X&Y&Y&Y&X&Y&Y&X\\
-scala trait        &X&X&X&Y&Y&Y&X&Y&X&X\\
-original trait     &X&X&X&Y&-&-&X&X&-&-\\
-Ferruccio trait  &X&X&X&Y&X&-&X&X&Y&Y\\
-\name trait            &X&Y&X&Y&X&-&Y&X&Y&X\\
-\name class           &Y&Y&Y&X&Y&Y&Y&-&Y&X\\
+java/scala class&\YY &X&\YY &\YY &\YY &\YY &X&\YY &\YY &X\\
+java8 interface &X&X&X&\YY &\YY &\YY &X&\YY &\YY &X\\
+scala trait        &X&X&X&\YY &\YY &\YY &X&\YY &X&X\\
+original trait     &X&X&X&\YY &-&-&X&X&-&-\\
+Ferruccio trait  &X&X&X&\YY &X&-&X&X&\YY &\YY \\
+\name trait            &X&\YY &X&\YY &X&-&\YY &X&\YY &X\\
+\name class           &\YY &\YY &\YY &X&\YY &\YY &\YY &-&\YY &X\\
 module composition
-                      &-&-&Y&Y&-&-&-&-&Y&Y\\
-deepFJig class &Y&Y&Y&Y&Y&X&Y&X&Y&Y\\
+                      &-&-&\YY &\YY &-&-&-&-&\YY &\YY \\
+deepFJig class &\YY &\YY &\YY &\YY &\YY &X&\YY &X&\YY &\YY \\
 package template
-                      &X&Y&X&Y&X&-&X&X&Y&X\\
+                      &X&\YY &X&\YY &X&-&X&X&\YY &X\\
 
 \end{tabular}
 \end{center}

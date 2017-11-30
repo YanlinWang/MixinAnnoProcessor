@@ -88,53 +88,21 @@ This nicely solve our problem.
 However, notice how if we wished to add many similar operations we would 
 have to repeat the propagation code (as in \Q@sumAdd1@) many times
 just changing the name of the operation.
-In the next section we will show how to improve on this point.
-
-
-\subsection{More composition operators}
-\use\ is amazing, elegant and simple, but our system can be easily enriched with more 
-operators: while most approaches in literature presents a fixed set of operators, we do not need such restriction.
-We just need to be sure that every newly added operator respects the following criteria:
-
-\begin{itemize}
-\item As for \use, the operato does not need to be total, but if it fails it needs to provide an error that will be reported to the programmer.
-\item When the operator takes in input only traits (they are going to be well typed), if a result is produced,
- such result is well typed.
-\item When the operator takes in input also code literal, if a non well typed result is produced,
-the type error must be tracked back to code in one of those non typed yet code literals.
- \end{itemize}
-
-
-Here we see some example of other composition operators, inspired from~\cite{servetto2014meta}:
-\paragraph{Restrict}${}_{}$\\*
-Restrict makes a method abstract
+Solutions to the expression problems involving the  Visitor Pattern 
+allow defining a \Q@CloneVisitor@ in order
+to reuse its propagation code.
+You can see what we mean with the sketch of code below:
 \begin{lstlisting}
-t:{method bool geq(This x) x.leq(this)   method bool leq(This x) x.qeq(this) }
-C:Use t[restrict geq],{method bool geq(This x)  /*actual geq impl*/}
+class CloneVisitor{
+  Exp visit(Lit l){return new Lit(l.inner);}
+  Exp visit(Sum s){return new Sum(s.left.accept(this),s.right.accept(this);}
+  }
+class Add1 extends CloneVisitor{
+  Exp visit(Lit l){return new Lit(l.inner+1);}
+  }
 \end{lstlisting}
-
-A variant of this operator allows to move the implementation to another name. This is very usefull to implement \Q@super@. This also is enough to suppor the example of before, when we try to compose \Q@colored@
-with \Q@flavoured@.
-
-\begin{lstlisting}
-  colored:{/*as before*/}
-  flavoured:{
-  method Flavour flavour()
-    method This withFlavour(Flavour that)
-    method This merge(This other)
-      this.withFlavour(this.flavour().mix(that.flavour())
-    }
-  CPoint:Use colored[restrict merge as _1merge],flavoured[restrict merge as _2merge],
-  pointSum,{
-    class method This of(int x,int y) This.of(x,y,Color.of(/*red*/))
-    class method This of(int x, int y,Color color)
-    method This merge(This other)
-      this._1merge(other)._2merge(other)
-    }
-\end{lstlisting}
-
-Note how we are leveraging on the fact that the code literal does not need to be complete, thus we can just call \Q@_1merge()@ and \Q@_2merge()@
-
+In \name we can obtain the same kind of code reuse, without the need of introducing 
+the concepts related to the Visitor Pattern; but we need to rely on 2 new operators:
 
 \paragraph{Rename}${}_{}$\\*
 Rename allows to make some form of ``compile time'' refactoring
@@ -214,7 +182,7 @@ operation:{//for sum and lit, easy to extends as before
   }
 \end{lstlisting}
 
-Now, to have my addN I can
+Now, to have my \Q@addN@ we can
 
 \begin{lstlisting}
 opAddn: Use
@@ -226,60 +194,60 @@ opAddn: Use
 
 
 
-\paragraph{Full power of redirect}${}_{}$\\*
-An expressive form of Redirect can be multiple, that is, can redirect may interdependent classes at the same time.
-We show an example where a specific kind of \Q@Service@ can produce a \Q@Report@, and 
-\Q@Report@s can be combined together.
-The goal is to execute a list of such services and produce a collated report.
-This example also show how to propagate generics:
-
-\begin{lstlisting}
-Service:{interface method Void performService()}
-serviceCombinator:{
-  S:{implements Service method R report()  }
-  
-  R:{method R combine(R that)   class method R empty() }
-  
-  ListS:list[redirect Elem to S]
-  
-  class method R doAll(ListS ss){//here we use extended java like syntax
-    R r=R.empty()
-    for(S s in ss){
-      s.performService();
-      r=r.combine(s.report())
-      }
-    return r;
-  }
-}
-PaintingService:serviceCombinator[redirect S to PaintingService]
-PaintingService:{... method PaintingReport report()..}
-PaintingReport:{..}
-\end{lstlisting}
-
-The flattened version of \Q@PaintingService@ would look like:
-\begin{lstlisting}
-PaintingService:{
-  ListS:/*the expansion of list[redirect Elem to PaintingService]*/
-  
-  class method PaintingReport doAll(ListS ss){
-    PaintingReport r=PaintingReport.empty()
-    for(PaintingService s in ss){
-      s.performService();
-      r=r.combine(s.report())
-      }
-    return r;
-  }
-}
-\end{lstlisting}
-Where you can note how redirect figured out \Q@R=PaintingReport@ by comparing the structural shape of
-classes \Q@PaintingService@ and \Q@S@.
-
-To encode the former generic code in java you need to write
-the following headeche inducing interfaces for RService and Report.
-and require that the services you want to serve implement those.
-\begin{lstlisting}
-interface Service{ void performService();}
-interface Report<R extends Report<R>>{R combine(R that);}
-interface RService<R extends Report<R>> extends Service{ R report();}
-\end{lstlisting}
-Note how we still can not encode the method \Q@empty@.
+%\paragraph{Full power of redirect}${}_{}$\\*
+%An expressive form of Redirect can be multiple, that is, can redirect may interdependent classes at the same time.
+%We show an example where a specific kind of \Q@Service@ can produce a \Q@Report@, and 
+%\Q@Report@s can be combined together.
+%The goal is to execute a list of such services and produce a collated report.
+%This example also show how to propagate generics:
+%
+%\begin{lstlisting}
+%Service:{interface method Void performService()}
+%serviceCombinator:{
+%  S:{implements Service method R report()  }
+%  
+%  R:{method R combine(R that)   class method R empty() }
+%  
+%  ListS:list[redirect Elem to S]
+%  
+%  class method R doAll(ListS ss){//here we use extended java like syntax
+%    R r=R.empty()
+%    for(S s in ss){
+%      s.performService();
+%      r=r.combine(s.report())
+%      }
+%    return r;
+%  }
+%}
+%PaintingService:serviceCombinator[redirect S to PaintingService]
+%PaintingService:{... method PaintingReport report()..}
+%PaintingReport:{..}
+%\end{lstlisting}
+%
+%The flattened version of \Q@PaintingService@ would look like:
+%\begin{lstlisting}
+%PaintingService:{
+%  ListS:/*the expansion of list[redirect Elem to PaintingService]*/
+%  
+%  class method PaintingReport doAll(ListS ss){
+%    PaintingReport r=PaintingReport.empty()
+%    for(PaintingService s in ss){
+%      s.performService();
+%      r=r.combine(s.report())
+%      }
+%    return r;
+%  }
+%}
+%\end{lstlisting}
+%Where you can note how redirect figured out \Q@R=PaintingReport@ by comparing the structural shape of
+%classes \Q@PaintingService@ and \Q@S@.
+%
+%To encode the former generic code in java you need to write
+%the following headeche inducing interfaces for RService and Report.
+%and require that the services you want to serve implement those.
+%\begin{lstlisting}
+%interface Service{ void performService();}
+%interface Report<R extends Report<R>>{R combine(R that);}
+%interface RService<R extends Report<R>> extends Service{ R report();}
+%\end{lstlisting}
+%Note how we still can not encode the method \Q@empty@.
